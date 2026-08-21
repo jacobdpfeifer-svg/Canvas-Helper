@@ -200,36 +200,22 @@ def test_config_normalizes_canvas_api_url(monkeypatch):
     assert config_module.get_config().canvas_api_url == "https://canvas.school.edu/api/v1"
 
 
-def test_execute_typescript_disabled_by_default(monkeypatch):
-    """Code execution is opt-in (#157): a default install must not expose it."""
-    monkeypatch.delenv("EXECUTE_TYPESCRIPT_ENABLED", raising=False)
-    config_module.reset_config()
-    assert config_module.get_config().execute_typescript_enabled is False
-
-
-def test_anonymization_enabled_by_default(monkeypatch):
-    """FERPA anonymization is opt-out, never opt-in."""
+def test_anonymization_disabled_by_default_in_student_fork(monkeypatch):
+    """Jacob IBE fork: self-only token — anonymization off by default."""
     monkeypatch.delenv("ENABLE_DATA_ANONYMIZATION", raising=False)
     config_module.reset_config()
-    assert config_module.get_config().enable_data_anonymization is True
+    assert config_module.get_config().enable_data_anonymization is False
 
 
-def test_http_startup_path_also_rejects_cleartext(monkeypatch):
-    """The scheme check must not depend on validate_config().
-
-    HTTP mode never calls validate_config() — that path is stdio's .env check —
-    so an earlier version of this rejection was bypassed entirely in HTTP mode.
-    That is the deployment where it matters most: the Canvas URL is
-    server-pinned, so one http:// typo puts *every* caller's token on the wire,
-    not just the operator's.
-    """
+def test_startup_rejects_cleartext_canvas_url(monkeypatch):
+    """Scheme check must reject cleartext non-loopback Canvas URLs."""
     monkeypatch.setenv("CANVAS_API_URL", "http://canvas.school.edu")
     monkeypatch.delenv("CANVAS_ALLOW_INSECURE_HTTP", raising=False)
     config_module.reset_config()
     assert config_module.validate_canvas_url_scheme() is False
 
 
-def test_http_startup_path_accepts_https(monkeypatch):
+def test_startup_accepts_https_canvas_url(monkeypatch):
     monkeypatch.setenv("CANVAS_API_URL", "https://canvas.school.edu")
     config_module.reset_config()
     assert config_module.validate_canvas_url_scheme() is True

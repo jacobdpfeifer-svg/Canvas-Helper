@@ -170,8 +170,61 @@ class TestSubmitAssignment:
 
         assert "NOTHING has been submitted" in result
         assert "confirmation_token=" in result
+        assert "Points possible:" in result
+        assert "Accepted types:" in result
+        assert "Always show this preview" in result
         # Only the two reads happened. No POST.
         assert all(call.args[0] == "get" for call in request.call_args_list)
+
+    @pytest.mark.asyncio
+    async def test_preview_includes_points_possible(self):
+        tools = get_tools(
+            STUDENT_WRITE_TOOLS="submit_assignment",
+            COURSE_AGENT_POLICY_ENABLED="false",
+        )
+        with patch(
+            "canvas_mcp.tools.student_write.get_course_id",
+            new=AsyncMock(return_value="123"),
+        ), patch(
+            "canvas_mcp.tools.student_write.make_canvas_request", new_callable=AsyncMock
+        ) as request:
+            request.side_effect = [
+                _mock_assignment(points_possible=5),
+                {"attempt": 0},
+            ]
+            result = await tools["submit_assignment"](
+                course_identifier="TEST", assignment_id=42,
+                submission_type="online_text_entry", body="hello",
+            )
+
+        assert "Points possible: 5" in result
+        assert "online_text_entry" in result
+
+    @pytest.mark.asyncio
+    async def test_quiz_assignment_soft_blocked(self):
+        tools = get_tools(
+            STUDENT_WRITE_TOOLS="submit_assignment",
+            COURSE_AGENT_POLICY_ENABLED="false",
+        )
+        with patch(
+            "canvas_mcp.tools.student_write.get_course_id",
+            new=AsyncMock(return_value="123"),
+        ), patch(
+            "canvas_mcp.tools.student_write.make_canvas_request", new_callable=AsyncMock
+        ) as request:
+            request.return_value = _mock_assignment(
+                submission_types=["online_quiz"],
+                is_quiz_assignment=True,
+                quiz_id=99,
+            )
+            result = await tools["submit_assignment"](
+                course_identifier="TEST", assignment_id=42,
+                submission_type="online_text_entry", body="hello",
+            )
+
+        assert "quiz" in result.lower()
+        assert "blocked" in result.lower()
+        assert request.call_count == 1
 
     @pytest.mark.asyncio
     async def test_confirm_submits(self):

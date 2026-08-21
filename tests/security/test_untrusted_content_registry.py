@@ -14,7 +14,6 @@ from canvas_mcp.server import register_all_tools
 @pytest.fixture(autouse=True)
 def _all_feature_gated_tools_enabled(monkeypatch):
     """Make the registry gate see every optional tool profile."""
-    monkeypatch.setenv("EXECUTE_TYPESCRIPT_ENABLED", "true")
     monkeypatch.setenv(
         "STUDENT_WRITE_TOOLS", ",".join(sorted(STUDENT_WRITE_TOOL_NAMES))
     )
@@ -27,7 +26,7 @@ def _all_feature_gated_tools_enabled(monkeypatch):
 async def test_every_read_tool_declares_and_keeps_its_untrusted_content_policy():
     """A new read tool cannot ship unclassified or lose its declared fence path."""
     mcp = FastMCP("untrusted-content-registry")
-    register_all_tools(mcp, role="all")
+    register_all_tools(mcp, role="student")
     read_tools = {
         tool.name: tool
         for tool in await mcp.list_tools(run_middleware=False)

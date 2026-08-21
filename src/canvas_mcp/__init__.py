@@ -1,15 +1,13 @@
 """
-Canvas MCP Server
+Canvas MCP Server — Jacob IBE personal student fork (CU Boulder).
 
-A Model Context Protocol server for Canvas LMS integration, providing
-educators with AI-powered tools for course management, assignment handling,
-discussion facilitation, and student analytics.
+Student-only stdio MCP server. Not the upstream multi-audience product.
 """
 
 __version__ = "1.11.0"
-__author__ = "Vishal Sachdev"
-__email__ = "vsachde2@illinois.edu"
-__description__ = "A Model Context Protocol server for Canvas LMS integration"
+__author__ = "Jacob Pfeifer (fork); upstream Vishal Sachdev"
+__email__ = ""
+__description__ = "Personal student Canvas MCP for CU Boulder IBE"
 
 from .server import main
 
