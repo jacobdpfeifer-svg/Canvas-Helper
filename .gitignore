@@ -130,3 +130,8 @@ docs/compliance/
 # Local agent skills (not part of the public package)
 .agents/
 internal/hosted-spec-draft/
+
+# Jacob hybrid: Playwright SSO session + deps (never commit auth)
+browser/.auth/
+browser/node_modules/
+browser/package-lock.json

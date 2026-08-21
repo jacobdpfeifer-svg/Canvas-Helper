@@ -10,18 +10,20 @@ Orient the agent to Jacob’s transfer record + Fall 2026 IBE load. Not a degree
 ## Prerequisites
 
 - Read [`JACOB.md`](../../JACOB.md)
-- Live Canvas: `get_my_enrollments` or `list_courses`
+- Prefer `inbox/week.md` + `inbox/courses/*` (from `npm run sync`). Use MCP `list_courses` only if PAT works.
 
 ## Steps
 
 ### 1. Confirm live enrollments
 
-Call `list_courses` / `get_my_enrollments`. Expect Fall 2026:
+From inbox sync notes / enrolled courses list, or MCP if available. Expect Fall 2026:
 
 - APPM 1235 Pre-Calculus for Engineers
 - BCOR 1030 Communication Strategy
 - CSCI 1200 Intro Computational Thinking
 - ECON 2010 Principles of Microeconomics
+- COEN 1500 CEAS First-Year Seminar (easy to miss on planner-only syncs)
+- Calculus 1 Readiness Prep / Online Experience if present
 
 If Canvas differs, trust Canvas for this-term work and note the delta.
 

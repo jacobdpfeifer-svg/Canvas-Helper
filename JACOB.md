@@ -29,6 +29,9 @@ Use this ranking when deciding what deserves Jacob’s deep attention versus pro
 | BCOR 1030 | Communication Strategy | 018 / 019 / 024 | Drafts OK; live/classmate-facing presentations always Jacob |
 | CSCI 1200 | Intro Computational Thinking | 800, 801 | **Worth Jacob’s time by default** (startup + software goals); rarely auto-submit |
 | ECON 2010 | Principles of Microeconomics | 100, 113 | Required this term despite ECON 2999TC transfer — never skip Canvas work because of the TC |
+| COEN 1500 | CEAS First-Year Seminar | 824, 868 | Missed on first planner-only sync — include in weekly plans; dinner/workshop signups + thought projects |
+| Calculus 1 Readiness Prep | Prep course | — | Support for APPM path; mostly undated unit quizzes — surface when due dates appear |
+| Online Experience | Leeds online orientation | TR | Advising challenges / orientation — low stakes process help |
 
 Not on this schedule (already transferred where noted): BCOR 1025, BCOR 2202. Expected later: APPM 1350 (after 1235), etc.
 
@@ -64,9 +67,22 @@ Not an official degree audit. If Canvas shows a course that also appears below a
 
 **Primary job:** help Jacob with academic *processes* (planning, drafts, checklists, peer-review tracking, module progress, grade risk). Submitting work is exceptional.
 
+## Data path (no PAT required)
+
+CU may block student API tokens. Architecture: [`docs/HYBRID.md`](docs/HYBRID.md).
+
+```text
+JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO cookies (default) or PAT (optional)
+```
+
+1. Prefer fresh [`inbox/week.md`](inbox/week.md) (from `cd browser && npm run sync`)
+2. Optional later: MCP with `CANVAS_API_TOKEN` for the same REST facts + safer native submits
+3. **Browser UI escape hatch only** for WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI — process help; Jacob operates the tool. Never auto.
+
 ### Always require Jacob (never auto-submit)
 
-- In-person quizzes / exams / timed proctored assessments
+- In-person quizzes / exams / timed **or remotely proctored** assessments
+- WebAssign / ZyBooks / PlayPosit / LockDown / other LTI tool workflows
 - Presentations or work needing classmate coordination
 - Originality / voice / judgment work (essays, cases, pitches, reflections)
 - Group work that binds others
@@ -76,6 +92,7 @@ Not an official degree audit. If Canvas shows a course that also appears below a
 ### Auto-submit allowed only when ALL are true
 
 - Course appears in `.jacob/calibrated-courses.md`
+- **Not** WebAssign / ZyBooks / PlayPosit / proctored / other LTI
 - Online, individual, non-proctored
 - Low stakes (completion check, tiny points, clear busywork vs goals)
 - Answer is mechanical / already produced with low ambiguity
@@ -83,18 +100,20 @@ Not an official degree audit. If Canvas shows a course that also appears below a
 - Course syllabus policy does not forbid agent writes
 - Log a visible one-line **why auto** rationale (and the submit preview) in the response — never hide the preview from Jacob
 
-Wire protocol: `submit_assignment` is still preview → `confirmation_token` → confirm. Autonomy means the agent may redeem the token without asking Jacob when the rubric above says auto — not that the token is removed.
+Wire protocol (native Canvas via API/MCP): `submit_assignment` is still preview → `confirmation_token` → confirm. Autonomy means the agent may redeem the token without asking Jacob when the rubric above says auto — not that the token is removed.
+
+**Do not** auto-click Submit inside WebAssign / ZyBooks / PlayPosit / proctoring UIs.
 
 ### Discussion / comments
 
 - Default: draft for Jacob’s review
 - Post/reply only when Jacob explicitly says to
-- `comment_on_my_submission` / `mark_module_item_done`: ask unless clearly trivial completion checkbox work matching auto-submit bar
+- Comments / mark-module-done: ask unless clearly trivial and auto bar matches
 
 ## Session checklist for the agent
 
 1. Read this file
-2. Prefer student Canvas tools (`get_my_*`, shared reads)
-3. Triage upcoming work into **Worth Jacob’s time** vs **Agent can handle** vs **Ask**
-4. Never take quizzes/tests for Jacob
+2. Read `inbox/week.md`; if stale/empty, refresh via `browser` sync (SSO→API), not DOM-first scraping
+3. Triage into **Worth Jacob’s time** vs **Agent can handle** vs **Ask**
+4. Never take quizzes/tests or drive LTI tools for Jacob
 5. Entrepreneurship lens: flag team/pitch/project work early

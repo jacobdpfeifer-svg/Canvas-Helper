@@ -1,27 +1,28 @@
 ---
-description: Jacob IBE personal Canvas agent — always load JACOB.md and follow triage/submit policy
+description: Jacob IBE personal Canvas agent — JACOB triage; SSO→API→inbox without PAT
 alwaysApply: true
 ---
 
 # Jacob IBE student agent
 
-This workspace is Jacob Pfeifer’s **personal student fork** of canvas-mcp (CU Boulder IBE Fall 2026).
+Personal student fork (CU Boulder IBE Fall 2026). Load [`JACOB.md`](../../JACOB.md) every session.
 
-## Required context
+## Architecture (no token assumed)
 
-Before automating Canvas work, read and follow [`JACOB.md`](../../JACOB.md):
+```text
+JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO (Playwright) [PAT optional later]
+                         browser UI = LTI/external escape hatch only
+```
 
-- Goals: entrepreneurship first, then software/data
-- Fall 2026: APPM 1235, BCOR 1030, CSCI 1200, ECON 2010
-- Transfer map and open advising flags
-- Assignment triage + conditional auto-submit rules
+See [`docs/HYBRID.md`](../../docs/HYBRID.md).
 
 ## Hard rules
 
-1. Process help over submission. Prefer plans, drafts, checklists.
-2. Never auto-submit quizzes, exams, proctored work, or classmate-coordination presentations.
-3. When unsure whether something is worth Jacob’s time → **ask Jacob**.
-4. Auto-submit only when every auto-submit criterion in `JACOB.md` is met **and** the course is listed in `.jacob/calibrated-courses.md`; always show the preview and log **why auto** (never hide the preview).
-5. `submit_assignment` remains preview → confirmation_token → confirm; agent may redeem the token without asking only when auto-submit criteria pass.
-6. Do not rebuild educator, hosted Azure, or degree-audit features in this fork.
-7. Do not invent CU degree-audit decisions from the transfer map; flag advising questions instead.
+1. Process help over submission.
+2. Never auto-submit quizzes, exams, proctored work, WebAssign, ZyBooks, PlayPosit, or classmate presentations.
+3. When unsure → **ask Jacob**.
+4. Auto-submit (native Canvas only) only when every `JACOB.md` criterion passes **and** course is in `.jacob/calibrated-courses.md`; always show preview + **why auto**.
+5. Prefer fresh `inbox/week.md`. If stale: `cd browser && npm run sync` (after `open-canvas` if needed). Do not stall on missing PAT.
+6. Do not treat DOM scraping or MCP as a second system of record — same REST facts.
+7. Never store IdentiKey passwords or commit `browser/.auth/`.
+8. Do not rebuild educator/hosted/degree-audit features; do not invent CU degree-audit decisions.

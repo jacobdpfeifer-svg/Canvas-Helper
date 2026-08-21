@@ -1,92 +1,49 @@
 ---
 name: canvas-week-plan
-description: Jacob's weekly Canvas planner for CU Boulder IBE. Triages due work into worth-Jacob's-time vs agent-can-handle using JACOB.md. Use for "what's due", "plan my week", "weekly check".
+description: Jacob's weekly planner from inbox/ (SSO→API sync) or MCP if PAT works. Triages with JACOB.md. Use for "what's due", "plan my week", "weekly check".
 ---
 
 # Canvas Week Plan (Jacob IBE)
 
-Generate Jacob’s weekly plan from Canvas, then triage each item using [`JACOB.md`](../../JACOB.md).
+Generate Jacob’s weekly plan from the **single due-list contract** (`inbox/week.md`), then triage with [`JACOB.md`](../../JACOB.md).
+
+Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
 
 ## Prerequisites
 
-- Read `JACOB.md` first (Fall 2026 courses, career priorities, triage rubric)
-- Canvas MCP student tools available
-- Courses this term: APPM 1235, BCOR 1030, CSCI 1200, ECON 2010
+- Read `JACOB.md` and `.jacob/calibrated-courses.md`
+- Courses: APPM 1235, BCOR 1030, CSCI 1200, ECON 2010, COEN 1500 (+ readiness/orientation if present)
 
 ## Steps
 
-### 1. Load context
+### 1. Load memory
 
-Open `JACOB.md`. Apply per-course defaults (CSCI 1200 = deep attention; exams always Jacob; etc.). Check `.jacob/calibrated-courses.md` before treating anything as auto-eligible.
+1. Read [`inbox/week.md`](../../inbox/week.md).
+2. If missing or `Updated:` older than **2 days**: run or ask for `cd browser && npm run sync` (SSO→`/api/v1`), then re-read. Do not stall on missing PAT.
+3. If MCP PAT works **and** inbox is stale, you may also call `get_my_upcoming_assignments` — then **write results into inbox** so the next turn stays consistent. Do not maintain a second informal list.
 
-### 2. Gather Canvas data
+### 2. Gather extras
 
-1. `get_my_upcoming_assignments` (`days_ahead=7`, widen if asked)
-2. `get_my_submission_status`
-3. `get_my_course_grades`
-4. `get_my_peer_reviews_todo`
+- Course notes: `inbox/courses/*.md`
+- Optional MCP: grades / peer reviews / submission status when PAT is up
 
-### 3. Triage each item
-
-Classify into:
+### 3. Triage
 
 | Bucket | Meaning |
 |--------|---------|
-| **Worth Jacob’s time** | Exams, quizzes, presentations, CSCI build work, judgment-heavy writing, group coord |
-| **Agent can handle** | Clear low-stakes busywork meeting every auto-submit criterion in `JACOB.md` |
-| **Ask Jacob** | Unsure, first submit in a course, or criteria incomplete |
+| **Worth Jacob’s time** | Exams, quizzes, proctored, presentations, CSCI build, judgment writing, group coord |
+| **External / LTI (Jacob in tool)** | WebAssign, ZyBooks, PlayPosit, other LTI — draft help only |
+| **Agent can handle** | Native Canvas low-stakes busywork meeting every auto criterion + calibrated |
+| **Ask Jacob** | Unsure / first submit in a course |
 
-Do **not** auto-submit from this skill alone — hand eligible items to `jacob-assignment-triage` or ask first.
+Do not auto-submit from this skill — hand off to `jacob-assignment-triage` for native Canvas only.
 
-### 4. Output format
+### 4. Output
 
-```
-## Week ahead (Jacob / IBE Fall 2026)
+Note **source** (`inbox` from sso-session-api / MCP / merge). Include:
 
-### Quick stats
-- Due this week: N
-- Worth your time: N
-- Agent can handle (candidates): N
-- Ask you: N
-- Peer reviews pending: N
+Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → Suggested order.
 
-### Worth your time
-- [Course] Assignment — due … — why (exam / CSCI / presentation / …)
-  - Process help: …
+## Entrepreneurship lens
 
-### Agent can handle (candidates)
-- [Course] Assignment — due … — why auto bar might apply
-  - Next: run assignment-triage or confirm with Jacob
-
-### Ask you
-- …
-
-### By course
-#### CSCI 1200 (grade …)
-…
-
-#### APPM 1235 …
-#### BCOR 1030 …
-#### ECON 2010 …
-
-### Peer reviews
-…
-
-### Suggested order (your time first)
-1. …
-```
-
-### 5. Entrepreneurship lens
-
-Flag early: team projects, pitches, demos, anything that builds toward startup / software goals (especially CSCI 1200).
-
-## Tools
-
-| Tool | Purpose |
-|------|---------|
-| `get_my_upcoming_assignments` | Due window |
-| `get_my_submission_status` | Submitted vs not |
-| `get_my_course_grades` | Standing |
-| `get_my_peer_reviews_todo` | Peer reviews |
-| `get_assignment_details` | Drill-down |
-| `get_syllabus` | Policy / agent-write rules |
+Flag team/pitch/project/CSCI build work early.

@@ -1,76 +1,51 @@
 # Canvas MCP — Jacob IBE (personal fork)
 
-Personal **student-only** Canvas agent for **Jacob Pfeifer**, CU Boulder **Integrated Business and Engineering (IBE)**, Fall 2026.
+Personal **student** academic agent for **Jacob Pfeifer**, CU Boulder **IBE**, Fall 2026.
 
-This branch (`personal/jacob-ibe`) is a cut-down fork of upstream canvas-mcp. It is **not** a drop-in contribution surface back to PyPI / MCP Registry / Azure.
+**Works without a Canvas access token.** Default path:
 
-Context and triage rules: [`JACOB.md`](JACOB.md).
+1. SSO login (Playwright) → Canvas `/api/v1` → [`inbox/week.md`](inbox/week.md)
+2. Agent triages with [`JACOB.md`](JACOB.md)
+3. Browser UI only for WebAssign / ZyBooks / PlayPosit / proctored / LTI
 
-## Status (honest)
+Architecture: [`docs/HYBRID.md`](docs/HYBRID.md)
 
-| Phase | State |
-|-------|--------|
-| Jacob profile + Cursor rule + skills | Done |
-| Student-only tool registry (educator/hosted strip) | Mostly done — local stdio focus |
-| **Phase 0 — live CU Boulder API token** | **Open** — add `CANVAS_API_TOKEN` then smoke-test |
-| Live auto-submit validation | Blocked on Phase 0 |
-
-See [`IMPLEMENTATION_REMAINING.md`](IMPLEMENTATION_REMAINING.md) and [`docs/CU_ACCESS.md`](docs/CU_ACCESS.md).
-
-## Quick start
-
-1. Copy env and set a real token (when you have one):
+## Quick start (no token)
 
 ```bash
-cp env.template .env
-# edit CANVAS_API_TOKEN
+cd browser
+npm install && npx playwright install chromium
+npm run open-canvas   # IdentiKey + MFA once
+npm run sync          # writes ../inbox/week.md from /api/v1
 ```
 
-```bash
-CANVAS_API_TOKEN=your_token_here
-CANVAS_API_URL=https://canvas.colorado.edu/api/v1
-CANVAS_ROLE=student
-STUDENT_WRITE_TOOLS=submit_assignment,comment_on_my_submission,mark_module_item_done
-COURSE_AGENT_POLICY_DEFAULT=allow
-ENABLE_DATA_ANONYMIZATION=false
-```
+In chat: ask for a **week plan** — agent reads inbox + `JACOB.md`.
 
-2. Install and run (stdio only):
+## Optional API token later
 
-```bash
-uv pip install -e .
-uv run canvas-mcp-server --test   # after token is set
-uv run canvas-mcp-server
-```
-
-3. Point Cursor MCP at this server. Always load `JACOB.md`.
+When OIT grants a PAT: [docs/CU_ACCESS.md](docs/CU_ACCESS.md). Same REST truth; MCP becomes a nicer client, not a second system.
 
 ## Fall 2026
 
 | Course | Focus |
 |--------|--------|
-| APPM 1235 | Pre-calc — exams = you |
-| BCOR 1030 | Comm strategy — drafts OK; live presentations = you |
-| CSCI 1200 | Computational thinking — worth your time by default |
-| ECON 2010 | Micro — still required despite ECON 2999TC |
+| APPM 1235 | Pre-calc — exams = you; WebAssign = you in tool |
+| BCOR 1030 | Drafts OK; PlayPosit/proctored/presentations = you |
+| CSCI 1200 | Worth your time; ZyBooks = you in tool |
+| ECON 2010 | Required despite ECON 2999TC |
+| COEN 1500 | FYS signups / thought projects — include in week plans |
 
 ## Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `jacob-ibe-semester` | Transfer + semester orientation |
-| `canvas-week-plan` | Weekly plan with triage buckets |
-| `jacob-assignment-triage` | Process help + rare auto-submit |
-| `canvas-discussion-facilitator` | Draft discussions; post only if you say so |
-
-## Automation policy (short)
-
-- Process help first; submit is exceptional
-- Never auto quizzes/exams/classmate presentations
-- When unsure → ask Jacob
-- Full rubric: [`JACOB.md`](JACOB.md)
-- Course calibration list: [`.jacob/calibrated-courses.md`](.jacob/calibrated-courses.md)
+| `jacob-canvas-browser` | SSO sync + LTI escape hatch |
+| `jacob-inbox-week` | Maintain inbox |
+| `canvas-week-plan` | Weekly triage plan |
+| `jacob-assignment-triage` | Process help + rare native submit |
+| `jacob-ibe-semester` | Transfer + semester |
+| `canvas-discussion-facilitator` | Draft discussions |
 
 ## License
 
-MIT (inherited from upstream). Not for republishing as the multi-audience product.
+MIT (inherited). Not for republishing as the multi-audience upstream product.
