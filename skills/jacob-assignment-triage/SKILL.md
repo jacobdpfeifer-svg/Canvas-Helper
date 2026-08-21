@@ -1,74 +1,51 @@
 ---
 name: jacob-assignment-triage
-description: Classify Jacob's Canvas assignments using JACOB.md triage rubric; draft process help; auto-submit only when every low-stakes criterion is met. Use for "triage my work", "can you submit this", "what's busywork", "handle my homework".
+description: Classify Jacob's work with JACOB.md; process help first; native Canvas submit only when auto criteria pass. Never auto LTI/WebAssign/ZyBooks/PlayPosit/proctored.
 ---
 
 # Jacob assignment triage
 
-Decide what deserves Jacob’s attention versus agent process help / rare auto-submit.
+Decide Worth-your-time vs process help vs rare **native Canvas** auto-submit.
 
 ## Prerequisites
 
-- Read [`JACOB.md`](../../JACOB.md) fully
-- Check [`.jacob/calibrated-courses.md`](../../.jacob/calibrated-courses.md) — if the course is not listed, **do not auto-submit**
-- Student write tools enabled if submitting (`submit_assignment`)
-- When unsure → **ask Jacob** (never stretch auto-submit)
+- [`JACOB.md`](../../JACOB.md), [`.jacob/calibrated-courses.md`](../../.jacob/calibrated-courses.md)
+- Items from `inbox/week.md` (preferred) or MCP
+- When unsure → **ask Jacob**
 
-## Always Jacob (stop; do not submit)
+## Always Jacob (do not submit)
 
-- In-person / proctored quizzes and exams
-- Presentations or classmate coordination
-- Essays, cases, pitches, reflections, originality-heavy work
+- Quizzes / exams / remotely proctored
+- **WebAssign, ZyBooks, PlayPosit, LockDown, other LTI** — draft help; Jacob uses the tool UI
+- Presentations / classmate coordination
+- Essays, cases, pitches, reflections
 - Group work that binds others
-- Course not yet in `.jacob/calibrated-courses.md`
-- CSCI 1200 work by default (worth his time) unless he explicitly marks an item busywork
+- Course not in `.jacob/calibrated-courses.md`
+- CSCI 1200 by default unless Jacob marks busywork
 
-## Auto-submit path (only if ALL are true)
+## Auto-submit (native Canvas only; ALL must be true)
 
-1. Course is listed in `.jacob/calibrated-courses.md`
-2. Online, individual, non-proctored (not a quiz/exam)
-3. Low stakes vs goals
-4. Mechanical answer already clear
-5. No classmate coordination
-6. Syllabus does not forbid agent writes (`get_syllabus` / course policy)
-7. Log a visible **why auto** one-liner in the chat response (never hide the preview)
+1. Not external/LTI/proctored
+2. Course calibrated
+3. Online, individual, non-proctored, low stakes, mechanical
+4. Policy allows agent writes
+5. Show preview + **why auto** (never hide)
 
-### Wire steps
+### If PAT/MCP available
 
-1. `get_assignment_details` + `get_my_submission` (attempts, type, points)
-2. `submit_assignment` **without** `confirmation_token` → preview (must surface points + submission types)
-3. **Always show Jacob the preview text and why auto in the response** — do not hide the preview
-4. If every auto criterion passed: redeem with same args + `confirmation_token`
-5. Report: what was submitted, course, **why auto: …**
+`submit_assignment` preview → show Jacob → redeem token only if auto bar passed.
 
-If any criterion fails → draft process help and ask. Do not redeem the token.
+### If no PAT
 
-## Process-help default (most items)
-
-For Worth-Jacob / Ask buckets:
-
-- Outline steps, checklist, draft text/code comments
-- Point to files/pages via `list_modules` / `get_page_content` / `read_course_file`
-- Do **not** post discussions unless Jacob says so
-- Do **not** redeem submit tokens unless auto bar passed or Jacob approved the preview
+Do not claim submitted. For native Canvas busywork, draft the text/files and ask Jacob to paste/upload, **or** wait for PAT. Do not auto-click Canvas Submit in the browser unless Jacob explicitly approves that one item and it meets the auto bar.
 
 ## Output
 
 ```
 ## Triage result
-
 ### Worth your time
-…
-
+### External / LTI (Jacob in tool)
 ### Asked you
-…
-
-### Auto-submitted (if any)
-- … — why auto: …
-
-### Preview shown (auto path)
-…
-
+### Auto-submitted (native, if any) — why auto:
 ### Drafts ready for you
-…
 ```

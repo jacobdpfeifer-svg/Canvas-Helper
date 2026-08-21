@@ -1,0 +1,14 @@
+{
+  "name": "jacob-canvas-browser",
+  "private": true,
+  "description": "SSO session → Canvas /api/v1 → inbox/ (no developer PAT required)",
+  "scripts": {
+    "open-canvas": "node scripts/open-canvas.mjs",
+    "sync": "node scripts/sync-week.mjs",
+    "pull-todo": "node scripts/sync-week.mjs",
+    "audit": "node scripts/audit-canvas.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
