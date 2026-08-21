@@ -1,147 +1,92 @@
 ---
 name: canvas-week-plan
-description: Student weekly assignment planner for Canvas LMS. Shows all due dates, submission status, grades, and peer reviews across all courses. Use when a student says "what's due", "plan my week", "weekly check", or wants to organize their coursework.
+description: Jacob's weekly Canvas planner for CU Boulder IBE. Triages due work into worth-Jacob's-time vs agent-can-handle using JACOB.md. Use for "what's due", "plan my week", "weekly check".
 ---
 
-# Canvas Week Plan
+# Canvas Week Plan (Jacob IBE)
 
-Generate a comprehensive weekly plan for a student, showing all upcoming assignments, current grades, submission status, and pending peer reviews across all enrolled courses.
+Generate Jacob’s weekly plan from Canvas, then triage each item using [`JACOB.md`](../../JACOB.md).
 
 ## Prerequisites
 
-- **Canvas MCP server** must be configured and running in the agent's MCP client (e.g., Claude Code, Cursor, Codex, OpenCode)
-- The user must have a **student role** in their Canvas courses
-- No anonymization is needed -- students only see their own data
+- Read `JACOB.md` first (Fall 2026 courses, career priorities, triage rubric)
+- Canvas MCP student tools available
+- Courses this term: APPM 1235, BCOR 1030, CSCI 1200, ECON 2010
 
 ## Steps
 
-### 1. Get Upcoming Assignments
+### 1. Load context
 
-Call the MCP tool `get_my_upcoming_assignments` with `days_ahead=7` to retrieve all assignments due in the next week.
+Open `JACOB.md`. Apply per-course defaults (CSCI 1200 = deep attention; exams always Jacob; etc.). Check `.jacob/calibrated-courses.md` before treating anything as auto-eligible.
 
-**Data to collect per assignment:**
-- Assignment name
-- Course name or code
-- Due date and time
-- Point value
-- Assignment type (quiz, essay, discussion, etc.)
+### 2. Gather Canvas data
 
-### 2. Check Submission Status
+1. `get_my_upcoming_assignments` (`days_ahead=7`, widen if asked)
+2. `get_my_submission_status`
+3. `get_my_course_grades`
+4. `get_my_peer_reviews_todo`
 
-Call the MCP tool `get_my_submission_status` to determine what has been submitted and what has not.
+### 3. Triage each item
 
-**Categorize each assignment as one of:**
-- **Submitted** -- already turned in
-- **Not submitted** -- still needs to be done
-- **Late** -- past due but late submissions still accepted
-- **Missing** -- past due, no late submissions accepted
+Classify into:
 
-### 3. Get Current Grades
+| Bucket | Meaning |
+|--------|---------|
+| **Worth Jacob’s time** | Exams, quizzes, presentations, CSCI build work, judgment-heavy writing, group coord |
+| **Agent can handle** | Clear low-stakes busywork meeting every auto-submit criterion in `JACOB.md` |
+| **Ask Jacob** | Unsure, first submit in a course, or criteria incomplete |
 
-Call the MCP tool `get_my_course_grades` to show academic standing for each enrolled course.
+Do **not** auto-submit from this skill alone — hand eligible items to `jacob-assignment-triage` or ask first.
 
-**Collect per course:**
-- Current percentage and letter grade
-- Impact of upcoming assignments on grade (if calculable)
-
-### 4. Check Peer Reviews
-
-Call the MCP tool `get_my_peer_reviews_todo` to find any pending peer reviews.
-
-**Collect per pending review:**
-- Which assignment needs peer review
-- How many reviews are required
-- Deadline for completing reviews
-- Reviews completed vs. remaining
-
-### 5. Generate the Weekly Plan
-
-Present a structured, actionable plan using the format below. Adjust courses, assignments, and numbers to match the actual data retrieved.
+### 4. Output format
 
 ```
-## Your Week Ahead
+## Week ahead (Jacob / IBE Fall 2026)
 
-### Quick Stats
-- **Due this week:** 5 assignments
-- **Already submitted:** 2
-- **Peer reviews pending:** 3
-- **Highest priority:** Final Project (100 pts, due Fri)
+### Quick stats
+- Due this week: N
+- Worth your time: N
+- Agent can handle (candidates): N
+- Ask you: N
+- Peer reviews pending: N
 
-### By Course
+### Worth your time
+- [Course] Assignment — due … — why (exam / CSCI / presentation / …)
+  - Process help: …
 
-#### CS 101 (Current: 87% B+)
-| Assignment | Due | Points | Status |
-|------------|-----|--------|--------|
-| Quiz 5 | Tue 11:59pm | 20 | Not submitted |
-| Lab 8 | Thu 5:00pm | 30 | Submitted |
+### Agent can handle (candidates)
+- [Course] Assignment — due … — why auto bar might apply
+  - Next: run assignment-triage or confirm with Jacob
 
-#### MATH 221 (Current: 92% A-)
-| Assignment | Due | Points | Status |
-|------------|-----|--------|--------|
-| HW 12 | Wed 11:59pm | 25 | Not submitted |
-| Final Project | Fri 11:59pm | 100 | Not submitted |
+### Ask you
+- …
 
-### Peer Reviews Due
-- **Essay 2 Peer Review** (ENG 101) - 2 reviews needed by Thu
-- **Project Proposal Review** (CS 101) - 1 review needed by Fri
+### By course
+#### CSCI 1200 (grade …)
+…
 
-### Suggested Priority Order
-1. **Quiz 5** (CS 101) - Due tomorrow, 20 pts
-2. **HW 12** (MATH 221) - Due Wed, 25 pts
-3. **Peer Reviews** - 3 total, due Thu-Fri
-4. **Final Project** (MATH 221) - Due Fri, 100 pts (start early!)
+#### APPM 1235 …
+#### BCOR 1030 …
+#### ECON 2010 …
 
-### Grade Impact
-- Completing all assignments could raise your grades:
-  - CS 101: 87% -> 89%
-  - MATH 221: 92% -> 94%
+### Peer reviews
+…
+
+### Suggested order (your time first)
+1. …
 ```
 
-### 6. Offer Drill-Down Options
+### 5. Entrepreneurship lens
 
-After presenting the plan, let the user know what further actions are available:
+Flag early: team projects, pitches, demos, anything that builds toward startup / software goals (especially CSCI 1200).
 
-```
-Need more details? I can:
-1. Show full assignment instructions for any item
-2. Check the rubric for an assignment
-3. Show your grade breakdown for a course
-4. Focus on just one course
-```
-
-## MCP Tools Used
+## Tools
 
 | Tool | Purpose |
 |------|---------|
-| `get_my_upcoming_assignments` | Fetch assignments due within a time window |
-| `get_my_submission_status` | Check submitted vs. not submitted |
-| `get_my_course_grades` | Retrieve current grades per course |
-| `get_my_peer_reviews_todo` | Find pending peer review tasks |
-| `get_assignment_details` | Drill down into a specific assignment (rubric, instructions) |
-
-## Output Variations
-
-### Compact Mode
-
-If the user asks for a "quick check" or "just the highlights", use a shorter format:
-
-```
-## This Week
-- 3 assignments due (2 not started)
-- 2 peer reviews pending
-- Grades: CS 101 (87%), MATH 221 (92%), ENG 101 (85%)
-
-**Priority:** Quiz 5 (tomorrow), HW 12 (Wed), Final Project (Fri)
-```
-
-### Single Course Mode
-
-If the user specifies a course (e.g., "plan my week for CS 101"), show only that course's assignments, grades, and peer reviews.
-
-## Notes
-
-- Best used at the start of each week (Sunday or Monday)
-- Assignments are sorted by due date, then by point value
-- Late and missing assignments are highlighted for attention
-- All student-facing tools use the `get_my_*` prefix
-- No privacy concerns since students only access their own data
+| `get_my_upcoming_assignments` | Due window |
+| `get_my_submission_status` | Submitted vs not |
+| `get_my_course_grades` | Standing |
+| `get_my_peer_reviews_todo` | Peer reviews |
+| `get_assignment_details` | Drill-down |
+| `get_syllabus` | Policy / agent-write rules |

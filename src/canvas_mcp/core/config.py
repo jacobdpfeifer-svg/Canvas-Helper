@@ -14,8 +14,6 @@ load_dotenv()
 _INVALID_INT_ENV_VARS: dict[str, str] = {}
 _INVALID_FLOAT_ENV_VARS: dict[str, str] = {}
 
-VALID_SANDBOX_MODES = frozenset({"auto", "local", "container"})
-
 # Canonical names of the student write tools an operator may enable via
 # STUDENT_WRITE_TOOLS. Declared here rather than in the tools package so config
 # stays free of imports from it. Quiz-taking is deliberately absent: it is an
@@ -26,13 +24,6 @@ STUDENT_WRITE_TOOL_NAMES = frozenset({
     "comment_on_my_submission",
     "mark_module_item_done",
 })
-
-
-def _parse_keys(raw: str) -> frozenset[str]:
-    """Parse a comma/whitespace-separated list of access keys into a set."""
-    if not raw:
-        return frozenset()
-    return frozenset(k for k in raw.replace(",", " ").split() if k)
 
 
 def _normalize_canvas_url(raw: str) -> str:
@@ -114,9 +105,8 @@ def validate_canvas_url_scheme() -> bool:
     http:// origin puts a credential for student records on the wire for anyone
     on the path. A warning is not proportionate to that.
 
-    Called from BOTH startup paths. validate_config() runs only in stdio mode,
-    and HTTP mode is where this matters most: the Canvas URL is server-pinned,
-    so one operator typo would leak *every* caller's token, not just their own.
+    Called from startup (stdio). validate_config() covers missing URL/token;
+    this function only owns the cleartext scheme case.
     """
     from urllib.parse import urlparse
 
@@ -198,7 +188,8 @@ class Config:
         self.log_api_requests = _bool_env("LOG_API_REQUESTS", False)
 
         # Privacy and security configuration
-        self.enable_data_anonymization = _bool_env("ENABLE_DATA_ANONYMIZATION", True)
+        # Jacob IBE personal fork: self-only student token — anonymization off by default
+        self.enable_data_anonymization = _bool_env("ENABLE_DATA_ANONYMIZATION", False)
         self.anonymization_debug = _bool_env("ANONYMIZATION_DEBUG", False)
         self.log_redact_pii = _bool_env("LOG_REDACT_PII", True)
 
@@ -207,74 +198,12 @@ class Config:
         self.log_execution_events = _bool_env("LOG_EXECUTION_EVENTS", False)
         self.audit_log_dir = os.getenv("AUDIT_LOG_DIR", "")
 
-        # Code execution sandbox configuration (secure defaults)
-        self.enable_ts_sandbox = _bool_env("ENABLE_TS_SANDBOX", True)
-        self.ts_sandbox_mode = os.getenv("TS_SANDBOX_MODE", "auto").lower()
-        self.ts_sandbox_block_outbound_network = _bool_env("TS_SANDBOX_BLOCK_OUTBOUND_NETWORK", True)
-        self.ts_sandbox_allowlist_hosts = os.getenv("TS_SANDBOX_ALLOWLIST_HOSTS", "")
-        self.ts_sandbox_cpu_limit = _int_env("TS_SANDBOX_CPU_LIMIT", 30)
-        self.ts_sandbox_memory_limit_mb = _int_env("TS_SANDBOX_MEMORY_LIMIT_MB", 512)
-        self.ts_sandbox_timeout_sec = _int_env("TS_SANDBOX_TIMEOUT_SEC", 120)
-        self.ts_sandbox_container_image = os.getenv("TS_SANDBOX_CONTAINER_IMAGE", "node:20-alpine")
-
-        # Code execution is opt-in — set EXECUTE_TYPESCRIPT_ENABLED=true to
-        # enable the execute_typescript tool (independent of CANVAS_ROLE).
-        # Off by default: arbitrary code execution should be a deliberate
-        # operator choice, not something a default install exposes (#157).
-        self.execute_typescript_enabled = _bool_env("EXECUTE_TYPESCRIPT_ENABLED", False)
-
-        # HTTP access-key gate (v1, multi-user). Comma- or whitespace-separated
-        # list of accepted keys; an HTTP caller must present a matching
-        # X-MCP-Access-Key header. Empty disables the gate (rely on external
-        # auth). stdio mode ignores this entirely.
-        self.mcp_access_keys = _parse_keys(os.getenv("MCP_ACCESS_KEYS", ""))
-
-        # Secure-by-default: in HTTP mode, an unconfigured key gate makes the
-        # server exit unless the operator EXPLICITLY opts into unauthenticated
-        # mode (i.e. external auth such as Entra/Easy Auth fronts the endpoint).
-        # This makes "fail open" impossible by omission — only by declaration.
-        self.mcp_allow_unauthenticated = _bool_env("MCP_ALLOW_UNAUTHENTICATED", False)
-
-        # Entra ID platform auth: when the endpoint is fronted by Azure App
-        # Service authentication, the platform validates the Entra token and
-        # injects a trusted X-MS-CLIENT-PRINCIPAL(-ID) identity header. The app
-        # reads that for per-identity authorization + audit (the token is already
-        # validated upstream). Gate behind a flag so local/stdio runs never trust
-        # the spoofable X-MS-* headers. mcp_entra_allowed_oids is the allowlist of
-        # Entra object IDs permitted to use this server (empty = allow any
-        # platform-authenticated identity).
-        self.entra_auth_enabled = _bool_env("ENTRA_AUTH_ENABLED", False)
-        self.mcp_entra_allowed_oids = _parse_keys(os.getenv("MCP_ENTRA_ALLOWED_OIDS", ""))
-
-        # --- Self-service access-approval flow (hosted-only; off by default) ---
-        # Feature flag. When false (default) the gate behaves exactly as before
-        # and the /admin/access/* routes 404. See internal access-approval spec.
-        self.access_request_enabled = _bool_env("ACCESS_REQUEST_ENABLED", False)
-        # Azure Table Storage overlay (managed-identity auth; no keys).
-        self.access_table_account = os.getenv("ACCESS_TABLE_ACCOUNT", "")
-        self.access_table_name = os.getenv("ACCESS_TABLE_NAME", "accessoverlay")
-        # Azure Communication Services email.
-        self.acs_endpoint = os.getenv("ACS_ENDPOINT", "")
-        self.acs_sender = os.getenv("ACS_SENDER", "")
-        # Admin notification recipients (comma/space separated).
-        self.access_admin_emails = [
-            e.strip()
-            for e in os.getenv("ACCESS_ADMIN_EMAILS", "").replace(",", " ").split()
-            if e.strip()
-        ]
-        # Public base URL used to build approval links (no trailing slash).
-        self.access_approve_base_url = os.getenv("ACCESS_APPROVE_BASE_URL", "").rstrip("/")
-        # HMAC secret for approval tokens; empty disables the feature (fail-closed).
-        self.access_token_secret = os.getenv("ACCESS_TOKEN_SECRET", "")
-        # Suppress re-emailing the admin for the same OID within this window.
-        self.access_notify_cooldown_hours = _int_env("ACCESS_NOTIFY_COOLDOWN_HOURS", 24)
-
         # Optional metadata
         self.institution_name = os.getenv("INSTITUTION_NAME", "")
         self.timezone = os.getenv("TIMEZONE", "UTC")
 
-        # Role-based tool filtering
-        self.canvas_role = os.getenv("CANVAS_ROLE", "all").lower()
+        # This fork is student-only; CANVAS_ROLE is coerced in validate_config().
+        self.canvas_role = os.getenv("CANVAS_ROLE", "student").lower()
 
         # --- Student write tools (#170) ---
         # Campus-wide operator ceiling. Empty (the default) means NO student write
@@ -288,10 +217,10 @@ class Config:
         # Per-course instructor policy. Can further restrict (never expand) the
         # operator ceiling above.
         self.course_agent_policy_enabled = _bool_env("COURSE_AGENT_POLICY_ENABLED", True)
-        # Posture when a course has no policy artifact. Institutional decision, so
-        # it is operator-configurable; "deny" is the safe default.
+        # Jacob IBE fork: freshman syllabi often omit agent policy — default allow;
+        # a syllabus can still deny. Operator can set COURSE_AGENT_POLICY_DEFAULT=deny.
         self.course_agent_policy_default = os.getenv(
-            "COURSE_AGENT_POLICY_DEFAULT", "deny"
+            "COURSE_AGENT_POLICY_DEFAULT", "allow"
         ).strip().lower()
         # Denials cache longer than grants. A stale grant is a revocation window on
         # an attempt-consuming action, so it is deliberately short.
@@ -393,22 +322,14 @@ def validate_config() -> bool:
             effective=config.canvas_api_url,
         )
 
-    if config.ts_sandbox_mode not in VALID_SANDBOX_MODES:
+    # This fork is student-only; coerce any other profile.
+    if config.canvas_role != "student":
         log_warning(
-            "TS_SANDBOX_MODE should be one of auto, local, container; "
-            f"defaulting to 'auto' (got '{config.ts_sandbox_mode}')"
+            f"CANVAS_ROLE={config.canvas_role} ignored; this fork is student-only"
         )
+        config.canvas_role = "student"
 
-    valid_roles = ("student", "educator", "all")
-    if config.canvas_role not in valid_roles:
-        log_warning(
-            f"CANVAS_ROLE should be one of {', '.join(valid_roles)}; "
-            f"defaulting to 'all' (got '{config.canvas_role}')"
-        )
-        config.canvas_role = "all"
-
-    # Student write policy: an unrecognized posture must fail closed, not fall
-    # through to something permissive.
+    # Student write policy: unrecognized posture fails closed to deny.
     valid_postures = ("allow", "deny")
     if config.course_agent_policy_default not in valid_postures:
         log_warning(

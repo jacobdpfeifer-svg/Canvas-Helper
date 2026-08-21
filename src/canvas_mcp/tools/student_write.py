@@ -65,9 +65,23 @@ from ..core.validation import coerce_canvas_id, validate_params
 from ..core.write_confirmation import unconfirmed_write_warning
 
 # Submission types this tool supports. Quiz and discussion types are absent by
-# design: quiz-taking is a separate academic-integrity decision behind its own
-# flag, and discussion participation already has dedicated tools.
+# design: quiz-taking is refused for this student fork (academic integrity),
+# and discussion participation already has dedicated tools.
 _SUPPORTED_TYPES = ("online_text_entry", "online_url", "online_upload")
+
+# Assignment shapes that look like quizzes — soft-blocked so the agent cannot
+# walk Jacob into submitting assessments via this tool.
+_QUIZ_SUBMISSION_TYPES = frozenset({"online_quiz"})
+
+
+def _assignment_looks_like_quiz(assignment: dict[str, Any]) -> bool:
+    """True when Canvas metadata indicates a quiz-style assessment."""
+    if assignment.get("is_quiz_assignment"):
+        return True
+    if assignment.get("quiz_id") is not None:
+        return True
+    types = assignment.get("submission_types") or []
+    return any(t in _QUIZ_SUBMISSION_TYPES for t in types)
 
 # These tools are self-scoped by a hard-coded "/submissions/self" path suffix. That
 # only holds while assignment_id cannot end the path early, so a non-numeric ID is
@@ -724,11 +738,10 @@ def register_student_write_tools(mcp: FastMCP) -> None:
         ) -> str:
             """Submit one of YOUR OWN assignments. Consumes an attempt.
 
-            Two-step by design. Call it without a confirmation_token to get a
-            preview of exactly what would be sent plus a token; show that preview
-            to the student, then call again passing the token to actually submit.
-            The token expires, is single-use, and is void if the content or the
-            attempt count changed since the preview.
+            Two-step by design. Call without confirmation_token for a preview
+            (points, submission types, content, token). Always surface that
+            preview in the chat. Redeem the token only when Jacob approved or
+            JACOB.md auto-submit criteria fully pass (never for quizzes).
 
             Args:
                 course_identifier: Course code or Canvas ID
@@ -780,6 +793,13 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if isinstance(assignment, dict) and "error" in assignment:
                 return f"Error fetching assignment: {assignment['error']}"
 
+            if _assignment_looks_like_quiz(assignment):
+                return (
+                    "❌ This looks like a quiz or LTI assessment "
+                    f"(types: {', '.join(assignment.get('submission_types') or []) or 'unknown'}). "
+                    "Agent submit is blocked for quizzes/exams — Jacob must take it in Canvas."
+                )
+
             # A group submission becomes the whole group's submission and
             # consumes a shared attempt, affecting students who never consented.
             # That needs its own decision, so Tier 1 declines rather than guess.
@@ -790,10 +810,11 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     "on behalf of your whole group. Please submit it in Canvas."
                 )
 
-            if submission_type not in (assignment.get("submission_types") or []):
+            accepted_types = assignment.get("submission_types") or []
+            if submission_type not in accepted_types:
                 return (
                     f"❌ This assignment does not accept '{submission_type}'. "
-                    f"It accepts: {', '.join(assignment.get('submission_types') or []) or 'nothing'}"
+                    f"It accepts: {', '.join(accepted_types) or 'nothing'}"
                 )
 
             submission = await make_canvas_request(
@@ -842,7 +863,9 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     "📋 Submission preview — NOTHING has been submitted yet.",
                     "",
                     f"Assignment: {assignment.get('name', assignment_id)}",
-                    f"Type: {submission_type}",
+                    f"Requested type: {submission_type}",
+                    f"Accepted types: {', '.join(accepted_types) or 'none'}",
+                    f"Points possible: {assignment.get('points_possible', 'N/A')}",
                 ]
                 if assignment.get("due_at"):
                     preview.append(f"Due: {format_date(assignment['due_at'])}")
@@ -868,8 +891,11 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     preview.append(f"\nComment: {comment}")
 
                 preview.append(
-                    "\n➡️  Show this to the student. To submit, call again with "
+                    "\n➡️  Always show this preview (and any why-auto rationale) in chat. "
+                    "To submit, call again with "
                     f"confirmation_token='{token}' and identical content.\n"
+                    "Redeem without asking Jacob only when JACOB.md auto-submit "
+                    "criteria fully pass and the course is calibrated. "
                     "This consumes an attempt and cannot be undone."
                 )
                 return "\n".join(preview)

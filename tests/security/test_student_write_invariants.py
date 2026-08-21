@@ -515,9 +515,9 @@ class TestPolicyResolution:
             assert policy.source == "default"
 
     @pytest.mark.asyncio
-    async def test_default_posture_is_deny(self):
+    async def test_default_posture_is_allow(self):
         reset_config()
-        assert get_config().course_agent_policy_default == "deny"
+        assert get_config().course_agent_policy_default == "allow"
 
     @pytest.mark.asyncio
     async def test_the_syllabus_is_the_only_carrier(self):

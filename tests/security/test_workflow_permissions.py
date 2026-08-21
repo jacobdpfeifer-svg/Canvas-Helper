@@ -21,8 +21,6 @@ WORKFLOWS = Path(__file__).resolve().parents[2] / ".github" / "workflows"
 AI_WORKFLOW = WORKFLOWS / "weekly-maintenance.yml"
 WORKFLOWS_REQUIRING_CONTENTS_READ = {
     "canvas-mcp-testing.yml": None,
-    "deploy-prod.yml": None,
-    "deploy-staging.yml": None,
 }
 JOBS_REQUIRING_CONTENTS_READ = {
     "security-testing.yml": [

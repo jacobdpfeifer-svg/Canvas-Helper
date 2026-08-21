@@ -2,7 +2,6 @@
 Tests for course-related MCP tools.
 """
 
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -51,26 +50,21 @@ LONG_SYLLABUS_HTML = (
 
 
 class TestListCoursesParams:
-    """list_courses must honor CANVAS_ROLE and use enrollment_state for 'current'.
+    """list_courses uses enrollment_state for 'current' (student fork).
 
     Chamberlain (and many institutions) never flip finished courses to
     workflow_state=completed, so filtering on state[] cannot distinguish a
     current course from a past one. enrollment_state=active is the canonical
-    signal. The Shared tool must also not hard-filter to teacher enrollments,
-    which returns nothing for students.
+    signal. This fork never filters to teacher-only enrollments.
     """
 
     @staticmethod
-    async def _call_and_get_params(role="all", **kwargs):
+    async def _call_and_get_params(**kwargs):
         """Invoke list_courses with a mocked API and return the params it sent."""
         with patch(
             "canvas_mcp.tools.courses.fetch_all_paginated_results",
             new_callable=AsyncMock,
-        ) as mock_fetch, patch(
-            "canvas_mcp.tools.courses.get_config",
-            return_value=SimpleNamespace(canvas_role=role),
-            create=True,
-        ):
+        ) as mock_fetch:
             mock_fetch.return_value = [
                 {"id": 1, "name": "Current Course", "course_code": "NR101"}
             ]
@@ -83,30 +77,16 @@ class TestListCoursesParams:
 
     @pytest.mark.asyncio
     async def test_student_default_uses_enrollment_state_active(self):
-        """Default (student/all): scope to active enrollments, no teacher filter."""
-        params = await self._call_and_get_params(role="student")
+        """Default: scope to active enrollments, no teacher filter."""
+        params = await self._call_and_get_params()
         assert params.get("enrollment_state") == "active"
         assert "enrollment_type" not in params
-
-    @pytest.mark.asyncio
-    async def test_all_role_default_uses_enrollment_state_active(self):
-        """Role 'all' behaves like student: active enrollments, no teacher filter."""
-        params = await self._call_and_get_params(role="all")
-        assert params.get("enrollment_state") == "active"
-        assert "enrollment_type" not in params
-
-    @pytest.mark.asyncio
-    async def test_educator_role_keeps_teacher_filter(self):
-        """Educator: preserve teacher-only behavior, AND scope to active."""
-        params = await self._call_and_get_params(role="educator")
-        assert params.get("enrollment_type") == "teacher"
-        assert params.get("enrollment_state") == "active"
 
     @pytest.mark.asyncio
     async def test_include_all_returns_full_history(self):
-        """include_all=True drops role/active scoping; state[] still defaults to
+        """include_all=True drops active scoping; state[] still defaults to
         ['available'] (use include_concluded to also surface past courses)."""
-        params = await self._call_and_get_params(role="student", include_all=True)
+        params = await self._call_and_get_params(include_all=True)
         assert "enrollment_type" not in params
         assert "enrollment_state" not in params
 
@@ -114,7 +94,7 @@ class TestListCoursesParams:
     async def test_include_concluded_adds_completed_state(self):
         """include_concluded=True surfaces completed courses too."""
         params = await self._call_and_get_params(
-            role="student", include_all=True, include_concluded=True
+            include_all=True, include_concluded=True
         )
         assert "completed" in params.get("state[]", [])
 
@@ -407,10 +387,7 @@ class TestOwnRoleSurfacing:
         with patch(
             "canvas_mcp.tools.courses.fetch_all_paginated_results",
             new_callable=AsyncMock,
-        ) as mock_fetch, patch(
-            "canvas_mcp.tools.courses.get_config",
-            return_value=SimpleNamespace(canvas_role="all"),
-        ):
+        ) as mock_fetch:
             mock_fetch.return_value = courses
             return await get_tool_function("list_courses")()
 

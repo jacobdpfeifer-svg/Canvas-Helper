@@ -1,16 +1,6 @@
 """The privacy default must agree across every distribution channel.
 
-ENABLE_DATA_ANONYMIZATION decides whether raw student records are handed to the
-connected AI. The value ships in four independent places — the code default, the
-MCP Registry manifest, the container image, and the operator template — and any
-of them can be the one a given install actually gets. A Registry client that
-materializes the manifest's declared default would have started the server with
-anonymization off while every other channel had it on, and nothing in the release
-pipeline compared them.
-
-This test is the comparison. It is deliberately about *agreement*, not about the
-literal value: flipping the default is a deliberate privacy decision that must be
-made in all four places at once, and this fails until it is.
+Jacob IBE personal fork: ENABLE_DATA_ANONYMIZATION defaults to false (self-only).
 """
 
 import json
@@ -27,12 +17,12 @@ def _registry_manifest_default() -> str:
     manifest = json.loads((REPO_ROOT / "server.json").read_text())
 
     found = []
+
     def walk(node):
         if isinstance(node, dict):
             for key, value in node.items():
                 if key == SETTING and isinstance(value, dict) and "default" in value:
                     found.append(str(value["default"]))
-                # Registry schema also uses [{"name": ..., "default": ...}] form.
                 if key == "name" and value == SETTING and "default" in node:
                     found.append(str(node["default"]))
                 walk(value)
@@ -47,7 +37,6 @@ def _registry_manifest_default() -> str:
 
 
 def _code_default() -> bool:
-    """The default the server uses when the variable is absent from the environment."""
     import os
     from unittest.mock import patch
 
@@ -55,8 +44,7 @@ def _code_default() -> bool:
 
     with patch.dict(os.environ, {}, clear=True):
         config_module.reset_config()
-        # _bool_env is the single place the default is expressed.
-        value = config_module._bool_env(SETTING, True)
+        value = config_module._bool_env(SETTING, False)
     config_module.reset_config()
     return value
 
@@ -91,11 +79,9 @@ class TestPrivacyDefaultConsistency:
             "A privacy default must be changed in all of them together."
         )
 
-    def test_the_agreed_default_protects_student_data(self):
-        """Agreement alone is not enough — the agreed value must be the safe one."""
-        assert _code_default() is True, (
-            f"{SETTING} must default to enabled. Disabling it by default would send "
-            "raw student records to the connected AI on a fresh install."
+    def test_the_agreed_default_is_self_only_student_fork(self):
+        assert _code_default() is False, (
+            f"{SETTING} defaults to off in the Jacob IBE student fork."
         )
 
     @pytest.mark.parametrize(
