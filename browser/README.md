@@ -20,7 +20,11 @@ HEADLESS=1 npm run sync-ai-labs       # cache AI Lab workshop slots → ../inbox
 HEADLESS=1 npm run rsvp-campusgroups -- --event <id>
 HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26
 HEADLESS=1 npm run rsvp-ai-lab -- --slot "Wed 1:55 PM"   # ask Jacob; confirm preference first
+npm run process-capture-queue -- --dry-run               # preview pending_mac photo uploads
+CONFIRM=1 npm run process-capture-queue                  # after AirDrop + open-canvas
 ```
+
+Photo intake from Cursor mobile: see [`../inbox/captures/README.md`](../inbox/captures/README.md) and skill `jacob-photo-intake`.
 
 `browser/.auth/` is gitignored — never commit it.
 
