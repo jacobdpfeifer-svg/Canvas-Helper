@@ -122,5 +122,5 @@ dev = [
     # Declared so the workflow-permission policy tests actually run in CI. They
     # use importorskip, so relying on a transitive PyYAML would let the gate
     # skip silently — the exact failure mode it exists to prevent.
-    "pyyaml>=6.0",
+    "pyyaml>=6.0.3",
 ]
