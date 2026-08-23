@@ -110,3 +110,18 @@ jobs:
         echo "## Canvas MCP test results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "Full suite passed on 3.10, 3.11, 3.12 and 3.13." >> $GITHUB_STEP_SUMMARY
+
+  browser-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Set up Node.js
+      uses: actions/setup-node@49933ea5286caeca186269dadf70363e1bcd8032 # v4.4.0
+      with:
+        node-version: "20"
+
+    - name: Run browser sync unit tests
+      working-directory: browser
+      run: npm test

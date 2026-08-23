@@ -78,6 +78,7 @@ JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO cookies (default) or PAT (opt
 1. Prefer fresh [`inbox/week.md`](inbox/week.md) (from `cd browser && npm run sync`)
 2. Optional later: MCP with `CANVAS_API_TOKEN` for the same REST facts + safer native submits
 3. **Browser UI escape hatch only** for WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI — process help; Jacob operates the tool. Never auto.
+4. **CampusGroups signups** (COEN major dinner, AI lab workshop): Playwright scripts in `browser/`; read [`.jacob/signup-preferences.md`](.jacob/signup-preferences.md) before picking slots. RSVP ≠ Canvas assignment done.
 
 ### Always require Jacob (never auto-submit)
 
@@ -115,5 +116,20 @@ Wire protocol (native Canvas via API/MCP): `submit_assignment` is still preview 
 1. Read this file
 2. Read `inbox/week.md`; if stale/empty, refresh via `browser` sync (SSO→API), not DOM-first scraping
 3. Triage into **Worth Jacob’s time** vs **Agent can handle** vs **Ask**
-4. Never take quizzes/tests or drive LTI tools for Jacob
-5. Entrepreneurship lens: flag team/pitch/project work early
+4. When Jacob asks what’s next / priority / time: run **jacob-task-brief** (P0–P3 + outcome + first step) per [`.jacob/priority-rubric.md`](.jacob/priority-rubric.md)
+5. When Jacob asks for a **weekly layout** (“plan my week”, “what’s due this week”): run **canvas-week-plan** (delegates Top 3 to task-brief)
+6. When Jacob names a **course**: run **jacob-course-arc** (theme, checkpoints, learning arc)
+7. **Instructor profile** in `inbox/courses/*.md` informs drafts (formatting, AI policy, tone) — never overrides quiz/LTI/proctored rules; refresh via **jacob-instructor-profile** when stale
+8. Optional: read/write [`inbox/focus.md`](inbox/focus.md) dated Top-3 cache after a brief or week plan
+9. Never take quizzes/tests or drive LTI tools for Jacob
+10. Entrepreneurship lens: flag team/pitch/project work early
+
+### Skill index
+
+| Trigger | Skill |
+|---------|-------|
+| “plan my week”, “what’s due this week”, weekly layout | `canvas-week-plan` |
+| “what should I do first”, “brief me”, “priority”, time-box | `jacob-task-brief` |
+| “brief me on CSCI”, course arc, class-scoped | `jacob-course-arc` |
+| “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
+| SSO sync, open Canvas, LTI escape hatch | `jacob-canvas-browser` |

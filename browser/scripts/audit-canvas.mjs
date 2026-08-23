@@ -1,42 +1,32 @@
 /**
  * Deep SSO→/api/v1 audit (no developer PAT).
- * Routine week updates: prefer `npm run sync`.
+ * Routine week updates: prefer `npm run sync` (canonical week.md writer).
+ *
+ * This script measures recall against the prior week.md using actionable
+ * misses (dated ≤14d) vs catalog extras (undated / outside window).
  */
 import fs from "node:fs";
 import path from "node:path";
 import {
   INBOX_DIR,
   WEEK_PATH,
-  api,
-  apiAllPages,
-  classifyExternalHint,
-  dedupeRows,
+  addDenverDays,
+  classifyOutcomeHint,
+  collectTruncationWarnings,
+  denverDay,
   escCell,
-  fromAssignments,
-  fromPlanner,
-  fromTodo,
-  isoDay,
+  fetchDueUniverse,
+  filterDatedInWindow,
   keyOf,
   launchCanvasContext,
   requireLoggedIn,
 } from "./lib/canvas-session.mjs";
 
-function fromCalendar(events) {
-  const rows = [];
-  for (const e of events || []) {
-    rows.push({
-      source: "calendar",
-      course: e.context_name || e.context_code || "",
-      title: e.title || "Event",
-      due: e.start_at || e.end_at || "",
-      points: "",
-      type: e.type || "calendar_event",
-      html_url: e.html_url || "",
-      complete: false,
-      course_id: (String(e.context_code || "").match(/course_(\d+)/) || [])[1],
-    });
-  }
-  return rows;
+function normalizeTitle(t) {
+  return String(t || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function parsePriorWeekMd(text) {
@@ -54,12 +44,19 @@ function parsePriorWeekMd(text) {
     const [course, title, due] = cells;
     if (!title) continue;
     keys.add(keyOf(course, title, due || ""));
-    titles.add(title.toLowerCase());
+    titles.add(normalizeTitle(title));
   }
   return { keys, titles };
 }
 
-const today = isoDay();
+function healthRow(label, h) {
+  if (!h) return `| ${label} | — | — |`;
+  const ok = h.ok == null ? "—" : String(h.ok);
+  const extra = h.truncated ? " truncated" : "";
+  return `| ${label} | ${ok}${extra} | ${h.count ?? 0} |`;
+}
+
+const today = denverDay();
 const { context, page } = await launchCanvasContext();
 try {
   await requireLoggedIn(page);
@@ -69,187 +66,141 @@ try {
   process.exit(1);
 }
 
-const start = new Date();
-start.setUTCHours(0, 0, 0, 0);
-const end45 = new Date(Date.now() + 45 * 86400000);
-const startIso = start.toISOString();
-const endIso = end45.toISOString();
-
-console.log("Fetching courses…");
-const coursesRes = await apiAllPages(page, "/api/v1/courses", {
-  enrollment_state: "active",
-});
-const courses = coursesRes.ok ? coursesRes.items : [];
-
-console.log("Fetching planner (45d)…");
-const plannerRes = await apiAllPages(page, "/api/v1/planner/items", {
-  start_date: startIso,
-  end_date: endIso,
-});
-
-console.log("Fetching users/self/todo…");
-const todoRes = await api(page, "/api/v1/users/self/todo?per_page=50");
-const todoItems =
-  todoRes.ok && Array.isArray(todoRes.json) ? todoRes.json : [];
-
-console.log("Fetching calendar events (45d)…");
-const calRes = await apiAllPages(page, "/api/v1/calendar_events", {
-  type: "assignment",
-  start_date: startIso.slice(0, 10),
-  end_date: endIso.slice(0, 10),
-  all_events: "true",
-});
-const calEvRes = await apiAllPages(page, "/api/v1/calendar_events", {
-  type: "event",
-  start_date: startIso.slice(0, 10),
-  end_date: endIso.slice(0, 10),
-  all_events: "true",
-});
-
-const allRows = [
-  ...fromPlanner(plannerRes.items),
-  ...fromTodo(todoItems),
-  ...fromCalendar(calRes.items),
-  ...fromCalendar(calEvRes.items),
-];
-
-const perCourse = [];
-for (const c of courses) {
-  const id = c.id;
-  const name = c.name || c.course_code || String(id);
-  console.log(`  assignments for ${name} (${id})…`);
-  const aRes = await apiAllPages(page, `/api/v1/courses/${id}/assignments`, {
-    order_by: "due_at",
-    include: "submission",
-  });
-  const rows = fromAssignments(name, id, aRes.items || []);
-  perCourse.push({
-    id,
-    name,
-    code: c.course_code,
-    ok: aRes.ok,
-    count: rows.length,
-  });
-  if (aRes.ok) allRows.push(...rows);
+console.log("Fetching due universe (45d) via shared SSO path…");
+let courses;
+let universe;
+let health;
+let perCourse;
+try {
+  ({ courses, universe, health, perCourse } = await fetchDueUniverse(page, {
+    daysAhead: 45,
+  }));
+} catch (e) {
+  console.error(String(e.message || e));
+  await context.close();
+  process.exit(1);
 }
 
 const prior = fs.existsSync(WEEK_PATH) ? fs.readFileSync(WEEK_PATH, "utf8") : "";
 const { keys: priorKeys, titles: priorTitles } = parsePriorWeekMd(prior);
-const universe = dedupeRows(allRows);
 
-const missedByTitleOnly = [];
-for (const r of universe) {
-  const titleHit = priorTitles.has((r.title || "").toLowerCase());
+const actionableWindow = filterDatedInWindow(universe, {
+  today,
+  daysAhead: 14,
+  includeComplete: true,
+});
+
+const actionableMisses = [];
+for (const r of actionableWindow) {
+  const titleHit = priorTitles.has(normalizeTitle(r.title));
   const k = keyOf(r.course, r.title, r.due);
-  if (!priorKeys.has(k) && !titleHit) missedByTitleOnly.push(r);
+  if (!priorKeys.has(k) && !titleHit) actionableMisses.push(r);
 }
 
-const weekEnd = new Date(Date.now() + 7 * 86400000);
-const weekTable = universe
-  .filter((r) => {
-    if (!r.due) return false;
-    const d = new Date(r.due);
-    return d >= new Date(today) && d <= weekEnd;
-  })
-  .slice(0, 80);
+const catalogExtras = universe.filter((r) => {
+  if (!r.due) return true;
+  const dueDay = denverDay(new Date(r.due));
+  const endDay = addDenverDays(today, 14);
+  return dueDay < today || dueDay > endDay;
+});
 
-const weekMd = `# Week ahead
-
-Updated: ${today}
-
-Source: sso-session-api (audit comprehensive)
-
-## Due this week (refreshed)
-
-| Course | Assignment | Due | Points | Type | Notes |
-|--------|------------|-----|--------|------|-------|
-${
-  weekTable.length
-    ? weekTable
-        .map((r) => {
-          const hint = classifyExternalHint(r.title, r.type);
-          const note = [(r.sources || [r.source]).join("+"), hint]
-            .filter(Boolean)
-            .join("; ");
-          return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(
-            String(r.due).replace("T", " ").slice(0, 16)
-          )} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(note)} |`;
-        })
-        .join("\n")
-    : "| | | | | | |"
-}
-
-## Audit pointer
-
-See \`inbox/audit-${today}.md\` for full 45-day comparison vs prior capture.
-`;
+const undated = universe.filter((r) => !r.due);
+const datedForward = universe.filter(
+  (r) => r.due && denverDay(new Date(r.due)) >= today
+);
 
 fs.mkdirSync(INBOX_DIR, { recursive: true });
-fs.writeFileSync(WEEK_PATH, weekMd, "utf8");
-
 const auditPath = path.join(INBOX_DIR, `audit-${today}.md`);
-const undated = universe.filter((r) => !r.due);
-const next45 = universe.filter(
-  (r) => r.due && new Date(r.due) >= new Date(today)
-);
+
+const missList =
+  actionableMisses.length > 0
+    ? actionableMisses
+        .map((r) => {
+          const hint = classifyOutcomeHint(r.title, r.type);
+          return `- **${escCell(r.title)}** (${escCell(r.course)}) — due ${escCell(
+            String(r.due).replace("T", " ").slice(0, 16)
+          )} — ${escCell(r.type)}${hint ? ` — ${escCell(hint)}` : ""}`;
+        })
+        .join("\n")
+    : "- None";
+
+const courseLines =
+  (perCourse || [])
+    .map(
+      (c) =>
+        `- **${escCell(c.name)}** (\`${c.code || ""}\`, id ${c.id}): assignments=${c.assignments_count} ok=${c.assignments_ok}; discussions=${c.discussions_count} ok=${c.discussions_ok}`
+    )
+    .join("\n") || "- (none)";
 
 const auditMd = `# Canvas audit ${today}
 
 SSO session audit (no developer API token). Compared against prior \`inbox/week.md\`.
 
+## Executive summary
+
+| Finding | Detail |
+|---------|--------|
+| Courses enrolled | **${courses.length}** |
+| Unique universe items | **${universe.length}** |
+| Dated from today forward (45d pull) | **${datedForward.length}** |
+| Undated catalog shells | **${undated.length}** |
+| Actionable misses (dated ≤14d, not in prior week.md) | **${actionableMisses.length}** |
+| Catalog extras (undated or outside 14d) | **${catalogExtras.length}** |
+
+Actionable misses are the accuracy signal. Catalog extras are mostly undated shells, future stubs, and attendance placeholders — not sync failures.
+
 ## Endpoint health
 
 | Endpoint | OK | Count |
 |----------|----|-------|
-| /api/v1/courses | ${coursesRes.ok} | ${courses.length} |
-| /api/v1/planner/items (45d) | ${plannerRes.ok} | ${plannerRes.items?.length ?? 0} |
-| /api/v1/users/self/todo | ${todoRes.ok} (${todoRes.status}) | ${todoItems.length} |
-| /api/v1/calendar_events type=assignment | ${calRes.ok} | ${calRes.items?.length ?? 0} |
-| /api/v1/calendar_events type=event | ${calEvRes.ok} | ${calEvRes.items?.length ?? 0} |
-| Per-course /assignments | — | ${perCourse.reduce((n, c) => n + c.count, 0)} total |
+${healthRow("/api/v1/courses", health.courses)}
+${healthRow("/api/v1/planner/items (45d)", health.planner)}
+${healthRow("/api/v1/planner/items filter=incomplete_items", health.planner_incomplete)}
+${healthRow("/api/v1/users/self/todo (paginated)", health.todo)}
+${healthRow("/api/v1/calendar_events type=assignment", health.calendar_assignments)}
+${healthRow("/api/v1/calendar_events type=event", health.calendar_events)}
+${healthRow("Per-course /assignments", health.assignments)}
+${healthRow("Per-course /discussion_topics (dated)", health.discussions)}
 
 ## Courses
 
-${perCourse.map((c) => `- **${escCell(c.name)}** (\`${c.code || ""}\`, id ${c.id}): assignments=${c.count}, ok=${c.ok}`).join("\n") || "- (none)"}
+${courseLines}
 
-## Universe summary
+## Actionable misses (dated ≤14d, absent from prior week.md)
 
-- Unique items: **${universe.length}**
-- Dated from today forward: **${next45.length}**
-- Undated: **${undated.length}**
-- Missed vs prior titles: **${missedByTitleOnly.length}**
-
-## Missed vs prior week.md
-
-${
-  missedByTitleOnly
-    .map(
-      (r) =>
-        `- **${escCell(r.title)}** (${escCell(r.course)}) — due ${escCell(r.due) || "undated"} — ${escCell(r.type)}`
-    )
-    .join("\n") || "- None"
-}
+${missList}
 
 ## Notes
 
 - Remotely proctored / WebAssign / ZyBooks / PlayPosit = Worth-your-time or LTI escape hatch — never auto.
-- \`inbox/week.md\` refreshed for the next 7 days from this audit.
+- Canonical week list: run \`npm run sync\` (this audit does **not** overwrite \`inbox/week.md\`).
+- Re-run: \`cd browser && npm run audit\`.
 `;
 
 fs.writeFileSync(auditPath, auditMd, "utf8");
 console.log(`Wrote ${auditPath}`);
-console.log(`Wrote ${WEEK_PATH}`);
 console.log(
   JSON.stringify(
     {
       courses: courses.length,
       universe: universe.length,
-      missed: missedByTitleOnly.length,
-      weekTable: weekTable.length,
+      actionableMisses: actionableMisses.length,
+      catalogExtras: catalogExtras.length,
+      undated: undated.length,
+      health,
     },
     null,
     2
   )
 );
+
+const truncationWarnings = collectTruncationWarnings(health);
+if (truncationWarnings.length) {
+  console.error(
+    `AUDIT FAILED: pagination truncated on: ${truncationWarnings.join("; ")}`
+  );
+  await context.close();
+  process.exit(1);
+}
 
 await context.close();

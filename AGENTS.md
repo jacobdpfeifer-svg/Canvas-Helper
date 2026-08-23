@@ -19,7 +19,8 @@ JACOB triage ← inbox/ memory ← Canvas /api/v1 ← SSO cookies (or later PAT)
 3. If inbox stale (>2 days) or empty → tell Jacob / run `cd browser && npm run sync` (after `open-canvas` if needed)
 4. Triage Worth / Agent / Ask
 5. External/LTI/proctored → process help only; Jacob uses the tool UI
-6. Native Canvas auto-submit only if every `JACOB.md` criterion + calibrated course; show preview + **why auto**
+6. CampusGroups signups → Playwright `browser/.auth` scripts (`rsvp-campusgroups`, `rsvp-dinner`); IDE browser has no SSO — see [`docs/CU_BROWSER.md`](docs/CU_BROWSER.md)
+7. Native Canvas auto-submit only if every `JACOB.md` criterion + calibrated course; show preview + **why auto**
 
 ## Optional PAT (later)
 
@@ -34,6 +35,16 @@ ENABLE_DATA_ANONYMIZATION=false
 
 When MCP works: prefer it for the **same** REST facts and for `submit_assignment` preview→confirm. Do not invent a second due-list format.
 
+## Skill index
+
+| Trigger | Skill |
+|---------|-------|
+| “plan my week”, “what’s due this week” | `canvas-week-plan` (Top 3 via task-brief) |
+| “what should I do first”, “brief me”, “priority” | `jacob-task-brief` |
+| “brief me on [course]”, course arc | `jacob-course-arc` |
+| “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
+| SSO sync, LTI escape hatch | `jacob-canvas-browser` |
+
 ## Skills
 
 | Skill | Purpose |
@@ -42,6 +53,9 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | `jacob-inbox-week` | Maintain / merge inbox |
 | `jacob-canvas-browser` | SSO sync + LTI escape hatch |
 | `canvas-week-plan` | Weekly plan from inbox (or MCP) |
+| `jacob-task-brief` | Priority P0–P3, briefing, first step, time optimize |
+| `jacob-course-arc` | Course theme, checkpoints, learning arc, class-scoped priority |
+| `jacob-instructor-profile` | Instructor grading style, values, behavior preferences (course MD) |
 | `jacob-assignment-triage` | Process help + rare native submit |
 | `canvas-discussion-facilitator` | Draft discussions |
 

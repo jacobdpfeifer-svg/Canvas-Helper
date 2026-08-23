@@ -38,11 +38,22 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
 
 Do not auto-submit from this skill — hand off to `jacob-assignment-triage` for native Canvas only.
 
-### 4. Output
+### 4. Priority order (required)
+
+Apply [`jacob-task-brief`](../jacob-task-brief/SKILL.md) + [`.jacob/priority-rubric.md`](../../.jacob/priority-rubric.md):
+
+- Rank open inbox rows **P0–P3**
+- Emit full briefing cards for **Top 3** (Why / Outcome / First step / Time box / Mode)
+- Batch same-platform LTI; list deferred P3 briefly
+- End with one **Do first** sentence
+
+If Jacob asks to save focus, write [`inbox/focus.md`](../../inbox/focus.md) from the Top 3 (not a second due-list).
+
+### 5. Output
 
 Note **source** (`inbox` from sso-session-api / MCP / merge). Include:
 
-Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → Suggested order.
+Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → **Focus briefing (Top 3 + batch + Do first)**.
 
 ## Entrepreneurship lens
 
