@@ -709,6 +709,10 @@ export function mergeCourseFileContent({
   const sections = existing ? existing : "";
   const theme = cleanSectionBody(extractSection(sections, "Theme"), "Theme");
   const arcNotes = cleanSectionBody(extractSection(sections, "Arc notes"), "Arc notes");
+  const lectureCaptures = cleanSectionBody(
+    extractSection(sections, "Lecture captures"),
+    "Lecture captures"
+  );
   const instructorProfile = cleanSectionBody(
     extractSection(sections, "Instructor profile"),
     "Instructor profile"
@@ -750,6 +754,9 @@ export function mergeCourseFileContent({
 
   const themeBlock = isPlaceholderSection(theme) ? "-\n" : `${theme}\n`;
   const arcBlock = isPlaceholderSection(arcNotes) ? "-\n" : `${arcNotes}\n`;
+  const lectureBlock = isPlaceholderSection(lectureCaptures)
+    ? ""
+    : `## Lecture captures\n\n${lectureCaptures}\n\n`;
   const instructorBlock = `${formatInstructorProfileBlock(
     instructorProfile,
     policyPages
@@ -780,8 +787,7 @@ ${formatCatalogTable(catalogRows)}
 
 ## Arc notes
 
-${arcBlock}
-## Instructor profile
+${arcBlock}${lectureBlock}## Instructor profile
 
 ${instructorBlock}
 ## Syllabus / agent policy notes

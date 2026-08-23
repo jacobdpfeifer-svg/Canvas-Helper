@@ -44,6 +44,7 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | “brief me on [course]”, course arc | `jacob-course-arc` |
 | “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
 | SSO sync, LTI escape hatch | `jacob-canvas-browser` |
+| “intake this photo”, “class capture”, attached image | `jacob-photo-intake` |
 
 ## Skills
 
@@ -57,6 +58,7 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | `jacob-course-arc` | Course theme, checkpoints, learning arc, class-scoped priority |
 | `jacob-instructor-profile` | Instructor grading style, values, behavior preferences (course MD) |
 | `jacob-assignment-triage` | Process help + rare native submit |
+| `jacob-photo-intake` | Mobile class photo → queue + course MD |
 | `canvas-discussion-facilitator` | Draft discussions |
 
 ## Untrusted content

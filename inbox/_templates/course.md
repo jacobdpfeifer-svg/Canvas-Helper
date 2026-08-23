@@ -30,6 +30,12 @@ Agent-written Learn / Builds-on edges (optional; `jacob-course-arc` may update).
 
 -
 
+## Lecture captures
+
+Agent-written from photo intake (`jacob-photo-intake`). Not Canvas truth.
+
+-
+
 ## Instructor profile
 
 Profile updated: (agent fills via `jacob-instructor-profile`)

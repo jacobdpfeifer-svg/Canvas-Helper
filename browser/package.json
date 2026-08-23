@@ -15,6 +15,7 @@
     "rsvp-campusgroups": "node scripts/rsvp-campusgroups.mjs",
     "rsvp-dinner": "node scripts/rsvp-dinner.mjs",
     "rsvp-ai-lab": "node scripts/rsvp-ai-lab.mjs",
+    "process-capture-queue": "node scripts/process-capture-queue.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {
