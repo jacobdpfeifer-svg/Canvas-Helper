@@ -23,9 +23,9 @@ JACOB.md triage              ← always the brain
 3. If inbox missing or `Updated:` older than **2 days** → refresh with SSO sync:
    ```bash
    cd browser && npm run open-canvas   # once / when session dies
-   cd browser && npm run sync          # writes inbox/week.md via /api/v1
+   cd browser && npm run sync          # writes inbox/week.md + inbox/courses/* catalogs via /api/v1
    ```
-4. Triage Worth / Agent / Ask. Never auto WebAssign/ZyBooks/PlayPosit/proctored quizzes.
+4. Triage Worth / Agent / Ask. When Jacob asks what’s next / priority: run `jacob-task-brief` (P0–P3). When Jacob names a **course**: run `jacob-course-arc` (theme + learning arc + class priority). Never auto WebAssign/ZyBooks/PlayPosit/proctored quizzes.
 5. If/when `CANVAS_API_TOKEN` works: prefer MCP tools for the **same** facts and for native Canvas submits (preview→confirm). Still refresh inbox periodically so offline turns work.
 
 ```mermaid
@@ -47,14 +47,15 @@ flowchart TD
 
 ### Brain — `JACOB.md`
 
-Triage, course defaults, calibration (`.jacob/calibrated-courses.md`). Unchanged by auth method.
+Triage, course defaults, calibration (`.jacob/calibrated-courses.md`), priority rubric (`.jacob/priority-rubric.md`). Unchanged by auth method.
 
 ### Memory — `inbox/`
 
 | Path | Purpose |
 |------|---------|
 | `inbox/week.md` | Canonical due list for the agent |
-| `inbox/courses/*.md` | Per-course notes |
+| `inbox/focus.md` | Optional dated Top-3 cache from `jacob-task-brief` (not a second due-list) |
+| `inbox/courses/*.md` | Per-course notes + assignment catalog + checkpoints (sync) + arc notes (agent) + **instructor profile** (agent) |
 | `inbox/audit-*.md` | Occasional deep sync reports |
 
 Skills read inbox first when PAT is absent.
@@ -65,20 +66,35 @@ Filled by:
 
 | Auth | How |
 |------|-----|
-| **SSO (default)** | `browser/npm run sync` — session cookies → planner + todo + per-course assignments |
+| **SSO (default)** | `browser/npm run sync` — session cookies → planner + todo + assignments + discussions + calendar (canonical `inbox/week.md`); `npm run audit` for 45d actionable-miss metrics |
 | **PAT (optional)** | `CANVAS_API_TOKEN` + `canvas-mcp-server` MCP tools |
 
 Same endpoints. Same facts. Different credential.
 
-### Escape hatch — Browser UI
+### Escape hatch — Browser UI + CampusGroups
 
 Only when REST cannot complete the work:
 
 - WebAssign, ZyBooks, PlayPosit, other LTI
+- **CampusGroups** (COEN major dinner, AI lab workshop) — Playwright `browser/.auth` scripts; see [`CU_BROWSER.md`](CU_BROWSER.md)
 - Remotely proctored / lockdown quizzes
 - Anything Jacob must perform live
 
-Never auto-drive these. Process help + Jacob clicks.
+Never auto-drive LTI/proctored tools. CampusGroups RSVP uses Playwright only (not Cursor IDE browser). Process help + verified RSVP; Jacob confirms calendar-binding slots.
+
+## Instructor preferences (two tracks)
+
+Professor preferences affect assignment completion in **two parallel tracks** — agents must consult both before drafts or auto-submit:
+
+| Track | Storage | Used for |
+|-------|---------|----------|
+| **Draft voice** | `## Instructor profile` in `inbox/courses/CODE.md` (agent-maintained via `jacob-instructor-profile`) | Tone, formatting, AI disclosure, rubric habits, per-type notes |
+| **Submit permission** | `agent_writes:` in Canvas syllabus → synced to `## Syllabus / agent policy notes` + enforced by MCP `course_policy.py` | Native Canvas auto-submit only |
+| **Jacob trust** | `.jacob/calibrated-courses.md` | First-submit / auto-submit gate per course |
+
+Profile informs drafts; syllabus marker + calibration gate submits. Profile **never** overrides quiz/LTI/proctored rules.
+
+After sync: `cd browser && npm run validate-profiles` — rebuild stale profiles with `jacob-instructor-profile`; stamp Sources with `npm run refresh-profiles`.
 
 ## What not to build
 

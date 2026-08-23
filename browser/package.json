@@ -4,9 +4,18 @@
   "description": "SSO session → Canvas /api/v1 → inbox/ (no developer PAT required)",
   "scripts": {
     "open-canvas": "node scripts/open-canvas.mjs",
+    "open-campusgroups": "node scripts/open-campusgroups.mjs",
     "sync": "node scripts/sync-week.mjs",
     "pull-todo": "node scripts/sync-week.mjs",
-    "audit": "node scripts/audit-canvas.mjs"
+    "validate-profiles": "node scripts/validate-profiles.mjs",
+    "refresh-profiles": "node scripts/refresh-instructor-profiles.mjs",
+    "audit": "node scripts/audit-canvas.mjs",
+    "sync-dinners": "node scripts/sync-coen-dinners.mjs",
+    "sync-ai-labs": "node scripts/sync-coen-ai-labs.mjs",
+    "rsvp-campusgroups": "node scripts/rsvp-campusgroups.mjs",
+    "rsvp-dinner": "node scripts/rsvp-dinner.mjs",
+    "rsvp-ai-lab": "node scripts/rsvp-ai-lab.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "playwright": "^1.49.0"

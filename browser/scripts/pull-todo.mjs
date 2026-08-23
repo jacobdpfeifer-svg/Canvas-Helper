@@ -1,5 +1,4 @@
 /**
- * Backward-compatible entry: same as sync-week.mjs
- * (SSO session → Canvas /api/v1 → inbox/week.md).
+ * @deprecated Use `npm run sync` — package.json aliases pull-todo to sync-week.mjs.
  */
 import "./sync-week.mjs";

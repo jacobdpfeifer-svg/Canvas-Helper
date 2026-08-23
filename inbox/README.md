@@ -9,13 +9,17 @@ Architecture: [`docs/HYBRID.md`](../docs/HYBRID.md)
 
 ```
 inbox/
-  week.md                 # canonical due list
+  week.md                 # canonical due list (14d open rows)
+  focus.md                # optional dated Top-3 cache (jacob-task-brief / week-plan)
   courses/APPM1235.md
   courses/BCOR1030.md
+  courses/CALCREADY.md    # Calculus 1 Readiness Prep
   courses/CSCI1200.md
   courses/ECON2010.md
   courses/COEN1500.md
-  audit-*.md              # optional deep syncs
+  courses/ONLINEEXP.md    # Leeds Online Experience
+  audit-*.md              # accuracy audits (npm run audit)
+  archive/                # old snapshots
   _templates/
 ```
 

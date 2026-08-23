@@ -1,0 +1,412 @@
+Syllabus
+
+Please read the course information in all 4 tabs.
+
+About the Course
+
+Course Objectives
+This course covers algebra, trigonometry, and selected topics in analytical geometry (e.g., graphing) to prepare students for the calculus sequence and beyond. The course also strives to improve student critical thinking and problem solving skills.
+
+Text
+This course will cover Chapters 1-7 of Precalculus: Methods For Calculus, Eighth Edition by James Stewart/Lothar Redlin/Saleem Watson. You will be able to access a digital version of the course textbook through the required WebAssign online homework system. The specific sections we cover from the textbook, and learning outcomes for each section, can be found here .
+
+APPM 1235 Teaching team
+The APPM 1235 teaching team consists of course instructors, recitation teaching assistants, and learning assistants.
+
+Your course instructor is ultimately responsible for conducting your MWF classes, exam grading, and implementing course policies. They are also your primary point of contact for the course. If you ever have a question or you want to discuss something, and are not sure who to reach out to, your course instructor is here to help. Find your instructor, their homework hours, and their email here . In APPM 1235 one of the course instructors also takes on the role of overseeing the course and is called the course coordinator. They do things like manage WebAssign, the canvas page, and etc. This semester the course is being coordinated by Dr. Seneca Lindsey .
+
+Your recitation teaching assistant (TA) is a CU Boulder graduate student who conducts the Thursday recitation and administers the weekly quiz. They grade written homework, quizzes, and work with instructors on exam grading. You should contact your TA if questions arise about recitation, homework, or quiz grading. Find your teaching assistant, their homework hours, and their email here .
+
+You may have one or more learning assistants (LAs) in your MWF classes and workgroup (if you are enrolled in the 1-credit co-enrollment workgroup ). Learning assistants are undergraduate students who are farther along in their undergraduate careers and can be thought of as peer support who receive training through the CU Boulder learning assistant program. LAs meet weekly with a course instructor to discuss the math we are currently covering. They do not have any power over course policy, do not have access to student information or student grades, and do not take part in grading. They are, however, a great resource for peer experience. Find the full list of course LAs at the bottom of the instructor and TA canvas page .
+
+If you are enrolled in the 1-credit APPM 1236 workgroup , then a workgroup instructor will be leading your workgroup. The workgroup instructor will conduct the workgroup each week. Their name and email can be found here . The materials utilized in workgroup were crafted in collaboration with APPM 1235 instructors specifically for APPM 1235. For those reading this who are not enrolled in the workgroup, you may still be able to enroll to get extra guided practice for APPM 1235. Find more information here .
+
+Course Packet
+A course packet, created by APPM 1235 faculty, is required for this course and must be brought to class every Monday, Wednesday, and Friday. The course packet is available in the CU Boulder Bookstore.
+
+Classes - MWF
+
+Classes will be held on Mondays, Wednesdays, and Fridays. You are expected to attend and come prepared by doing the pre-class assignment (see below) ahead of time.
+
+There is an in-class assignment each MWF (see more info below).
+
+All MWF classes are held in CHEM 32 . IMPORTANT: Our classroom is located in the basement "B" floor of the Cristol Chemistry and Biochemistry (CHEM) building and can be hard to find from certain CHEM building entrances. Please use this map to find the best building entrance.
+
+See the Instructors and TAs page for section specific instructor information.
+
+All sections of the course have the same course policies, cover the same material, have the same homework assignments, have a quiz in recitation, and all students take the same exams at the same time (days and times can be found in the exam information page).
+
+See the "Exams, Assignments, and Grading" tab above for what to do if you miss a class for any reason.
+
+Recitations - Thursdays
+
+Recitations will meet on Thursdays in CHEM 32 , the same room as MWF classes. Participation for the entire recitation is expected and you must participate during the entire recitation to be eligible for credit on the quiz.
+
+You will be working collaboratively on problem sets and discussing key concepts with your peers and Teaching Assistant.
+
+You will take a graded quiz (see more info below) each non-exam week in recitation (see specific dates in the course schedule ).
+
+See the "Exams, Assignments, and Grading" tab above for how quiz and recitation participation affect your grade.
+
+See the Instructors and TAs page for your recitation TA contact information.
+
+Exams
+
+In APPM 1235 there will be three graded midterm exams and one graded cumulative final exam. Midterm exams take place in the evenings and the final exam date/time is set by the University. See the course schedule for dates/times.
+
+All APPM 1235 students take the same exams at the same times.
+
+Click on the "Exams, Assignments, and Grading" tab at the top of the page for further information about exams including exam grading details.
+
+Click on the "Course Policies and CU Policies" tab for information about what to do if you are ill before an exam.
+
+Honor Code: Calculators, phones, notes/books, help from other person(s) or sharing your own work, and any other unauthorized devices are not allowed during exams and use of any of these is considered an honor code violation. Violation of the CU Student Honor code will result in a penalty to your grade (up to and including an F in the class) and a report will be submitted to the University office of student conduct.
+
+APPM 1235 utilizes core mastery retakes for midterm exams give students a chance to retest on core topics with an opportunity to improve their score. Click on the "Exams, Assignments, and Grading" tab for more information.
+
+Online "WebAssign" Homework
+
+Graded Online "WebAssign" homework is submitted through the WebAssign website and is due Thursdays and Sundays by 11:59pm local time. Note that (as hyperlinked) you must access the CU Boulder specific login: https://webassign.net/colorado/login.html
+
+We recommend doing the WebAssign homework well ahead of the submission time, in part, because you may have technical issues. All of the problems will be scored.
+
+You have 100 attempts for each free response question, only the highest attempt score on each problem will be counted. For multiple choice problems you only get one attempt . Each problem is scored (and progress saved) every time you press submit.
+
+It is best practice to write out full solutions for each WebAssign problem. If you're not sure about a problem, try to write out a solution before reviewing your course packet or notes. Instructors often create exam questions that are similar to homework questions.
+
+If the problem states to round your final answer to a certain number of decimal places, you should use a calculator only as the last step of the problem to round your answer.
+
+Click on the "Exams, Assignments, and Grading" tab at the top of the page for further information about how WebAssign homework contributes towards your course grade and what to do if you miss an assignment for things like illness, family emergency, technical issues, and etc.
+
+Honor Code: All WebAssign homework problems must be solved without: using calculators (unless required by the problem), copying off of AI (such as ChatGPT), or looking up answers on internet sites. You may work in groups, utilize A.I. (for example ask it to review properties of exponents), or ask instructors/TAs questions (including questions like "How do I start?"), however each answer and solution must be written and understood by you . Copying answers/solutions from the internet, a tutor or friend, or other sources (including A.I.) is plagiarism and considered an honor code violation. Violation of the CU Student Honor code will result in a penalty to your grade and a report will be submitted to the University office of student conduct.
+
+Written Homework
+
+Written Homework primarily has problems from Mondays class but also contains a few practice problems from the previous week.
+
+Graded Written homework will be due every Tuesday by 11:59pm local time. See course schedule for specific dates.
+
+Your work must be scanned into a single pdf and uploaded to Gradescope by 11:59pm. Written HW will not be accepted via email. We recommend submitting ahead of this time in case you have technical issues.
+
+A random selection of HW problems will be fully graded requiring full justification of all steps leading to the correct solution. Several points will be assigned based on general neatness, students can find the homework format guidelines outlined here .
+
+The written homework may provide the final answer to select problems at the end of the assignment; to obtain full credit on these you must write all of the steps and correct logic that leads to that given answer.
+
+You will always give final answers in exact form (unless specified by the problem), simplified as much as possible (rather than rounded to a certain number of decimal places).
+
+Click on the "Exam, Assignments, and Grading" tab at the top of the page for further information about how written homework contributes towards your course grade and what to do if you miss an assignment for things like illness, family emergency, technical issues, and etc.
+
+Honor Code: All written homework problems must be solved without: using calculators (unless required by the problem), copying off of AI (such as ChatGPT), or looking up answers on internet sites. You may work in groups, utilize A.I. (for example ask it to review properties of exponents), or ask instructors/TAs questions (including questions like "How do I start?"), however each answer and solution must be written and understood by you . Copying answers/solutions from the internet, a tutor or friend, or other sources (including A.I.) is plagiarism and considered an honor code violation. Violation of the CU Student Honor code will result in a penalty to your grade and a report will be submitted to the University office of student conduct.
+
+Quizzes
+
+Graded Quizzes will be given each non-exam week in recitation. For exact dates, see the course schedule .
+
+Quizzes will be taken individually without help from another person.
+
+Your work must be scanned and uploaded to Gradescope as a single pdf before you leave recitation. You will also submit the paper copy of your quiz to your TA.
+
+Click on the "Exams, Assignments, and Grading" tab at the top of the page for further information about how quizzes contribute towards your course grade and what to do if you miss a quiz for things like illness, family emergency, technical issues, and etc.
+
+Honor Code: For quizzes, you are only allowed a pencil. All quiz problems must be solved without using any electronic devices (such as calculator or phone). No notes or books are allowed. Copying answers/solutions from a classmate is considered an honor code violation. Violation of the CU Student Honor code will result in a penalty to your grade and a report will be submitted to the University office of student conduct.
+
+Each week you must attend your assigned recitation section.
+
+If you have accommodations through disability services for quizzes, please communicate directly with your teaching assistant ahead of the first quiz to make arrangements for your accommodations to be met.
+
+Pre-Class Assignment
+
+Before each MWF class students will have the choice to watch a short video or read an assignment in the textbook to prepare for the next class.
+
+The last 1-2 questions of each WebAssign homework and Written homework will direct you to the pre-class assignment which will help you answer those questions.
+
+All students are expected to watch the video or do the reading. We recommend taking notes in the course packet provided space at the start of each section.
+
+You will have a one-question activity at the start of each class that you prepare for by doing the pre-class reading/viewing and associated practice problem(s).
+
+MWF in-class question
+Attendance and participation in class and recitation are expected in this course.
+
+Each MWF class you will have a 4-point assignment. This will be a math question, taken from the material covered in the pre-class assignment, that you will solve and will be graded. You must also be present and participating for the remainder of the class to receive credit on the in-class assignment
+
+See the "Exams, Assignments, and Grading" tab for more details about how the MWF class assignment score affects your course grade and for our policy if you miss a day of class.
+
+Calculators and help from another person are not allowed on these assignments. All work submitted must be your own, copying other students work or sharing your own work is considered plagiarism and an honor code violation . Violation of the CU Student Honor code will result in a penalty to your grade and a report will be submitted to the University office of student conduct.
+
+AI Use
+
+AI tools can be very useful, however relying on AI to do your assignments will prevent you from understanding the course content. Our goal is to help you master precalculus topics to prepare you for future courses and career opportunities. Please note the acceptable and prohibited uses of AI in this course:
+
+Acceptable Uses of AI: You may use AI to help you understand course topics and general solution methods. For example, you may enter prompts like "Steps for solving an equation", "How is trigonometry used in real applications?", or "Generate exercises related to solving a rational equation".
+
+Keep in mind that AIs sometimes hallucinate, providing incorrect information. They also may use terminology or notation that does not match our textbook, or assume prior knowledge of topics you have not learned.
+
+Prohibited Uses of AI: You may not use AI to generate a solution for any assignment in this course. You may not input the statement of a problem (or very similar problem) from any assignment into an AI tool. You may not submit an AI-generated solution even if wording and other minor changes are made.
+
+A violation of this policy, at a minimum, will result in a zero grade for the assignment. A serious violation of the CU Student Honor Code will result in a course grade of F and the filing of an Honor Code violation report.
+
+If you are not sure what is and is not allowed, please ask. We encourage you to visit instructor/TA homework hours regularly. We'll be happy to answer questions and help you to complete your assignments!
+
+Instructor & TA Homework Hours
+
+We're here to help! Visit any of our homework/office hours to ask questions, work on homework, and/or find other students in class to work with. The homework hours schedule can be found on the Instructors and TAs page. You may visit any instructor/TA in this course! Every instructor and TA is here to help any APPM 1235 student!
+
+Learning Outcomes
+We have identified learning outcomes for each section of the textbook to clarify the specific topics that are important for this course.
+
+Administrative drop from class in first two weeks
+APPM 1235: Precalculus for Engineers is a course that requires diligence and getting off to a strong start. Students who do not attend class and/or participate in assignments during the first two weeks of the semester may be administratively dropped from the class.
+
+Click on the tabs at the top of the page to learn more about this course.
+Read about "Technical Requirements", "Exams, Assignments, and Grading", and "Course Policies and CU Policies".
+
+Technical Requirements
+
+Technical Requirements
+Websites that we will be using include:
+
+Canvas : Learning management system (LMS) where course information and course grades will be posted. Important and time sensitive course updates will be posted here, make sure you are set to receive announcement alerts in your email (typically enabled by default).
+
+WebAssign : Online homework platform. Find instructions below for setting up WebAssign.
+
+Gradescope: Website where you will upload solutions for written homework, quizzes, and exams. Find instructions below for setting up Gradescope. To access Gradescope, use the link on left hand side of our Canvas course.
+
+Gradescope scanning app . You will need to scan and upload written assignments to Gradescope. Camera images will not be accepted. Gradescope has a free app that can scan documents into a single pdf and upload assignments. Follow these steps to create your gradescope login account:
+
+Click "log in" on the Gradescope website and select Forgot password? (do this even if you've never even heard of gradescope!)
+
+Enter the first.last@colorado.edu email address ( Note some emails have numbers at the end too, include those if yours does) you use for CU Boulder and follow the steps to reset your password. As this will only create credentials for Gradescope, it will not affect the login credentials for CU Boulder.
+
+You can now download the official Gradescope app .
+
+For help with assignment uploading see here . We have created an assignment in Gradescope for you to practice uploading your first pdf. You can find it in the gradescope app once your login is set.
+
+In the future, when you want to view assignments in gradescope, click on the gradescope hyperlink on the left side of this screen.
+
+WebAssign : Online homework platform
+
+To access WebAssign: Go to our CU Boulder WebAssign weblink: https://www.webassign.net/colorado/login.html
+
+Login with your CU Boulder identikey (four letters and four numbers, do not include "@colorado.edu") and password.
+
+If this is your first time using WebAssign you will be redirected to Cengage. You will need to create a Cengage account (you only ever do this once).
+
+Once that's done return to https://www.webassign.net/colorado/login.html and enter your identikey and password and you should be in!
+
+Note: If you enrolled in the course late, you may not see the course. Email your instructor in this case.
+
+Not working? Check the WebAssign tab in the course FAQ .
+
+Exams, Assignments, and Grading
+
+Course Grade Determination
+
+Exams
+
+80%
+
+Exam 1 (see date in course schedule )
+
+~17.77% (100 points)
+
+Exam 2 (see date in course schedule )
+~17.77% (100 points)
+
+Exam 3 (see date in course schedule )
+~17.77% (100 points)
+
+Final Exam (see date in course schedule )
+~26.68% (150 points)
+
+Written Homework
+5%
+20%
+
+WebAssign Online Homework
+5%
+
+Recitation Quizzes
+8%
+
+MWF Daily Question in-class Assignment
+
+2%
+
+Total
+
+100%
+
+Grade Cutoffs: After the final exam, if the average of your exam scores is 65% or better, then your homework and quiz/recitation scores will be factored in to determine your course grade. If the average of your exam scores is less than 65% you will not receive a passing grade. The approximate course grade lines will be calculated based on the following:
+
+Letter Grade
+A
+A-
+B+
+B
+B-
+C+
+C
+C-
+D+
+D
+D-
+
+Course Average
+93-100%
+90-93%
+87-90%
+83-87%
+80-83%
+77-80%
+73-77%
+70-73%
+67-70%
+63-67%
+60-63%
+
+with exam average of 65 % or above
+
+At the end of the semester, these grade cutoffs may be lowered very slightly (i.e., "bump up course grade") but they will not be raised (i.e., "lower your course grade"). If this adjustment is made (based on a variety of factors from the semester (e.g., difficulty of exams)), do not expect more than a "generous round" such as a 69.1% earning a C- or 82.3% earning a B. This adjustment is not always made, if you wish to earn a certain letter grade, make sure to achieve the cutoff based on the grade scale above.
+
+Accommodating missed assignments for any reason* and impact on course percentage:
+
+Assignment:
+MWF Class Assignment
+Recitation attendance/quiz
+Written Homework
+WebAssign online homework
+
+Missed Assignment Policy:
+6 lowest scores dropped.
+2 lowest recitation/quiz scores are dropped. For example, if you miss one quiz, it will be scored a zero and would then be one of your two dropped scores.
+2 one-week extensions, no need to email instructor, simply upload assignment to gradescope within one week of original due date.
+4 three-day extensions allowed, up to a week after initial due date. These extensions must be requested through webassign after initial due date passes . Each extension is for three days but the assignment cannot be submitted more than a week late. For example , an extension requested six days after the initial due date must be completed within one day.
+
+*This policy is designed to accommodate absences or missed assignments for any reason (including reasons such as family emergencies, illnesses, technological issues, and etc). Further details about missing assignments or absences can be found in the "Course Policies and CU policies" tab above.
+
+Please see our corrections policy on the "Course Policies and CU Policies" tab for what to do if you believe you found an error in grading in quiz or homework assignment.
+
+Exams
+
+Check the course schedule for dates, times and locations. There will be no make-up exams or early exams.
+
+At the end of the exam all students will scan their work and upload to Gradescope while supervised by an exam proctor. They will then submit their paper exam copy.
+
+Students with exam accommodations through disability services should present their disability services accommodation letter to their instructor at least one week before the first midterm. For logistics reasons we cannot guarantee accommodations for an exam if we do not receive the accommodation letter a week or more before that exam. See additional instructions for submitting your documentation .
+
+See the corrections policy on the "Course Policies and CU Policies" tab for what to do if you believe you found an error in grading of your exam.
+
+See the "Course Policies and CU policies" tab for details about what to do if you are ill before an exam.
+
+Please see the ``About the Course" tab above for further exam details.
+
+Mastery of Core Topics
+There are six core topics that you are expected to master by the end of the course. They are: Exponents rules, solving equations, domain of functions, graphs of base functions by using transformations, solving exponential and logarithmic equations, and trigonometric values of real numbers . These topics are important to understand well for upper level math, science, and engineering courses.
+
+Proficiency Level
+Core Topic Grade
+
+Mastery
+90-100%
+
+Near Mastery
+80-89%
+
+Partial Mastery
+70-79%
+
+Emerging Mastery
+0-69%
+
+Each of the three midterm exams will include core topic problems worth approximately 20 to 40 points.
+
+Midterm
+Core topic
+Core Points
+
+Exam 1
+
+exponents rules
+
+solving equations
+
+~20-40
+
+Exam 2
+
+domain of functions
+
+graphs of base functions with transformations
+
+~20-40
+
+Exam 3
+
+solving exponential and logarithmic equations
+
+trigonometric values of real numbers
+
+~20-40
+
+If your exam score on any core topic falls below 80% (Near Mastery level), you will be allowed one attempt to raise your core topic score, replacing the previous one, up to a maximum of 80%. Core Mastery retakes can only help your exam score, they cannot hurt it. We recommend all students strive to achieve at least Partial Mastery (70% or higher) of each core topic.
+
+Quizzes
+
+Recitation Quizzes are held each non-exam week. See the course schedule for exact dates.
+
+Students with accommodations through disability services for quizzes must present their disability services accommodation letter to the teaching assistant as early as possible. See additional instructions for submitting your documentation .
+
+Please see our corrections policy on the "Course Policies and CU Policies" tab for what to do if you believe you found an error in grading.
+
+Please see the ``About the Course" tab above for further quiz details.
+
+Course Policies and CU Policies
+
+Illnesses and Other Unexpected Absences
+
+Missing MWF class or recitation: You are expected to attend and participate in class and recitation. If you are going to miss a class or recitation due to illness or other emergency you do not need to notify your instructor or TA. We trust that your absence is for a legitimate reason. We post lecture videos to help you stay caught up with material. As stated in the "Exams, Assignments, and Grades" tab: At the end of the semester we will drop your 2 lowest recitation/quiz scores and your 6 lowest MWF in-class assignment scores to account for emergencies/illnesses. This policy is applied automatically when a student misses a quiz or MWF in-class assignment score.
+
+Ill or other emergency before exam: You must notify your Instructor if you are ill or have an emergency on the day of an exam that affects your ability to take the exam, and you should notify them before the exam starts to discuss the situation. We may decide that you are eligible to be excused from the midterm. If excused from a midterm exam, the exam portion of your course grade will be made up by your other two midterms and the final exam. If unexcused, a zero will be recorded for your midterm exam score and factored into your final course grade. All students are required to take the final exam. If you are unable to take the final exam at the scheduled time due to illness/emergency, you will need to contact your instructor before the final exam to determine if you meet the University's requirements for an Incomplete.
+
+Missed written homework assignment: If you miss a written homework due date, you may submit your work directly to Gradescope up to one week late for full credit. A maximum of 2 late written HW submissions will be allowed for the semester. You do not need to contact your instructor or TA to take advantage of this.
+
+Missed WebAssign assignment: If you miss a WebAssign homework due date, go to "past assignments" and click "Request Extension" in WebAssign after the initial due date has passed . Select automatic extension (not manual). A 3-day extension will be granted automatically (the submission deadline is one week after the original due date, meaning if you request the extension six days after the original due date, you'll only have one day to complete it). A maximum of 4 late WebAssign submissions will be allowed for the semester.
+
+If you feel that you have extenuating circumstances (such as an extended illness) that affects your ability to participate in a significant portion of the course such that the above policy does not adequately address your needs, please contact your instructor to discuss the situation. You should also discuss your situation with your academic advisor.
+
+Corrections Policy
+It is your responsibility to review homework, quizzes, and exams within one week, after they have been returned to you and scores have been posted, to verify that the grades have been posted correctly in Canvas. If you believe there is an error on the grading of a problem, you should submit a regrade request directly through gradescope.
+
+Guidelines for requesting a regrade:
+
+If you believe you should have received more points on a problem, we can't alter the points awarded because we use the same rubric for every student. For exams, make sure you compare your work to the solutions to see why you missed points.
+
+If you have questions about the grading, you should feel free to come by homework hours to discuss your work and the grading.
+
+A request for a regrade on a problem may lead to a complete regrade of the exam/quiz/homework and points may be adjusted on any part of the exam/quiz/homework if other errors are found. Please think carefully and compare your work to that of the solutions (or come by office/homework hours) before submitting a regrade request through gradescope.
+
+You are not allowed to request a regrade of your entire exam/quiz/homework, however, you may come to homework hours and go over your exam/quiz/homework with an instructor or TA to see why you missed points.
+
+Dropping the course
+Advice from your academic advisor is recommended before dropping any course. After October 27, dropping the course will be possible only with a petition approved by the Dean's office.
+
+Academic Honesty
+All homework, quiz, and exam problems must be solved without: using calculators (unless required by the problem), copying off of AI (such as ChatGPT), or looking up answers on internet sites. Each answer and solution must be written and understood by you . Copying answers/solutions from the internet, a tutor or friend, or other sources (including A.I.) is plagiarism and considered an honor code violation. Violation of the CU Student Honor code will result in a penalty to your grade (potentially up to and including an F in the course) and a report will be submitted to the University office of student conduct.
+
+Syllabus Changes
+The APPM 1235 instructors reserve the right to modify this syllabus as needed as a result of changing conditions this semester. If any changes are made, announcements will be posted on this Canvas webpage.
+
+Snow Days
+Snow is a common occurrence in Colorado in the late autumn, winter, and early spring months. Learning how to coexist with the snow is an important part of living in Colorado. On any given day, if there is snow, class/recitation/exams will meet/be-held as normal unless the University announces that course activities are cancelled . We always follow University policy, announcements, and warnings. If the University announces a cancellation of course activities due to snow (or any other reason) a course instructor will post a canvas announcement about how the course will be adjusted. NOTE: There are days in which we see significant snow and the University does not cancel course activities. Plan to participate in course activities (e.g., class, recitation, exam, etc.) as normal unless the University announces a cancellation of course activities.
+
+Accommodations for University-Related Extracurricular Activities
+Students formally affiliated with curricular and extracurricular University-related activities are required to communicate in writing with the instructor about potential conflicts within the first week of class or as soon as the student learns of a conflicting event. This deadline is established in order to provide students with time to change their course schedule if necessary. Instructors are not obligated to accommodate any potential conflicts, but may, at their own discretion, allow reasonable accommodations for these absences.
+
+University Policies
+You can read about University Policies on the CU Resources page.
+
+Canvas Privacy Policy
+You can read the Canvas Privacy Policy on the Instructure Product Privacy Policy page.
+
+Canvas Accessibility Statement
+You can read the Canvas Accessibility Statement on the Accessibility within Canvas page.

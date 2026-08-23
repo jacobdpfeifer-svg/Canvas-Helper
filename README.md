@@ -19,7 +19,7 @@ npm run open-canvas   # IdentiKey + MFA once
 npm run sync          # writes ../inbox/week.md from /api/v1
 ```
 
-In chat: ask for a **week plan** — agent reads inbox + `JACOB.md`.
+In chat: ask for a **week plan**, or **brief me** / **what should I do first** (priority + first step).
 
 ## Optional API token later
 
@@ -42,6 +42,8 @@ When OIT grants a PAT: [docs/CU_ACCESS.md](docs/CU_ACCESS.md). Same REST truth; 
 | `jacob-canvas-browser` | SSO sync + LTI escape hatch |
 | `jacob-inbox-week` | Maintain inbox |
 | `canvas-week-plan` | Weekly triage plan |
+| `jacob-task-brief` | Priority P0–P3, briefing, first step |
+| `jacob-course-arc` | Course theme, checkpoints, learning arc |
 | `jacob-assignment-triage` | Process help + rare native submit |
 | `jacob-ibe-semester` | Transfer + semester |
 | `canvas-discussion-facilitator` | Draft discussions |

@@ -23,6 +23,8 @@ See [`docs/HYBRID.md`](../../docs/HYBRID.md).
 3. When unsure → **ask Jacob**.
 4. Auto-submit (native Canvas only) only when every `JACOB.md` criterion passes **and** course is in `.jacob/calibrated-courses.md`; always show preview + **why auto**.
 5. Prefer fresh `inbox/week.md`. If stale: `cd browser && npm run sync` (after `open-canvas` if needed). Do not stall on missing PAT.
-6. Do not treat DOM scraping or MCP as a second system of record — same REST facts.
-7. Never store IdentiKey passwords or commit `browser/.auth/`.
-8. Do not rebuild educator/hosted/degree-audit features; do not invent CU degree-audit decisions.
+6. When Jacob asks what’s next / priority / time: use `jacob-task-brief` + `.jacob/priority-rubric.md` (optional `inbox/focus.md` cache — not a second due-list).
+7. When Jacob names a **course** (brief me on CSCI, course arc): use `jacob-course-arc` + `inbox/courses/*.md` catalog.
+8. Do not treat DOM scraping or MCP as a second system of record — same REST facts.
+9. Never store IdentiKey passwords or commit `browser/.auth/`.
+10. Do not rebuild educator/hosted/degree-audit features; do not invent CU degree-audit decisions.
