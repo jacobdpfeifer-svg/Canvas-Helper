@@ -1,6 +1,5 @@
 """Discussion and announcement MCP tools for Canvas API."""
 
-import json
 import re
 from typing import Any
 
