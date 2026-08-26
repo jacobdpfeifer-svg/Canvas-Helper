@@ -122,6 +122,10 @@ jobs:
       with:
         node-version: "20"
 
+    - name: Install browser dependencies
+      working-directory: browser
+      run: npm ci
+
     - name: Run browser sync unit tests
       working-directory: browser
       run: npm test
