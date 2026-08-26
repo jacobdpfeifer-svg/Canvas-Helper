@@ -14,8 +14,8 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md). Rubric: [`.jacob/priorit
 ## Prerequisites
 
 1. Read [`JACOB.md`](../../JACOB.md) and `.jacob/priority-rubric.md`
-2. Read [`inbox/week.md`](../../inbox/week.md) — open rows for the requested course
-3. Read matching [`inbox/courses/CODE.md`](../../inbox/courses/) — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
+2. Read [`inbox/week.md`](../../inbox/week.md) — open rows for the requested course. **Due column is America/Denver local (MT)** — urgency and arc checkpoint dates use Denver calendar day, not raw UTC.
+3. Read matching [`inbox/courses/CODE.md`](../../inbox/courses/) — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**. Catalog Due cells are MT after sync; arc notes must match catalog/`week.md`, never UTC fragments (e.g. `05:59`).
 4. If inbox stale (`Updated:` >2 days) or course file missing catalog → `cd browser && npm run sync` (after `open-canvas` if needed)
 5. Optional: fetch assignment description via MCP `get_assignment` / syllabus via `get_syllabus` when PAT exists and titles are opaque
 6. If instructor profile missing or stale → run [`jacob-instructor-profile`](../jacob-instructor-profile/SKILL.md) before deep arc on voice/judgment assignments
@@ -59,14 +59,14 @@ Sort open cards by P-level, then due, then goal fit.
 
 ### 3. Infer course theme
 
-Synthesize **Theme** (2–4 sentences) from:
+Synthesize **Theme** (2–4 sentences) from, in order:
 
-- Assignment catalog sequence (unit names in titles: Pre Reading → Pre Lab → Lab → Challenge)
-- Cached Theme in course file (refresh if catalog changed materially)
-- Course defaults in `JACOB.md`
-- Checkpoints (what quizzes/exams gate)
+1. Syllabus digest / `_raw/CODE-syllabus.txt` objectives (prefer `(syllabus)`)
+2. Cached Theme in course file when `## Syllabus sources` is fresh
+3. Assignment catalog sequence (unit names: Pre Reading → Pre Lab → Lab → Challenge)
+4. Course defaults in `JACOB.md` + Checkpoints
 
-Mark `(inferred)` when not from syllabus. Do not invent a theme with no catalog signal → say "Theme unclear — need syllabus or more published modules."
+If Theme is only `(inferred)` and a non-stub `_raw` exists → run [`jacob-syllabus-intake`](../jacob-syllabus-intake/SKILL.md) before briefing. Mark `(inferred)` when not from syllabus. Do not invent a theme with no catalog or syllabus signal → say "Theme unclear — need syllabus or more published modules."
 
 ### 4. Checkpoints
 
@@ -122,7 +122,7 @@ Source: inbox/week.md + inbox/courses/[CODE].md (Updated: …)
 …
 
 ### Instructor lens
-2–3 bullets from `## Instructor profile` most relevant to open work (grading tone, AI policy, participation). If profile empty → say "Run jacob-instructor-profile."
+2–3 bullets from `## Instructor profile` most relevant to open work (grading tone, Jacob-written AI policy if filled, participation). If profile empty → say "Run jacob-instructor-profile." Do not invent AI restrictions from syllabus.
 
 ### Checkpoints
 …

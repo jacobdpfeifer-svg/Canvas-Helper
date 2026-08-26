@@ -28,9 +28,11 @@ def test_format_date_returns_na_for_none():
     assert dates.format_date("") == "N/A"
 
 
-def test_format_date_defaults_to_utc_with_z_suffix(monkeypatch):
+def test_format_date_defaults_to_america_denver(monkeypatch):
+    pytest.importorskip("tzdata")
     monkeypatch.delenv("TIMEZONE", raising=False)
-    assert dates.format_date("2026-05-28T23:59:00Z") == "2026-05-28T23:59:00Z"
+    # 23:59 UTC on 2026-05-28 == 17:59 MDT (UTC-6)
+    assert dates.format_date("2026-05-28T23:59:00Z") == "2026-05-28T17:59:00-06:00"
 
 
 def test_format_date_uses_z_when_timezone_explicitly_utc(monkeypatch):

@@ -8,13 +8,18 @@ import {
   dedupeRows,
   extractLinksFromHtml,
   filterPolicyPages,
+  filterSyllabusSupplementPages,
+  fromDiscussions,
   hasCampusGroupsLink,
   hasUploadAfterEventHint,
   isCheckpoint,
+  isSyllabusStub,
   denverDay,
   denverMidnightUtc,
   filterDatedInWindow,
+  formatDueDenver,
   mergeCourseFileContent,
+  mergeSyllabusParts,
   parseAgentPolicyFromSyllabus,
   formatAgentPolicyNotes,
   resolveCourseFile,
@@ -34,6 +39,26 @@ describe("denverMidnightUtc", () => {
     const m = denverMidnightUtc("2026-01-15");
     assert.equal(m.toISOString(), "2026-01-15T07:00:00.000Z");
     assert.equal(denverDay(m), "2026-01-15");
+  });
+});
+
+describe("formatDueDenver", () => {
+  it("formats CU 11:59 PM deadline (Gen AI Part 1)", () => {
+    assert.equal(formatDueDenver("2026-08-28T05:59:59Z"), "Thu, Aug 27, 2026, 11:59 PM MT");
+  });
+
+  it("formats CU 11:59 PM deadline (ChatGPT Edu)", () => {
+    assert.equal(formatDueDenver("2026-08-27T05:59:59Z"), "Wed, Aug 26, 2026, 11:59 PM MT");
+  });
+
+  it("formats in-class style midday UTC", () => {
+    assert.equal(formatDueDenver("2026-09-01T17:00:00Z"), "Tue, Sep 1, 2026, 11:00 AM MT");
+  });
+
+  it("returns empty for missing or invalid input", () => {
+    assert.equal(formatDueDenver(""), "");
+    assert.equal(formatDueDenver(null), "");
+    assert.equal(formatDueDenver("not-a-date"), "");
   });
 });
 
@@ -177,6 +202,52 @@ describe("buildWeekNoteParts", () => {
     assert.match(joined, /signup-external/);
     assert.match(joined, /url:https:\/\/canvas\.colorado\.edu/);
   });
+
+  it("marks graded discussions as stakes:assignment-like", () => {
+    const parts = buildWeekNoteParts({
+      source: "discussion_topics",
+      sources: ["planner", "discussion_topics"],
+      title: "Propose two different ideas for Advocate",
+      type: "discussion_topic",
+      points: 1,
+      html_url: "https://canvas.colorado.edu/courses/141523/discussion_topics/1931227",
+    });
+    const joined = parts.join("; ");
+    assert.match(joined, /outcome:discussion/);
+    assert.match(joined, /stakes:assignment-like/);
+  });
+});
+
+describe("fromDiscussions", () => {
+  it("uses nested assignment due and points", () => {
+    const rows = fromDiscussions("BCOR 1030", "141523", [
+      {
+        id: 1931227,
+        title: "Propose two different ideas for Advocate",
+        html_url: "https://canvas.colorado.edu/courses/141523/discussion_topics/1931227",
+        assignment: {
+          due_at: "2026-08-27T05:59:00Z",
+          points_possible: 1,
+          all_dates: [
+            { base: true, due_at: "2026-08-27T05:59:00Z" },
+            { base: false, due_at: "2026-08-27T11:59:00Z" },
+          ],
+          submission: { workflow_state: "unsubmitted" },
+        },
+      },
+      {
+        id: 99,
+        title: "Ungraded undated chat",
+        points_possible: null,
+      },
+    ]);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].title, "Propose two different ideas for Advocate");
+    assert.equal(rows[0].points, 1);
+    assert.equal(rows[0].type, "discussion_topic");
+    assert.equal(rows[0].due, "2026-08-27T11:59:00Z");
+    assert.equal(rows[0].complete, false);
+  });
 });
 
 describe("mergeCourseFileContent registration log", () => {
@@ -258,6 +329,17 @@ describe("shouldIncludeInWeekTable", () => {
       false
     );
   });
+
+  it("keeps announcements with points", () => {
+    assert.equal(
+      shouldIncludeInWeekTable({
+        title: "Answers/Lecture-video available and class reminders",
+        type: "announcement",
+        points: 1,
+      }),
+      true
+    );
+  });
 });
 
 describe("dedupeRows", () => {
@@ -322,6 +404,150 @@ describe("stripHtmlTags and syllabusHash", () => {
   it("hashes syllabus text deterministically", () => {
     assert.equal(syllabusHash("abc"), syllabusHash("abc"));
     assert.notEqual(syllabusHash("abc"), syllabusHash("abcd"));
+  });
+});
+
+describe("isSyllabusStub", () => {
+  it("flags empty and short bodies", () => {
+    assert.equal(isSyllabusStub(""), true);
+    assert.equal(isSyllabusStub("short"), true);
+  });
+  it("flags placeholder phrases under phrase max chars", () => {
+    assert.equal(
+      isSyllabusStub("Will be uploading a doc instead of using this page."),
+      true
+    );
+    assert.equal(
+      isSyllabusStub(
+        "Please note that the Canvas syllabus is different than the classic, live syllabus, which you need to read completely."
+      ),
+      true
+    );
+  });
+  it("does not flag a long real syllabus", () => {
+    const body =
+      "Course Objectives\n".repeat(50) + "WebAssign homework due Thursdays.";
+    assert.equal(isSyllabusStub(body), false);
+  });
+});
+
+describe("mergeSyllabusParts", () => {
+  it("joins canvas body, pages, and files with separators", () => {
+    const merged = mergeSyllabusParts({
+      canvasBody: "Canvas stub",
+      pages: [
+        { title: "Exams, Assignments, and Grading", body: "Weights: 40%" },
+      ],
+      files: [{ filename: "CSCI1200-syllabus.pdf", text: "PDF content" }],
+    });
+    assert.match(merged, /--- CANVAS SYLLABUS PAGE ---/);
+    assert.match(merged, /--- PAGE: Exams, Assignments, and Grading ---/);
+    assert.match(merged, /--- FILE: CSCI1200-syllabus\.pdf ---/);
+    assert.match(merged, /PDF content/);
+  });
+  it("notes pending extraction when no text", () => {
+    const merged = mergeSyllabusParts({
+      files: [{ filename: "x.pdf", path: "/tmp/x.pdf" }],
+    });
+    assert.match(merged, /text extraction pending/);
+  });
+});
+
+describe("filterSyllabusSupplementPages", () => {
+  it("matches syllabus and grading pages", () => {
+    const pages = filterSyllabusSupplementPages([
+      {
+        title: "Exams, Assignments, and Grading",
+        url: "exams",
+        published: true,
+      },
+      {
+        title: "Course Policies and CU Policies",
+        url: "policies",
+        published: true,
+      },
+      { title: "Week 3 Lab", url: "lab", published: true },
+    ]);
+    assert.equal(pages.length, 2);
+  });
+});
+
+describe("mergeCourseFileContent preserves Syllabus sources", () => {
+  it("keeps agent Syllabus sources section across sync merge", () => {
+    const existing = `# CSCI1200 — Test
+
+Updated: 2026-08-01
+
+Sections: 800
+Canvas URL: https://old.example
+Primary instructor(s): Old
+TA(s):
+Syllabus hash: oldhash
+
+## Theme
+
+theme text
+
+## Syllabus sources
+
+Last reviewed: 2026-08-23
+- Canvas syllabus page + PDF
+
+## Checkpoints
+
+- (none)
+
+## Assignment catalog
+
+| Name | Due | Points | Type | Outcome | Status |
+|------|-----|--------|------|---------|--------|
+| | | | | | |
+
+## Arc notes
+
+-
+
+## Instructor profile
+
+Profile updated: 2026-08-01
+
+### Grading and weights
+
+- note (syllabus)
+
+### Policy pages (synced)
+
+- old
+
+## Syllabus / agent policy notes
+
+-
+
+## Modules / what's next
+
+-
+
+## Worth Jacob's time defaults
+
+(See JACOB.md for this course.)
+`;
+    const md = mergeCourseFileContent({
+      existingContent: existing,
+      courseTitle: "CSCI 1200",
+      catalogRows: [],
+      today: "2026-08-24",
+      syncMeta: {
+        canvasUrl: "https://canvas.colorado.edu/courses/123",
+        primaryInstructors: "K. Nielsen",
+        tas: "",
+        syllabusHash: "newhash",
+        syllabusPlain: "body",
+        policyPages: [],
+      },
+    });
+    assert.match(md, /## Syllabus sources/);
+    assert.match(md, /Last reviewed: 2026-08-23/);
+    assert.match(md, /theme text/);
   });
 });
 

@@ -1,16 +1,24 @@
 # ONLINEEXP — Online Experience (Leeds)
 
-Updated: 2026-08-22
+Updated: 2026-08-26
 
 Sections: TR
 Canvas URL: https://canvas.colorado.edu/courses/135245
 Primary instructor(s): Heather Clark (id 237250); Danielle Wall (id 433264)
-TA(s):
+TA(s): Syllabus hash: (none)
 Syllabus hash: (none)
 
 ## Theme
 
-Leeds online orientation — advising challenges and onboarding.
+(inferred) Leeds online orientation — advising challenges and onboarding modules. Low stakes; prioritize Engineering + Pre-Business challenges for IBE.
+
+## Syllabus sources
+
+Last reviewed: 2026-08-24
+
+- **Syllabus N/A** — orientation course; Canvas returned no syllabus_body
+- Sources: assignment catalog + LTI section modules (Welcome, Sections 1–5)
+- Gaps: none critical; optional module intros on next sync
 
 ## Checkpoints
 
@@ -53,11 +61,11 @@ Synced from Canvas `/api/v1` (open items, term window). Not the 14d due-list —
 
 ## Arc notes
 
--
-
+- Orientation only — Engineering Advising Challenge + Pre-Business most relevant for IBE; complete Degree Requirements quiz.
+- LTI Sections 1–5 are the curriculum narrative; advising challenges are checkpoints.
 ## Instructor profile
 
-Profile updated: 2026-08-22
+Profile updated: 2026-08-24
 
 ### Grading and weights
 
@@ -73,9 +81,13 @@ Profile updated: 2026-08-22
 
 - Self-paced modules — work through in order. (assignment catalog)
 
-### AI and academic integrity
+### Academic integrity
 
-- Canvas returned no syllabus body — complete your own orientation quizzes. (syllabus)
+- No formal syllabus — treat orientation quizzes as your own work. (syllabus)
+
+### AI policy (Jacob only)
+
+(Jacob fills — agents must not paste syllabus AI rules here)
 
 ### Formatting and submission habits
 
@@ -90,9 +102,11 @@ Profile updated: 2026-08-22
 ### Per assignment-type notes
 
 - **All items**: low stakes; Jacob can batch-complete; never auto-submit without Jacob OK on calendar-binding items (none expected).
+
 ### Sources
 
 - Assignment catalog (synced 2026-08-22)
+- Syllabus: N/A (orientation)
 
 ### Confidence and gaps
 
@@ -106,7 +120,7 @@ Profile updated: 2026-08-22
 
 ## Syllabus / agent policy notes
 
-(synced 2026-08-22)
+(synced 2026-08-26)
 
 No `agent_writes:` marker in Canvas syllabus — MCP uses default posture
 (deny unless `COURSE_AGENT_POLICY_DEFAULT=allow`).
@@ -119,7 +133,8 @@ allow_tools: submit_assignment
 
 ## Modules / what's next
 
--
+- Batch Engineering + Pre-Business advising challenges + Degree Requirements
+- Skim Sections 1–5 LTI for transfer/registration literacy
 
 ## Worth Jacob's time defaults
 

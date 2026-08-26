@@ -10,9 +10,9 @@ Decide Worth-your-time vs process help vs rare **native Canvas** auto-submit.
 ## Prerequisites
 
 - [`JACOB.md`](../../JACOB.md), [`.jacob/calibrated-courses.md`](../../.jacob/calibrated-courses.md)
-- Items from `inbox/week.md` (preferred) or MCP
-- **Before drafts** on written / discussion / reflection / presentation-script work: read `## Instructor profile` in `inbox/courses/CODE.md`. If missing or stale (see [`jacob-instructor-profile`](../jacob-instructor-profile/SKILL.md)) → build profile first and apply formatting, AI, tone, and rubric preferences.
-- **Policy dual-check** (draft + auto-submit): read `## Syllabus / agent policy notes` in the same course file (sync-owned `agent_writes:` marker). If profile `### AI and academic integrity` forbids agent work on this assignment type → never auto-submit; draft only with Jacob review. If synced notes say `agent_writes: deny` or `conflict` → no auto-submit regardless of profile.
+- Items from `inbox/week.md` (preferred) or MCP. **Due column / inbox = America/Denver local (MT)**; MCP `format_date()` emits ISO offset in the same timezone (default `America/Denver`) — never treat the UTC calendar date from raw `due_at` as Jacob's due day.
+- **Before drafts** on written / discussion / reflection / presentation-script work: read `## Instructor profile` in `inbox/courses/CODE.md`. If missing or stale (see [`jacob-instructor-profile`](../jacob-instructor-profile/SKILL.md)) → build profile first and apply formatting, tone, and rubric preferences. Apply AI prefs **only** from Jacob-filled `### AI policy (Jacob only)` — never invent or copy syllabus AI bans. Then read [`.jacob/writing-voice.md`](../../.jacob/writing-voice.md) and pick the matching genre knob (use [`.jacob/writing-samples/`](../../.jacob/writing-samples/) if cadence is unclear). Instructor = format/policy; writing-voice = how Jacob sounds.
+- **Policy dual-check** (draft + auto-submit): read `## Syllabus / agent policy notes` in the same course file (sync-owned `agent_writes:` marker). If synced notes say `agent_writes: deny` or `conflict` → no auto-submit. If Jacob filled `### AI policy (Jacob only)` with explicit limits on agent help for this type → honor those; otherwise do not invent AI restrictions.
 - When unsure → **ask Jacob**
 
 ## Assignment-level instructor overlay
@@ -20,7 +20,7 @@ Decide Worth-your-time vs process help vs rare **native Canvas** auto-submit.
 Before drafting or auto-submitting a specific item:
 
 1. Match catalog **Outcome** column (`discussion`, `written`, `busywork`, etc.) to `### Per assignment-type notes` in the instructor profile.
-2. When points ≥ 10 **or** title matches Gen AI / Advocate / reflection / essay / case → fetch assignment description + rubric via MCP `get_assignment_details` (or SSO API when no PAT). Assignment rubric beats syllabus for that task.
+2. **Points gate Worth/detail fetch; discussion type only gates post approval, not priority.** When `points > 0` **or** title matches Gen AI / Advocate / reflection / essay / case → fetch assignment/discussion description + rubric via MCP `get_assignment_details` (or SSO API when no PAT). Assignment rubric beats syllabus for that task.
 3. Apply overlay bullets to the draft (format, length, disclosure, citation). Surface conflicts between rubric and profile to Jacob.
 
 ## Always Jacob (do not submit)
@@ -40,7 +40,7 @@ Before drafting or auto-submitting a specific item:
 3. Online, individual, non-proctored, low stakes, mechanical
 4. **Policy dual-check passes:**
    - `## Syllabus / agent policy notes` shows `agent_writes: allow` (synced) **or** MCP `get_course_policy` allows writes
-   - Profile `### AI and academic integrity` does **not** forbid agent work on this assignment type
+   - Jacob-written `### AI policy (Jacob only)` does **not** forbid agent work on this assignment type (empty stub = no invented ban)
    - `agent_writes: deny`, `conflict`, or `malformed` → never auto
 5. Show preview + **why auto** (never hide)
 

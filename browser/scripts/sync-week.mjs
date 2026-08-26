@@ -23,6 +23,7 @@ import {
   collectTruncationWarnings,
   denverDay,
   escCell,
+  formatDueDenver,
   fetchDueUniverse,
   filterDatedInWindow,
   launchCanvasContext,
@@ -112,7 +113,7 @@ const table =
         .map((r) => {
           const noteParts = buildWeekNoteParts(r);
           return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(
-            String(r.due).replace("T", " ").slice(0, 16)
+            formatDueDenver(r.due)
           )} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(
             noteParts.join("; ")
           )} |`;

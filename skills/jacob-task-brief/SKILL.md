@@ -12,7 +12,7 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md). Rubric: [`.jacob/priorit
 ## Prerequisites
 
 1. Read `JACOB.md` and `.jacob/priority-rubric.md`
-2. Read [`inbox/week.md`](../../inbox/week.md) (and `inbox/courses/*` as needed)
+2. Read [`inbox/week.md`](../../inbox/week.md) (and `inbox/courses/*` as needed). **Due column is America/Denver local (MT)** — urgency uses Denver calendar day, not raw UTC date.
 3. If inbox missing or `Updated:` older than **2 days** → refresh via `cd browser && npm run sync` (after `open-canvas` if needed)
 4. Optional: read [`inbox/focus.md`](../../inbox/focus.md) if present (dated Top 3 cache — not a competing due list)
 
@@ -39,9 +39,11 @@ From title, type, Notes (incl. sync outcome hints), points, due, and course defa
 | Quiz / proctored | quiz, exam, proctored, LockDown |
 | Pre-reading | pre reading, pre-class, reading |
 | Lab / build | lab, pre lab, CSCI build |
-| Discussion | discussion_topic, discussion, advocate ideas |
+| Discussion | discussion_topic, discussion, advocate ideas (**delivery/first-step only**) |
 | Written HW | written hw, essay, gen ai assignment |
-| Tiny native busywork | low points, syllabus video, training, playlist |
+| Tiny native busywork | mechanical only: syllabus video, training, playlist — **not** graded discussions |
+
+If `points > 0` (Notes may say `stakes:assignment-like`), score **stakes** like Written HW / judgment — never Tiny native busywork solely because type is `discussion_topic`. Discussion class still sets the first-step draft path.
 
 Ambiguous → **Ask** Jacob (one question); do not invent the outcome.
 
@@ -58,8 +60,8 @@ Follow [`.jacob/priority-rubric.md`](../../.jacob/priority-rubric.md). Use goal 
 | Quiz / proctored | Build 15–30m study checklist; Jacob takes quiz in UI |
 | Pre-reading | Open reading → skim learning outcomes → note 3 takeaways |
 | Lab / build (esp. CSCI) | Open lab → env check → attempt first exercise |
-| Discussion | Confirm instructor profile fresh → apply tone/citation prefs → draft 3 voice bullets for Jacob to edit |
-| Written HW | Confirm instructor profile fresh → apply AI/format prefs → open prompt/problems → work problem 1 with method shown |
+| Discussion | Confirm instructor profile fresh → read `.jacob/writing-voice.md` → apply tone/citation prefs → draft 3 voice bullets for Jacob to edit |
+| Written HW | Confirm instructor profile fresh → read `.jacob/writing-voice.md` when the work is prose/reflection → apply format prefs + Jacob-written AI policy if filled → open prompt/problems → work problem 1 with method shown |
 | Tiny native busywork | Agent drafts answer; Jacob paste/submit if calibrated |
 
 Never auto-drive LTI/proctored UIs. Native auto-submit only via `jacob-assignment-triage` when every `JACOB.md` criterion passes.

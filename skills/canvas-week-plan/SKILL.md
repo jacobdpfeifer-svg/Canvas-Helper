@@ -19,7 +19,8 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
 ### 1. Load memory
 
 1. Read [`inbox/week.md`](../../inbox/week.md).
-2. If missing or `Updated:` older than **2 days**: run or ask for `cd browser && npm run sync` (SSO→`/api/v1`), then re-read. Do not stall on missing PAT.
+2. **Due column is America/Denver local (MT)** — do not treat UTC date from Canvas API as Jacob's due day.
+3. If missing or `Updated:` older than **2 days**: run or ask for `cd browser && npm run sync` (SSO→`/api/v1`), then re-read. Do not stall on missing PAT.
 3. If MCP PAT works **and** inbox is stale, you may also call `get_my_upcoming_assignments` — then **write results into inbox** so the next turn stays consistent. Do not maintain a second informal list.
 
 ### 2. Gather extras
@@ -31,7 +32,7 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
 
 | Bucket | Meaning |
 |--------|---------|
-| **Worth Jacob’s time** | Exams, quizzes, proctored, presentations, CSCI build, judgment writing, group coord |
+| **Worth Jacob’s time** | Exams, quizzes, proctored, presentations, CSCI build, judgment writing, group coord, **graded discussions / any item with points that needs Jacob judgment or peer work** |
 | **External / LTI (Jacob in tool)** | WebAssign, ZyBooks, PlayPosit, other LTI — draft help only |
 | **Agent can handle** | Native Canvas low-stakes busywork meeting every auto criterion + calibrated |
 | **Ask Jacob** | Unsure / first submit in a course |

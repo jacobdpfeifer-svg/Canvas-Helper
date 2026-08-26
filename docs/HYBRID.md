@@ -71,6 +71,17 @@ Filled by:
 
 Same endpoints. Same facts. Different credential.
 
+### Due dates — one timezone, two display formats
+
+Canvas stores `due_at` in **UTC**. Both auth paths convert to **America/Denver (MT)** for Jacob-facing output, but the string shape differs:
+
+| Path | Where | Example |
+|------|--------|---------|
+| **SSO sync → inbox** | `inbox/week.md` Due column; course catalog Due cells | `Thu, Aug 27, 2026, 11:59 PM MT` |
+| **MCP (optional PAT)** | Tool responses via `format_date()` | `2026-08-27T23:59:00-06:00` |
+
+Both mean the same wall clock. CU 11:59 PM MT deadlines often appear as `05:59` UTC on the **next** calendar day — do not use the UTC date as the due day. Agents quote **Denver local** only. Internal sort/window logic stays on ISO UTC.
+
 ### Escape hatch — Browser UI + CampusGroups
 
 Only when REST cannot complete the work:
@@ -88,13 +99,29 @@ Professor preferences affect assignment completion in **two parallel tracks** �
 
 | Track | Storage | Used for |
 |-------|---------|----------|
-| **Draft voice** | `## Instructor profile` in `inbox/courses/CODE.md` (agent-maintained via `jacob-instructor-profile`) | Tone, formatting, AI disclosure, rubric habits, per-type notes |
+| **Draft format / policy** | `## Instructor profile` in `inbox/courses/CODE.md` (agent-maintained via `jacob-instructor-profile`) | Tone expectations, formatting, rubric habits, per-type notes; **AI policy = Jacob-written only** (`### AI policy (Jacob only)`) |
+| **Jacob sound** | [`.jacob/writing-voice.md`](../.jacob/writing-voice.md) + [`.jacob/writing-samples/`](../.jacob/writing-samples/) | How drafts should sound (genre knobs); load after instructor profile |
 | **Submit permission** | `agent_writes:` in Canvas syllabus → synced to `## Syllabus / agent policy notes` + enforced by MCP `course_policy.py` | Native Canvas auto-submit only |
 | **Jacob trust** | `.jacob/calibrated-courses.md` | First-submit / auto-submit gate per course |
 
-Profile informs drafts; syllabus marker + calibration gate submits. Profile **never** overrides quiz/LTI/proctored rules.
+Profile informs draft format; writing-voice informs Jacob’s voice; syllabus marker + calibration gate submits. Profile **never** overrides quiz/LTI/proctored rules.
 
-After sync: `cd browser && npm run validate-profiles` — rebuild stale profiles with `jacob-instructor-profile`; stamp Sources with `npm run refresh-profiles`.
+### Syllabus-first course catalog
+
+Course MD files are filled **syllabus first**, then catalog inference:
+
+```text
+npm run sync → jacob-syllabus-intake → jacob-instructor-profile → course-arc / triage
+```
+
+1. **Sync** writes `inbox/courses/_raw/CODE-syllabus.txt` from Canvas `syllabus_body`. When that body is a stub, sync also fetches syllabus/grading/policy **pages** and syllabus-named **PDF files** (plus local `_raw/CODE-syllabus.pdf` when present) and merges them into the same `_raw` file. Hash in the course MD header detects changes.
+2. **`jacob-syllabus-intake`** digests `_raw` into agent-owned sections: `## Syllabus sources`, `## Theme`, `## Modules / what's next`, and tightens Confidence/gaps. Checklist: weights, honor/exams (agent), formats, attendance, office hours, LTI/materials, section notes, hard deadlines. **AI allow/prohibit: never paste** — note `AI policy in syllabus — Jacob to fill manually` under Confidence gaps only.
+3. **`jacob-instructor-profile`** rebuilds draft-voice preferences from that digest (syllabus tags dominate catalog inference). Preserves Jacob-written `### AI policy (Jacob only)`; never copies syllabus AI restriction rules.
+4. Validate: `cd browser && npm run validate-profiles && npm run validate-course-md` — flags Theme still `(inferred)` when a non-stub `_raw` exists, missing `## Syllabus sources`, and thin `(syllabus)` tagging.
+
+Re-intake when `Syllabus hash` changes, photo intake classifies `syllabus_delta`, or a policy announcement contradicts the profile. Stub courses (e.g. BCOR classic syllabus, ECON none) stay `(inferred)` until Jacob uploads a PDF or sync finds module pages.
+
+After sync: rebuild stale profiles with `jacob-instructor-profile`; stamp Sources with `npm run refresh-profiles`.
 
 ## What not to build
 
@@ -109,3 +136,4 @@ After sync: `cd browser && npm run validate-profiles` — rebuild stale profiles
 - [`CU_BROWSER.md`](CU_BROWSER.md) — login + sync commands  
 - [`CU_ACCESS.md`](CU_ACCESS.md) — optional PAT when granted  
 - [`browser/README.md`](../browser/README.md)
+- Skill: [`skills/jacob-syllabus-intake/SKILL.md`](../skills/jacob-syllabus-intake/SKILL.md)

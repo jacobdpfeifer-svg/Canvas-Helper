@@ -25,7 +25,11 @@ See [`docs/HYBRID.md`](../../docs/HYBRID.md).
 5. Prefer fresh `inbox/week.md`. If stale: `cd browser && npm run sync` (after `open-canvas` if needed). Do not stall on missing PAT.
 6. When Jacob asks what’s next / priority / time: use `jacob-task-brief` + `.jacob/priority-rubric.md` (optional `inbox/focus.md` cache — not a second due-list).
 7. When Jacob names a **course** (brief me on CSCI, course arc): use `jacob-course-arc` + `inbox/courses/*.md` catalog.
+7b. Syllabus-first: when `Syllabus hash` changes or Theme is `(inferred)` with non-stub `_raw` → `jacob-syllabus-intake` before profile/arc.
 8. When Jacob attaches a **class photo** (intake / class capture): use `jacob-photo-intake` + `inbox/captures/queue.md`.
 9. Do not treat DOM scraping or MCP as a second system of record — same REST facts.
 10. Never store IdentiKey passwords or commit `browser/.auth/`.
 11. Do not rebuild educator/hosted/degree-audit features; do not invent CU degree-audit decisions.
+12. Any inbox row with `points > 0` (including discussions) is assignment-like for triage/priority; Canvas type only affects how Jacob submits or posts (discussions stay draft→approval).
+12. **AI restrictions — Jacob only:** after sync / syllabus-intake / instructor-profile, do not paste AI allow/prohibit / tool-ban rules into `inbox/courses/*.md`. Sync may keep AI text in `_raw/`. If syllabus mentions AI policy → Confidence gaps only; Jacob fills `### AI policy (Jacob only)`.
+13. **Due dates — America/Denver:** `inbox/week.md` and course catalog Due columns are **Denver local (MT)** after sync. Never quote due dates to Jacob from raw Canvas `due_at` UTC without conversion. CU 11:59 PM deadlines appear as `05:59` UTC on the **next calendar day** — do not use the UTC date as the due day.

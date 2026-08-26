@@ -1,6 +1,6 @@
 # CALCREADY — Calculus 1 Readiness Prep
 
-Updated: 2026-08-22
+Updated: 2026-08-26
 
 Sections: Canvas URL: https://canvas.colorado.edu/courses/CALCREADY
 Canvas URL: https://canvas.colorado.edu/courses/105829
@@ -10,7 +10,14 @@ Syllabus hash: 9a369ef22e704e6c
 
 ## Theme
 
-Support course for APPM 1350 path — unit quizzes when due dates appear.
+(syllabus) Free, non-credit Calculus 1 readiness prep: review functions, trig, exponents, equations/inequalities, and rational/exp/log topics via self-paced unit quizzes. Aim ~3 units/week; target 80%+ per unit if retaking math placement. Support for APPM path — surface when due dates appear.
+
+## Syllabus sources
+
+Last reviewed: 2026-08-24
+
+- Canvas syllabus page → `_raw/CALCREADY-syllabus.txt` (hash 9a369ef22e704e6c)
+- Gaps: none critical (prep course)
 
 ## Checkpoints
 
@@ -76,16 +83,18 @@ Synced from Canvas `/api/v1` (open items, term window). Not the 14d due-list —
 
 ## Arc notes
 
--
-
+- Self-paced units; retake quizzes freely after reviewing answers. (syllabus)
+- Quiz conditions: no calculator/notes/books/help — exam-like when preparing for placement retake. (syllabus)
+- After attempt, use any resources to learn before retrying. (syllabus)
 ## Instructor profile
 
-Profile updated: 2026-08-22
+Profile updated: 2026-08-24
 
 ### Grading and weights
 
 - Free, non-credit prep course; self-paced (~3 units/week recommended). (syllabus)
 - Most items undated until published — monitor sync for due windows. (assignment catalog)
+- Aim **80%+** on each unit quiz if retaking math placement. (syllabus)
 
 ### Classroom and professionalism
 
@@ -93,17 +102,22 @@ Profile updated: 2026-08-22
 
 ### Communication preferences
 
-- Async/self-paced — follow Canvas when units unlock. (inferred)
+- Async/self-paced — follow Canvas when units unlock. (syllabus)
+- Zoom office hours noted historically (Aug 5–22 window on syllabus) — confirm current OH on Canvas. (syllabus)
 
-### AI and academic integrity
+### Academic integrity
 
 - During **unit quizzes**: no calculator, notes, books, electronic resources, or help from another person — exam-like conditions. (syllabus)
 - After a quiz attempt, answers are shown; you may use any resources to understand mistakes before retaking. (syllabus)
+- Online solvers less useful than understanding solutions yourself. (syllabus)
+
+### AI policy (Jacob only)
+
+(Jacob fills — agents must not paste syllabus AI rules here)
 
 ### Formatting and submission habits
 
-- Self-paced unit quizzes in Canvas; aim for **80%+** on each unit if retaking math placement. (syllabus)
-- No calculators on any prep problems. (syllabus)
+- Self-paced unit quizzes in Canvas; no calculators on prep problems. (syllabus)
 
 ### Values they reward / penalize
 
@@ -114,13 +128,16 @@ Profile updated: 2026-08-22
 ### Per assignment-type notes
 
 - **Unit quizzes**: Jacob takes; agent can review concepts only.
+
 ### Sources
-- Assignment catalog (synced 2026-08-22)
+
 - Canvas syllabus (synced 2026-08-22, hash 9a369ef22e704e6c)
+- Assignment catalog (synced 2026-08-22)
 
 ### Confidence and gaps
 
-- Low: thin syllabus signal — refresh after sync
+- High: quiz honesty rules and 80% target from syllabus
+- Low: current office-hour schedule after Aug 22 window
 
 ### Policy pages (synced)
 
@@ -129,7 +146,7 @@ Profile updated: 2026-08-22
 
 ## Syllabus / agent policy notes
 
-(synced 2026-08-22)
+(synced 2026-08-26)
 
 No `agent_writes:` marker in Canvas syllabus — MCP uses default posture
 (deny unless `COURSE_AGENT_POLICY_DEFAULT=allow`).
@@ -142,7 +159,8 @@ allow_tools: submit_assignment
 
 ## Modules / what's next
 
--
+- Pace ~3 units/week; prioritize Units 1–2 if APPM 1235 is active
+- Re-attempt placement only after solid unit-quiz mastery
 
 ## Worth Jacob's time defaults
 

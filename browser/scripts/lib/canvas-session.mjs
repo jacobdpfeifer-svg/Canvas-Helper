@@ -5,6 +5,7 @@
  * Playwright is auth + transport, not a second product.
  */
 import { chromium } from "playwright";
+import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -23,6 +24,14 @@ export const WEEK_PATH = path.join(INBOX_DIR, "week.md");
 
 const POLICY_PAGE_RE =
   /professional|participation|policy|syllabus|grading|integrity|gen\s*ai|expectation/i;
+/** Pages worth fetching when Canvas syllabus_body is a stub or incomplete. */
+export const SYLLABUS_PAGE_RE =
+  /syllabus|course information|grading|exams.*grading|course policies|assignments.*grading|policies/i;
+/** Phrases that indicate the Canvas syllabus page is not the real syllabus. */
+export const SYLLABUS_STUB_PHRASE_RE =
+  /uploading a doc|will be uploading|classic.?syllabus|course information module|preferred to create a syllabus page|different than the classic/i;
+export const SYLLABUS_STUB_MAX_CHARS = 200;
+export const SYLLABUS_STUB_PHRASE_MAX_CHARS = 600;
 export const CATALOG_DAYS = Number(process.env.CATALOG_DAYS || 90);
 
 /** Map Canvas course name/code → inbox/courses/CODE.md */
@@ -100,6 +109,24 @@ export function denverDay(d = new Date()) {
 /** @deprecated Prefer denverDay for window bounds. */
 export function isoDay(d = new Date()) {
   return denverDay(d);
+}
+
+/** User-facing due string in America/Denver (e.g. "Thu Aug 27 11:59 PM MT"). */
+export function formatDueDenver(isoUtc) {
+  if (!isoUtc) return "";
+  const d = new Date(isoUtc);
+  if (Number.isNaN(d.getTime())) return "";
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(d);
+  return `${formatted} MT`;
 }
 
 function denverHour(ms) {
@@ -350,7 +377,7 @@ export function formatCatalogTable(rows) {
   return [
     header,
     ...rows.map((r) => {
-      const due = r.due ? String(r.due).replace("T", " ").slice(0, 16) : "";
+      const due = formatDueDenver(r.due);
       const status = r.complete ? "complete" : "open";
       return `| ${escCell(r.title)} | ${escCell(due)} | ${escCell(r.points)} | ${escCell(
         r.type
@@ -366,9 +393,7 @@ export function formatCheckpoints(rows) {
   }
   return cps
     .map((r) => {
-      const due = r.due
-        ? String(r.due).replace("T", " ").slice(0, 16)
-        : "undated";
+      const due = r.due ? formatDueDenver(r.due) : "undated";
       const pts = r.points != null && r.points !== "" ? `${r.points} pts` : "points TBD";
       return `- **${r.title}** — due ${due}; ${pts} (${r.type})`;
     })
@@ -493,6 +518,15 @@ export function isSignupTitle(title, type) {
 export function buildWeekNoteParts(row) {
   const hint = classifyOutcomeHint(row.title, row.type, row.description);
   const parts = [(row.sources || [row.source]).join("+"), "open", hint].filter(Boolean);
+  const pts = Number(row.points);
+  const typeStr = String(row?.type || "").toLowerCase();
+  if (
+    Number.isFinite(pts) &&
+    pts > 0 &&
+    (typeStr.includes("discussion") || typeStr === "announcement")
+  ) {
+    parts.push("stakes:assignment-like");
+  }
   if (row.html_url) {
     const url = String(row.html_url).startsWith("http")
       ? row.html_url
@@ -504,6 +538,105 @@ export function buildWeekNoteParts(row) {
 
 export function syllabusHash(body) {
   return crypto.createHash("sha256").update(String(body || ""), "utf8").digest("hex").slice(0, 16);
+}
+
+/**
+ * True when Canvas syllabus_body is empty, very short, or a placeholder pointing elsewhere.
+ * @param {string} plain
+ */
+export function isSyllabusStub(plain) {
+  const t = String(plain || "").trim();
+  if (!t) return true;
+  if (t.length < SYLLABUS_STUB_MAX_CHARS) return true;
+  if (SYLLABUS_STUB_PHRASE_RE.test(t) && t.length < SYLLABUS_STUB_PHRASE_MAX_CHARS) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Pages to fetch as syllabus supplements (broader than policy-link list).
+ * @param {Array<{title?: string, url?: string, html_url?: string, published?: boolean, course_id?: string|number}>} pages
+ */
+export function filterSyllabusSupplementPages(pages) {
+  return (pages || [])
+    .filter(
+      (p) => p && p.published !== false && SYLLABUS_PAGE_RE.test(String(p.title || ""))
+    )
+    .map((p) => ({
+      title: p.title,
+      url: p.url,
+      html_url:
+        p.html_url ||
+        (p.url ? `${BASE}/courses/${p.course_id || ""}/pages/${p.url}` : ""),
+    }))
+    .sort((a, b) => String(a.title).localeCompare(String(b.title)));
+}
+
+/**
+ * Merge Canvas syllabus page + supplemental pages/files into one plain-text cache.
+ * @param {{ canvasBody?: string, pages?: Array<{title: string, body: string}>, files?: Array<{filename: string, text?: string, path?: string}> }} parts
+ */
+export function mergeSyllabusParts({ canvasBody = "", pages = [], files = [] } = {}) {
+  const parts = [];
+  const body = String(canvasBody || "").trim();
+  if (body) {
+    parts.push(`--- CANVAS SYLLABUS PAGE ---\n${body}`);
+  }
+  for (const p of pages || []) {
+    const text = String(p?.body || "").trim();
+    if (!text) continue;
+    parts.push(`--- PAGE: ${p.title || "untitled"} ---\n${text}`);
+  }
+  for (const f of files || []) {
+    const text = String(f?.text || "").trim();
+    const name = f?.filename || "syllabus.pdf";
+    if (text) {
+      parts.push(`--- FILE: ${name} ---\n${text}`);
+    } else if (f?.path) {
+      parts.push(
+        `--- FILE: ${name} (text extraction pending — see ${f.path}) ---`
+      );
+    }
+  }
+  return parts.join("\n\n").trim();
+}
+
+/**
+ * Extract text from a PDF. Tries pdftotext, then python3+pypdf.
+ * @param {string} pdfPath
+ * @returns {string|null}
+ */
+export function extractPdfText(pdfPath) {
+  if (!pdfPath || !fs.existsSync(pdfPath)) return null;
+
+  try {
+    const out = execFileSync("pdftotext", ["-layout", pdfPath, "-"], {
+      encoding: "utf8",
+      maxBuffer: 12 * 1024 * 1024,
+    });
+    if (String(out || "").trim()) return String(out).trim();
+  } catch {
+    /* fall through */
+  }
+
+  try {
+    const script = `
+from pypdf import PdfReader
+import sys
+r = PdfReader(sys.argv[1])
+print("\\n".join((p.extract_text() or "") for p in r.pages))
+`;
+    const out = execFileSync("python3", ["-c", script, pdfPath], {
+      encoding: "utf8",
+      maxBuffer: 12 * 1024 * 1024,
+    });
+    if (String(out || "").trim()) return String(out).trim();
+  } catch {
+    /* fall through */
+  }
+
+  return null;
 }
 
 const AGENT_POLICY_KV_RE = /^\s*([a-z_]+)\s*:\s*(.*?)\s*$/i;
@@ -695,7 +828,7 @@ function formatInstructorProfileBlock(agentBody, policyPages) {
 
 /**
  * Merge sync-owned catalog/checkpoints into inbox/courses/CODE.md.
- * Preserves Theme, Arc notes, Instructor profile (agent), Syllabus, Modules, Worth when present.
+ * Preserves Theme, Syllabus sources, Arc notes, Instructor profile (agent), Syllabus, Modules, Worth when present.
  */
 export function mergeCourseFileContent({
   existingContent,
@@ -708,6 +841,10 @@ export function mergeCourseFileContent({
   const header = parseCourseHeader(existing, courseTitle);
   const sections = existing ? existing : "";
   const theme = cleanSectionBody(extractSection(sections, "Theme"), "Theme");
+  const syllabusSources = cleanSectionBody(
+    extractSection(sections, "Syllabus sources"),
+    "Syllabus sources"
+  );
   const arcNotes = cleanSectionBody(extractSection(sections, "Arc notes"), "Arc notes");
   const lectureCaptures = cleanSectionBody(
     extractSection(sections, "Lecture captures"),
@@ -753,6 +890,9 @@ export function mergeCourseFileContent({
         : `${syllabus}\n`;
 
   const themeBlock = isPlaceholderSection(theme) ? "-\n" : `${theme}\n`;
+  const syllabusSourcesBlock = isPlaceholderSection(syllabusSources)
+    ? ""
+    : `## Syllabus sources\n\n${syllabusSources}\n\n`;
   const arcBlock = isPlaceholderSection(arcNotes) ? "-\n" : `${arcNotes}\n`;
   const lectureBlock = isPlaceholderSection(lectureCaptures)
     ? ""
@@ -775,7 +915,7 @@ Syllabus hash: ${syllabusHashValue || ""}
 ## Theme
 
 ${themeBlock}
-## Checkpoints
+${syllabusSourcesBlock}## Checkpoints
 
 ${formatCheckpoints(catalogRows)}
 
@@ -940,6 +1080,10 @@ export function classifyOutcomeHint(title, type, description = "") {
 export function shouldIncludeInWeekTable(row) {
   const type = String(row?.type || "").toLowerCase();
   const title = String(row?.title || "").toLowerCase();
+  const pts = Number(row?.points);
+  if (Number.isFinite(pts) && pts > 0) {
+    return true;
+  }
 
   if (type === "calendar_event" || type === "event") {
     if (
@@ -1069,16 +1213,17 @@ export function fromAssignments(courseName, courseId, assignments) {
 export function fromDiscussions(courseName, courseId, topics) {
   const rows = [];
   for (const t of topics || []) {
-    const due = t.due_at || t.assignment?.due_at || "";
+    const linked = t.assignment || t;
+    const due = studentDueAt(linked) || t.due_at || "";
     if (!due) continue;
-    const submission = t.assignment?.submission;
+    const submission = t.assignment?.submission ?? t.submission;
     rows.push({
       source: "discussion_topics",
       course: courseName,
       title: t.title || "Discussion",
       due,
       points: t.assignment?.points_possible ?? t.points_possible ?? "",
-      type: t.assignment_id ? "discussion_topic" : "discussion_topic",
+      type: "discussion_topic",
       html_url: t.html_url || "",
       complete: submissionComplete(submission),
       course_id: courseId,
@@ -1214,7 +1359,116 @@ export function filterPolicyPages(pages) {
     .sort((a, b) => String(a.title).localeCompare(String(b.title)));
 }
 
-async function fetchCourseInstructorMeta(page, courseId) {
+/**
+ * Fetch page body via Canvas REST.
+ * @returns {Promise<{title: string, url: string, body: string}|null>}
+ */
+async function fetchPageBody(page, courseId, pageMeta) {
+  const slug = pageMeta?.url;
+  if (!slug) return null;
+  const res = await apiGet(page, `/api/v1/courses/${courseId}/pages/${encodeURIComponent(slug)}`);
+  if (!res.ok) return null;
+  const body = stripHtmlTags(res.json?.body || "");
+  if (!body.trim()) return null;
+  return {
+    title: res.json?.title || pageMeta.title || slug,
+    url: slug,
+    body,
+  };
+}
+
+/**
+ * List syllabus-named files and download the first PDF/DOCX text we can extract.
+ * Also checks local `_raw/CODE-syllabus.pdf` when courseCode is known.
+ * @returns {Promise<Array<{filename: string, text?: string, path?: string}>>}
+ */
+async function fetchSyllabusFiles(page, courseId, { courseCode } = {}) {
+  const files = [];
+
+  if (courseCode) {
+    const localPdf = path.join(COURSES_RAW_DIR, `${courseCode}-syllabus.pdf`);
+    if (fs.existsSync(localPdf)) {
+      const text = extractPdfText(localPdf);
+      files.push({
+        filename: path.basename(localPdf),
+        text: text || undefined,
+        path: text ? undefined : localPdf,
+      });
+    }
+  }
+
+  const filesRes = await apiGet(page, `/api/v1/courses/${courseId}/files`, {
+    search_term: "syllabus",
+    "content_types[]": "application/pdf",
+    per_page: "20",
+    sort: "created_at",
+    order: "desc",
+  });
+  if (!filesRes.ok) return files;
+
+  const candidates = (Array.isArray(filesRes.json) ? filesRes.json : []).filter((f) => {
+    const name = String(f?.display_name || f?.filename || "").toLowerCase();
+    return /\.pdf$|\.docx?$|syllabus/i.test(name);
+  });
+
+  for (const f of candidates.slice(0, 3)) {
+    const filename = f.display_name || f.filename || `syllabus-${f.id}.pdf`;
+    const alreadyHave = files.some(
+      (x) => x.filename === filename || (x.text && x.text.length > 500)
+    );
+    if (alreadyHave && files.some((x) => x.text && x.text.length > 500)) {
+      continue;
+    }
+
+    const downloadUrl = f.url || `${BASE}/api/v1/files/${f.id}/download?download_frd=1`;
+    let destPath = path.join(
+      COURSES_RAW_DIR,
+      courseCode ? `${courseCode}-syllabus-canvas.pdf` : `course-${courseId}-syllabus.pdf`
+    );
+
+    try {
+      fs.mkdirSync(COURSES_RAW_DIR, { recursive: true });
+      const buf = await page.evaluate(async (url) => {
+        const res = await fetch(url, { credentials: "include" });
+        if (!res.ok) return null;
+        const ab = await res.arrayBuffer();
+        const bytes = new Uint8Array(ab);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary);
+      }, downloadUrl);
+
+      if (!buf) continue;
+      const binary = Buffer.from(buf, "base64");
+      if (binary.length < 100) continue;
+      fs.writeFileSync(destPath, binary);
+      const text = extractPdfText(destPath);
+      files.push({
+        filename,
+        text: text || undefined,
+        path: text ? undefined : destPath,
+      });
+      if (text && text.length > 500) break;
+    } catch {
+      /* skip file */
+    }
+  }
+
+  return files;
+}
+
+/**
+ * Resolve COURSE_FILE_MAP code for a Canvas course name/code.
+ */
+export function resolveCourseCode(name, code) {
+  const blob = `${name || ""} ${code || ""}`;
+  for (const row of COURSE_FILE_MAP) {
+    if (row.patterns.some((re) => re.test(blob))) return row.code;
+  }
+  return null;
+}
+
+async function fetchCourseInstructorMeta(page, courseId, { courseName, courseCode } = {}) {
   const detailRes = await apiGet(page, `/api/v1/courses/${courseId}`, {
     "include[]": ["syllabus_body", "teachers"],
   });
@@ -1240,20 +1494,86 @@ async function fetchCourseInstructorMeta(page, courseId) {
     teachers.filter((t) => /ta\b|teaching assistant/i.test(String(t.display_name || t.name || "")))
   );
   const syllabusBody = course.syllabus_body || "";
-  const syllabusPlain = stripHtmlTags(syllabusBody);
+  let syllabusPlain = stripHtmlTags(syllabusBody);
 
   const pagesRes = await apiAllPages(page, `/api/v1/courses/${courseId}/pages`, {
     per_page: 100,
   });
-  const policyPages = pagesRes.ok
-    ? filterPolicyPages(
-        (pagesRes.items || []).map((p) => ({
-          ...p,
-          course_id: courseId,
-          html_url: p.html_url || `${BASE}/courses/${courseId}/pages/${p.url}`,
-        }))
-      )
+  const allPages = pagesRes.ok
+    ? (pagesRes.items || []).map((p) => ({
+        ...p,
+        course_id: courseId,
+        html_url: p.html_url || `${BASE}/courses/${courseId}/pages/${p.url}`,
+      }))
     : [];
+  const policyPages = filterPolicyPages(allPages);
+
+  const stub = isSyllabusStub(syllabusPlain);
+  // Always pull grading/policy-named pages for APPM-style multi-tab syllabi;
+  // for stubs, pull the broader supplement set.
+  const supplementCandidates = stub
+    ? filterSyllabusSupplementPages(allPages)
+    : filterSyllabusSupplementPages(allPages).filter((p) =>
+        /exams.*grading|assignments.*grading|course policies|grading/i.test(String(p.title || ""))
+      );
+
+  const fetchedPages = [];
+  const seenUrls = new Set();
+  for (const meta of supplementCandidates) {
+    if (!meta.url || seenUrls.has(meta.url)) continue;
+    seenUrls.add(meta.url);
+    const fetched = await fetchPageBody(page, courseId, meta);
+    if (fetched) fetchedPages.push(fetched);
+  }
+
+  // Also ensure policy pages are listed even when we didn't fetch bodies
+  for (const pp of policyPages) {
+    if (pp.url && !seenUrls.has(pp.url) && stub) {
+      seenUrls.add(pp.url);
+      const fetched = await fetchPageBody(page, courseId, pp);
+      if (fetched) fetchedPages.push(fetched);
+    }
+  }
+
+  const code =
+    resolveCourseCode(courseName || course.name, courseCode || course.course_code) ||
+    resolveCourseCode(course.name, course.course_code);
+
+  let fileParts = [];
+  if (stub || !syllabusPlain) {
+    fileParts = await fetchSyllabusFiles(page, courseId, { courseCode: code });
+  } else if (code) {
+    // Prefer local PDF when Canvas page is stub-like or local PDF exists
+    const localPdf = path.join(COURSES_RAW_DIR, `${code}-syllabus.pdf`);
+    if (fs.existsSync(localPdf)) {
+      const text = extractPdfText(localPdf);
+      if (text) fileParts.push({ filename: path.basename(localPdf), text });
+    }
+  }
+
+  if (fetchedPages.length || fileParts.length) {
+    syllabusPlain = mergeSyllabusParts({
+      canvasBody: syllabusPlain,
+      pages: fetchedPages,
+      files: fileParts,
+    });
+  }
+
+  // Merge policy page list with any supplement pages we actually used
+  const policyByUrl = new Map(policyPages.map((p) => [p.url || p.html_url, p]));
+  for (const fp of fetchedPages) {
+    const key = fp.url;
+    if (!policyByUrl.has(key)) {
+      policyByUrl.set(key, {
+        title: fp.title,
+        url: fp.url,
+        html_url: `${BASE}/courses/${courseId}/pages/${fp.url}`,
+      });
+    }
+  }
+  const mergedPolicyPages = [...policyByUrl.values()].sort((a, b) =>
+    String(a.title).localeCompare(String(b.title))
+  );
 
   return {
     ok: true,
@@ -1263,7 +1583,7 @@ async function fetchCourseInstructorMeta(page, courseId) {
     tas,
     syllabusPlain,
     syllabusHash: syllabusPlain ? syllabusHash(syllabusPlain) : "",
-    policyPages,
+    policyPages: mergedPolicyPages,
     pagesOk: pagesRes.ok,
   };
 }
@@ -1396,10 +1716,13 @@ export async function fetchDueUniverse(page, { daysAhead = 14 } = {}) {
       page,
       `/api/v1/courses/${id}/discussion_topics`,
       {
-        "include[]": ["assignment", "all_dates"],
+        "include[]": ["assignment", "all_dates", "submission"],
       }
     );
-    const instructorMeta = await fetchCourseInstructorMeta(page, id);
+    const instructorMeta = await fetchCourseInstructorMeta(page, id, {
+      courseName: name,
+      courseCode: c.course_code,
+    });
     if (instructorMeta.ok) syllabusOk += 1;
     else syllabusFail += 1;
 

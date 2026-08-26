@@ -16,7 +16,7 @@ Single source of scoring rules for [`jacob-task-brief`](../skills/jacob-task-bri
 | Factor | Signal | Effect |
 |--------|--------|--------|
 | **Urgency** | Due in &lt;24h / &lt;72h / this week / undated | Pushes toward P0–P1 when soon; undated stays low unless unlock |
-| **Stakes** | Points, quiz/exam, proctored | High stakes → Jacob deep time (Worth), never agent-submit |
+| **Stakes** | Points, quiz/exam, proctored | Canvas **type** does not set P-level. If `points > 0` (or graded), score stakes like an assignment — including graded discussions (same urgency×points rules as written HW). High stakes → Jacob deep time (Worth), never agent-submit |
 | **Goal fit** | Career rank + course defaults in `JACOB.md` (CSCI default Worth; APPM exams Jacob; BCOR presentations Jacob; entrepreneurship lens) | Boost career-aligned work within same urgency band |
 | **Friction** | WebAssign / ZyBooks / PlayPosit / other LTI | Schedule Jacob-in-tool block; never auto-submit |
 | **Unlock** | Pre-reading before lab, signup before event, access setup | Raise priority even if low points |
@@ -28,7 +28,7 @@ Single source of scoring rules for [`jacob-task-brief`](../skills/jacob-task-bri
 2. Due &lt;72h **or** quiz/exam/proctored **or** unlocks same-week work → at least **P1**.
 3. Strong goal fit (esp. CSCI build / pitch / team) in this week → prefer **P1** over **P2** when urgency is comparable.
 4. Same-platform LTI cluster due same day → keep as **P1/P2** but **batch** in one sitting (see time rules).
-5. Tiny points, mechanical, native, far due → **P3** (agent draft when policy allows).
+5. Tiny points → **P3** only when the work is **mechanical** busywork (playlist, training screenshot, empty announcements) and far due — **not** discussions, unlocks, peer work, or any judgment item with points.
 6. When unsure between two adjacent levels → **ask Jacob**, do not invent stakes.
 
 ## Time optimization (fixed)

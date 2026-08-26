@@ -1,0 +1,12 @@
+# Panel — Women's Entrepreneurship
+
+**Genre:** Panel / event  
+**Why Jacob:** Person-by-person; interest filter (capital / climate gets more depth); `I would have asked`; classmate rapport detail.
+
+## Excerpt
+
+Social entrepreneurship is solving pressing social and economic issues around the world. I think that all of these women emulate the nature of a social entrepreneur well. First, Megan Whimrick drives capital for a private climate fund. She was definitely the most interesting for me to listen to because of my appreciation for investing and driving capital. I find that her work is especially difficult in an emerging sector like renewable batteries and fuels. Many companies with renewable products in the US are heavily subsidized which can cause an artificial market. For investors it's difficult to gauge the scalability or durability of a company. She must be extremely persuasive and must have quite the selection of companies in the fund for her level of success. I noticed she mentioned that the beginning of her career was in government relations for green vehicles. I imagine her introduction to the renewable energy field through vehicles prepared her well to analyze up and coming industries and companies within. Before the meeting Greydon and I found that she was a competitive rower at some point in her life which boosted her rapport with us even more. Now she is a venture capitalist driving a 300 million fund for climate conservation. Quite the story, and very impressive.
+
+Rachel Allen’s dialogue was interesting. She discussed how the most important work begins within, sustaining life for all beings on the planet. At least, this was my interpretation. I appreciated her nonprofit business model and would have liked to find out more. I would have asked her the background behind the moral principles her organization uses. I would have also asked how she determines the right or wrong way to approach a conflict or situation.
+
+Jamie Bailey went to the University of Florida and attended Winter Park High School. I found it incredible that her restaurant, Kaya, was the only Filipino restaurant to hold a Michelin star. She stated that her life after school was spent more or less in youth development nonprofits. She taught sixth grade in Phoenix, Arizona which I imagine led her to pursue education equality. It radiated from her that she wants everyone to have access to quality education.

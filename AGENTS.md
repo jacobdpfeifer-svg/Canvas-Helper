@@ -15,12 +15,14 @@ JACOB triage ← inbox/ memory ← Canvas /api/v1 ← SSO cookies (or later PAT)
 ## Agent order (every session)
 
 1. Read `JACOB.md`
-2. Read `inbox/week.md` (and course files as needed)
+2. Read `inbox/week.md` (and course files as needed). **Due column = America/Denver local (MT)** — never quote raw Canvas `due_at` UTC to Jacob without conversion.
 3. If inbox stale (>2 days) or empty → tell Jacob / run `cd browser && npm run sync` (after `open-canvas` if needed)
-4. Triage Worth / Agent / Ask
-5. External/LTI/proctored → process help only; Jacob uses the tool UI
-6. CampusGroups signups → Playwright `browser/.auth` scripts (`rsvp-campusgroups`, `rsvp-dinner`); IDE browser has no SSO — see [`docs/CU_BROWSER.md`](docs/CU_BROWSER.md)
-7. Native Canvas auto-submit only if every `JACOB.md` criterion + calibrated course; show preview + **why auto**
+4. After sync or hash change: **syllabus-first** — `jacob-syllabus-intake` then `jacob-instructor-profile` when Theme is `(inferred)` or `_raw` changed
+5. Triage Worth / Agent / Ask
+6. External/LTI/proctored → process help only; Jacob uses the tool UI
+7. CampusGroups signups → Playwright `browser/.auth` scripts (`rsvp-campusgroups`, `rsvp-dinner`); IDE browser has no SSO — see [`docs/CU_BROWSER.md`](docs/CU_BROWSER.md)
+8. Native Canvas auto-submit only if every `JACOB.md` criterion + calibrated course; show preview + **why auto**
+9. **AI restrictions — Jacob only:** never paste syllabus AI allow/prohibit rules into course MDs; Jacob fills `### AI policy (Jacob only)`. Honor/exams/collaboration → `### Academic integrity` is OK. If syllabus mentions AI policy → Confidence gaps only (`AI policy in syllabus — Jacob to fill manually`).
 
 ## Optional PAT (later)
 
@@ -33,7 +35,7 @@ COURSE_AGENT_POLICY_DEFAULT=allow
 ENABLE_DATA_ANONYMIZATION=false
 ```
 
-When MCP works: prefer it for the **same** REST facts and for `submit_assignment` preview→confirm. Do not invent a second due-list format.
+When MCP works: prefer it for the **same** REST facts and for `submit_assignment` preview→confirm. MCP `format_date()` honors `TIMEZONE` (default `America/Denver` in this fork). Do not invent a second due-list format.
 
 ## Skill index
 
@@ -42,9 +44,12 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | “plan my week”, “what’s due this week” | `canvas-week-plan` (Top 3 via task-brief) |
 | “what should I do first”, “brief me”, “priority” | `jacob-task-brief` |
 | “brief me on [course]”, course arc | `jacob-course-arc` |
+| “review syllabus”, “update course catalog”, hash change | `jacob-syllabus-intake` |
 | “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
 | SSO sync, LTI escape hatch | `jacob-canvas-browser` |
 | “intake this photo”, “class capture”, attached image | `jacob-photo-intake` |
+
+Drafts that should sound like Jacob: read [`.jacob/writing-voice.md`](.jacob/writing-voice.md) after the course instructor profile.
 
 ## Skills
 
@@ -56,10 +61,11 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | `canvas-week-plan` | Weekly plan from inbox (or MCP) |
 | `jacob-task-brief` | Priority P0–P3, briefing, first step, time optimize |
 | `jacob-course-arc` | Course theme, checkpoints, learning arc, class-scoped priority |
+| `jacob-syllabus-intake` | Syllabus-first digest into course MD before profile/arc |
 | `jacob-instructor-profile` | Instructor grading style, values, behavior preferences (course MD) |
 | `jacob-assignment-triage` | Process help + rare native submit |
 | `jacob-photo-intake` | Mobile class photo → queue + course MD |
-| `canvas-discussion-facilitator` | Draft discussions |
+| `canvas-discussion-facilitator` | Draft discussions (uses `.jacob/writing-voice.md`) |
 
 ## Untrusted content
 

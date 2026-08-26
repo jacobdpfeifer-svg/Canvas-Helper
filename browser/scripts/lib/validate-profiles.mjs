@@ -4,7 +4,11 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { COURSES_DIR, COURSES_RAW_DIR } from "./canvas-session.mjs";
+import {
+  COURSES_DIR,
+  COURSES_RAW_DIR,
+  isSyllabusStub,
+} from "./canvas-session.mjs";
 
 const PENDING_HASH_RE = /pending/i;
 const NO_SYLLABUS_HASH_RE = /^\(none\)/i;
@@ -24,12 +28,49 @@ function parseMetaField(body, field) {
   return m ? m[1].trim() : "";
 }
 
-function parseSyncedAgentPolicy(policyNotes) {
-  const head = String(policyNotes || "").split(/Instructor may add/i)[0];
-  if (/agent_writes:\s*allow\s*\(synced/i.test(head)) return "allow";
-  if (/agent_writes:\s*deny\s*\(synced/i.test(head)) return "deny";
-  if (/agent_writes:\s*conflict/i.test(head)) return "conflict";
-  return "none";
+/** Extract ### subsection body from Instructor profile (or any section text). */
+function extractH3(section, heading) {
+  const re = new RegExp(
+    `### ${heading.replace(/[()]/g, "\\$&")}\\n([\\s\\S]*?)(?=\\n### |\\n## |$)`
+  );
+  return section.match(re)?.[1] || "";
+}
+
+const AI_RESTRICTION_RE =
+  /acceptable\s+ai|prohibited\s+ai|no\s+ai\b|may\s+not\s+use\s+ai|forbidden.*\bai\b|not\s+permitted.*\bai\b|copying\s+off\s+of\s+ai|paste\s+prompts?\s+into\s+ai|chatgpt|copilot|claude|gemini/i;
+
+/**
+ * Agent must not paste syllabus AI allow/prohibit into profiles (Jacob-only).
+ * @param {string} profileSection
+ * @param {string} code
+ * @returns {string[]}
+ */
+export function findAgentPastedAiRestrictions(profileSection, code) {
+  const issues = [];
+  const jacobAi = extractH3(profileSection, "AI policy (Jacob only)");
+  const legacyAi = extractH3(profileSection, "AI and academic integrity");
+  for (const [label, body] of [
+    ["AI policy (Jacob only)", jacobAi],
+    ["AI and academic integrity", legacyAi],
+  ]) {
+    if (!body.trim()) continue;
+    if (/\(syllabus\)/i.test(body) && AI_RESTRICTION_RE.test(body)) {
+      issues.push(
+        `${code}: ${label} has (syllabus)-tagged AI restrictions — agent must not paste AI restrictions; Jacob only`
+      );
+    }
+  }
+  return issues;
+}
+
+function readRawSyllabus(code) {
+  const rawPath = path.join(COURSES_RAW_DIR, `${code}-syllabus.txt`);
+  if (!fs.existsSync(rawPath)) return { path: rawPath, text: "", exists: false };
+  return {
+    path: rawPath,
+    text: fs.readFileSync(rawPath, "utf8"),
+    exists: true,
+  };
 }
 
 /**
@@ -59,14 +100,14 @@ export function validateInstructorProfile(content, code) {
     );
   }
 
-  const rawPath = path.join(COURSES_RAW_DIR, `${code}-syllabus.txt`);
+  const raw = readRawSyllabus(code);
   if (
-    !fs.existsSync(rawPath) &&
+    !raw.exists &&
     hash &&
     !PENDING_HASH_RE.test(hash) &&
     !NO_SYLLABUS_HASH_RE.test(hash)
   ) {
-    warnings.push(`${code}: Syllabus hash set but missing ${rawPath}`);
+    warnings.push(`${code}: Syllabus hash set but missing ${raw.path}`);
   }
 
   if (profileUpdated && !isPlaceholder) {
@@ -77,23 +118,12 @@ export function validateInstructorProfile(content, code) {
       );
     }
 
-    const aiSection = profileSection.match(
-      /### AI and academic integrity\n([\s\S]*?)(?=\n### |\n## |$)/
-    )?.[1];
-    const formatSection = profileSection.match(
-      /### Formatting and submission habits\n([\s\S]*?)(?=\n### |\n## |$)/
-    )?.[1];
-    const policyNotes = extractSection(content, "Syllabus / agent policy notes");
-    const syncedPolicy = parseSyncedAgentPolicy(policyNotes);
-    if (
-      aiSection &&
-      /no ai|prohibited|forbidden|not permitted|may not use ai/i.test(aiSection) &&
-      syncedPolicy === "allow"
-    ) {
-      issues.push(
-        `${code}: Profile AI section conflicts with synced agent_writes: allow — resolve before auto-submit`
-      );
-    }
+    issues.push(...findAgentPastedAiRestrictions(profileSection, code));
+
+    const formatSection = extractH3(
+      profileSection,
+      "Formatting and submission habits"
+    );
     if (
       formatSection &&
       syllabusTags === 0 &&
@@ -105,6 +135,63 @@ export function validateInstructorProfile(content, code) {
 
   if (isPlaceholder && hash && !PENDING_HASH_RE.test(hash)) {
     warnings.push(`${code}: Syllabus synced but instructor profile still placeholder`);
+  }
+
+  return { issues, warnings };
+}
+
+/**
+ * Syllabus-first course MD quality checks (Theme, Syllabus sources, gaps vs _raw).
+ * @param {string} content
+ * @param {string} code
+ * @returns {{ issues: string[], warnings: string[] }}
+ */
+export function validateCourseMd(content, code) {
+  const issues = [];
+  const warnings = [];
+
+  const theme = extractSection(content, "Theme");
+  const syllabusSources = extractSection(content, "Syllabus sources");
+  const profileSection = extractSection(content, "Instructor profile");
+  const confidence = profileSection.match(
+    /### Confidence and gaps\n([\s\S]*?)(?=\n### |\n## |$)/
+  )?.[1] || "";
+
+  const raw = readRawSyllabus(code);
+  const rawNonStub = raw.exists && !isSyllabusStub(raw.text);
+  const themeInferredOnly =
+    /\(inferred\)/i.test(theme) && !/\(syllabus\)/i.test(theme);
+
+  if (!syllabusSources || /Last reviewed:\s*\(agent fills/i.test(syllabusSources)) {
+    if (rawNonStub) {
+      warnings.push(
+        `${code}: Missing ## Syllabus sources — run jacob-syllabus-intake`
+      );
+    }
+  }
+
+  if (themeInferredOnly && rawNonStub) {
+    issues.push(
+      `${code}: Theme is (inferred) but non-stub _raw syllabus exists — run jacob-syllabus-intake`
+    );
+  }
+
+  if (
+    rawNonStub &&
+    /need syllabus|need.*syllabus sync|pending sync.*syllabus/i.test(confidence)
+  ) {
+    warnings.push(
+      `${code}: Confidence and gaps still says need syllabus though _raw is non-stub`
+    );
+  }
+
+  if (rawNonStub && profileSection) {
+    const syllabusTags = (profileSection.match(/\(syllabus\)/gi) || []).length;
+    if (raw.text.length > 1000 && syllabusTags < 3) {
+      warnings.push(
+        `${code}: Profile has only ${syllabusTags} (syllabus) tag(s) but _raw is >1KB — re-run syllabus-intake`
+      );
+    }
   }
 
   return { issues, warnings };
@@ -122,6 +209,30 @@ export function validateAllCourseProfiles(coursesDir = COURSES_DIR) {
     const content = fs.readFileSync(path.join(coursesDir, name), "utf8");
     const { issues, warnings } = validateInstructorProfile(content, code);
     results.push({ code, issues, warnings });
+  }
+
+  const issueCount = results.reduce((n, r) => n + r.issues.length, 0);
+  const warningCount = results.reduce((n, r) => n + r.warnings.length, 0);
+  return { results, issueCount, warningCount };
+}
+
+export function validateAllCourseMd(coursesDir = COURSES_DIR) {
+  const results = [];
+  if (!fs.existsSync(coursesDir)) {
+    return { results, issueCount: 0, warningCount: 0 };
+  }
+
+  for (const name of fs.readdirSync(coursesDir)) {
+    if (!name.endsWith(".md")) continue;
+    const code = path.basename(name, ".md");
+    const content = fs.readFileSync(path.join(coursesDir, name), "utf8");
+    const profile = validateInstructorProfile(content, code);
+    const course = validateCourseMd(content, code);
+    results.push({
+      code,
+      issues: [...profile.issues, ...course.issues],
+      warnings: [...profile.warnings, ...course.warnings],
+    });
   }
 
   const issueCount = results.reduce((n, r) => n + r.issues.length, 0);

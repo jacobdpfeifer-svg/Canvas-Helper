@@ -8,6 +8,7 @@
     "sync": "node scripts/sync-week.mjs",
     "pull-todo": "node scripts/sync-week.mjs",
     "validate-profiles": "node scripts/validate-profiles.mjs",
+    "validate-course-md": "node scripts/validate-course-md.mjs",
     "refresh-profiles": "node scripts/refresh-instructor-profiles.mjs",
     "audit": "node scripts/audit-canvas.mjs",
     "sync-dinners": "node scripts/sync-coen-dinners.mjs",

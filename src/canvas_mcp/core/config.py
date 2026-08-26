@@ -200,7 +200,7 @@ class Config:
 
         # Optional metadata
         self.institution_name = os.getenv("INSTITUTION_NAME", "")
-        self.timezone = os.getenv("TIMEZONE", "UTC")
+        self.timezone = os.getenv("TIMEZONE", "America/Denver")
 
         # This fork is student-only; CANVAS_ROLE is coerced in validate_config().
         self.canvas_role = os.getenv("CANVAS_ROLE", "student").lower()

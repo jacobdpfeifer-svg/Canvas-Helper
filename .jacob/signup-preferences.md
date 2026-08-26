@@ -13,5 +13,6 @@ Agent reads this before calendar-binding signups (CampusGroups, etc.). Ask Jacob
 ## AI Lab workshop (COEN 1500)
 
 - **Rule:** ask Jacob for slot preference before registering
-- **Preferred slot:** (Jacob to choose — see `inbox/coen-ai-labs.md`)
-- **Status:** unconfirmed
+- **Preferred slot:** Mon Sep 21 2026 6:00 PM (evening after classes; Williams Village North Rm 186)
+- **Status:** confirmed
+- **Registered:** AI Lab workshop, 2026-09-21 6pm, event 386299

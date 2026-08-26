@@ -22,6 +22,7 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md). Assignment use: [`jacob-
 2. Resolve course → `inbox/courses/CODE.md` (see table in [`jacob-course-arc`](../jacob-course-arc/SKILL.md))
 3. If inbox stale (>2 days) or syllabus hash missing → `cd browser && npm run sync` (after `open-canvas` if needed)
 4. Read `inbox/courses/_raw/CODE-syllabus.txt` when present (sync cache)
+5. Run [`jacob-syllabus-intake`](../jacob-syllabus-intake/SKILL.md) first when `_raw` changed, Theme is only `(inferred)` with a non-stub `_raw`, or `## Syllabus sources` is missing / stale vs hash
 
 ## Cache rules
 
@@ -48,8 +49,8 @@ When Jacob shares graded work with instructor comments:
 
 | Priority | Source | How |
 |----------|--------|-----|
-| 1 | Assignment rubric / description | MCP `get_assignment_details` or SSO API for high-stakes items |
-| 2 | Syllabus | `_raw/CODE-syllabus.txt` or MCP `get_syllabus` |
+| 1 | Syllabus digest | From [`jacob-syllabus-intake`](../jacob-syllabus-intake/SKILL.md) / `_raw/CODE-syllabus.txt` — **dominates** catalog inference for weights, honor/exams, formatting (**not** AI allow/prohibit) |
+| 2 | Assignment rubric / description | MCP `get_assignment_details` or SSO API for high-stakes items |
 | 3 | Policy pages | `### Policy pages (synced)` in course MD → MCP `get_page_content` per URL |
 | 4 | Announcements | MCP `list_announcements` + details for last 30 days |
 | 5 | Graded submission comments | MCP `get_my_submission` when Jacob has graded work |
@@ -57,12 +58,13 @@ When Jacob shares graded work with instructor comments:
 
 **Accuracy rules:**
 
-1. Syllabus beats external for grade weights and integrity
+1. Syllabus beats external for grade weights and non-AI integrity (collaboration, exams, Honor Code)
 2. Assignment rubric beats syllabus for that task
 3. Announcements override stale syllabus when professor explicitly clarifies
-4. External never justifies violating integrity or AI policy
+4. **Never paste AI allow/prohibit / tool-ban rules** from syllabus or external into the profile — Jacob owns `### AI policy (Jacob only)`. External never justifies inventing AI restrictions.
 5. Tag bullets: `(syllabus)`, `(assignment: Title)`, `(announcement)`, `(inferred)`, `(external, unverified)`
 6. Multiple teachers → list all; note section/TA uncertainty
+7. On refresh: **preserve** existing Jacob-written `### AI policy (Jacob only)` content; do not overwrite with syllabus AI text
 
 ## Steps
 
@@ -84,7 +86,7 @@ For each primary instructor name:
 
 ### 3. Synthesize into course MD
 
-Update `## Instructor profile` (preserve `### Policy pages (synced)` — sync owns that subsection). Set `Profile updated: YYYY-MM-DD`.
+Update `## Instructor profile` (preserve `### Policy pages (synced)` — sync owns that subsection; preserve Jacob-written `### AI policy (Jacob only)`). Set `Profile updated: YYYY-MM-DD`.
 
 ```markdown
 ## Instructor profile
@@ -100,8 +102,11 @@ Profile updated: YYYY-MM-DD
 ### Communication preferences
 - office hours, email, how to ask questions
 
-### AI and academic integrity
-- …
+### Academic integrity
+- collaboration, exams, Honor Code — **not** AI allow/prohibit (syllabus)
+
+### AI policy (Jacob only)
+(Jacob fills — agents must not paste syllabus AI rules here)
 
 ### Formatting and submission habits
 - file types, naming, length, citations
@@ -130,6 +135,7 @@ Profile updated: YYYY-MM-DD
 - Medium: …
 - Low / external: …
 - Unknown: …
+- AI policy in syllabus — Jacob to fill manually (when applicable)
 ```
 
 Do **not** overwrite sync-owned catalog, checkpoints, or `Syllabus hash` header field.

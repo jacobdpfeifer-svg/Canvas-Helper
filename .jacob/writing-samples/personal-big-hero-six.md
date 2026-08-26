@@ -1,0 +1,18 @@
+# Personal-literary — Big Hero Six / ENG 140
+
+**Genre:** Personal-literary (ENG)  
+**Why Jacob:** Stacked sensory hooks; three-part thesis; media ↔ memory weave; concrete Xbox/brother scene; circular marshmallow close. (Full essay also wrestles gender/family politics with “grain of salt” — see writing-voice.md.)
+
+## Excerpt (hook + thesis)
+
+What would it feel like to fly on a giant marshmallow robot? What would it feel like to scream along the clouds in front of a setting sun? No worries, no cares, just freedom in the sky. In 2016 I fell in love with the animated movie Big Hero Six. Disney presents a story of a boy named Hiro who develops a quirky, fun relationship with a healthcare robot named Baymax. Being adept at developing life changing tech, Hiro is admired for creating a small magnetic device called the Microbot. Interestingly, the Microbot is not only Hiro's triumph but also his demise, as it leads to the death of Tadashi, his older brother. After the tragedy, however, a part of Tadashi is still left behind. Unknowingly, Hiro awakens the marshmallow creature named Baymax which begins their journey. Aside from the ability to fly with Baymax, Hiro and I have similar stories. I believe our journeys align because of our shared passion for tech innovation, the strong relationship my brother and I share, and introduction to gender equality from people around us.
+
+## Excerpt (brother / Xbox parallel)
+
+When you know someone well you will say you know them like a brother or a sister. That relationship is revered by both sides. Hiro and Tadashi are not just brothers but also best friends. Being the oldest, I resonate with Tadashi. While the position in the family can lead to perks it is inevitable that younger siblings will follow the older siblings' example. As a result, for most of my life I have been terrified I would dismantle my brother’s productivity by messing up.
+
+On my thirteenth birthday I received an Xbox which I remember was like receiving the ability to fly. At the time the game Fortnite was becoming increasingly popular and all I wanted to do was play the game. I could feel my brain rotting, and knew it was a horrible way to spend my time. However this was not the worst part, because of the example I set, naturally my younger brother's appetite for video games became unprecedented. Presently, I've asked myself if my brother's Xbox downfall could have been avoided and I've come to the hard truth that if I wasn't playing all the time he would have found better means to spend his time. That is a sobering reality. Even though it seems I left a wake of unproductive gaming addictions, my younger brother and I share numerous other passions. Together we backcountry ski, snowmobile, downhill mountain bike, and dirt bike. What gives me relief is some of those activities I can take credit for.
+
+## Excerpt (close)
+
+Younger Jacob found it rare to identify with the characters of the Disney movies. When I watched Big Hero Six I thought the movie was made specifically for me. Never had I felt a level of connection with a story and main character. Even through my perspective of the world years later the plot, themes, characters, and visual designs all feel tailored to me. I quite enjoyed watching the animation again, realizing how similar I still am to Hiro Hamada. It's funny how much we can learn from certain animated films. Characters aren't bound to reality. Anything is possible. Using our imaginations lights a fire we didn't know existed. Who could have possibly thought a movie about a giant marshmallow robot would have inspired someone like me so much?

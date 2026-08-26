@@ -7,8 +7,9 @@ following conventions:
 - All dates include time components (even if they're 00:00:00)
 - All dates include timezone information (Z for UTC or +/-HH:MM offset)
 - Canvas returns UTC; internal datetime comparisons stay in UTC
-- User-facing output is converted to the configured TIMEZONE (default UTC)
-  so models surface a wall-clock time the user recognizes. Output remains
+- User-facing output is converted to the configured TIMEZONE (default
+  ``America/Denver`` in this Jacob fork) so models surface a wall-clock time
+  the user recognizes. Output remains
   ISO 8601 (e.g. ``2026-05-28T18:59:59-05:00``) so downstream parsers that
   use ``fromisoformat`` continue to work.
 - Dates without timezone information are assumed to be in UTC
