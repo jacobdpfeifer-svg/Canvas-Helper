@@ -255,6 +255,102 @@ enrolling.
   requisites or department permission (`ceadvise@colorado.edu`).
 - Check tuition/financial-aid impact of adding a course after your original bill was set.
 
+## 9. What if Jacob switched out of IBE into a standalone BSBA (Management or Finance emphasis)?
+
+Researched 2026-08-31, hypothetical only — Jacob has not requested this switch.
+[BSBA catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/business-administration-bachelor-science-bsba/)
+
+### What structurally changes
+
+| Bucket | IBE | BSBA (any emphasis, e.g. Management or Finance) |
+|---|---|---|
+| Business core | 30cr, CU-locked | Same 30cr, same CU-locked |
+| Area of emphasis | 18cr, CU-locked, min. 3 semesters (Entrepreneurship or Sustainability only) | Same 18cr, same CU-locked, same min. 3 semesters — just 10 choices instead of 2 (incl. Management, Finance, Accounting, Business Analytics, Marketing, MIS, Real Estate, Strategy & Entrepreneurship, Supply Chain, Sustainable Business) |
+| Engineering coursework | **34cr, CU-locked, cohort-sequenced, project-based** (incl. 2 courses still "to be developed") | **Gone entirely** — this is the single biggest structural change |
+| General Education | 35cr, several named courses (APPM 1350, PHYS 1110) | 33cr, same core Social Science/Written Comm/Diversity structure, but **Natural Sciences is a generic A&S-list category, not a named engineering course** |
+| Electives | 3cr | **Business electives 16cr + Non-business electives 23cr = 39cr** |
+| **Total** | 120cr | 120cr |
+
+Dropping the 34-credit engineering bucket is the headline change — that was IBE's least
+outsourceable, most rigidly cohort-sequenced content. In exchange, the elective space balloons
+from 3 credits to 39 credits.
+
+### Where this genuinely opens up more outside/low-oversight credit
+
+- **Non-business electives (23cr):** wide open — not tied to a named course, so CLEP, DSST, AP,
+  GT Pathways CCCOnline, and pre-approved regionally-accredited transfer credit can all plausibly
+  land here, subject only to the general "C- or better, academic not vocational, non-duplicative"
+  rules in §1. This bucket alone is bigger than all of IBE's flexible space combined.
+- **Natural Sciences gen-ed:** BSBA's footnote states only microeconomics/macroeconomics, math,
+  and writing are "specific" required courses — Natural Sciences and Arts & Humanities pull from
+  the general [A&S Gen Ed list](https://www.colorado.edu/artsandsciences/undergraduate/degree-requirements/general-education-requirements),
+  which is exactly the list CLEP/AP/DSST general-science exams (Biology, Chemistry, Environmental
+  Science, etc. → generic ARSC 1999TC) are designed to satisfy. Under IBE this line item is the
+  named, CU-only **PHYS 1110** — no CLEP equivalent exists for that. This is a real, concrete
+  gain from switching.
+- **Residency ceiling loosens:** if Jacob is no longer in CEAS at all, CEAS's stricter rule (the
+  "only 6 credits of transfer/CLEP without a petition inside your final 45 credits" cap from §3)
+  no longer applies — only Leeds' rule (45 CU hours, 30 business-in-residence) would govern,
+  which doesn't carry that same late-stage 6-credit ceiling.
+
+### Where it does *not* help (don't expect a shortcut here)
+
+- **Mathematical Skills is not more flexible under BSBA — it's a different but equally locked
+  requirement.** Leeds requires **MATH 1112 (Mathematical Analysis in Business)** with a grade
+  of B or higher, and explicitly states there is **"no automatic exemption based on prior
+  coursework, such as calculus."** The only test-out path is Leeds' own in-house **MATH 1112
+  exemption exam** (an Excel/business-math skills test administered by Leeds) — not a CLEP/AP
+  substitute, and not something outside coursework satisfies automatically.
+  ([MATH 1112 course page](http://leeds-faculty.colorado.edu/kornish/business-math-class/))
+  This exemption exam is itself worth knowing about as a low-oversight, one-sitting test-out —
+  just note it's CU-administered, not an outside credential.
+- **Picking Management vs. Finance (vs. any other emphasis) makes essentially zero difference
+  to outsourcing potential.** Every Leeds area of emphasis is 18 CU-only, upper-division credit
+  hours with prerequisite sequencing; no CLEP/DSST exam maps to any specific ACCT/FNCE/MGMT/ORGN
+  -numbered Leeds course (DSST business exams only map to generic ARSC 1999TC, which explicitly
+  cannot fill a major/emphasis requirement — see §4). If tech-entrepreneurship alignment with
+  Jacob's #1 stated career priority matters, Leeds' **Strategy & Entrepreneurship** emphasis is
+  a closer thematic fit than Management or Finance, at the identical CU-lock-in cost — worth
+  mentioning to an advisor as an option alongside Management/Finance, not a speed differentiator.
+- Diversity, Written Communication, and the CLEP-Macroeconomics-for-ECON-2020 trick from §4 are
+  all unaffected by this switch either way.
+
+### Net effect on realistic "how fast"
+
+Rough, self-derived estimate (not an audit): under IBE, roughly 82 of 120 credits are
+structurally CU-only (business core + emphasis + engineering), leaving ~38 credits of flexible
+gen-ed/elective space. Under BSBA, the CU-only core shrinks to roughly 48 credits (business
+core + one emphasis), leaving ~72 credits of elective/gen-ed space — of which a meaningful chunk
+(non-business electives + generic Natural Science/Arts & Humanities gen-ed) is realistically
+CLEP/DSST/AP/transfer-friendly. That's a materially bigger outside-credit runway, purely because
+the engineering half disappears — not because "Management" or "Finance" themselves are more
+testable than IBE's business content.
+
+### How the switch itself would work
+
+- Contact Leeds undergraduate advising (`leedsug@colorado.edu`) or the assigned IBE advisor to
+  ask directly whether moving IBE → standalone BSBA is an internal Leeds major-change request
+  or requires the formal [Intra-University Transfer (IUT)](https://www.colorado.edu/registrar/students/intra-university-transfer)
+  process — IBE is jointly Leeds+CEAS, so this is genuinely ambiguous from the outside and not
+  something to assume either way.
+- Note: CU's IUT page states Leeds IUT applications (the path for students transferring **into**
+  Leeds from other colleges) are closed for Fall 2026 — that closure is about outside students
+  transferring in, not about an existing Leeds-housed IBE student changing their Leeds major, but
+  confirm this distinction with an advisor rather than assuming it doesn't apply.
+- Ask specifically how in-progress Fall 2026 CEAS-linked coursework (APPM 1235, COEN 1500) would
+  be treated if the switch happened mid-semester — whether it converts to elective credit, is
+  dropped, or stays as-is.
+
+### The trade-off this doesn't resolve
+
+Speed and career fit pull in different directions here. IBE is the closest match to Jacob's
+stated #1 career priority (tech entrepreneurship) and #4 (aerospace) in `JACOB.md`'s ranking,
+and its engineering content can't be replicated through outside credit under either program —
+that content either gets built at CU (IBE) or dropped entirely (BSBA). BSBA is faster and far
+more outsourcing-friendly, but trades away the engineering credential and hands-on project
+experience. This is a values/goals call for Jacob and his advisor, not something this research
+resolves.
+
 ## Sources
 
 - [IBE — Bachelor of Science (BS) catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/integrated-business-engineering-bachelor-science-bs/)
@@ -271,3 +367,6 @@ enrolling.
 - [CE Online Credit](https://ce.colorado.edu/programs/ce-online-credit) / [CE Online Credit Dates & Deadlines](https://ce.colorado.edu/programs/ce-online-credit/dates-deadlines) / [Apply & Enroll](https://ce.colorado.edu/programs/ce-online-credit/apply-enroll) (Continuing Education online sessions, Flexible 7-credit cap)
 - [CU Boulder Class Search](https://www.colorado.edu/registrar/students/registration/search) (filtering by campus/instruction method/gen-ed attribute)
 - [CU Catalog — APPM 1235](https://catalog.colorado.edu/courses-a-z/appm/) (credit hours) / [Aerospace Engineering registration guide](https://www.colorado.edu/aerospace/current-students/undergraduates/registration-guide-new-first-year-students) (first-semester 17-credit soft guideline)
+- [BSBA catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/business-administration-bachelor-science-bsba/) (BSBA structure, emphases, footnotes on "specific" gen-ed courses)
+- [MATH 1112 course page / exemption exam](http://leeds-faculty.colorado.edu/kornish/business-math-class/) (no exemption for prior calculus; in-house exemption exam only)
+- [Intra-University Transfer](https://www.colorado.edu/registrar/students/intra-university-transfer) / [Transfer to Leeds (IUT) Advising Resource](https://www.colorado.edu/business-students/resources/current-undergraduate/transfer-leeds-iut-advising-resource) / [Change or Add a Major](https://www.colorado.edu/registrar/students/degree-planning/change-add-program) (process for changing majors)
