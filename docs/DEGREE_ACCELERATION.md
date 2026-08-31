@@ -439,6 +439,101 @@ ahead, not assume.
 4. Confirm current financial aid/scholarship coverage extends to Winter/Summer Session tuition,
    which is billed separately from the flat-rate fall/spring bill.
 
+## 11. Hypothetical: Business Core mostly done + Winter/Summer every year — how much time does that actually save?
+
+Researched 2026-08-31, hypothetical only. Short answer: **much less than the credit-hour math
+suggests — realistically 0 to about 1 semester, not the "up to a year" that stacking 16
+summer credits × several years might imply.** The reason is that IBE's pacing bottleneck isn't
+credit-hour count, it's the length of a sequential, project-based, in-person chain that
+Business Core credit doesn't touch and that new evidence shows summer session can't shortcut.
+
+### New evidence: the GEEN engineering sequence is confirmed not offered in summer
+
+Checked directly (not previously verified in §10): **GEEN 1400 (Engineering Projects)** —
+16-week Fall course description confirms it runs on the regular semester calendar (also
+offered Spring per historical section data), with a mandatory in-person **Design Expo**,
+physical fabrication budget (~$75/student), and required hands-on skills workshops.
+[Course search history](https://www.coursicle.com/colorado/courses/GEEN/1400/) shows recent
+offerings in Fall 2024/2025/2026 and Spring 2024/2025/2026 only — **no summer sections found**.
+The same applies structurally to GEEN 2400 and GEEN 3400 (also team/project-based with
+end-of-term deliverables). GEEN's prefix traces back to the "General Engineering"/Integrated
+Design Engineering (IDE) program, which several other CEAS majors also draw these specific
+courses from — they're shared, established courses, not IBE-exclusive, which is exactly why
+their scheduling pattern (Fall/Spring only, in person) is well-established and unlikely to
+change for IBE's benefit.
+([GEEN 1400 course page](https://www.colorado.edu/center/mortenson/current-students/mortenson-center-courses/geen-1400-first-year-engineering-projects-0))
+
+Note: **GEEN 2851 (Statics) and GEEN 3852 (Thermodynamics)** are more traditional lecture/
+problem-set engineering-science courses (closer in style to a physics course than a team design
+studio) — plausible summer/online candidates, but not confirmed here. Worth asking specifically.
+
+### Why "most BCORs already done" doesn't change the timeline much
+
+Business Core was never the actual pacing bottleneck. Even in the favorable hypothetical where
+most of the 30-credit Business Core is already satisfied, two things still anchor Jacob to
+roughly the standard cohort calendar:
+
+- **BASE 2104 (BCOR Applied Semester Experience, 6cr)** is very likely a live-case/practicum
+  course that applies the preceding BCOR modules — the kind of course that, like the GEEN design
+  sequence, is probably scheduled once per year (Spring, per the recommended plan) and not
+  summer-compressible. Not confirmed here — worth asking the advisor directly, but structurally
+  similar risk profile to the GEEN sequence.
+- **The Engineering Coursework (34cr) sequence spans Years 2 through 4 by design** — GEEN 1400
+  (Y2 Fall) → GEEN 1017 (Y2 Spring) → GEEN 2400 + GEEN 2851 (Y3 Fall) → GEEN 3400 + GEEN 3024 +
+  GEEN 3852 (Y3 Spring) → capstone + tech electives (Y4). Clearing every other requirement early
+  doesn't change *when* GEEN 1400 first becomes available (Year 2 by design) or compress the
+  chain after that, especially since the project courses are confirmed not offered in summer.
+- **Area of Emphasis (18cr)** carries its own explicit "minimum three semesters" floor in the
+  catalog, due to prerequisites — independent of Business Core status.
+
+### The one credible mechanism for real savings
+
+Using summer as a genuine **third term per year** (not just a place to park extra electives)
+can shave real calendar time *if and only if* the specific sequential courses in the chain are
+actually offered there — inserting a summer completion of a prerequisite-gated course between
+a spring and the following fall can pull the whole downstream chain forward by roughly one
+term. This is plausible for:
+
+- Area-of-Emphasis upper-division electives (Leeds runs summer sections for its regular BSBA
+  population already — more likely than GEEN's studio courses, not confirmed for the specific
+  IBE-approved emphasis list).
+- GEEN 2851/3852 specifically, if they turn out to have summer offerings (unconfirmed).
+
+This is a materially different strategy than "take any 16 credits of summer electives" — it
+requires the *right* courses, in sequence, to actually be scheduled, which has to be confirmed
+term by term with an advisor rather than assumed from the credit-hour math.
+
+### What Winter/Summer every year reliably delivers instead
+
+- Much lighter regular-term course loads (fewer competing gen-ed/elective/remaining-BCOR
+  courses crowding each Fall/Spring alongside the sequential project work) — a real bandwidth
+  and GPA-risk benefit, not a calendar-time one.
+- Lower risk of needing an extra "make-up" 9th semester if something gets delayed.
+- If literally everything non-sequential is cleared early, a real shot at a lighter-than-usual
+  final year, potentially finishing remaining requirements by December of Year 4 instead of
+  the following May — realistically **the single most likely source of an actual one-semester
+  savings.**
+
+### What it costs
+
+- Tuition for Winter/Summer Session is billed separately from the flat-rate fall/spring bill —
+  confirm financial aid/scholarship coverage before committing to every year.
+- No summer break for 3-4 consecutive years, and every summer spent in class is a summer *not*
+  spent on an internship — worth weighing against Jacob's #1 stated career priority (tech
+  entrepreneurship), where founder/internship experience often matters more than finishing one
+  semester earlier.
+- Burnout risk from year-round enrollment with a heavy STEM+business dual load.
+
+### Questions worth asking an advisor directly
+
+1. Is GEEN 2851 or GEEN 3852 ever offered in summer or online?
+2. Does IBE accept the same substitutes the IDE program allows for GEEN 1400 (e.g., ASEN 1400,
+   ECEN 1400) — if so, does any of those have different scheduling that helps?
+3. Are any Area-of-Emphasis courses (for whichever emphasis Jacob picks) offered in summer?
+4. Is BASE 2104 offered more than once a year, or compressible into a summer format at all?
+5. Is there any real appetite in the program for a student to move through the GEEN sequence
+   ahead of their cohort year, or is that structurally blocked regardless of credit standing?
+
 ## Sources
 
 - [IBE — Bachelor of Science (BS) catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/integrated-business-engineering-bachelor-science-bs/)
@@ -461,3 +556,7 @@ ahead, not assume.
 - [Winter Session](https://www.colorado.edu/winter/) / [Winter Session Dates & Deadlines](https://www.colorado.edu/winter/dates-and-deadlines) / [Winter Session Course Information](https://www.colorado.edu/winter/course-information) (3-week online January term, 4-credit cap, folds into Spring load)
 - [Summer Session](https://www.colorado.edu/summer/) / [Summer Session Online Courses](https://www.colorado.edu/summer/courses/online) / [How to Enroll (16-credit cap)](https://www.colorado.edu/summer/apply-enroll/current-students/how-enroll) / [CEAS Summer Session](https://www.colorado.edu/engineering/academics/summer-session)
 - [Business Core (BCOR) course catalog](https://catalog.colorado.edu/courses-a-z/bcor/) (summer eligibility, prerequisites, major restrictions)
+- [GEEN 1400: First Year Engineering Projects](https://www.colorado.edu/center/mortenson/current-students/mortenson-center-courses/geen-1400-first-year-engineering-projects-0) (course structure, Design Expo, no summer offering)
+- [GEEN 1400 section history / Coursicle](https://www.coursicle.com/colorado/courses/GEEN/1400/) (confirms Fall/Spring-only offering pattern, no summer sections)
+- [Integrated Design Engineering (BSIDE) catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/engineering-applied-science/programs-study/integrated-design-engineering/integrated-design-engineering-bside/) (GEEN course sequence and cross-listed substitutes: ASEN 1400/1403, ECEN 1400)
+- [IDE Current Student FAQs](https://www.colorado.edu/program/ide/academics/current-student-faqs) (GEEN prefix origin as shared "General Engineering" courses)
