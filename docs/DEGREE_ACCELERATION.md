@@ -169,6 +169,92 @@ in §7 reveals an unfilled Arts & Humanities or generic elective seat.
 9. Don't spend money/time on outside coursework for the Diversity requirement (§4) — it
    structurally won't count.
 
+## 8. Stacking CU's own asynchronous online courses *right now* (mid-semester)
+
+Researched 2026-08-31 (Fall 2026, "week 2"). Confirm live details in Buff Portal Class Search —
+add windows are date-sensitive and change every term.
+
+### The main-campus add window is already closed
+
+The Fall 2026 16-week schedule's **Last Day to Add or Swap a Class was Friday, Aug. 28**. Past
+that date, adding a regular main-campus course (in-person or online-flagged) needs instructor +
+department approval, available seats, and proof of attendance since day one — not a real
+"stack more classes" lever right now.
+([Fall 2026 Academic Calendar](https://www.colorado.edu/registrar/media/1942))
+
+### CU's own separate online-credit calendar is still open — this is the real lever
+
+CU Boulder's **Division of Continuing Education (CE) Online Credit** program runs on its own
+registration calendar, independent of the main 16-week schedule, and per A&S residency policy
+these are **CU Boulder courses that count as in-residence credit** (unlike outside-institution
+transfer). Genuinely asynchronous — "Online" instruction mode means no scheduled meeting times.
+([CE Online Credit](https://ce.colorado.edu/programs/ce-online-credit) /
+[Dates & Deadlines](https://ce.colorado.edu/programs/ce-online-credit/dates-deadlines))
+
+Fall 2026 windows still open as of Aug 31:
+
+| Format | Starts | Add deadline | Notes |
+|---|---|---|---|
+| **CE Online Flexible** (self-paced) | Enroll any time — opened Aug 20 | No fixed deadline | Finish within up to 6 months of your enrollment date; capped at **7 credits at a time** across all Flexible courses until a grade posts |
+| **CE Session 1** (6-week term-based) | Aug 31 (today) | **Sept 2** | Tight — decide fast if targeting this one |
+| **CE 13-Week Session** (term-based) | Aug 31 (today) | **Sept 8** | More breathing room than Session 1 |
+| **CE 10-Week Session** (term-based) | Sept 21 | (opens once session starts) | Later option if you want more runway |
+| **CE Session 2** (6-week term-based) | Oct 19 | (opens once session starts) | Later still |
+
+Not every CE course is actually low-oversight — CE's own description says a course "may
+contain any combination of ... online quizzes **and discussion posts**." Screen the syllabus/
+grading breakdown per course before enrolling; don't assume asynchronous = auto-graded.
+
+### How many can Jacob actually stack right now
+
+Confirmed Fall 2026 credit hours already enrolled (main schedule): APPM 1235 (4) + BCOR 1030
+(3) + CSCI 1200 (3) + ECON 2010 (4) + COEN 1500 (1) = **15 credit hours**. Calculus 1 Readiness
+Prep is confirmed non-credit. "Online Experience" (Leeds orientation) credit value is unconfirmed
+— check Buff Portal; treated as 0 here.
+
+- CEAS requires a petition to enroll in **more than 19 credit hours** in any fall/spring
+  semester. 19 − 15 = **4 credit hours of headroom before a petition is legally required** —
+  in practice, room for **one** 3–4 credit CE course, or two 3-credit courses if he's willing
+  to land right at 18–19 (still under the ">19" petition trigger).
+- Separately, first-semester CEAS students are "strongly encouraged" (not required) to cap
+  total load at 17 credits for a successful transition — 15 + a 3-credit course = 18, already
+  past that soft guideline, worth a gut-check given he's also carrying a WebAssign-heavy
+  precalc course and two other new-cohort courses.
+- The CE Online Flexible program has its own separate 7-credit-at-a-time sub-cap, which isn't
+  the binding constraint here (the CEAS 19-credit rule bites first at his current load).
+
+**Bottom line: realistically one, maybe two, 3-credit CU Continuing Education online courses
+right now without needing a course-overload petition** — not an open-ended stack.
+
+### What to actually target, not just "any" online course
+
+Per §4/§5 above, Written Communication, Arts & Humanities, and Electives are likely already
+covered by Jacob's existing transfer credit (pending Buff Portal confirmation) — so an extra
+generic gen-ed course may not buy anything. The one bucket most likely still fully open, that
+*must* be an actual CU-flagged course (CLEP/transfer can't touch it — see §4), is:
+
+- **Diversity – U.S. Perspective / Diversity – Global Perspective** (6 credits total, 3 each).
+  A CE Online section flagged with a diversity gen-ed attribute is the only realistic
+  "low-oversight, still counts" way to knock this out online, since it has to be a real CU
+  course regardless. Whether a low-oversight (quiz-graded, not discussion/paper-heavy) one
+  exists this term needs checking case by case.
+
+### How to search for real candidates
+
+In [CU Boulder Class Search](https://www.colorado.edu/registrar/students/registration/search):
+Term = Fall 2026 → Any Campus = **Boulder Continuing Education** → Instruction Method =
+**Online** → (Advanced Search) filter by the Gen Ed / Diversity attribute you still need →
+open each result's syllabus and confirm the grading breakdown is quiz/exam-weighted before
+enrolling.
+
+### Before enrolling in anything new
+
+- Confirm with an IBE/CEAS advisor that CE Online credit counts toward CEAS's residency
+  requirement the same way it's documented for A&S (§3) — not explicitly confirmed for CEAS.
+- Some subjects (math, engineering, language) are restricted in CE and need proof of
+  requisites or department permission (`ceadvise@colorado.edu`).
+- Check tuition/financial-aid impact of adding a course after your original bill was set.
+
 ## Sources
 
 - [IBE — Bachelor of Science (BS) catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/integrated-business-engineering-bachelor-science-bs/)
@@ -181,3 +267,7 @@ in §7 reveals an unfilled Arts & Humanities or generic elective seat.
 - [A&S Policies & Requirements](https://catalog.colorado.edu/undergraduate/colleges-schools/arts-sciences/policies-requirements/) (Diversity requirement rules, CU Continuing Ed in-residence note)
 - [GT Pathways](https://cdhe.colorado.gov/guaranteed-transfer-pathways-general-education-curriculum) / [Fulfilling A&S Gen Ed with Colorado Community College coursework](https://www.colorado.edu/artsandsciences/student-resources/transfer-students/guide-colorado-community-college-students/fulfilling-gen-ed-requirements-colorado-community-college-coursework)
 - `JACOB.md` transfer credit map (Jacob's own transcript evaluation, as captured — not an official audit)
+- [Fall 2026 Academic Calendar](https://www.colorado.edu/registrar/media/1942) (main-campus add deadline)
+- [CE Online Credit](https://ce.colorado.edu/programs/ce-online-credit) / [CE Online Credit Dates & Deadlines](https://ce.colorado.edu/programs/ce-online-credit/dates-deadlines) / [Apply & Enroll](https://ce.colorado.edu/programs/ce-online-credit/apply-enroll) (Continuing Education online sessions, Flexible 7-credit cap)
+- [CU Boulder Class Search](https://www.colorado.edu/registrar/students/registration/search) (filtering by campus/instruction method/gen-ed attribute)
+- [CU Catalog — APPM 1235](https://catalog.colorado.edu/courses-a-z/appm/) (credit hours) / [Aerospace Engineering registration guide](https://www.colorado.edu/aerospace/current-students/undergraduates/registration-guide-new-first-year-students) (first-semester 17-credit soft guideline)
