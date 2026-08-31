@@ -351,6 +351,94 @@ more outsourcing-friendly, but trades away the engineering credential and hands-
 experience. This is a values/goals call for Jacob and his advisor, not something this research
 resolves.
 
+## 10. Winter Session and Summer Session — the real acceleration levers
+
+Researched 2026-08-31. These are CU Boulder's *own* intersession programs — unlike CE Online
+Credit (§8), there's no ambiguity here: Winter/Summer Session credit is ordinary CU Boulder
+coursework, so it counts as in-residence and applies toward Leeds/CEAS residency the same as
+any fall/spring class. This is the single best "still within the rules, still fast" lever
+available, precisely because it doesn't compete with the Fall/Spring 19-credit CEAS threshold.
+
+### Winter Session (the "January term")
+
+[Winter Session](https://www.colorado.edu/winter/) — fully online, asynchronous, 3-week term
+during winter break.
+
+- **Winter Session 2027: Dec 14, 2026 – Jan 4, 2027.** Course list posts **Oct 12, 2026**;
+  registration opens **Nov 2, 2026** — both are close on the calendar from today, worth marking
+  now.
+- Roughly 30 courses per year, mostly lower/upper-division **Arts & Sciences** topics (varies
+  year to year — not published this far out). Realistically a gen-ed/elective source, not a
+  place to expect BCOR/GEEN/IBE-specific sections.
+- **Capped at 4 credit hours** for the term (it's condensed — expect ~35-45 hrs/week per
+  3-credit course, not a light lift despite being asynchronous).
+- **Winter Session credit counts as part of your Spring credit load**, not a separate bucket —
+  so it stacks against the same CEAS 19-credit-without-petition threshold as the rest of spring,
+  it just lets you front-load one course before the semester starts.
+- Not usable by students newly admitted for that same spring term — irrelevant for Jacob since
+  he'll be a continuing student.
+- Best use case for Jacob: if a Diversity-flagged or Arts & Humanities A&S course happens to be
+  offered that winter, this is a clean way to clear one of those gen-ed slots without adding a
+  course to the regular spring schedule.
+
+### Summer Session
+
+[Summer Session](https://www.colorado.edu/summer/) — six terms per year (Maymester ~3wk,
+Sessions A/B ~5wk each, Session C ~8wk, Session D ~10wk, Augmester ~3wk), with "hundreds of"
+online, remote, hybrid, and in-person options across nearly every subject.
+([CEAS Summer Session](https://www.colorado.edu/engineering/academics/summer-session) explicitly
+frames it as a way to "meet major or minor requirements ... accelerate your graduation.")
+
+- **Undergraduate summer credit cap is 16 credit hours total across all summer sessions** — a
+  separate, parallel limit from the Fall/Spring 19-credit CEAS threshold (§8). This is the
+  actual headline finding: **summer isn't competing with your regular-semester credit ceiling
+  at all** — it's close to a free extra half-semester of progress every year, if the specific
+  courses Jacob still needs happen to be scheduled.
+- **BCOR (business core) courses are eligible to be offered in summer and are open to Leeds
+  majors** (confirmed via the BCOR catalog entries — restricted to Business majors, which
+  includes IBE). Whether a given BCOR piece actually has an online summer section in any given
+  year has to be checked in Class Search closer to the term — not something to bank on sight
+  unseen, but a real, worth-checking option unlike Winter Session.
+- **GEEN (engineering) courses do appear in the summer engineering catalog too** — but be
+  realistic about what "online" means here: GEEN 1400/2400/3400-style courses are described as
+  interdisciplinary **team projects** culminating in an **end-of-semester design expo/poster
+  session**, even in the regular semester description. Even if scheduled in summer, this is a
+  *pace* lever (finish requirements sooner), not an *oversight* lever (still real project/team
+  work) — worth being clear about that distinction given the "low oversight" framing driving
+  this research. Don't expect a self-paced, software-graded GEEN summer section.
+- Confirm what Class Search actually shows once it opens for a given summer — Summer 2027
+  offerings aren't published this far out. Rough historical pattern: course search opens a
+  few months before the term, enrollment begins in early March, first sessions start in early
+  May.
+
+### Putting it together: the annual capacity picture
+
+| Window | Cap | Counts toward | Realistic content for Jacob |
+|---|---|---|---|
+| Fall/Spring (regular) | 19cr before CEAS petition | that semester | Cohort-locked IBE courses |
+| Winter Session | 4cr | folded into Spring's 19cr cap | One gen-ed/elective course, if offered that year |
+| Summer Session | 16cr | its own separate cap | BCOR (if scheduled), gen-ed/electives reliably; GEEN/IBE-specific unlikely for a brand-new cohort program, but check |
+| CE Online Flexible (§8) | 7cr at a time | whichever semester it lands in | Same caveats as §8 |
+
+**Bottom line for "as fast as possible, within the rules":** the biggest single lever isn't an
+outside low-oversight course at all — it's **using Summer Session every year**, since its
+16-credit cap runs parallel to (not shared with) the Fall/Spring ceiling and the credit
+unambiguously counts as in-residence. The realistic constraint is simply whether the specific
+courses Jacob still needs (BCOR pieces, gen-ed, and eventually engineering coursework) are
+actually scheduled and online in a given summer — something to plan with an advisor a semester
+ahead, not assume.
+
+### Action items
+
+1. Calendar Oct 12 (Winter Session course list) and Nov 2 (Winter Session registration opens)
+   for 2026 — check specifically for a Diversity or Arts & Humanities online course.
+2. Ask the IBE/Leeds advisor now, before Spring 2027 registration, which BCOR pieces (if any)
+   are likely to run online in Summer 2027, and build a summer plan around them.
+3. Treat any summer GEEN/engineering sections as a scheduling accelerant, not a workload
+   reducer — same real project expectations as the regular semester.
+4. Confirm current financial aid/scholarship coverage extends to Winter/Summer Session tuition,
+   which is billed separately from the flat-rate fall/spring bill.
+
 ## Sources
 
 - [IBE — Bachelor of Science (BS) catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/integrated-business-engineering-bachelor-science-bs/)
@@ -370,3 +458,6 @@ resolves.
 - [BSBA catalog page](https://catalog.colorado.edu/undergraduate/colleges-schools/business/programs-study/business-administration/business-administration-bachelor-science-bsba/) (BSBA structure, emphases, footnotes on "specific" gen-ed courses)
 - [MATH 1112 course page / exemption exam](http://leeds-faculty.colorado.edu/kornish/business-math-class/) (no exemption for prior calculus; in-house exemption exam only)
 - [Intra-University Transfer](https://www.colorado.edu/registrar/students/intra-university-transfer) / [Transfer to Leeds (IUT) Advising Resource](https://www.colorado.edu/business-students/resources/current-undergraduate/transfer-leeds-iut-advising-resource) / [Change or Add a Major](https://www.colorado.edu/registrar/students/degree-planning/change-add-program) (process for changing majors)
+- [Winter Session](https://www.colorado.edu/winter/) / [Winter Session Dates & Deadlines](https://www.colorado.edu/winter/dates-and-deadlines) / [Winter Session Course Information](https://www.colorado.edu/winter/course-information) (3-week online January term, 4-credit cap, folds into Spring load)
+- [Summer Session](https://www.colorado.edu/summer/) / [Summer Session Online Courses](https://www.colorado.edu/summer/courses/online) / [How to Enroll (16-credit cap)](https://www.colorado.edu/summer/apply-enroll/current-students/how-enroll) / [CEAS Summer Session](https://www.colorado.edu/engineering/academics/summer-session)
+- [Business Core (BCOR) course catalog](https://catalog.colorado.edu/courses-a-z/bcor/) (summer eligibility, prerequisites, major restrictions)
