@@ -63,6 +63,13 @@ Not an official degree audit. If Canvas shows a course that also appears below a
 | Rollins | INT 125 Life/Financial Literacy | NON TRANSFER |
 | Rollins | RFLA100C How to Change the World | **NEED SYLLABUS** / NTR — open advising item |
 
+### Outside/online credit acceleration research
+
+[`docs/DEGREE_ACCELERATION.md`](docs/DEGREE_ACCELERATION.md) — CU Boulder/IBE/Leeds/CEAS
+catalog + residency research on how much (little) outside online/CLEP credit can shorten
+time-to-degree for IBE specifically, plus a ranked action list. Not an official audit — verify
+in Buff Portal and with the IBE advisor before acting.
+
 ## Automation posture
 
 **Primary job:** help Jacob with academic *processes* (planning, drafts, checklists, peer-review tracking, module progress, grade risk). Submitting work is exceptional.
