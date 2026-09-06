@@ -176,7 +176,7 @@ class Config:
         self.canvas_api_url = _normalize_canvas_url(self.canvas_api_url_configured)
 
         # Optional configuration with defaults
-        self.mcp_server_name = os.getenv("MCP_SERVER_NAME", "canvas-api")
+        self.mcp_server_name = os.getenv("MCP_SERVER_NAME", "productname-canvas-mcp")
         self.debug = _bool_env("DEBUG", False)
         self.api_timeout = _int_env("API_TIMEOUT", 30)
         self.cache_ttl = _int_env("CACHE_TTL", 300)

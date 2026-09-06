@@ -37,8 +37,8 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "https://github.com/vishalsachdev/canvas-mcp"
-Repository = "https://github.com/vishalsachdev/canvas-mcp"
+Homepage = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
+Repository = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
 
 [project.scripts]
 canvas-mcp-server = "canvas_mcp.server:main"
