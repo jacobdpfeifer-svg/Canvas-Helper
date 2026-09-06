@@ -73,7 +73,7 @@ export function validateInstructorProfile(content, code) {
     const syllabusTags = (profileSection.match(/\(syllabus\)/gi) || []).length;
     if (syllabusTags === 0) {
       issues.push(
-        `${code}: Instructor profile has no (syllabus)-tagged bullets — run jacob-instructor-profile after sync`
+        `${code}: Instructor profile has no (syllabus)-tagged bullets — run student-instructor-profile after sync`
       );
     }
 

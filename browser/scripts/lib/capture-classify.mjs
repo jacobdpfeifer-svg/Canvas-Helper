@@ -3,10 +3,15 @@
  * Pure functions — safe to import from tests and Mac scripts.
  */
 import crypto from "node:crypto";
+import { getSchoolConfig } from "./school-config.mjs";
 
 /** @typedef {'high'|'med'|'low'} Confidence */
 /** @typedef {'whiteboard'|'slide'|'handout'|'syllabus_delta'|'homework_problem'|'event_selfie'|'graded_work'|'quiz'|'unknown'} CaptureKind */
 /** @typedef {'update_course_md'|'canvas_upload'|'needs_review'} CaptureAction */
+
+function schoolTimezone() {
+  return getSchoolConfig().timezone || "UTC";
+}
 
 export const COURSE_CODES = [
   "APPM1235",
@@ -18,7 +23,7 @@ export const COURSE_CODES = [
   "ONLINEEXP",
 ];
 
-/** Short aliases Jacob might say in voice/text. */
+/** Short aliases the student might say in voice/text. */
 const USER_ALIASES = [
   { code: "APPM1235", patterns: [/\bappm\b/i, /pre-?calc/i, /1235/i] },
   { code: "BCOR1030", patterns: [/\bbcor\b/i, /1030/i, /communication strategy/i] },
@@ -62,11 +67,11 @@ const HOMEWORK_RE = /homework|problem set|written hw|assignment #/i;
 
 /**
  * @param {Date} [d]
- * @returns {string} YYYYMMDD-HHMMSS-hex4 in America/Denver
+ * @returns {string} YYYYMMDD-HHMMSS-hex4 in school timezone
  */
 export function makeCaptureId(d = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Denver",
+    timeZone: schoolTimezone(),
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -92,7 +97,7 @@ export function makeCaptureId(d = new Date()) {
  */
 export function formatCapturedAt(d = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Denver",
+    timeZone: schoolTimezone(),
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -273,7 +278,7 @@ export function formatQueueRow(row) {
  */
 export function formatLectureCaptureBullet(opts) {
   const date = opts.date || new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Denver",
+    timeZone: schoolTimezone(),
   }).format(new Date());
   const suffix = opts.assignmentMatch && opts.assignmentMatch !== "-"
     ? ` (${opts.assignmentMatch})`

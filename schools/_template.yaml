@@ -1,0 +1,25 @@
+# School registry template. Copy to schools/{slug}.yaml and fill in.
+slug: example-u
+display_name: Example University
+canvas_base_url: https://canvas.example.edu
+sso_idp: https://idp.example.edu/idp/shibboleth
+timezone: America/New_York
+term_dates:
+  fall_start: "2026-08-24"
+  fall_end: "2026-12-18"
+  spring_start: "2027-01-12"
+  spring_end: "2027-05-08"
+lti_catalog:
+  - gradescope
+  - zybooks
+  - webassign
+  - mylab
+  - piazza
+  - perusall
+engagement_platform: null
+# Optional: map Canvas course name patterns → inbox course file codes
+course_file_map: []
+# Example:
+# course_file_map:
+#   - code: CSCI1000
+#     patterns: ["csci\\s*1000"]

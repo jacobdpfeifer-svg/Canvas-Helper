@@ -1,4 +1,4 @@
-"""Tool modules for Canvas MCP server (Jacob IBE student-only fork)."""
+"""Tool modules for Canvas MCP server (student-only ProductName)."""
 
 from .assignments import register_shared_assignment_tools
 from .courses import register_course_tools, register_shared_content_tools

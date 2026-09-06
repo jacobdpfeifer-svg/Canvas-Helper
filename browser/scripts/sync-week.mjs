@@ -21,7 +21,7 @@ import {
   INBOX_DIR,
   buildWeekNoteParts,
   collectTruncationWarnings,
-  denverDay,
+  schoolLocalDay,
   escCell,
   fetchDueUniverse,
   filterDatedInWindow,
@@ -30,9 +30,11 @@ import {
   shouldIncludeInWeekTable,
   writeCourseCatalogFiles,
 } from "./lib/canvas-session.mjs";
+import { getSchoolConfig } from "./lib/school-config.mjs";
 
 const daysAhead = Number(process.env.DAYS || 14);
-const today = denverDay();
+const today = schoolLocalDay();
+const schoolTz = getSchoolConfig().timezone || "UTC";
 
 const { context, page } = await launchCanvasContext();
 try {
@@ -43,7 +45,7 @@ try {
   process.exit(1);
 }
 
-console.log(`Syncing Canvas REST via SSO (${daysAhead}d, America/Denver)…`);
+console.log(`Syncing Canvas REST via SSO (${daysAhead}d, ${schoolTz})…`);
 let courses;
 let universe;
 let health;
@@ -82,8 +84,8 @@ const healthBits = [
 
 const notes = [
   `SSO→/api/v1 sync (no developer PAT). ${healthBits.join("; ")}.`,
-  "External/LTI rows (WebAssign, ZyBooks, PlayPosit, proctored) need browser UI + Jacob — never auto.",
-  `Window: ${today} → +${daysAhead}d America/Denver. Open dated rows: ${openRows.length}; completed in window (hidden from table): ${doneRows.length}.`,
+  "External/LTI rows (WebAssign, ZyBooks, PlayPosit, proctored) need browser UI + the student — never auto.",
+  `Window: ${today} → +${daysAhead}d ${schoolTz}. Open dated rows: ${openRows.length}; completed in window (hidden from table): ${doneRows.length}.`,
 ];
 
 if (health.todo.truncated || health.planner.truncated || health.assignments.truncated) {
@@ -146,8 +148,8 @@ ${notes.map((n) => `- ${n}`).join("\n")}
 
 ## Agent next steps
 
-1. Read \`JACOB.md\` and triage this table (Worth / Agent / Ask).
-2. For rows marked external/LTI or assessment — process help only; Jacob does the tool UI.
+1. Read \`USER.md\` and triage this table (Worth / Agent / Ask).
+2. For rows marked external/LTI or assessment — process help only; the student does the tool UI.
 3. Native Canvas text/file submits: only if auto bar + calibrated course; prefer MCP when PAT exists.
 `;
 

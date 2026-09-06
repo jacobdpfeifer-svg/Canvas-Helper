@@ -1,5 +1,5 @@
 /**
- * Open Canvas headed so Jacob can complete IdentiKey + MFA.
+ * Open Canvas headed so the student can complete SSO + MFA.
  * Reuses browser/.auth for later npm run sync.
  */
 import { BASE, launchCanvasContext } from "./lib/canvas-session.mjs";

@@ -1,0 +1,36 @@
+slug: cu-boulder
+display_name: University of Colorado Boulder
+canvas_base_url: https://canvas.colorado.edu
+sso_idp: https://fedauth.colorado.edu
+timezone: America/Denver
+term_dates:
+  fall_start: "2026-08-24"
+  fall_end: "2026-12-18"
+  spring_start: "2027-01-12"
+  spring_end: "2027-05-08"
+lti_catalog:
+  - gradescope
+  - zybooks
+  - webassign
+  - mylab
+  - piazza
+  - perusall
+  - playposit
+engagement_platform:
+  host: https://campusgroups.colorado.edu
+  path: /engineeringconnections
+course_file_map:
+  - code: CSCI1200
+    patterns: ["csci\\s*1200"]
+  - code: APPM1235
+    patterns: ["appm\\s*1235"]
+  - code: BCOR1030
+    patterns: ["bcor\\s*1030"]
+  - code: COEN1500
+    patterns: ["coen\\s*1500"]
+  - code: ECON2010
+    patterns: ["econ\\s*2010"]
+  - code: CALCREADY
+    patterns: ["readiness\\s*prep", "calculus\\s*1\\s*readiness"]
+  - code: ONLINEEXP
+    patterns: ["online\\s*experience", "leeds.*orientation"]

@@ -1,13 +1,13 @@
 """
-Canvas MCP Server — Jacob IBE personal student fork (CU Boulder).
+Canvas MCP Server — ProductName local-first student platform.
 
-Student-only stdio MCP server. Not the upstream multi-audience product.
+Student-only stdio MCP server.
 """
 
 __version__ = "1.11.0"
-__author__ = "Jacob Pfeifer (fork); upstream Vishal Sachdev"
+__author__ = "ProductName; upstream canvas-mcp (Vishal Sachdev)"
 __email__ = ""
-__description__ = "Personal student Canvas MCP for CU Boulder IBE"
+__description__ = "Local-first student Canvas MCP (ProductName)"
 
 from .server import main
 

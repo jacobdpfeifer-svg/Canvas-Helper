@@ -1,5 +1,5 @@
 """
-Tool discovery for Canvas MCP (Jacob IBE student fork).
+Tool discovery for Canvas MCP (ProductName student platform).
 
 Searches the live registry of registered MCP tools.
 """

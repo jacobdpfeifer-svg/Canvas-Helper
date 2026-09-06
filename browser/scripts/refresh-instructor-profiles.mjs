@@ -1,6 +1,6 @@
 /**
  * Post-sync helper: stamp profile Sources with syllabus hash from course header
- * and flag courses that need a full jacob-instructor-profile rebuild.
+ * and flag courses that need a full student-instructor-profile rebuild.
  *
  * Usage: cd browser && npm run sync && npm run refresh-profiles
  */
@@ -9,7 +9,7 @@ import path from "node:path";
 import {
   COURSES_DIR,
   COURSES_RAW_DIR,
-  denverDay,
+  schoolLocalDay,
 } from "./lib/canvas-session.mjs";
 import { validateInstructorProfile } from "./lib/validate-profiles.mjs";
 
@@ -50,7 +50,7 @@ function updateSourcesLine(content, hash, today) {
   );
 }
 
-const today = denverDay();
+const today = schoolLocalDay();
 let updated = 0;
 const needsRebuild = [];
 
@@ -83,6 +83,6 @@ for (const name of fs.readdirSync(COURSES_DIR)) {
 console.log(`Updated Sources in ${updated} course file(s).`);
 if (needsRebuild.length) {
   console.log(
-    `Run jacob-instructor-profile for: ${[...new Set(needsRebuild)].join(", ")}`
+    `Run student-instructor-profile for: ${[...new Set(needsRebuild)].join(", ")}`
   );
 }

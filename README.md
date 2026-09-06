@@ -1,53 +1,58 @@
-# Canvas MCP — Jacob IBE (personal fork)
+# ProductName — local-first student Canvas automation
 
-Personal **student** academic agent for **Jacob Pfeifer**, CU Boulder **IBE**, Fall 2026.
+Organize and complete academic busywork. **Works without a Canvas access token.**
 
-**Works without a Canvas access token.** Default path:
+Default truth path:
 
-1. SSO login (Playwright) → Canvas `/api/v1` → [`inbox/week.md`](inbox/week.md)
-2. Agent triages with [`JACOB.md`](JACOB.md)
+1. SSO login (Playwright) → Canvas `/api/v1` → `{user_root}/inbox/week.md`
+2. Agent triages with [`templates/USER.md`](templates/USER.md) (copied to `{user_root}/USER.md` onboarding)
 3. Browser UI only for WebAssign / ZyBooks / PlayPosit / proctored / LTI
 
-Architecture: [`docs/HYBRID.md`](docs/HYBRID.md)
+Architecture: [`docs/architecture.md`](docs/architecture.md) · Agent guide: [`AGENTS.md`](AGENTS.md)
 
 ## Quick start (no token)
 
 ```bash
 cd browser
 npm install && npx playwright install chromium
-npm run open-canvas   # IdentiKey + MFA once
-npm run sync          # writes ../inbox/week.md from /api/v1
+npm run open-canvas   # SSO + MFA once
+npm run sync          # writes inbox/week.md from /api/v1
 ```
 
-In chat: ask for a **week plan**, or **brief me** / **what should I do first** (priority + first step).
+Set `SCHOOL_SLUG` (default `cu-boulder`) and optionally `DEV_USER_ROOT` for a product user-root path.
 
-## Optional API token later
+In chat: ask for a **week plan**, or **brief me** / **what should I do first**.
 
-When OIT grants a PAT: [docs/CU_ACCESS.md](docs/CU_ACCESS.md). Same REST truth; MCP becomes a nicer client, not a second system.
+## Optional API token
 
-## Fall 2026
-
-| Course | Focus |
-|--------|--------|
-| APPM 1235 | Pre-calc — exams = you; WebAssign = you in tool |
-| BCOR 1030 | Drafts OK; PlayPosit/proctored/presentations = you |
-| CSCI 1200 | Worth your time; ZyBooks = you in tool |
-| ECON 2010 | Required despite ECON 2999TC |
-| COEN 1500 | FYS signups / thought projects — include in week plans |
+When your school grants a PAT: same REST truth; MCP (`canvas-mcp-server`) is a nicer client, not a second system. See school notes under [`docs/schools/`](docs/schools/).
 
 ## Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `jacob-canvas-browser` | SSO sync + LTI escape hatch |
-| `jacob-inbox-week` | Maintain inbox |
+| `student-canvas-browser` | SSO sync + LTI escape hatch |
+| `student-inbox-week` | Maintain inbox |
 | `canvas-week-plan` | Weekly triage plan |
-| `jacob-task-brief` | Priority P0–P3, briefing, first step |
-| `jacob-course-arc` | Course theme, checkpoints, learning arc |
-| `jacob-assignment-triage` | Process help + rare native submit |
-| `jacob-ibe-semester` | Transfer + semester |
+| `student-task-brief` | Priority P0–P3, briefing, first step |
+| `student-course-arc` | Course theme, checkpoints, learning arc |
+| `student-assignment-triage` | Process help + rare native submit |
+| `student-degree-progress` | Transfers + semester from USER.md + enrollments |
+| `student-instructor-profile` | How the professor grades |
+| `student-photo-intake` | Class photo capture intake |
 | `canvas-discussion-facilitator` | Draft discussions |
+
+Enrollment lists come from `list_courses` / inbox sync — not hard-coded in skills.
+
+## Dev corpus (private fork)
+
+Personal CU Boulder / IBE notes live under [`dev/`](dev/) (`dev/JACOB.md`, legacy hybrid docs). Root `inbox/` and `.jacob/` are local memory for that fork — migrate with:
+
+```bash
+python scripts/migrate-dev-user-root.py --user-root /tmp/pn-dev --force
+export DEV_USER_ROOT=/tmp/pn-dev SCHOOL_SLUG=cu-boulder
+```
 
 ## License
 
-MIT (inherited). Not for republishing as the multi-audience upstream product.
+MIT. Student-only surface — not educator grading or hosted multi-tenant LMS automation.

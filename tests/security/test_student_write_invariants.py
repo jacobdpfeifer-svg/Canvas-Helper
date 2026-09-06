@@ -168,9 +168,9 @@ class TestConfirmationIsCallerBound:
                 self.api_token = token
 
         with patch.object(sw, "get_request_credentials", return_value=_Creds("aaa")):
-            first = sw._fingerprint("1", "2", "online_text_entry", "digest", 0)
+            first = sw._submission_fingerprint("1", "2", "online_text_entry", "digest", 0)
         with patch.object(sw, "get_request_credentials", return_value=_Creds("bbb")):
-            second = sw._fingerprint("1", "2", "online_text_entry", "digest", 0)
+            second = sw._submission_fingerprint("1", "2", "online_text_entry", "digest", 0)
 
         assert first != second
 
@@ -182,13 +182,13 @@ class TestConfirmationIsCallerBound:
                 self.api_token = token
 
         with patch.object(sw, "get_request_credentials", return_value=_Creds("aaa")):
-            fingerprint = sw._fingerprint("1", "2", "online_text_entry", "d", 0)
-            token = sw._issue_token(fingerprint)
+            fingerprint = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0)
+            token = sw._SUBMIT_GUARD.issue(fingerprint)
         with patch.object(sw, "get_request_credentials", return_value=_Creds("bbb")):
-            other = sw._fingerprint("1", "2", "online_text_entry", "d", 0)
+            other = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0)
 
-        assert sw._check_token(token, fingerprint) is None
-        assert sw._check_token(token, other) is not None
+        assert sw._SUBMIT_GUARD.check(token, fingerprint) is None
+        assert sw._SUBMIT_GUARD.check(token, other) is not None
 
     def test_caller_identity_does_not_expose_the_credential(self):
         """The handle must not be the token, nor reversible to it."""
@@ -198,7 +198,7 @@ class TestConfirmationIsCallerBound:
             api_token = "super-secret-canvas-token"
 
         with patch.object(sw, "get_request_credentials", return_value=_Creds()):
-            identity = sw._caller_identity()
+            identity = sw._SUBMIT_GUARD.caller_identity()
 
         assert "super-secret-canvas-token" not in identity
         assert len(identity) == 64  # sha256 hex
@@ -515,9 +515,9 @@ class TestPolicyResolution:
             assert policy.source == "default"
 
     @pytest.mark.asyncio
-    async def test_default_posture_is_allow(self):
+    async def test_default_posture_is_deny(self):
         reset_config()
-        assert get_config().course_agent_policy_default == "allow"
+        assert get_config().course_agent_policy_default == "deny"
 
     @pytest.mark.asyncio
     async def test_the_syllabus_is_the_only_carrier(self):

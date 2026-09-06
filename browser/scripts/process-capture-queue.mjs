@@ -35,7 +35,7 @@ function usage() {
   console.log(`Usage: npm run process-capture-queue [-- --dry-run] [-- --id CAPTURE_ID]
 
 Processes queue rows with status pending_mac when matching files exist in inbox/captures/inbox/.
-Jacob must confirm uploads — pass CONFIRM=1 to submit (otherwise dry-run preview).`);
+Student must confirm uploads — pass CONFIRM=1 to submit (otherwise dry-run preview).`);
 }
 
 if (args.includes("--help") || args.includes("-h")) {

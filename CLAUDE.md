@@ -1,28 +1,31 @@
-# CLAUDE.md — Jacob IBE personal Canvas fork
+# CLAUDE.md — ProductName student Canvas platform
 
-Load [`JACOB.md`](./JACOB.md) and [`AGENTS.md`](./AGENTS.md). Architecture: [`docs/HYBRID.md`](./docs/HYBRID.md).
+Load [`AGENTS.md`](./AGENTS.md) and `{user_root}/USER.md` (template: [`templates/USER.md`](./templates/USER.md)). Architecture: [`docs/architecture.md`](./docs/architecture.md).
 
-**Default: no Canvas PAT.** Useful via SSO → `/api/v1` → `inbox/`.
+**Default: no Canvas PAT.** Useful via SSO → `/api/v1` → inbox.
 
-This is **not** the upstream multi-audience product. Do not restore educator tools, hosted Azure, or quiz-taking automation.
+Do not restore educator tools, hosted Azure, or quiz-taking automation.
 
 ## Truth path
 
-1. Brain: `JACOB.md` triage (+ `.jacob/priority-rubric.md` when Jacob asks what’s next; `jacob-course-arc` when Jacob names a course)
+1. Brain: `USER.md` triage (+ `calibration/priority-rubric.md` for priority; `student-course-arc` when the student names a course)
 2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs + arc notes; optional dated `inbox/focus.md` Top-3 cache)
 3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST)
 4. Optional later: PAT + `canvas-mcp-server` for the same REST + native submits
-5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — Jacob operates; agent drafts  
+5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — student operates; agent drafts
 
 ## Layout
 
 ```
-JACOB.md, AGENTS.md, docs/HYBRID.md
-inbox/                 # durable due-list memory (+ optional focus.md)
+AGENTS.md, templates/USER.md, docs/architecture.md
+schools/               # tenant yaml (e.g. cu-boulder)
+inbox/                 # durable due-list memory (dev corpus at repo root; product uses user_root)
 browser/               # SSO auth + sync scripts (not DOM-primary)
-.jacob/                # calibration + priority-rubric
-src/canvas_mcp/        # optional MCP when PAT exists
-skills/                # jacob-* + week-plan + task-brief + course-arc + discussion
+calibration/           # under user_root (repo .jacob/ is legacy/dev)
+src/canvas_mcp/       # optional MCP when PAT exists
+skills/                # student-* + canvas-week-plan + discussion
+app/                   # ProductName Tauri shell + daemon
+dev/                   # private-fork Jacob/IBE docs (not shipping claims)
 ```
 
 ## Commands
@@ -41,7 +44,7 @@ uv run python -m pytest tests/ -q
 ## Coding standards
 
 - Prefer extending SSO→API→inbox over new scrapers
-- MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` stays preview→confirm
+- MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` stays preview→confirm via ConfirmationGuard
 - Never commit `.env` or `browser/.auth/`
 
 ## Out of scope

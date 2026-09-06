@@ -1,22 +1,43 @@
 /**
- * Shared CU Canvas SSO session helpers.
+ * Shared Canvas SSO session helpers (school-aware).
  *
  * Truth path: session cookies → same /api/v1 REST as a PAT would use.
  * Playwright is auth + transport, not a second product.
+ *
+ * School constants come from schools/{slug}.yaml via getSchoolConfig().
  */
 import { chromium } from "playwright";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getSchoolConfig, schoolDay } from "./school-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const BASE = "https://canvas.colorado.edu";
+function school() {
+  return getSchoolConfig();
+}
+
+export function getBase() {
+  return school().canvas_base_url;
+}
+
+/** Canvas base URL from school registry (string). */
+export let BASE = getBase();
+
 export const ROOT = path.join(__dirname, "..", "..", "..");
 export const AUTH_DIR =
   process.env.AUTH_DIR || path.join(__dirname, "..", "..", ".auth");
-export const INBOX_DIR = path.join(ROOT, "inbox");
+
+function resolveInboxDir() {
+  if (process.env.DEV_USER_ROOT) {
+    return path.join(process.env.DEV_USER_ROOT, "inbox");
+  }
+  return path.join(ROOT, "inbox");
+}
+
+export const INBOX_DIR = resolveInboxDir();
 export const COURSES_DIR = path.join(INBOX_DIR, "courses");
 export const COURSES_RAW_DIR = path.join(COURSES_DIR, "_raw");
 export const WEEK_PATH = path.join(INBOX_DIR, "week.md");
@@ -25,24 +46,18 @@ const POLICY_PAGE_RE =
   /professional|participation|policy|syllabus|grading|integrity|gen\s*ai|expectation/i;
 export const CATALOG_DAYS = Number(process.env.CATALOG_DAYS || 90);
 
-/** Map Canvas course name/code → inbox/courses/CODE.md */
-export const COURSE_FILE_MAP = [
-  { code: "CSCI1200", patterns: [/csci\s*1200/i] },
-  { code: "APPM1235", patterns: [/appm\s*1235/i] },
-  { code: "BCOR1030", patterns: [/bcor\s*1030/i] },
-  { code: "COEN1500", patterns: [/coen\s*1500/i] },
-  { code: "ECON2010", patterns: [/econ\s*2010/i] },
-  {
-    code: "CALCREADY",
-    patterns: [/readiness\s*prep/i, /calculus\s*1\s*readiness/i],
-  },
-  {
-    code: "ONLINEEXP",
-    patterns: [/online\s*experience/i, /leeds.*orientation/i],
-  },
-];
+/** Map Canvas course name/code → inbox/courses/CODE.md (from school yaml). */
+export function getCourseFileMap() {
+  return school().course_file_map || [];
+}
 
-const TZ = "America/Denver";
+/** @deprecated Prefer getCourseFileMap() — refreshed each access via getter below. */
+export const COURSE_FILE_MAP = getCourseFileMap();
+
+/** School-local calendar day as YYYY-MM-DD (not UTC). */
+export function schoolLocalDay(d = new Date()) {
+  return schoolDay(d, school().timezone);
+}
 
 export function clearSingletonLocks(authDir = AUTH_DIR) {
   for (const name of ["SingletonLock", "SingletonSocket", "SingletonCookie"]) {
@@ -55,6 +70,7 @@ export function clearSingletonLocks(authDir = AUTH_DIR) {
 }
 
 export async function launchCanvasContext(options = {}) {
+  BASE = getBase();
   fs.mkdirSync(AUTH_DIR, { recursive: true });
   clearSingletonLocks();
   const headless = process.env.HEADLESS === "1";
@@ -68,73 +84,69 @@ export async function launchCanvasContext(options = {}) {
 }
 
 export async function requireLoggedIn(page) {
+  BASE = getBase();
+  const hostRe = new RegExp(
+    school().canvas_base_url.replace(/^https?:\/\//, "").replace(/\./g, "\\."),
+    "i"
+  );
   await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 60_000 });
   try {
-    await page.waitForURL(/canvas\.colorado\.edu/i, { timeout: 45_000 });
+    await page.waitForURL(hostRe, { timeout: 45_000 });
   } catch {
     /* may already be on Canvas after SAML */
   }
   await page.waitForTimeout(2000);
+  const idpHost = (school().sso_idp || "").replace(/^https?:\/\//, "");
   const onLogin =
     page.url().includes("login") ||
-    page.url().includes("fedauth.colorado.edu") ||
+    (idpHost && page.url().includes(idpHost)) ||
     (await page.locator("text=IdentiKey").count()) > 0 ||
     (await page.locator('input[name="username"], #username').count()) > 0;
   if (onLogin) {
     throw new Error(
-      "Not logged in. Run: cd browser && npm run open-canvas — complete IdentiKey/MFA, then retry."
+      "Not logged in. Run: cd browser && npm run open-canvas — complete SSO/MFA, then retry."
     );
   }
 }
 
-/** America/Denver calendar day as YYYY-MM-DD (not UTC). */
-export function denverDay(d = new Date()) {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
-}
-
-/** @deprecated Prefer denverDay for window bounds. */
+/** @deprecated Prefer schoolLocalDay for window bounds. */
 export function isoDay(d = new Date()) {
-  return denverDay(d);
+  return schoolLocalDay(d);
 }
 
-function denverHour(ms) {
+function schoolLocalHour(ms) {
   return Number(
     new Intl.DateTimeFormat("en-US", {
-      timeZone: TZ,
+      timeZone: school().timezone,
       hour: "numeric",
       hour12: false,
     }).format(new Date(ms))
   );
 }
 
-/** UTC instant for midnight on `dayStr` (YYYY-MM-DD) in America/Denver. */
-export function denverMidnightUtc(dayStr) {
+/** UTC instant for midnight on `dayStr` (YYYY-MM-DD) in the school timezone. */
+export function schoolMidnightUtc(dayStr) {
   const [year, month, day] = dayStr.split("-").map(Number);
   let lo = Date.UTC(year, month - 1, day - 1, 12, 0, 0);
   let hi = Date.UTC(year, month - 1, day + 1, 12, 0, 0);
   while (lo < hi) {
     const mid = Math.floor((lo + hi) / 2);
-    const midDay = denverDay(new Date(mid));
+    const midDay = schoolLocalDay(new Date(mid));
     if (midDay < dayStr) lo = mid + 1;
     else hi = mid;
   }
   let t = lo;
-  while (denverDay(new Date(t)) === dayStr && denverHour(t) > 0) {
+  while (schoolLocalDay(new Date(t)) === dayStr && schoolLocalHour(t) > 0) {
     t -= 3600000;
   }
-  while (denverDay(new Date(t)) !== dayStr) t += 3600000;
+  while (schoolLocalDay(new Date(t)) !== dayStr) t += 3600000;
   return new Date(t);
 }
 
-/** Add calendar days in Denver, returning YYYY-MM-DD. */
-export function addDenverDays(dayStr, n) {
-  const start = denverMidnightUtc(dayStr);
-  return denverDay(new Date(start.getTime() + Number(n) * 86400000));
+/** Add calendar days in the school timezone, returning YYYY-MM-DD. */
+export function addSchoolDays(dayStr, n) {
+  const start = schoolMidnightUtc(dayStr);
+  return schoolLocalDay(new Date(start.getTime() + Number(n) * 86400000));
 }
 
 function buildQuery(params = {}) {
@@ -301,7 +313,7 @@ export function keyOf(course, title, due) {
  */
 export function resolveCourseFile(courseName, courseCode) {
   const blob = `${courseName || ""} ${courseCode || ""}`;
-  for (const entry of COURSE_FILE_MAP) {
+  for (const entry of getCourseFileMap()) {
     if (entry.patterns.some((p) => p.test(blob))) {
       return path.join(COURSES_DIR, `${entry.code}.md`);
     }
@@ -326,15 +338,15 @@ export function outcomeLabel(title, type) {
 
 /** Open catalog rows for course arc (~term window + checkpoints). */
 export function filterCatalogRows(rows, { today, catalogDays = CATALOG_DAYS } = {}) {
-  const startDay = today || denverDay();
-  const endDay = addDenverDays(startDay, Number(catalogDays || 90));
+  const startDay = today || schoolLocalDay();
+  const endDay = addSchoolDays(startDay, Number(catalogDays || 90));
 
   return (rows || [])
     .filter((r) => {
       if (r.complete) return false;
       if (isCheckpoint(r.title, r.type)) return true;
       if (!r.due) return true;
-      const dueDay = denverDay(new Date(r.due));
+      const dueDay = schoolLocalDay(new Date(r.due));
       if (dueDay < startDay) return true;
       return dueDay <= endDay;
     })
@@ -597,7 +609,7 @@ export function parseAgentPolicyFromSyllabus(body) {
 
 /** Sync-owned markdown for ## Syllabus / agent policy notes */
 export function formatAgentPolicyNotes(syllabusPlain, today) {
-  const synced = today || denverDay();
+  const synced = today || schoolLocalDay();
   const parsed = parseAgentPolicyFromSyllabus(syllabusPlain);
   if (!parsed.hasMarker) {
     return [
@@ -687,7 +699,7 @@ function isInstructorProfilePlaceholder(body) {
 function formatInstructorProfileBlock(agentBody, policyPages) {
   const policyBlock = `### Policy pages (synced)\n\n${formatPolicyPagesList(policyPages)}\n`;
   if (isInstructorProfilePlaceholder(agentBody)) {
-    return `Profile updated: (agent fills via \`jacob-instructor-profile\`)\n\n${policyBlock}`;
+    return `Profile updated: (agent fills via \`student-instructor-profile\`)\n\n${policyBlock}`;
   }
   const withoutPolicy = removeSubsection(agentBody, "Policy pages (synced)").trim();
   return `${withoutPolicy}\n\n${policyBlock}`;
@@ -726,8 +738,8 @@ export function mergeCourseFileContent({
     "Modules / what's next"
   );
   const worth = cleanSectionBody(
-    extractSection(sections, "Worth Jacob's time defaults"),
-    "Worth Jacob's time defaults"
+    extractSection(sections, "Worth your time defaults"),
+    "Worth your time defaults"
   );
   const registrationLog = cleanSectionBody(
     extractSection(sections, "Registration log"),
@@ -764,7 +776,7 @@ export function mergeCourseFileContent({
 
   return `# ${header}
 
-Updated: ${today || denverDay()}
+Updated: ${today || schoolLocalDay()}
 
 Sections: ${sectionsLine || ""}
 Canvas URL: ${canvasUrl || ""}
@@ -796,15 +808,15 @@ ${agentPolicyBlock}
 ## Modules / what's next
 
 ${isPlaceholderSection(modules) ? "-\n" : `${modules}\n`}
-## Worth Jacob's time defaults
+## Worth your time defaults
 
-${isPlaceholderSection(worth) ? "(See JACOB.md for this course.)\n" : `${worth}\n`}
+${isPlaceholderSection(worth) ? "(See USER.md for this course.)\n" : `${worth}\n`}
 ${isPlaceholderSection(registrationLog) ? "" : `## Registration log\n\n${registrationLog}\n`}
 `;
 }
 
 export function writeCourseCatalogFiles(perCourse, { today } = {}) {
-  const syncDay = today || denverDay();
+  const syncDay = today || schoolLocalDay();
   fs.mkdirSync(COURSES_DIR, { recursive: true });
   fs.mkdirSync(COURSES_RAW_DIR, { recursive: true });
   const written = [];
@@ -875,13 +887,13 @@ export function classifyOutcomeHint(title, type, description = "") {
     typeStr === "external_tool" ||
     /eoc|learningcurve/.test(blob)
   ) {
-    return "outcome:lti; external/LTI — browser+Jacob; never auto";
+    return "outcome:lti; external/LTI — browser+student; never auto";
   }
   if (/\bquiz\b|exam|midterm|final/.test(blob)) {
-    return "outcome:quiz; assessment — Jacob only";
+    return "outcome:quiz; assessment — student only";
   }
   if (/presentation|in-class\s+present/.test(blob)) {
-    return "outcome:presentation; Jacob only";
+    return "outcome:presentation; student only";
   }
 
   const externalSignup =
@@ -907,7 +919,7 @@ export function classifyOutcomeHint(title, type, description = "") {
     return "outcome:signup";
   }
   if (/thought\s*project|philosophy\s*of|relationship\s*to\s*engineering/.test(blob)) {
-    return "outcome:written; reflection — Jacob voice";
+    return "outcome:written; reflection — student voice";
   }
   if (/recitation\s*scan/.test(blob)) {
     return "outcome:written";
@@ -1182,7 +1194,7 @@ export function dedupeRows(rows) {
 
   const byTitleDay = new Map();
   for (const row of byId.values()) {
-    const dueDay = row.due ? denverDay(new Date(row.due)) : "";
+    const dueDay = row.due ? schoolLocalDay(new Date(row.due)) : "";
     const k = `${(row.course || "").toLowerCase()}||${(row.title || "").toLowerCase()}||${dueDay}`;
     const prev = byTitleDay.get(k);
     if (!prev) {
@@ -1311,13 +1323,13 @@ export async function enrichSignupDescriptions(page, universe) {
  * Prefer this over DOM scraping. Used by both sync and audit.
  */
 export async function fetchDueUniverse(page, { daysAhead = 14 } = {}) {
-  const today = denverDay();
-  const start = denverMidnightUtc(today);
-  const end = denverMidnightUtc(addDenverDays(today, daysAhead));
+  const today = schoolLocalDay();
+  const start = schoolMidnightUtc(today);
+  const end = schoolMidnightUtc(addSchoolDays(today, daysAhead));
   const startIso = start.toISOString();
   const endIso = end.toISOString();
   const startDay = today;
-  const endDay = addDenverDays(today, daysAhead);
+  const endDay = addSchoolDays(today, daysAhead);
   const health = {};
 
   const coursesRes = await apiAllPages(page, "/api/v1/courses", {
@@ -1467,13 +1479,13 @@ export async function fetchDueUniverse(page, { daysAhead = 14 } = {}) {
 
 /** Rows with a real due date inside [today, today+daysAhead] (Denver days). */
 export function filterDatedInWindow(universe, { today, daysAhead, includeComplete = false } = {}) {
-  const startDay = today || denverDay();
-  const endDay = addDenverDays(startDay, Number(daysAhead || 14));
+  const startDay = today || schoolLocalDay();
+  const endDay = addSchoolDays(startDay, Number(daysAhead || 14));
 
   return (universe || []).filter((r) => {
     if (!r.due) return false;
     if (!includeComplete && r.complete) return false;
-    const dueDay = denverDay(new Date(r.due));
+    const dueDay = schoolLocalDay(new Date(r.due));
     return dueDay >= startDay && dueDay <= endDay;
   });
 }

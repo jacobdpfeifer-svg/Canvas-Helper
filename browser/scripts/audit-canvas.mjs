@@ -10,10 +10,10 @@ import path from "node:path";
 import {
   INBOX_DIR,
   WEEK_PATH,
-  addDenverDays,
+  addSchoolDays,
   classifyOutcomeHint,
   collectTruncationWarnings,
-  denverDay,
+  schoolLocalDay,
   escCell,
   fetchDueUniverse,
   filterDatedInWindow,
@@ -56,7 +56,7 @@ function healthRow(label, h) {
   return `| ${label} | ${ok}${extra} | ${h.count ?? 0} |`;
 }
 
-const today = denverDay();
+const today = schoolLocalDay();
 const { context, page } = await launchCanvasContext();
 try {
   await requireLoggedIn(page);
@@ -99,14 +99,14 @@ for (const r of actionableWindow) {
 
 const catalogExtras = universe.filter((r) => {
   if (!r.due) return true;
-  const dueDay = denverDay(new Date(r.due));
-  const endDay = addDenverDays(today, 14);
+  const dueDay = schoolLocalDay(new Date(r.due));
+  const endDay = addSchoolDays(today, 14);
   return dueDay < today || dueDay > endDay;
 });
 
 const undated = universe.filter((r) => !r.due);
 const datedForward = universe.filter(
-  (r) => r.due && denverDay(new Date(r.due)) >= today
+  (r) => r.due && schoolLocalDay(new Date(r.due)) >= today
 );
 
 fs.mkdirSync(INBOX_DIR, { recursive: true });

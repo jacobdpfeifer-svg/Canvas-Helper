@@ -31,11 +31,8 @@ from __future__ import annotations
 import base64
 import binascii
 import hashlib
-import hmac
 import os
-import secrets
 import tempfile
-import time
 from typing import Any
 
 from fastmcp import FastMCP
@@ -62,7 +59,7 @@ from ..core.untrusted_content import (
     fence_untrusted_inline,
 )
 from ..core.validation import coerce_canvas_id, validate_params
-from ..core.write_confirmation import unconfirmed_write_warning
+from ..core.write_confirmation import ConfirmationGuard, unconfirmed_write_warning
 
 # Submission types this tool supports. Quiz and discussion types are absent by
 # design: quiz-taking is refused for this student fork (academic integrity),
@@ -70,7 +67,7 @@ from ..core.write_confirmation import unconfirmed_write_warning
 _SUPPORTED_TYPES = ("online_text_entry", "online_url", "online_upload")
 
 # Assignment shapes that look like quizzes — soft-blocked so the agent cannot
-# walk Jacob into submitting assessments via this tool.
+# walk the student into submitting assessments via this tool.
 _QUIZ_SUBMISSION_TYPES = frozenset({"online_quiz"})
 
 
@@ -110,138 +107,24 @@ def _too_large_message() -> str:
 # preview and answer, short enough that course state cannot drift far.
 _CONFIRM_TTL_SECONDS = 300
 
-# Signing key for confirmation tokens, generated per process and deliberately
-# NOT shareable between workers.
-#
-# A shared key would let the same token verify on every replica, and since the
-# claim that makes a confirmation single-use is process-local, two workers could
-# then accept the same token concurrently and both submit, spending two of the
-# student's attempts. Enforcing single-use across replicas would require shared
-# atomic state (Redis or a database), which this library should not require.
-#
-# So a token is redeemable only on the process that issued it. A hosted
-# deployment should use session affinity to keep a student's preview and confirm
-# on one worker; without affinity, a confirmation may be rejected and the
-# student simply previews again. That is an inconvenience. Silently spending a
-# second attempt is not.
-_TOKEN_SECRET = secrets.token_bytes(32)
+# Shared ConfirmationGuard — all token crypto lives here (no local wrappers).
+_SUBMIT_GUARD = ConfirmationGuard(ttl_seconds=_CONFIRM_TTL_SECONDS)
 
-# Replay guard: fingerprint -> the time its claim can be forgotten. Entries only
-# need to outlive the token that created them, so they expire rather than
-# accumulating for the lifetime of the process.
-#
-# This is per-process. Single-use cannot be enforced across replicas without
-# shared state, but replay is separately defeated by the attempt number inside
-# the fingerprint: once a submission succeeds the attempt increments and the old
-# token matches nothing.
-_redeemed: dict[str, float] = {}
+
+def _identity_provider() -> str:
+    """Patchable identity: uses this module's get_request_credentials import."""
+    credentials = get_request_credentials()
+    if credentials is None:
+        return "stdio"
+    return _SUBMIT_GUARD.credential_digest(credentials.api_token)
+
+
+_SUBMIT_GUARD.set_identity_provider(_identity_provider)
 
 
 def reset_pending_confirmations() -> None:
     """Discard redeemed-token state (used by tests)."""
-    _redeemed.clear()
-
-
-def _purge_redeemed() -> None:
-    """Forget claims whose tokens have expired anyway."""
-    now = time.time()
-    for fingerprint in [f for f, expiry in _redeemed.items() if expiry < now]:
-        _redeemed.pop(fingerprint, None)
-
-
-def _reserve_confirmation(fingerprint: str) -> bool:
-    """Atomically claim a confirmation. False if it was already claimed.
-
-    There is deliberately no ``await`` between the membership test and the
-    write, which is what makes this atomic on the event loop. Without that,
-    two overlapping confirmations could both pass and both submit.
-    """
-    _purge_redeemed()
-    if fingerprint in _redeemed:
-        return False
-    _redeemed[fingerprint] = time.time() + _CONFIRM_TTL_SECONDS
-    return True
-
-
-def _release_confirmation(fingerprint: str) -> None:
-    """Give a claim back after a path that ended without submitting."""
-    _redeemed.pop(fingerprint, None)
-
-
-def _issue_token(fingerprint: str, now: float | None = None) -> str:
-    """Mint a confirmation token committing to ``fingerprint`` until it expires."""
-    expiry = int((now if now is not None else time.time()) + _CONFIRM_TTL_SECONDS)
-    mac = hmac.new(
-        _TOKEN_SECRET, f"{expiry}|{fingerprint}".encode(), hashlib.sha256
-    ).hexdigest()[:32]
-    return f"{expiry}.{mac}"
-
-
-def _check_token(token: str, fingerprint: str) -> str | None:
-    """Verify a token against the current request. Returns an error, or None.
-
-    The signature covers the fingerprint, which in turn covers the caller's own
-    credential, the target, the exact payload and the observed attempt count. So
-    a token cannot be moved to another student, another assignment, or different
-    content: any of those changes the fingerprint and the signature stops
-    matching.
-    """
-    expiry_text, _, mac = token.partition(".")
-    if not mac:
-        return (
-            "❌ That confirmation token is malformed. Run the preview again."
-        )
-    try:
-        expiry = int(expiry_text)
-    except ValueError:
-        return "❌ That confirmation token is malformed. Run the preview again."
-
-    expected = hmac.new(
-        _TOKEN_SECRET, f"{expiry}|{fingerprint}".encode(), hashlib.sha256
-    ).hexdigest()[:32]
-    if not hmac.compare_digest(mac, expected):
-        return (
-            "❌ This confirmation does not match. Either the submission changed "
-            "since the preview (content or attempt count differs), or the "
-            "preview was handled by a different server process. Nothing was "
-            "submitted. Preview again and confirm the new token."
-        )
-    if expiry < time.time():
-        return "❌ That confirmation expired. Run the preview again."
-
-    # Purge before the membership test, not only inside the reservation. An
-    # uncertain submission error deliberately keeps its claim, and a later
-    # preview of unchanged content at an unchanged attempt count produces the
-    # same fingerprint — so without purging here, a quiet process would keep
-    # rejecting that retry long after the claim should have lapsed.
-    _purge_redeemed()
-    if fingerprint in _redeemed:
-        return (
-            "❌ That confirmation was already used. Nothing was submitted. "
-            "Run the preview again."
-        )
-    return None
-
-
-def _caller_identity() -> str:
-    """A stable, non-reversible handle for whoever is calling.
-
-    Hosted deployments pass a per-user Canvas token on every request, so this
-    distinguishes students without ever storing or logging the credential. In
-    stdio mode there is a single user and the constant is fine.
-    """
-    credentials = get_request_credentials()
-    if credentials is None:
-        return "stdio"
-    # Keyed with the per-process token secret rather than bare SHA-256. Canvas
-    # tokens are high-entropy (this is not password hashing, whatever a scanner
-    # pattern-matches it as), but keying costs nothing and means a leaked
-    # fingerprint is not even a digest-of-the-token oracle. Stability within
-    # the process is all the confirmation flow needs, and _TOKEN_SECRET is
-    # per-process by design.
-    return hmac.new(
-        _TOKEN_SECRET, credentials.api_token.encode(), hashlib.sha256
-    ).hexdigest()
+    _SUBMIT_GUARD.reset()
 
 
 class _PreparedFile:
@@ -262,7 +145,7 @@ class _PreparedFile:
         return len(self.content)
 
 
-def _fingerprint(
+def _submission_fingerprint(
     course_id: str,
     assignment_id: str,
     submission_type: str,
@@ -270,28 +153,15 @@ def _fingerprint(
     attempt: int,
     allowed_attempts: int | None = None,
 ) -> str:
-    """Bind a confirmation to exactly what was previewed, and to who previewed it.
-
-    Including the observed attempt number means a submission that lands between
-    preview and confirm invalidates the token rather than silently consuming a
-    second attempt.
-
-    Including the caller identity matters on a hosted server, where each request
-    carries its own Canvas token: without it, a token issued to one student could
-    be redeemed by another whose attempt number happened to match, so the
-    confirmation would no longer authorize the account that saw the preview.
-
-    Including the attempt *limit* as well as the count matters because an
-    instructor can change ``allowed_attempts`` in between. A preview that said
-    "unlimited" could otherwise be confirmed against a freshly capped assignment
-    and spend what is now the final attempt, with the student having agreed to
-    something different.
-    """
-    raw = (
-        f"{_caller_identity()}|{course_id}|{assignment_id}|"
-        f"{submission_type}|{payload_digest}|{attempt}|{allowed_attempts}"
+    """Bind a confirmation via ConfirmationGuard.fingerprint (+ identity provider)."""
+    return _SUBMIT_GUARD.fingerprint(
+        course_id,
+        assignment_id,
+        submission_type,
+        payload_digest,
+        str(attempt),
+        str(allowed_attempts),
     )
-    return hashlib.sha256(raw.encode()).hexdigest()
 
 
 def _digest_payload(
@@ -560,7 +430,7 @@ async def _final_preflight(
             "not supported for group assignments. Please submit it in Canvas."
         )
 
-    current = _fingerprint(
+    current = _submission_fingerprint(
         course_id,
         assignment_id,
         submission_type,
@@ -740,8 +610,8 @@ def register_student_write_tools(mcp: FastMCP) -> None:
 
             Two-step by design. Call without confirmation_token for a preview
             (points, submission types, content, token). Always surface that
-            preview in the chat. Redeem the token only when Jacob approved or
-            JACOB.md auto-submit criteria fully pass (never for quizzes).
+            preview in the chat. Redeem the token only when the student approved or
+            USER.md auto-submit criteria fully pass (never for quizzes).
 
             Args:
                 course_identifier: Course code or Canvas ID
@@ -797,7 +667,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 return (
                     "❌ This looks like a quiz or LTI assessment "
                     f"(types: {', '.join(assignment.get('submission_types') or []) or 'unknown'}). "
-                    "Agent submit is blocked for quizzes/exams — Jacob must take it in Canvas."
+                    "Agent submit is blocked for quizzes/exams — the student must take it in Canvas."
                 )
 
             # A group submission becomes the whole group's submission and
@@ -847,7 +717,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 return prep_error
 
             digest = _digest_payload(body, url, comment, prepared)
-            fingerprint = _fingerprint(
+            fingerprint = _submission_fingerprint(
                 course_id,
                 str(assignment_id),
                 submission_type,
@@ -857,7 +727,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             )
 
             if not confirmation_token:
-                token = _issue_token(fingerprint)
+                token = _SUBMIT_GUARD.issue(fingerprint)
 
                 preview = [
                     "📋 Submission preview — NOTHING has been submitted yet.",
@@ -894,13 +764,13 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     "\n➡️  Always show this preview (and any why-auto rationale) in chat. "
                     "To submit, call again with "
                     f"confirmation_token='{token}' and identical content.\n"
-                    "Redeem without asking Jacob only when JACOB.md auto-submit "
+                    "Redeem without asking only when USER.md auto-submit "
                     "criteria fully pass and the course is calibrated. "
                     "This consumes an attempt and cannot be undone."
                 )
                 return "\n".join(preview)
 
-            token_error = _check_token(confirmation_token, fingerprint)
+            token_error = _SUBMIT_GUARD.check(confirmation_token, fingerprint)
             if token_error:
                 return token_error
 
@@ -910,7 +780,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             # submit, spending two attempts. Reserving first makes that
             # impossible; every path that ends without submitting releases it
             # again, so a failed upload still does not cost a fresh preview.
-            if not _reserve_confirmation(fingerprint):
+            if not _SUBMIT_GUARD.reserve(confirmation_token):
                 return (
                     "❌ That confirmation was already used. Nothing was "
                     "submitted. Run the preview again."
@@ -922,7 +792,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 course_id, "submit_assignment"
             )
             if not allowed:
-                _release_confirmation(fingerprint)
+                _SUBMIT_GUARD.release(confirmation_token)
                 return f"❌ Submission blocked. {reason}"
 
             data: dict[str, Any] = {"submission[submission_type]": submission_type}
@@ -939,7 +809,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     if upload_error:
                         # Release the claim: nothing was submitted, so the
                         # student can retry without re-previewing.
-                        _release_confirmation(fingerprint)
+                        _SUBMIT_GUARD.release(confirmation_token)
                         return f"{upload_error}\nNothing was submitted."
                     file_ids.append(file_id)
                 data["submission[file_ids][]"] = file_ids
@@ -957,7 +827,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 course_id, str(assignment_id), submission_type, digest, fingerprint
             )
             if preflight_error:
-                _release_confirmation(fingerprint)
+                _SUBMIT_GUARD.release(confirmation_token)
                 return preflight_error
 
             # The claim taken above stands from here on. Even if this call

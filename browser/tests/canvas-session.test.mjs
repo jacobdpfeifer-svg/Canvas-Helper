@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  addDenverDays,
+  addSchoolDays,
   buildWeekNoteParts,
   classifyOutcomeHint,
   COURSE_FILE_MAP,
@@ -11,8 +11,8 @@ import {
   hasCampusGroupsLink,
   hasUploadAfterEventHint,
   isCheckpoint,
-  denverDay,
-  denverMidnightUtc,
+  schoolLocalDay,
+  schoolMidnightUtc,
   filterDatedInWindow,
   mergeCourseFileContent,
   parseAgentPolicyFromSyllabus,
@@ -23,23 +23,23 @@ import {
   syllabusHash,
 } from "../scripts/lib/canvas-session.mjs";
 
-describe("denverMidnightUtc", () => {
+describe("schoolMidnightUtc", () => {
   it("returns Denver midnight in August (MDT, UTC-6)", () => {
-    const m = denverMidnightUtc("2026-08-22");
+    const m = schoolMidnightUtc("2026-08-22");
     assert.equal(m.toISOString(), "2026-08-22T06:00:00.000Z");
-    assert.equal(denverDay(m), "2026-08-22");
+    assert.equal(schoolLocalDay(m), "2026-08-22");
   });
 
   it("returns Denver midnight in January (MST, UTC-7)", () => {
-    const m = denverMidnightUtc("2026-01-15");
+    const m = schoolMidnightUtc("2026-01-15");
     assert.equal(m.toISOString(), "2026-01-15T07:00:00.000Z");
-    assert.equal(denverDay(m), "2026-01-15");
+    assert.equal(schoolLocalDay(m), "2026-01-15");
   });
 });
 
-describe("addDenverDays", () => {
+describe("addSchoolDays", () => {
   it("adds calendar days in Denver", () => {
-    assert.equal(addDenverDays("2026-08-22", 14), "2026-09-05");
+    assert.equal(addSchoolDays("2026-08-22", 14), "2026-09-05");
   });
 });
 
@@ -415,9 +415,9 @@ Profile updated: 2026-08-01
 
 -
 
-## Worth Jacob's time defaults
+## Worth your time defaults
 
-(See JACOB.md for this course.)
+(See USER.md for this course.)
 `;
     const md = mergeCourseFileContent({
       existingContent: existing,

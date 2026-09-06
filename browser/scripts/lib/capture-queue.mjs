@@ -4,7 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { denverDay } from "./canvas-session.mjs";
+import { schoolLocalDay } from "./canvas-session.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const CAPTURES_ROOT = path.join(__dirname, "..", "..", "..", "inbox", "captures");
@@ -167,6 +167,6 @@ export function findAssignmentIdInCourseMd(content, namePattern) {
 }
 
 export function touchQueueUpdated(content) {
-  const today = denverDay();
+  const today = schoolLocalDay();
   return String(content).replace(/^Updated:\s*.+$/m, `Updated: ${today}`);
 }

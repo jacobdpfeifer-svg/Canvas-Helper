@@ -1,18 +1,21 @@
 ---
 name: canvas-week-plan
-description: Jacob's weekly planner from inbox/ (SSO→API sync) or MCP if PAT works. Triages with JACOB.md. Use for "what's due", "plan my week", "weekly check".
+description: Weekly planner from inbox/ (SSO→API sync) or MCP if PAT works. Triages with USER.md. Use for "what's due", "plan my week", "weekly check".
+schema_version: 1
+category: canvas_read
+requires_cloud: false
 ---
 
-# Canvas Week Plan (Jacob IBE)
+# Canvas Week Plan
 
-Generate Jacob’s weekly plan from the **single due-list contract** (`inbox/week.md`), then triage with [`JACOB.md`](../../JACOB.md).
+Generate the student’s weekly plan from the **single due-list contract** (`inbox/week.md`), then triage with [`USER.md`](../../USER.md).
 
-Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
+Architecture: [`docs/architecture.md`](../../docs/architecture.md).
 
 ## Prerequisites
 
-- Read `JACOB.md` and `.jacob/calibrated-courses.md`
-- Courses: APPM 1235, BCOR 1030, CSCI 1200, ECON 2010, COEN 1500 (+ readiness/orientation if present)
+- Read `USER.md` and `calibration/calibrated-courses.md`
+- Courses = `{active_courses}` from `inbox/week.md` / `inbox/courses/*.md`, or MCP `list_courses` when available — never a hard-coded roster
 
 ## Steps
 
@@ -31,23 +34,23 @@ Architecture: [`docs/HYBRID.md`](../../docs/HYBRID.md).
 
 | Bucket | Meaning |
 |--------|---------|
-| **Worth Jacob’s time** | Exams, quizzes, proctored, presentations, CSCI build, judgment writing, group coord |
-| **External / LTI (Jacob in tool)** | WebAssign, ZyBooks, PlayPosit, other LTI — draft help only |
+| **Worth the student’s time** | Exams, quizzes, proctored, presentations, builds marked Worth in USER.md, judgment writing, group coord |
+| **External / LTI (the student in tool)** | WebAssign, ZyBooks, PlayPosit, other LTI — draft help only |
 | **Agent can handle** | Native Canvas low-stakes busywork meeting every auto criterion + calibrated |
-| **Ask Jacob** | Unsure / first submit in a course |
+| **Ask the student** | Unsure / first submit in a course |
 
-Do not auto-submit from this skill — hand off to `jacob-assignment-triage` for native Canvas only.
+Do not auto-submit from this skill — hand off to `student-assignment-triage` for native Canvas only.
 
 ### 4. Priority order (required)
 
-Apply [`jacob-task-brief`](../jacob-task-brief/SKILL.md) + [`.jacob/priority-rubric.md`](../../.jacob/priority-rubric.md):
+Apply [`student-task-brief`](../student-task-brief/SKILL.md) + [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md):
 
 - Rank open inbox rows **P0–P3**
 - Emit full briefing cards for **Top 3** (Why / Outcome / First step / Time box / Mode)
 - Batch same-platform LTI; list deferred P3 briefly
 - End with one **Do first** sentence
 
-If Jacob asks to save focus, write [`inbox/focus.md`](../../inbox/focus.md) from the Top 3 (not a second due-list).
+If the student asks to save focus, write [`inbox/focus.md`](../../inbox/focus.md) from the Top 3 (not a second due-list).
 
 ### 5. Output
 
@@ -55,6 +58,6 @@ Note **source** (`inbox` from sso-session-api / MCP / merge). Include:
 
 Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → **Focus briefing (Top 3 + batch + Do first)**.
 
-## Entrepreneurship lens
+## Goal lens
 
-Flag team/pitch/project/CSCI build work early.
+Flag team/pitch/project/build work that matches career priorities in `USER.md` early.

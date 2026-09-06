@@ -22,6 +22,7 @@ import hashlib
 import hmac
 import secrets
 import time
+from collections.abc import Callable
 from typing import Any
 
 from .credentials import get_request_credentials
@@ -49,6 +50,10 @@ class ConfirmationGuard:
     single-use claim stays process-local, so two workers could both accept it.
     A hosted deployment should use session affinity; without it, a rejected
     confirmation just means previewing again.
+
+    ``identity_provider`` (optional) overrides ``caller_identity`` so a tool
+    module can bind identity to its own patchable ``get_request_credentials``
+    import without reimplementing token crypto.
     """
 
     # A token is ``expiry.nonce.authmac.fpmac`` — all fixed-width hex/int, so a
@@ -56,13 +61,28 @@ class ConfirmationGuard:
     # any hashing (cheap flood defense).
     _MAX_TOKEN_LEN = 256
 
-    def __init__(self, ttl_seconds: int = 300) -> None:
+    def __init__(
+        self,
+        ttl_seconds: int = 300,
+        identity_provider: Callable[[], str] | None = None,
+    ) -> None:
         self._ttl = ttl_seconds
         self._secret = secrets.token_bytes(32)
+        self._identity_provider = identity_provider
         # token nonce -> when its claim can be forgotten. Keyed by nonce, not
         # fingerprint, so redeeming one token does not block a *fresh* preview
         # of identical content — each preview mints its own single-use token.
         self._redeemed: dict[str, float] = {}
+
+    def set_identity_provider(self, provider: Callable[[], str] | None) -> None:
+        """Replace the caller-identity source (used by student_write at import)."""
+        self._identity_provider = provider
+
+    def credential_digest(self, api_token: str) -> str:
+        """Non-reversible handle for a Canvas API token (HMAC with guard secret)."""
+        return hmac.new(
+            self._secret, api_token.encode(), hashlib.sha256
+        ).hexdigest()
 
     def reset(self) -> None:
         """Discard redeemed-token state (used by tests)."""
@@ -74,12 +94,12 @@ class ConfirmationGuard:
         Hosted deployments pass a per-user Canvas token on every request; in
         stdio mode there is a single user and the constant is fine.
         """
+        if self._identity_provider is not None:
+            return self._identity_provider()
         credentials = get_request_credentials()
         if credentials is None:
             return "stdio"
-        return hmac.new(
-            self._secret, credentials.api_token.encode(), hashlib.sha256
-        ).hexdigest()
+        return self.credential_digest(credentials.api_token)
 
     def fingerprint(self, *parts: str) -> str:
         """Bind a confirmation to the caller plus the exact previewed request.

@@ -1,12 +1,13 @@
-# Docs (Jacob IBE fork)
+# Docs
 
-This fork no longer ships the upstream educator / learning-designer website.
+Product architecture for ProductName (Phase 1).
 
 | File | Purpose |
 |------|---------|
-| [`CU_ACCESS.md`](CU_ACCESS.md) | CU Boulder token + Phase 0 smoke |
-| [`../JACOB.md`](../JACOB.md) | Goals, courses, triage rubric |
-| [`../AGENTS.md`](../AGENTS.md) | Agent operating guide |
-| [`../README.md`](../README.md) | Install + status |
+| [`architecture.md`](architecture.md) | Truth path, tenants, permissions, skills |
+| [`schools/`](schools/) | Per-school notes (e.g. CU Boulder) |
+| [`handoff/architect-brief.md`](handoff/architect-brief.md) | Architect handback status |
 
-Upstream marketing HTML (educator guide, bulk grading, etc.) was removed from this branch.
+Agent guide: [`../AGENTS.md`](../AGENTS.md) · Install: [`../README.md`](../README.md) · User template: [`../templates/USER.md`](../templates/USER.md)
+
+Legacy Jacob/CU docs: [`../dev/docs/`](../dev/docs/).

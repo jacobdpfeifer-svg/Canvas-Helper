@@ -188,7 +188,8 @@ class Config:
         self.log_api_requests = _bool_env("LOG_API_REQUESTS", False)
 
         # Privacy and security configuration
-        # Jacob IBE personal fork: self-only student token — anonymization off by default
+        # Local-first single-machine beta: anonymization off by default.
+        # Revisit if multi-user machines share a daemon.
         self.enable_data_anonymization = _bool_env("ENABLE_DATA_ANONYMIZATION", False)
         self.anonymization_debug = _bool_env("ANONYMIZATION_DEBUG", False)
         self.log_redact_pii = _bool_env("LOG_REDACT_PII", True)
@@ -217,10 +218,10 @@ class Config:
         # Per-course instructor policy. Can further restrict (never expand) the
         # operator ceiling above.
         self.course_agent_policy_enabled = _bool_env("COURSE_AGENT_POLICY_ENABLED", True)
-        # Jacob IBE fork: freshman syllabi often omit agent policy — default allow;
-        # a syllabus can still deny. Operator can set COURSE_AGENT_POLICY_DEFAULT=deny.
+        # Multi-tenant product default: deny until syllabus/calibration allows.
+        # A syllabus marker can still grant; operator may set allow for personal forks.
         self.course_agent_policy_default = os.getenv(
-            "COURSE_AGENT_POLICY_DEFAULT", "allow"
+            "COURSE_AGENT_POLICY_DEFAULT", "deny"
         ).strip().lower()
         # Denials cache longer than grants. A stale grant is a revocation window on
         # an attempt-consuming action, so it is deliberately short.

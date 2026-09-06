@@ -1,0 +1,9 @@
+{
+  "name": "productname-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "iOS TestFlight companion — Live Activity + Top-3 widget + STOP/rewind. First day-60 cut line.",
+  "scripts": {
+    "start": "echo 'Expo scaffold — cuttable in Phase 1'"
+  }
+}

@@ -502,55 +502,55 @@ class TestConfirmationIntegrity:
         assert not [c for c in request.call_args_list if c.args[0] == "post"]
 
     def test_abandoned_previews_hold_no_server_state(self):
-        """Tokens are self-contained, so an abandoned preview costs nothing.
-
-        The previous design kept every issued token in a process-global map,
-        which a caller could grow without bound by previewing and never
-        confirming. Signed tokens remove the map entirely.
-        """
+        """Tokens are self-contained until reserved; abandoned previews cost nothing."""
         import canvas_mcp.tools.student_write as sw
 
         for _ in range(1000):
-            sw._issue_token("some-fingerprint")
-        assert not sw._redeemed
+            sw._SUBMIT_GUARD.issue("some-fingerprint")
+        assert not sw._SUBMIT_GUARD._redeemed
 
     def test_expired_token_is_rejected(self):
         import time as time_module
 
         import canvas_mcp.tools.student_write as sw
 
-        expired = sw._issue_token("fp", now=time_module.time() - _EXPIRED_BY)
-        assert "expired" in (sw._check_token(expired, "fp") or "")
+        expired = sw._SUBMIT_GUARD.issue("fp", now=time_module.time() - _EXPIRED_BY)
+        assert "expired" in (sw._SUBMIT_GUARD.check(expired, "fp") or "")
 
     def test_token_does_not_verify_against_a_different_payload(self):
         import canvas_mcp.tools.student_write as sw
 
-        token = sw._issue_token("fingerprint-a")
-        assert sw._check_token(token, "fingerprint-a") is None
-        assert sw._check_token(token, "fingerprint-b") is not None
+        token = sw._SUBMIT_GUARD.issue("fingerprint-a")
+        assert sw._SUBMIT_GUARD.check(token, "fingerprint-a") is None
+        assert sw._SUBMIT_GUARD.check(token, "fingerprint-b") is not None
 
     def test_reservation_is_exclusive(self):
         import canvas_mcp.tools.student_write as sw
 
-        assert sw._reserve_confirmation("fp") is True
-        assert sw._reserve_confirmation("fp") is False
+        token = sw._SUBMIT_GUARD.issue("fp")
+        assert sw._SUBMIT_GUARD.reserve(token) is True
+        assert sw._SUBMIT_GUARD.reserve(token) is False
 
     def test_released_reservation_can_be_reclaimed(self):
         import canvas_mcp.tools.student_write as sw
 
-        assert sw._reserve_confirmation("fp") is True
-        sw._release_confirmation("fp")
-        assert sw._reserve_confirmation("fp") is True
+        token = sw._SUBMIT_GUARD.issue("fp")
+        assert sw._SUBMIT_GUARD.reserve(token) is True
+        sw._SUBMIT_GUARD.release(token)
+        assert sw._SUBMIT_GUARD.reserve(token) is True
 
     def test_redeemed_claims_expire(self):
         """Otherwise memory grows with the lifetime submission count."""
         import canvas_mcp.tools.student_write as sw
 
-        sw._reserve_confirmation("old")
-        sw._redeemed["old"] = 0.0  # already past
-        sw._reserve_confirmation("new")
-        assert "old" not in sw._redeemed
-        assert "new" in sw._redeemed
+        old = sw._SUBMIT_GUARD.issue("old")
+        sw._SUBMIT_GUARD.reserve(old)
+        nonce = next(iter(sw._SUBMIT_GUARD._redeemed))
+        sw._SUBMIT_GUARD._redeemed[nonce] = 0.0
+        new = sw._SUBMIT_GUARD.issue("new")
+        sw._SUBMIT_GUARD.reserve(new)
+        assert nonce not in sw._SUBMIT_GUARD._redeemed
+        assert len(sw._SUBMIT_GUARD._redeemed) == 1
 
     @pytest.mark.asyncio
     async def test_concurrent_confirmations_submit_only_once(self):
@@ -609,8 +609,8 @@ class TestConfirmationIntegrity:
         """
         import canvas_mcp.tools.student_write as sw
 
-        unlimited = sw._fingerprint("1", "2", "online_text_entry", "d", 0, -1)
-        capped = sw._fingerprint("1", "2", "online_text_entry", "d", 0, 1)
+        unlimited = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0, -1)
+        capped = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0, 1)
         assert unlimited != capped
 
     @pytest.mark.asyncio
@@ -866,9 +866,11 @@ class TestConfirmationIntegrity:
     def test_token_does_not_verify_under_a_forged_signature(self):
         import canvas_mcp.tools.student_write as sw
 
-        token = sw._issue_token("fp")
-        expiry, _, _mac = token.partition(".")
-        assert sw._check_token(f"{expiry}.{'0' * 32}", "fp") is not None
+        token = sw._SUBMIT_GUARD.issue("fp")
+        parts = token.split(".")
+        assert len(parts) == 4
+        forged = f"{parts[0]}.{parts[1]}.{'0' * 32}.{'0' * 32}"
+        assert sw._SUBMIT_GUARD.check(forged, "fp") is not None
 
 
 class TestPreviewShowsWhatIsAuthorized:
@@ -946,7 +948,9 @@ class TestUploadFailureHandling:
         assert "Nothing was submitted" in result
         # The token must survive: the failure had nothing to do with the
         # student's content, so it should not cost them a fresh preview.
-        assert not sw._redeemed, "token retired despite nothing being submitted"
+        assert not sw._SUBMIT_GUARD._redeemed, (
+            "token retired despite nothing being submitted"
+        )
         assert token  # issued and still syntactically usable for a retry
 
     @pytest.mark.asyncio
