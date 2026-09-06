@@ -1,5 +1,5 @@
 /**
- * Open CampusGroups headed so Jacob can complete Shibboleth + consent/onboarding once per term.
+ * Open CampusGroups headed so the student can complete Shibboleth + consent/onboarding once per term.
  * Reuses browser/.auth (same profile as Canvas sync).
  */
 import { CG_BASE, ensureCampusGroupsSession, launchCanvasContext } from "./campusgroups-session.mjs";

@@ -18,6 +18,7 @@ pub const SYNC_WEEKEND: Duration = Duration::from_secs(6 * 60 * 60);
 /// Absolute floor — never poll Canvas more often than this.
 pub const SYNC_FLOOR: Duration = Duration::from_secs(5 * 60);
 
+#[allow(dead_code)]
 pub struct DaemonConfig {
     pub user_id: String,
     pub school_slug: String,

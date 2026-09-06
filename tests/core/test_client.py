@@ -24,7 +24,7 @@ class TestCanvasAuthHeaders:
     def test_user_agent_identifies_project(self):
         """UA should be self-identifying per Instructure's guidance (contact URL)."""
         headers = _canvas_auth_headers("t")
-        assert "github.com/vishalsachdev/canvas-mcp" in headers["User-Agent"]
+        assert "github.com/jacobdpfeifer-svg/Canvas-Helper" in headers["User-Agent"]
 
 
 class TestResolveCanvasApiRoot:

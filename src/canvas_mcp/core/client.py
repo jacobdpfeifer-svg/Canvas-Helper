@@ -30,7 +30,7 @@ def _canvas_auth_headers(api_token: str) -> dict[str, str]:
 
     return {
         "Authorization": f"Bearer {api_token}",
-        "User-Agent": f"canvas-mcp/{__version__} (https://github.com/vishalsachdev/canvas-mcp)",
+        "User-Agent": f"canvas-mcp/{__version__} (https://github.com/jacobdpfeifer-svg/Canvas-Helper)",
     }
 
 def _resolve_canvas_api_root(base_api_url: str, api_root: Literal["rest", "quiz"]) -> str:
