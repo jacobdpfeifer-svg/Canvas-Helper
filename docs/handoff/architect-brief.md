@@ -166,18 +166,18 @@ Write skills were **never** auto-promoted (hard ban tested). Live Llama 3.1 8B Q
 
 ### Must-fix before beta (remaining)
 
-1. Connect two-user isolation smoke (separate user roots + auth dirs).
-2. Replace dry-run GCal/Gmail with real OAuth; keep undo_ptr contract.
-3. Legal: per-school policy sheet in onboarding (CU).
-4. Chrome Native Messaging host manifest registration for `com.productname.daemon`.
+1. ~~Connect two-user isolation smoke (separate user roots + auth dirs).~~ **Done** — `tests/core/test_two_user_isolation.py`.
+2. ~~Replace dry-run GCal/Gmail with real OAuth; keep undo_ptr contract.~~ **Done** — `GOOGLE_OAUTH_CLIENT_SECRETS` + optional `.[google]`; dry-run fallback retained.
+3. ~~Legal: per-school policy sheet in onboarding (CU).~~ **Done** — onboarding step + `schools/*.yaml` `legal_notice`.
+4. ~~Chrome Native Messaging host manifest registration for `com.productname.daemon`.~~ **Done** — `app/native-messaging/`.
 
 ### Should-fix
 
-5. Live 8B tool-call evals against Ollama.
+5. ~~Live 8B tool-call evals against Ollama.~~ **Done** — gated by `PRODUCTNAME_LIVE_SKILL_EVAL` (CI stays structural).
 6. ~~Fix plugin RSVP default name still `"Jacob Pfeifer"`.~~ **Done** — `--name` required.
-7. CNAME / pyproject homepage URLs audit (Dockerfile `MCP_SERVER_NAME` → `productname-canvas-mcp`).
+7. ~~CNAME / pyproject homepage URLs audit (Dockerfile `MCP_SERVER_NAME` → `productname-canvas-mcp`).~~ **Done**.
 8. ~~Exclude root `inbox/` + `.jacob/` from release.~~ **Done** — deleted + gitignored.
-9. ~~Capture-classify hard-coded COURSE_CODES.~~ **Done** — derived from school `course_file_map` (empty by default).
+9. ~~Capture-classify hard-coded COURSE_CODES / CU selfie titles.~~ **Done** — school `course_file_map` + generic post-event match.
 
 ### Phase 2
 

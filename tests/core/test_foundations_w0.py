@@ -32,6 +32,7 @@ def test_load_cu_boulder_school():
     assert "colorado.edu" in school.canvas_base_url
     assert school.timezone == "America/Denver"
     assert list(school.course_file_map) == []
+    assert "local-first" in school.legal_notice.lower()
     assert "cu-boulder" in list_schools()
 
 

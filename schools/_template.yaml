@@ -19,6 +19,10 @@ lti_catalog:
 engagement_platform: null
 # Optional: map Canvas course name patterns → inbox course file codes
 course_file_map: []
+# Shown in onboarding before SSO (multiline string)
+legal_notice: |
+  ProductName is local-first. Data stays on this device. You are responsible for
+  following your school's academic integrity and acceptable-use policies.
 # Example:
 # course_file_map:
 #   - code: CSCI1000
