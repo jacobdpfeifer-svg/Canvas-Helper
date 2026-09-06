@@ -1,6 +1,40 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-import {
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { after, before, describe, it } from "node:test";
+import { clearSchoolConfigCache } from "../scripts/lib/school-config.mjs";
+
+const fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "pn-capture-school-"));
+// File content must contain single backslashes for RegExp source (csci\s*1200).
+const fixtureYaml = [
+  "slug: test-school",
+  "display_name: Test School",
+  "canvas_base_url: https://canvas.example.edu",
+  "timezone: America/Denver",
+  "course_file_map:",
+  "  - code: CSCI1200",
+  "    patterns:",
+  '      - "csci\\s*1200"',
+  '      - "\\bcsci\\b"',
+  "  - code: BCOR1030",
+  "    patterns:",
+  '      - "bcor\\s*1030"',
+  '      - "\\bbcor\\b"',
+  '      - "advocate"',
+  "  - code: COEN1500",
+  "    patterns:",
+  '      - "coen\\s*1500"',
+  '      - "\\bcoen\\b"',
+  "",
+].join("\n");
+
+fs.writeFileSync(path.join(fixtureDir, "test-school.yaml"), fixtureYaml);
+process.env.SCHOOLS_DIR = fixtureDir;
+process.env.SCHOOL_SLUG = "test-school";
+clearSchoolConfigCache();
+
+const {
   actionForKind,
   classifyCapture,
   classifyCourseFromOcr,
@@ -9,10 +43,21 @@ import {
   formatQueueRow,
   makeCaptureId,
   parseUserCourseOverride,
-} from "../scripts/lib/capture-classify.mjs";
+} = await import("../scripts/lib/capture-classify.mjs");
+
+before(() => {
+  process.env.SCHOOLS_DIR = fixtureDir;
+  process.env.SCHOOL_SLUG = "test-school";
+  clearSchoolConfigCache();
+});
+
+after(() => {
+  clearSchoolConfigCache();
+  fs.rmSync(fixtureDir, { recursive: true, force: true });
+});
 
 describe("parseUserCourseOverride", () => {
-  it("maps voice shorthand to course codes", () => {
+  it("maps voice shorthand to course codes from school yaml", () => {
     assert.equal(parseUserCourseOverride("CSCI — intake this whiteboard"), "CSCI1200");
     assert.equal(parseUserCourseOverride("BCOR whiteboard"), "BCOR1030");
     assert.equal(parseUserCourseOverride("COEN major dinner selfie"), "COEN1500");
@@ -31,7 +76,7 @@ describe("classifyCourseFromOcr", () => {
     assert.equal(hit.confidence, "high");
   });
 
-  it("uses keyword hints at med confidence", () => {
+  it("uses secondary yaml patterns at med confidence", () => {
     const hit = classifyCourseFromOcr("Advocate round 1 peer review");
     assert.ok(hit);
     assert.equal(hit.code, "BCOR1030");

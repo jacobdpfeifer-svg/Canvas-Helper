@@ -1,6 +1,6 @@
 """The privacy default must agree across every distribution channel.
 
-Jacob IBE personal fork: ENABLE_DATA_ANONYMIZATION defaults to false (self-only).
+ProductName student defaults: ENABLE_DATA_ANONYMIZATION defaults to false (self-only local use).
 """
 
 import json
@@ -81,7 +81,7 @@ class TestPrivacyDefaultConsistency:
 
     def test_the_agreed_default_is_self_only_student_fork(self):
         assert _code_default() is False, (
-            f"{SETTING} defaults to off in the Jacob IBE student fork."
+            f"{SETTING} defaults to off for ProductName student local use."
         )
 
     @pytest.mark.parametrize(

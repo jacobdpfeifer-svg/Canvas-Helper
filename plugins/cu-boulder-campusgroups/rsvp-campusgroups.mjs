@@ -2,9 +2,8 @@
  * RSVP to a CampusGroups event via Playwright (shared .auth SSO).
  *
  * Usage:
- *   npm run rsvp-campusgroups -- --event 385793
- *   HEADLESS=1 npm run rsvp-campusgroups -- --event 385793 --verify
- *   npm run rsvp-campusgroups -- --event 385793 --name "Jacob Pfeifer"
+ *   npm run rsvp-campusgroups -- --event 385793 --name "Student Name"
+ *   HEADLESS=1 npm run rsvp-campusgroups -- --event 385793 --name "Student Name" --verify
  */
 import {
   appendRegistrationLog,
@@ -15,7 +14,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { event: null, verify: true, name: "Jacob Pfeifer", log: false };
+  const args = { event: null, verify: true, name: "", log: false };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--event" && argv[i + 1]) args.event = argv[++i];
@@ -29,8 +28,10 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv);
-if (!args.event) {
-  console.error("Usage: npm run rsvp-campusgroups -- --event <id> [--name \"Jacob Pfeifer\"] [--verify] [--log]");
+if (!args.event || !args.name.trim()) {
+  console.error(
+    'Usage: npm run rsvp-campusgroups -- --event <id> --name "Student Name" [--verify] [--log]'
+  );
   process.exit(1);
 }
 

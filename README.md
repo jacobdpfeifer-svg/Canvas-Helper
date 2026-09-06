@@ -16,10 +16,10 @@ Architecture: [`docs/architecture.md`](docs/architecture.md) · Agent guide: [`A
 cd browser
 npm install && npx playwright install chromium
 npm run open-canvas   # SSO + MFA once
-npm run sync          # writes inbox/week.md from /api/v1
+npm run sync          # writes {user_root}/inbox/week.md from /api/v1
 ```
 
-Set `SCHOOL_SLUG` (default `cu-boulder`) and optionally `DEV_USER_ROOT` for a product user-root path.
+Set `SCHOOL_SLUG` (default `cu-boulder`) and optionally `DEV_USER_ROOT` for a product user-root path (inbox + calibration). Without `DEV_USER_ROOT`, sync writes a local `inbox/` under the repo (gitignored).
 
 In chat: ask for a **week plan**, or **brief me** / **what should I do first**.
 
@@ -43,15 +43,6 @@ When your school grants a PAT: same REST truth; MCP (`canvas-mcp-server`) is a n
 | `canvas-discussion-facilitator` | Draft discussions |
 
 Enrollment lists come from `list_courses` / inbox sync — not hard-coded in skills.
-
-## Dev corpus (private fork)
-
-Personal CU Boulder / IBE notes live under [`dev/`](dev/) (`dev/JACOB.md`, legacy hybrid docs). Root `inbox/` and `.jacob/` are local memory for that fork — migrate with:
-
-```bash
-python scripts/migrate-dev-user-root.py --user-root /tmp/pn-dev --force
-export DEV_USER_ROOT=/tmp/pn-dev SCHOOL_SLUG=cu-boulder
-```
 
 ## License
 

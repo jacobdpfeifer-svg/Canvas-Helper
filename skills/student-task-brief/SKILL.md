@@ -95,7 +95,7 @@ When the student asks to **save** or **pin** focus (or week-plan asks to persist
 
 Write/overwrite [`inbox/focus.md`](../../inbox/focus.md) with today’s date, Top 3, and batch queue. Do **not** duplicate the full due table — that stays in `week.md`.
 
-Template: [`inbox/_templates/focus.md`](../../inbox/_templates/focus.md).
+Template: dated Top-3 cache under `{user_root}/inbox/focus.md` (not a second due-list).
 
 ## Output (week mode)
 

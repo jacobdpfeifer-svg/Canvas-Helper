@@ -201,7 +201,7 @@ def test_config_normalizes_canvas_api_url(monkeypatch):
 
 
 def test_anonymization_disabled_by_default_in_student_fork(monkeypatch):
-    """Jacob IBE fork: self-only token — anonymization off by default."""
+    """ProductName student: self-only token — anonymization off by default."""
     monkeypatch.delenv("ENABLE_DATA_ANONYMIZATION", raising=False)
     config_module.reset_config()
     assert config_module.get_config().enable_data_anonymization is False

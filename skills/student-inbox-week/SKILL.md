@@ -20,12 +20,12 @@ cd browser && npm run sync
 
 ## Manual / merge
 
-1. Read template [`inbox/_templates/week.md`](../../inbox/_templates/week.md) and current `week.md`.
+1. Read current `{user_root}/inbox/week.md` (create from sync if missing).
 2. Merge items; set `Updated:` and `Source:` (`sso-session-api` | `manual paste` | `mcp`).
 3. Flag WebAssign / ZyBooks / PlayPosit / proctored in Notes.
 4. Update `inbox/courses/CODE.md` for deep notes when useful (sync also refreshes **Assignment catalog** + **Checkpoints**).
 5. Offer `canvas-week-plan`, `student-task-brief`, or `student-course-arc` (when the student names a course).
-6. If the student asks to save focus: write [`inbox/focus.md`](../../inbox/focus.md) from `student-task-brief` Top 3 (template: [`inbox/_templates/focus.md`](../../inbox/_templates/focus.md)). Never treat focus as a competing due-list — `week.md` stays canonical.
+6. If the student asks to save focus: write `{user_root}/inbox/focus.md` from `student-task-brief` Top 3. Never treat focus as a competing due-list — `week.md` stays canonical.
 
 ## Rules
 

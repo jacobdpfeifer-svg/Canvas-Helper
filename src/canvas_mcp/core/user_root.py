@@ -4,8 +4,8 @@ macOS:  ~/Library/Application Support/{ProductName}/{user_id}/
 Windows: %APPDATA%\\{ProductName}\\{user_id}\\
 Linux:  ~/.local/share/{ProductName}/{user_id}/
 
-``DEV_USER_ROOT`` overrides the entire user root (useful while migrating the
-repo-local inbox/ + .jacob/ corpus during development).
+``DEV_USER_ROOT`` overrides the entire user root (useful for local development
+and tests without writing under the OS app-support path).
 """
 
 from __future__ import annotations

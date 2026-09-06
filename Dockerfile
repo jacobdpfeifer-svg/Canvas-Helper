@@ -1,4 +1,4 @@
-# Optional local container for the Jacob IBE student fork (stdio).
+# Optional local container for ProductName student Canvas MCP (stdio).
 # Prefer bare `uv run canvas-mcp-server` on your machine.
 
 FROM python:3.14-slim@sha256:a7fb1e634c4a578f9e0bd6327f11a3cde11b7a9395f48e24360c0988bcc5c2bc
@@ -18,7 +18,7 @@ RUN uv pip install --system --no-cache -e .
 RUN adduser --disabled-password --gecos '' mcp && \
     chown -R mcp:mcp /app
 
-ENV MCP_SERVER_NAME="jacob-canvas-ibe" \
+ENV MCP_SERVER_NAME="productname-canvas-mcp" \
     ENABLE_DATA_ANONYMIZATION="false" \
     ANONYMIZATION_DEBUG="false" \
     CANVAS_ROLE="student"

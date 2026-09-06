@@ -9,5 +9,3 @@ Product architecture for ProductName (Phase 1).
 | [`handoff/architect-brief.md`](handoff/architect-brief.md) | Architect handback status |
 
 Agent guide: [`../AGENTS.md`](../AGENTS.md) · Install: [`../README.md`](../README.md) · User template: [`../templates/USER.md`](../templates/USER.md)
-
-Legacy Jacob/CU docs: [`../dev/docs/`](../dev/docs/).

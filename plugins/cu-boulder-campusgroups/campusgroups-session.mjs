@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   AUTH_DIR,
+  INBOX_DIR,
   ROOT,
   schoolLocalDay,
   launchCanvasContext,
@@ -16,10 +17,22 @@ export const CG_SHIBBOLETH_LOGIN =
 export const CG_EC_BASE = "https://campusgroups.colorado.edu/engineeringconnections";
 /** @deprecated Use CG_EC_BASE — kept for host matching */
 export const CG_BASE = CG_EC_BASE;
-export const COEN_MAJOR_DINNERS_PATH = path.join(ROOT, "inbox", "coen-major-dinners.md");
-export const COEN_AI_LABS_PATH = path.join(ROOT, "inbox", "coen-ai-labs.md");
-export const SIGNUP_PREFS_PATH = path.join(ROOT, ".jacob", "signup-preferences.md");
-export const COEN1500_PATH = path.join(ROOT, "inbox", "courses", "COEN1500.md");
+
+function resolveUserRoot() {
+  if (process.env.DEV_USER_ROOT) {
+    return process.env.DEV_USER_ROOT;
+  }
+  return ROOT;
+}
+
+export const COEN_MAJOR_DINNERS_PATH = path.join(INBOX_DIR, "coen-major-dinners.md");
+export const COEN_AI_LABS_PATH = path.join(INBOX_DIR, "coen-ai-labs.md");
+export const SIGNUP_PREFS_PATH = path.join(
+  resolveUserRoot(),
+  "calibration",
+  "signup-preferences.md"
+);
+export const COEN1500_PATH = path.join(INBOX_DIR, "courses", "COEN1500.md");
 
 /** @param {string} url */
 export function isRsvpConfirmationUrl(url, eventId) {

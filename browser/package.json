@@ -1,5 +1,5 @@
 {
-  "name": "jacob-canvas-browser",
+  "name": "productname-canvas-browser",
   "private": true,
   "description": "SSO session → Canvas /api/v1 → inbox/ (no developer PAT required)",
   "scripts": {

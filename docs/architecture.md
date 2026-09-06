@@ -1,6 +1,6 @@
 # Architecture — ProductName (Phase 1)
 
-Distilled from the Phase 1 pivot plan. Supersedes historical `dev/docs/HYBRID.md` (private-fork archive) for product direction.
+Distilled from the Phase 1 pivot plan. Product truth path for general users (per-user `{user_root}`).
 
 ## Truth path
 

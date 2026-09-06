@@ -31,7 +31,7 @@ def test_load_cu_boulder_school():
     assert school.slug == "cu-boulder"
     assert "colorado.edu" in school.canvas_base_url
     assert school.timezone == "America/Denver"
-    assert any(e.code == "CSCI1200" for e in school.course_file_map)
+    assert list(school.course_file_map) == []
     assert "cu-boulder" in list_schools()
 
 

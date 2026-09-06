@@ -1,9 +1,9 @@
 # Architect Handback Brief — Phase 1 Pivot
 
-**Date:** 2026-09-06 (corrected same day after truth-pass M0 / M0.5 / M0.75)  
+**Date:** 2026-09-06 (must-fix pass after truth audit)  
 **Repo:** TheUltimateStudent:TeacherWorkflow  
 **Shipping name:** placeholder `ProductName` (`com.productname.student`)  
-**Verdict:** **Ready for architect review** after correction pass — earlier draft of this brief **overstated** ConfirmationGuard migration, `canvas-session` cleanliness, and `manifest.json` rename. Those three gaps are closed below. Product shell (Tauri/actuators) remains scaffolded, not production-integrated.
+**Verdict:** Must-fix items for de-Jacobize + ConfirmationGuard + manifest + root docs + Tauri Builder/tray are **done**. Remaining beta work is product integration (real OAuth actuators, NM host, two-user smoke, legal sheet) — not the prior truth gaps.
 
 ---
 
@@ -12,48 +12,38 @@
 | Area | Status |
 |------|--------|
 | W0 foundations (tenant, user_root, deny default, permissions, ledger) | **Shipped** |
-| W0.4 ConfirmationGuard migration | **Shipped in correction pass (M0)** — was thin wrappers; now call-site uses `_SUBMIT_GUARD` directly |
-| W1 de-Jacobize | **Shipped** after M0.5/M0.75 (inbox literals + full `manifest.json`) |
+| W0.4 ConfirmationGuard migration | **Shipped** — call sites use `_SUBMIT_GUARD` only; no `_issue_token` / `_check_token` / local `hmac` |
+| W1 de-Jacobize | **Shipped** — skill bodies use `{active_courses}` from `list_courses`/inbox; inbox sync writes `USER.md`; Jacob-private corpus removed from this product branch |
 | W2 brain + self-improve | **Shipped** (structural; HDBSCAN optional; mem0 with MEMORY.md fallback) |
 | W3 actuators | **Scaffolded** (dry-run MCP servers + undo_ptr + Chrome sensor extension) |
-| W4 app shell | **Scaffolded** (React UI + Rust daemon cadence + billing/telemetry stubs; iOS cuttable stub) |
+| W4 app shell | **Builder + autostart + tray + cadence loop wired**; OAuth/NM/notarized dmg still scaffold |
 | W5 verification | **Partial automated** — gates 1,5,6,7,9,10 + security suite green; E2E onboarding screencast / two-user SSO smoke not run in this pass |
 
-**Security suite:** `tests/security/` → **260 passed, 17 skipped** (re-verified after M0: student_write invariants + tools = **97 passed**).  
-**Pivot tests:** foundations + brain + verification remain green.
+**Security suite:** `tests/security/test_student_write_invariants.py` + `tests/tools/test_student_write.py` → **97 passed** (re-verified this pass).  
 
 ---
 
 ## 2. Diff inventory (by workstream)
 
-### W0 — Foundations (new)
+### W0 — Foundations
 
-- [`schools/_template.yaml`](../../schools/_template.yaml), [`schools/cu-boulder.yaml`](../../schools/cu-boulder.yaml)
-- [`src/canvas_mcp/core/tenants.py`](../../src/canvas_mcp/core/tenants.py)
-- [`src/canvas_mcp/core/user_root.py`](../../src/canvas_mcp/core/user_root.py) — `DEV_USER_ROOT` honored
-- [`src/canvas_mcp/core/permissions.py`](../../src/canvas_mcp/core/permissions.py) — pinned schema + NEVER_AUTO + proctoring refuse
-- [`src/canvas_mcp/core/ledger.py`](../../src/canvas_mcp/core/ledger.py) — pinned row schema
+- `schools/_template.yaml`, `schools/cu-boulder.yaml`
+- `src/canvas_mcp/core/{tenants,user_root,permissions,ledger}.py`
 - Config: `COURSE_AGENT_POLICY_DEFAULT` → **`deny`**
-- **M0:** [`student_write.py`](../../src/canvas_mcp/tools/student_write.py) uses `_SUBMIT_GUARD.issue/check/reserve/release/fingerprint` only; `_issue_token` / `_check_token` / local `hmac` **deleted**. [`ConfirmationGuard`](../../src/canvas_mcp/core/write_confirmation.py) gained `identity_provider` + `credential_digest` so tests can still patch this module’s `get_request_credentials`.
+- [`student_write.py`](../../src/canvas_mcp/tools/student_write.py) uses `_SUBMIT_GUARD.issue/check/reserve/release/fingerprint` only
 
-### W1 — De-Jacobize
+### W1 — De-Jacobize (must-fix pass)
 
-- Skills renamed: `jacob-*` → `student-*`; `jacob-ibe-semester` → `student-degree-progress`
-- **Manifests:** `TOOL_MANIFEST.json` + `server.json` renamed in first pass; **`manifest.json` completed in M0.75** (`name: productname-canvas-mcp`, long_description **40 tools**, CLI entry remains `canvas-mcp-server` per pyproject)
-- [`browser/scripts/lib/school-config.mjs`](../../browser/scripts/lib/school-config.mjs) + school-aware [`canvas-session.mjs`](../../browser/scripts/lib/canvas-session.mjs)
-- **M0.5:** Jacob inbox literals stripped; `denverDay` → `schoolLocalDay` (timezone already from school yaml; symbol renamed across browser/plugins)
-- CampusGroups → [`plugins/cu-boulder-campusgroups/`](../../plugins/cu-boulder-campusgroups/)
-- [`scripts/migrate-dev-user-root.py`](../../scripts/migrate-dev-user-root.py), [`templates/USER.md`](../../templates/USER.md)
+- Skills renamed earlier; **bodies rewritten** to drop Fall 2026 / IBE / named-course rosters — enrollments from `list_courses` / inbox; Worth defaults from `USER.md`
+- [`manifest.json`](../../manifest.json): `productname-canvas-mcp`, long_description **~40 tools**, CLI `canvas-mcp-server`
+- Browser sync: `USER.md` in generated inbox; `schoolLocalDay` / `getSchoolConfig().timezone`; skill name `student-instructor-profile`
+- Root [`README.md`](../../README.md) / [`CLAUDE.md`](../../CLAUDE.md) productized; personal Jacob corpus deleted from this branch (lives on `main` only)
 
-### Correction pass (this update)
+### W4 — App shell (must-fix pass)
 
-- **M0** ConfirmationGuard full migration + identity hook
-- **M0.5** inbox string + day-helper rename
-- **M0.75** `manifest.json` finish
-
-### W2–W5
-
-Unchanged from prior inventory (skill_router, self_improve, dry-run MCP servers, app scaffold, verification tests).
+- [`main.rs`](../../app/src-tauri/src/main.rs): `tauri::Builder` + `tauri-plugin-autostart` + menubar tray (**Sync now** / **Quit**)
+- [`daemon.rs`](../../app/src-tauri/src/daemon.rs): cadence loop + `run_canvas_sync()` → `npm run sync`
+- Gate: `CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check` (repo path contains `:`, which breaks default DYLD library path on macOS)
 
 ---
 
@@ -62,7 +52,7 @@ Unchanged from prior inventory (skill_router, self_improve, dry-run MCP servers,
 ```mermaid
 flowchart TB
   UI["app/ React: Top3 + NarrateAfter + palette"]
-  Daemon["daemon.rs cadence 2h/6h/focus"]
+  Daemon["daemon.rs Builder tray cadence SyncNow"]
   Router["skill_router + self_improve"]
   Perm["permissions.yaml counters"]
   Ledger["ledger.jsonl pinned schema"]
@@ -82,21 +72,18 @@ flowchart TB
   Daemon --> Canvas
 ```
 
-**Deviations from north-star:** no live Ollama loop in daemon yet; MCP actuators are dry-run; Tauri `Builder` + autostart not fully wired in `main.rs`; iOS Live Activity stub only.
+**Deviations from north-star:** no live Ollama loop in daemon yet; MCP actuators are dry-run; Native Messaging host not registered; iOS Live Activity stub only.
 
 ---
 
 ## 4. Security posture delta
 
-| Item | Before pivot | After correction pass |
-|------|--------------|------------------------|
-| `COURSE_AGENT_POLICY_DEFAULT` | `allow` | **`deny`** |
-| Confirmation tokens | Duplicate stack in `student_write` | **`ConfirmationGuard` only** — call sites use `_SUBMIT_GUARD.*`; no `_issue_token` / `_check_token` / module `hmac` |
-| Caller binding | Local HMAC | Guard `identity_provider` → module `get_request_credentials` + `credential_digest` |
-| `@validate_params` / `coerce_canvas_id` / `assert_no_identity_override` | Present | **Still present** — invariants green |
-| Permissions / never-auto / ledger | N/A | Pinned as before |
-
-**Honest note on first brief:** §4 previously claimed shared ConfirmationGuard while wrappers still existed. That claim was wrong until M0.
+| Item | Status |
+|------|--------|
+| `COURSE_AGENT_POLICY_DEFAULT` | **`deny`** |
+| Confirmation tokens | **`ConfirmationGuard` only** via `_SUBMIT_GUARD.*` |
+| Caller binding | Guard `identity_provider` → `get_request_credentials` + `credential_digest` |
+| `@validate_params` / `coerce_canvas_id` / `assert_no_identity_override` | Present — invariants green |
 
 ### Pinned ledger row schema (artifact)
 
@@ -121,13 +108,11 @@ flowchart TB
 
 ## 5. De-Jacobize status
 
-**Clean after M0.5 / M0.75:** `skills/`, `TOOL_MANIFEST.json`, `server.json`, **`manifest.json`**, `env.template`, `AGENTS.md`, `canvas-session.mjs` inbox-written strings + `schoolLocalDay` (no `denverDay` export), BASE/course map from school yaml.
+**Clean for shipping claims:** `skills/` bodies (no Fall 2026 roster / IBE hardcodes), `TOOL_MANIFEST.json` / `server.json` / **`manifest.json`**, product `README.md` / `CLAUDE.md` / `AGENTS.md`, canvas-session + sync-week user-facing strings (`USER.md`), `schoolLocalDay` + school yaml timezone.
 
-**Was falsely marked clean in first brief:** `canvas-session.mjs` wrote “Worth Jacob's time defaults”, `jacob-instructor-profile`, and “Jacob only/voice” into course files; `denverDay` symbol remained. Fixed in M0.5.
+**Removed from this product branch:** `dev/`, `.jacob/`, repo `inbox/`, Jacob Cursor rules, `IMPLEMENTATION_REMAINING.md`, `scripts/migrate-dev-user-root.py`. Root `/inbox/` and `/.jacob/` are gitignored.
 
-**Intentional CU leftovers:** `schools/cu-boulder.yaml`, `plugins/cu-boulder-campusgroups/` (still has argparse default `"Jacob Pfeifer"` — should-fix), `docs/schools/cu-boulder.md`, repo `inbox/` + `JACOB.md` (dev corpus).
-
-**Remaining soft hits:** plugin RSVP names; some browser script comments/README; `.cursor` Jacob rules; `docs/HYBRID.md` (dev keep).
+**Intentional CU school tenant (general):** `schools/cu-boulder.yaml` (`course_file_map: []`), `plugins/cu-boulder-campusgroups/` (RSVP requires `--name`; prefs under `{user_root}/calibration/`), `docs/schools/cu-boulder.md`.
 
 ---
 
@@ -153,16 +138,16 @@ Write skills were **never** auto-promoted (hard ban tested). Live Llama 3.1 8B Q
 ## 7. Permissions + ledger
 
 - Defaults match product matrix (calendar/email draft/triage/photo/sync automatic; submits gated; exams/LTI/proctoring/group/rsvp_paid never).
-- **Counters** in `permissions.yaml`; **skill bodies** on filesystem `skills/provisional|active/`.
+- **Counters** in `permissions.yaml`; **skill bodies** on filesystem `skills/`.
 - STOP sets `global_stop_until`; rewind walks `undo_ptr` via `stop_rewind.py`.
 
 ---
 
 ## 8. App / UX slice
 
-**Exists:** Top-3 sticky, NarrateAfter, ⌥Space palette UI, approval sheet, onboarding (Ollama progress / cloud-key skip + Sentry opt-in), ledger viewer mock, STOP button.
+**Exists:** Top-3 sticky, NarrateAfter, ⌥Space palette UI, approval sheet, onboarding (Ollama progress / cloud-key skip + Sentry opt-in; CU + waitlist school), ledger viewer mock, STOP button, **Tauri Builder + autostart plugin + tray (Sync now / Quit) + cadence loop**.
 
-**Stubbed:** real SSO from Tauri, real Ollama download, Native Messaging host, iOS Live Activity, Stripe charges, Twilio send.
+**Stubbed:** real SSO from Tauri, real Ollama download, Native Messaging host, iOS Live Activity, Stripe charges, Twilio send, notarized .dmg.
 
 ---
 
@@ -179,60 +164,51 @@ Write skills were **never** auto-promoted (hard ban tested). Live Llama 3.1 8B Q
 
 ## 10. Open risks + recommended next changes
 
-### Must-fix before beta (correction items first)
+### Must-fix before beta (remaining)
 
-- **M0** ConfirmationGuard full migration — **DONE** (this pass); re-run invariants before each submit path change.
-- **M0.5** Jacob inbox literals + `denverDay` → `schoolLocalDay` — **DONE**.
-- **M0.75** `manifest.json` name + 40-tool long_description — **DONE** (CLI remains `canvas-mcp-server`).
-
-Remaining must-fix (renumbered):
-
-1. Wire Tauri `Builder` + autostart plugin + menubar tray for real.
-2. Connect daemon → `npm run sync` with `DEV_USER_ROOT` + school slug.
-3. Replace dry-run GCal/Gmail with real OAuth; keep undo_ptr contract.
-4. Two-user isolation smoke (separate user roots + auth dirs).
-5. Legal: per-school policy sheet in onboarding (CU).
+1. Connect two-user isolation smoke (separate user roots + auth dirs).
+2. Replace dry-run GCal/Gmail with real OAuth; keep undo_ptr contract.
+3. Legal: per-school policy sheet in onboarding (CU).
+4. Chrome Native Messaging host manifest registration for `com.productname.daemon`.
 
 ### Should-fix
 
-6. Live 8B tool-call evals against Ollama.
-7. Delete or archive personal `JACOB.md` / `.cursor` Jacob rules from shipping artifact.
-8. Chrome Native Messaging host manifest registration.
-9. Fix plugin RSVP default name still `"Jacob Pfeifer"`.
-10. Strip remaining Jacob comments in `browser/README.md` / open-canvas / process-capture-queue.
+5. Live 8B tool-call evals against Ollama.
+6. ~~Fix plugin RSVP default name still `"Jacob Pfeifer"`.~~ **Done** — `--name` required.
+7. CNAME / pyproject homepage URLs audit (Dockerfile `MCP_SERVER_NAME` → `productname-canvas-mcp`).
+8. ~~Exclude root `inbox/` + `.jacob/` from release.~~ **Done** — deleted + gitignored.
+9. ~~Capture-classify hard-coded COURSE_CODES.~~ **Done** — derived from school `course_file_map` (empty by default).
 
 ### Phase 2
 
-11. Full-automation opt-in after clean ledger window.
-12. LTI adapters; Safari extension; Windows; skill sharing opt-in.
+10. Full-automation opt-in after clean ledger window.
+11. LTI adapters; Safari extension; Windows; skill sharing opt-in.
 
 ---
 
 ## 11. How to verify locally
 
 ```bash
-# ConfirmationGuard + invariants (M0)
+# ConfirmationGuard + invariants
 .venv/bin/python -m pytest tests/security/test_student_write_invariants.py \
   tests/tools/test_student_write.py -q
 
-# Pivot + security
-.venv/bin/python -m pytest tests/core/test_foundations_w0.py \
-  tests/core/test_brain_w2.py tests/core/test_verification_w5.py \
-  tests/security/ -q
-
 # Grep gates
-# no _issue_token/_check_token in student_write; no Jacob inbox strings in canvas-session;
-# no denverDay export; manifest.json name + "40"
+# no _issue_token/_check_token/hmac.new in student_write
+# no APPM 1235|IBE Fall|CSCI1200.md in skills/
+# no JACOB.md|jacob-instructor in browser/scripts
+# manifest.json name productname-canvas-mcp + ~40 tools
 
-# Dev migration
-python scripts/migrate-dev-user-root.py --user-root /tmp/pn-dev --force
+# Tauri (use CARGO_TARGET_DIR outside repo — path contains ':')
+source "$HOME/.cargo/env"
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
+
+# Optional local user root
 export DEV_USER_ROOT=/tmp/pn-dev SCHOOL_SLUG=cu-boulder
-
-node --input-type=module -e "import {getSchoolConfig} from './browser/scripts/lib/school-config.mjs'; console.log(getSchoolConfig())"
 ```
 
 ---
 
 ## Bottom line for architect agent
 
-Treat the **first** handback draft’s §4/§5 as inaccurate. After M0/M0.5/M0.75: ConfirmationGuard migration is real, inbox sync no longer stamps Jacob branding, and `manifest.json` matches product naming with a correct tool count. Remaining beta blockers are product integration (#1–#5), not those three truth gaps.
+De-Jacobize is real in skill **bodies**, inbox-written strings, and removal of Jacob-private corpus from this product branch. ConfirmationGuard and `manifest.json` claims hold under grep/pytest. Tauri **Builder + autostart + tray + cadence** compile and run as a process; actuators OAuth and NM host remain the next integration blockers.

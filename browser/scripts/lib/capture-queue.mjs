@@ -3,11 +3,9 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { schoolLocalDay } from "./canvas-session.mjs";
+import { INBOX_DIR as USER_INBOX_DIR, schoolLocalDay } from "./canvas-session.mjs";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const CAPTURES_ROOT = path.join(__dirname, "..", "..", "..", "inbox", "captures");
+export const CAPTURES_ROOT = path.join(USER_INBOX_DIR, "captures");
 export const QUEUE_PATH = path.join(CAPTURES_ROOT, "queue.md");
 export const INBOX_DIR = path.join(CAPTURES_ROOT, "inbox");
 export const PROCESSED_DIR = path.join(CAPTURES_ROOT, "processed");

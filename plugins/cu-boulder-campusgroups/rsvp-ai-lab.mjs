@@ -1,12 +1,13 @@
 /**
  * RSVP to a COEN AI Lab workshop slot.
- * Reads .jacob/signup-preferences.md and inbox/coen-ai-labs.md.
+ * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-ai-labs.md.
  *
  * Usage:
- *   npm run rsvp-ai-lab -- --slot "Wed 2pm"
- *   HEADLESS=1 npm run rsvp-ai-lab -- --event 123456 --log
+ *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name"
+ *   HEADLESS=1 npm run rsvp-ai-lab -- --event 123456 --name "Student Name" --log
  *
- * Requires AI Lab preference confirmed in .jacob/signup-preferences.md unless --event given.
+ * Requires AI Lab preference confirmed in calibration/signup-preferences.md unless --event given.
+ * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
  */
 import fs from "node:fs";
 import {
@@ -20,7 +21,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { slot: null, event: null, verify: true, name: "Jacob Pfeifer", log: true };
+  const args = { slot: null, event: null, verify: true, name: "", log: true };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--slot" && argv[i + 1]) args.slot = argv[++i];
@@ -78,7 +79,7 @@ function resolveAiLabRow({ slot, event, prefs }) {
   const needle = (slot || prefs.preferredSlot || "").toLowerCase();
   if (!needle) {
     throw new Error(
-      "No workshop slot specified — ask Jacob, set Preferred slot in .jacob/signup-preferences.md, or pass --slot / --event"
+      "No workshop slot specified — set Preferred slot in calibration/signup-preferences.md, or pass --slot / --event"
     );
   }
 
@@ -98,17 +99,21 @@ function resolveAiLabRow({ slot, event, prefs }) {
 }
 
 const args = parseArgs(process.argv);
+if (!args.name.trim()) {
+  console.error('Usage: npm run rsvp-ai-lab -- --name "Student Name" [--slot ...] [--event ...]');
+  process.exit(1);
+}
 
 let prefs = { status: "unconfirmed", preferredSlot: "" };
 try {
   prefs = parseAiLabPreferences(fs.readFileSync(SIGNUP_PREFS_PATH, "utf8"));
 } catch {
-  console.warn("Warning: .jacob/signup-preferences.md not found");
+  console.warn(`Warning: ${SIGNUP_PREFS_PATH} not found`);
 }
 
 if (!args.event && prefs.status !== "confirmed") {
   console.error(
-    "AI Lab preference not confirmed — ask Jacob for workshop slot, then set Status: confirmed and Preferred slot in .jacob/signup-preferences.md"
+    "AI Lab preference not confirmed — set Status: confirmed and Preferred slot in calibration/signup-preferences.md"
   );
   process.exit(1);
 }
@@ -145,7 +150,7 @@ try {
     verification,
     url: page.url(),
     calendarReminder:
-      "Optional: agent may create Google Calendar event via Google Calendar MCP after Jacob confirms slot",
+      "Optional: agent may create Google Calendar event via Google Calendar MCP after the student confirms the slot",
   };
 
   if (result.ok && args.log) {
