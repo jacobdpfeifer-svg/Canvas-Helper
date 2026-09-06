@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "local.productname/canvas-mcp",
+  "description": "Local-first student Canvas MCP (ProductName). SSO + REST + preview\u2192confirm writes.",
+  "version": "1.11.0",
+  "repository": {
+    "url": "https://github.com/vishalsachdev/canvas-mcp",
+    "source": "github"
+  },
+  "tags": [
+    "education",
+    "lms",
+    "canvas",
+    "student-tools",
+    "personal-fork"
+  ],
+  "license": "MIT",
+  "transport": {
+    "type": "stdio"
+  },
+  "configuration": {
+    "type": "env",
+    "env": {
+      "CANVAS_API_TOKEN": {
+        "description": "Your Canvas API access token (optional if using SSO sync).",
+        "required": true
+      },
+      "CANVAS_API_URL": {
+        "description": "Canvas API URL from your school registry (e.g. https://canvas.example.edu/api/v1)",
+        "required": true
+      },
+      "ENABLE_DATA_ANONYMIZATION": {
+        "description": "Student identity anonymization (off by default in this personal student fork).",
+        "required": false,
+        "default": "false"
+      },
+      "ANONYMIZATION_DEBUG": {
+        "description": "Enable anonymization debugging output",
+        "required": false,
+        "default": "false"
+      }
+    }
+  }
+}

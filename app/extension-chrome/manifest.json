@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "ProductName Canvas Sensor",
+  "version": "0.1.0",
+  "description": "Relays Canvas tab focus/URL to the local ProductName daemon. No direct writes — daemon issues MCP tool calls.",
+  "permissions": ["nativeMessaging", "tabs", "storage"],
+  "host_permissions": ["https://*.instructure.com/*", "https://canvas.colorado.edu/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "ProductName"
+  }
+}

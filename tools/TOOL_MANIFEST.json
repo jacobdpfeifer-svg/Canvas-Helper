@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "server": "productname-canvas-mcp",
+  "role": "student",
+  "categories": [
+    {
+      "id": "student",
+      "name": "Student read"
+    },
+    {
+      "id": "student_write",
+      "name": "Student write"
+    },
+    {
+      "id": "courses",
+      "name": "Courses"
+    },
+    {
+      "id": "pages",
+      "name": "Pages"
+    },
+    {
+      "id": "modules",
+      "name": "Modules"
+    },
+    {
+      "id": "assignments",
+      "name": "Assignments"
+    },
+    {
+      "id": "discussions",
+      "name": "Discussions"
+    },
+    {
+      "id": "files",
+      "name": "Files"
+    },
+    {
+      "id": "messaging",
+      "name": "Messaging"
+    },
+    {
+      "id": "discovery",
+      "name": "Discovery"
+    },
+    {
+      "id": "identity",
+      "name": "Identity"
+    },
+    {
+      "id": "shared",
+      "name": "Shared"
+    }
+  ],
+  "tools": [
+    {
+      "name": "comment_on_my_submission",
+      "category": "student_write",
+      "description": "Add a comment to YOUR OWN submission."
+    },
+    {
+      "name": "download_course_file",
+      "category": "files",
+      "description": "Download a file from a Canvas course to the local filesystem."
+    },
+    {
+      "name": "get_assignment_details",
+      "category": "assignments",
+      "description": "Get detailed information about a specific assignment."
+    },
+    {
+      "name": "get_conversation_details",
+      "category": "messaging",
+      "description": "Get detailed conversation information with messages."
+    },
+    {
+      "name": "get_course_content_overview",
+      "category": "courses",
+      "description": "Get a comprehensive overview of course content including pages, modules, and syllabus."
+    },
+    {
+      "name": "get_course_details",
+      "category": "courses",
+      "description": "Get detailed information about a specific course."
+    },
+    {
+      "name": "get_course_structure",
+      "category": "modules",
+      "description": "Get the full module and item structure for a course in a single call."
+    },
+    {
+      "name": "get_discussion_entry_details",
+      "category": "discussions",
+      "description": "Get detailed information about a specific discussion entry including all its replies."
+    },
+    {
+      "name": "get_discussion_topic_details",
+      "category": "discussions",
+      "description": "Get detailed information about a specific discussion topic."
+    },
+    {
+      "name": "get_discussion_with_replies",
+      "category": "discussions",
+      "description": "Enhanced function to get discussion entries with optional reply fetching."
+    },
+    {
+      "name": "get_front_page",
+      "category": "pages",
+      "description": "Get the front page content for a course."
+    },
+    {
+      "name": "get_my_course_grades",
+      "category": "student",
+      "description": "Get your current grades across all enrolled courses."
+    },
+    {
+      "name": "get_my_enrollments",
+      "category": "student",
+      "description": "List the courses YOU are enrolled in, with your role in each."
+    },
+    {
+      "name": "get_my_peer_reviews_todo",
+      "category": "student",
+      "description": "Get peer reviews YOU need to complete."
+    },
+    {
+      "name": "get_my_profile",
+      "category": "student",
+      "description": "Get YOUR own Canvas identity (user ID, name, login ID)."
+    },
+    {
+      "name": "get_my_submission",
+      "category": "student_write",
+      "description": "Get your own submission for an assignment, including attempts used."
+    },
+    {
+      "name": "get_my_submission_status",
+      "category": "student_write",
+      "description": "Get your submission status for assignments."
+    },
+    {
+      "name": "get_my_todo_items",
+      "category": "student",
+      "description": "Get your Canvas TODO list."
+    },
+    {
+      "name": "get_my_upcoming_assignments",
+      "category": "student",
+      "description": "Get your upcoming assignments across all courses."
+    },
+    {
+      "name": "get_page_content",
+      "category": "pages",
+      "description": "Get the full content body of a specific page."
+    },
+    {
+      "name": "get_page_details",
+      "category": "pages",
+      "description": "Get a specific page's metadata plus a short text preview."
+    },
+    {
+      "name": "get_syllabus",
+      "category": "courses",
+      "description": "Get the complete Canvas Syllabus tab content for a course, untruncated."
+    },
+    {
+      "name": "get_unread_count",
+      "category": "messaging",
+      "description": "Get number of unread conversations."
+    },
+    {
+      "name": "list_announcements",
+      "category": "discussions",
+      "description": "List a course's announcements, and nothing else."
+    },
+    {
+      "name": "list_assignments",
+      "category": "assignments",
+      "description": "List assignments for a specific course."
+    },
+    {
+      "name": "list_conversations",
+      "category": "messaging",
+      "description": "List conversations for the current user."
+    },
+    {
+      "name": "list_course_files",
+      "category": "files",
+      "description": "List files in a Canvas course with optional search."
+    },
+    {
+      "name": "list_courses",
+      "category": "courses",
+      "description": "List courses for the authenticated user."
+    },
+    {
+      "name": "list_discussion_entries",
+      "category": "discussions",
+      "description": "List discussion entries (posts) for a specific discussion topic with optional full content and replies."
+    },
+    {
+      "name": "list_discussion_topics",
+      "category": "discussions",
+      "description": "List discussion topics for a specific course."
+    },
+    {
+      "name": "list_module_items",
+      "category": "modules",
+      "description": "List items within a specific module, including pages."
+    },
+    {
+      "name": "list_modules",
+      "category": "modules",
+      "description": "List all modules in a course."
+    },
+    {
+      "name": "list_pages",
+      "category": "pages",
+      "description": "List pages for a specific course."
+    },
+    {
+      "name": "mark_conversations_read",
+      "category": "messaging",
+      "description": "Mark multiple conversations as read."
+    },
+    {
+      "name": "mark_module_item_done",
+      "category": "student_write",
+      "description": "Mark a module item done for YOURSELF."
+    },
+    {
+      "name": "post_discussion_entry",
+      "category": "discussions",
+      "description": "Post a new top-level entry to a discussion topic."
+    },
+    {
+      "name": "read_course_file",
+      "category": "files",
+      "description": "Read a file from a Canvas course and return its content as base64."
+    },
+    {
+      "name": "reply_to_discussion_entry",
+      "category": "discussions",
+      "description": "Reply to a student's discussion entry/comment."
+    },
+    {
+      "name": "search_canvas_tools",
+      "category": "discovery",
+      "description": "Search registered Canvas MCP tools by keyword."
+    },
+    {
+      "name": "submit_assignment",
+      "category": "student_write",
+      "description": "Submit one of YOUR OWN assignments. Consumes an attempt."
+    }
+  ]
+}
