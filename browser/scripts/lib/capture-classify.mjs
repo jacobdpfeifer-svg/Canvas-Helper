@@ -268,7 +268,7 @@ export function formatQueueRow(row) {
 }
 
 /**
- * Append a dated bullet for course MD ## Lecture captures.
+ * Append a dated bullet for course MD ## Class notes (legacy: Lecture captures).
  * @param {{ date?: string, summary: string, captureId: string, assignmentMatch?: string }} opts
  */
 export function formatLectureCaptureBullet(opts) {

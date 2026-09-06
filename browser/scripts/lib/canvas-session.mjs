@@ -846,9 +846,9 @@ export function mergeCourseFileContent({
     "Syllabus sources"
   );
   const arcNotes = cleanSectionBody(extractSection(sections, "Arc notes"), "Arc notes");
-  const lectureCaptures = cleanSectionBody(
-    extractSection(sections, "Lecture captures"),
-    "Lecture captures"
+  const classNotes = cleanSectionBody(
+    extractSection(sections, "Class notes") || extractSection(sections, "Lecture captures"),
+    "Class notes"
   );
   const instructorProfile = cleanSectionBody(
     extractSection(sections, "Instructor profile"),
@@ -894,9 +894,9 @@ export function mergeCourseFileContent({
     ? ""
     : `## Syllabus sources\n\n${syllabusSources}\n\n`;
   const arcBlock = isPlaceholderSection(arcNotes) ? "-\n" : `${arcNotes}\n`;
-  const lectureBlock = isPlaceholderSection(lectureCaptures)
+  const classNotesBlock = isPlaceholderSection(classNotes)
     ? ""
-    : `## Lecture captures\n\n${lectureCaptures}\n\n`;
+    : `## Class notes\n\n${classNotes}\n\n`;
   const instructorBlock = `${formatInstructorProfileBlock(
     instructorProfile,
     policyPages
@@ -927,7 +927,7 @@ ${formatCatalogTable(catalogRows)}
 
 ## Arc notes
 
-${arcBlock}${lectureBlock}## Instructor profile
+${arcBlock}${classNotesBlock}## Instructor profile
 
 ${instructorBlock}
 ## Syllabus / agent policy notes
@@ -950,54 +950,60 @@ export function writeCourseCatalogFiles(perCourse, { today } = {}) {
   const written = [];
 
   for (const course of perCourse || []) {
-    const filePath = resolveCourseFile(course.name, course.code);
-    if (!filePath) {
-      console.warn(
-        `No catalog mapping for enrolled course: ${course.name} (${course.code || course.id})`
-      );
-      continue;
-    }
-
-    const code = path.basename(filePath, ".md");
-    if (course.syllabusPlain) {
-      const rawPath = path.join(COURSES_RAW_DIR, `${code}-syllabus.txt`);
-      fs.writeFileSync(rawPath, course.syllabusPlain, "utf8");
-    }
-
-    const catalogRows = filterCatalogRows(course.rows || [], { today: syncDay });
-    let existing = "";
     try {
-      existing = fs.readFileSync(filePath, "utf8");
-    } catch {
-      /* new file */
+      const filePath = resolveCourseFile(course.name, course.code);
+      if (!filePath) {
+        console.warn(
+          `No catalog mapping for enrolled course: ${course.name} (${course.code || course.id})`
+        );
+        continue;
+      }
+
+      const code = path.basename(filePath, ".md");
+      if (course.syllabusPlain) {
+        const rawPath = path.join(COURSES_RAW_DIR, `${code}-syllabus.txt`);
+        fs.writeFileSync(rawPath, course.syllabusPlain, "utf8");
+      }
+
+      const catalogRows = filterCatalogRows(course.rows || [], { today: syncDay });
+      let existing = "";
+      try {
+        existing = fs.readFileSync(filePath, "utf8");
+      } catch {
+        /* new file */
+      }
+
+      const syncMeta = {
+        canvasUrl: course.canvasUrl || "",
+        primaryInstructors: course.primaryInstructors || "",
+        tas: course.tas || "",
+        syllabusHash: course.syllabusHash || "",
+        syllabusPlain: course.syllabusPlain ?? null,
+        syllabusSynced: !!course.syllabus_ok,
+        policyPages: course.policyPages || [],
+      };
+
+      const md = mergeCourseFileContent({
+        existingContent: existing,
+        courseTitle: course.name,
+        catalogRows,
+        today: syncDay,
+        syncMeta,
+      });
+      fs.writeFileSync(filePath, md, "utf8");
+      written.push({
+        file: filePath,
+        code,
+        catalogCount: catalogRows.length,
+        checkpoints: catalogRows.filter((r) => isCheckpoint(r.title, r.type)).length,
+        syllabus: !!course.syllabusPlain,
+        policyPages: (course.policyPages || []).length,
+      });
+    } catch (e) {
+      console.warn(
+        `writeCourseCatalogFiles: skip ${course?.name || course?.id}: ${e?.message || e}`
+      );
     }
-
-    const syncMeta = {
-      canvasUrl: course.canvasUrl || "",
-      primaryInstructors: course.primaryInstructors || "",
-      tas: course.tas || "",
-      syllabusHash: course.syllabusHash || "",
-      syllabusPlain: course.syllabusPlain ?? null,
-      syllabusSynced: !!course.syllabus_ok,
-      policyPages: course.policyPages || [],
-    };
-
-    const md = mergeCourseFileContent({
-      existingContent: existing,
-      courseTitle: course.name,
-      catalogRows,
-      today: syncDay,
-      syncMeta,
-    });
-    fs.writeFileSync(filePath, md, "utf8");
-    written.push({
-      file: filePath,
-      code,
-      catalogCount: catalogRows.length,
-      checkpoints: catalogRows.filter((r) => isCheckpoint(r.title, r.type)).length,
-      syllabus: !!course.syllabusPlain,
-      policyPages: (course.policyPages || []).length,
-    });
   }
 
   return written;
@@ -1007,10 +1013,12 @@ export function classifyOutcomeHint(title, type, description = "") {
   const blob = `${title || ""} ${type || ""}`.toLowerCase();
   const typeStr = String(type || "").toLowerCase();
   const descHtml = String(description || "").toLowerCase();
+  const ltiBlob = `${blob} ${descHtml}`;
 
+  // LTI/external tools always win over generic /survey/ → written below
   if (
-    /webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton/.test(
-      blob
+    /webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton|achieve|macmillan|bfwpub|lmslink/.test(
+      ltiBlob
     ) ||
     typeStr === "external_tool" ||
     /eoc|learningcurve/.test(blob)
@@ -1600,29 +1608,39 @@ function healthEntry(res, extra = {}) {
 
 /** Fetch assignment descriptions for signup-titled rows (CampusGroups link detection). */
 export async function enrichSignupDescriptions(page, universe) {
-  const signupRows = (universe || []).filter(
-    (r) => isSignupTitle(r.title, r.type) && r.course_id && r.canvas_id && !r.description
-  );
-  const byKey = new Map();
-  for (const row of signupRows) {
-    const key = `${row.course_id}:${row.canvas_id}`;
-    if (byKey.has(key)) continue;
-    byKey.set(key, row);
-  }
-
-  for (const row of byKey.values()) {
-    const res = await api(
-      page,
-      `/api/v1/courses/${row.course_id}/assignments/${row.canvas_id}`
+  try {
+    const signupRows = (universe || []).filter(
+      (r) => isSignupTitle(r.title, r.type) && r.course_id && r.canvas_id && !r.description
     );
-    if (res.ok && res.json?.description) {
-      row.description = res.json.description;
-      for (const r of universe) {
-        if (r.course_id === row.course_id && r.canvas_id === row.canvas_id) {
-          r.description = res.json.description;
+    const byKey = new Map();
+    for (const row of signupRows) {
+      const key = `${row.course_id}:${row.canvas_id}`;
+      if (byKey.has(key)) continue;
+      byKey.set(key, row);
+    }
+
+    for (const row of byKey.values()) {
+      try {
+        const res = await api(
+          page,
+          `/api/v1/courses/${row.course_id}/assignments/${row.canvas_id}`
+        );
+        if (res.ok && res.json?.description) {
+          row.description = res.json.description;
+          for (const r of universe) {
+            if (r.course_id === row.course_id && r.canvas_id === row.canvas_id) {
+              r.description = res.json.description;
+            }
+          }
         }
+      } catch (e) {
+        console.warn(
+          `enrichSignupDescriptions: skip ${row.course_id}:${row.canvas_id}: ${e?.message || e}`
+        );
       }
     }
+  } catch (e) {
+    console.warn(`enrichSignupDescriptions soft-fail: ${e?.message || e}`);
   }
 }
 
@@ -1708,48 +1726,74 @@ export async function fetchDueUniverse(page, { daysAhead = 14 } = {}) {
   for (const c of courses) {
     const id = c.id;
     const name = c.name || c.course_code || String(id);
-    const aRes = await apiAllPages(page, `/api/v1/courses/${id}/assignments`, {
-      order_by: "due_at",
-      "include[]": ["submission", "all_dates"],
-    });
-    const dRes = await apiAllPages(
-      page,
-      `/api/v1/courses/${id}/discussion_topics`,
-      {
-        "include[]": ["assignment", "all_dates", "submission"],
-      }
-    );
-    const instructorMeta = await fetchCourseInstructorMeta(page, id, {
-      courseName: name,
-      courseCode: c.course_code,
-    });
-    if (instructorMeta.ok) syllabusOk += 1;
-    else syllabusFail += 1;
+    try {
+      const aRes = await apiAllPages(page, `/api/v1/courses/${id}/assignments`, {
+        order_by: "due_at",
+        "include[]": ["submission", "all_dates"],
+      });
+      const dRes = await apiAllPages(
+        page,
+        `/api/v1/courses/${id}/discussion_topics`,
+        {
+          "include[]": ["assignment", "all_dates", "submission"],
+        }
+      );
+      const instructorMeta = await fetchCourseInstructorMeta(page, id, {
+        courseName: name,
+        courseCode: c.course_code,
+      });
+      if (instructorMeta.ok) syllabusOk += 1;
+      else syllabusFail += 1;
 
-    const aRows = aRes.ok ? fromAssignments(name, id, aRes.items || []) : [];
-    const dRows = dRes.ok ? fromDiscussions(name, id, dRes.items || []) : [];
-    const courseRows = dedupeRows([...aRows, ...dRows]);
-    perCourse.push({
-      id,
-      name,
-      code: c.course_code,
-      rows: courseRows,
-      assignments_ok: aRes.ok,
-      assignments_count: aRows.length,
-      assignments_truncated: !!aRes.truncated,
-      discussions_ok: dRes.ok,
-      discussions_count: dRows.length,
-      canvasUrl: instructorMeta.canvasUrl,
-      primaryInstructors: instructorMeta.primaryInstructors,
-      tas: instructorMeta.tas,
-      syllabusPlain: instructorMeta.syllabusPlain,
-      syllabusHash: instructorMeta.syllabusHash,
-      policyPages: instructorMeta.policyPages,
-      syllabus_ok: instructorMeta.ok,
-    });
-    if (!aRes.ok) assignmentHardFail = true;
-    if (aRes.ok) allRows.push(...aRows);
-    if (dRes.ok) allRows.push(...dRows);
+      const aRows = aRes.ok ? fromAssignments(name, id, aRes.items || []) : [];
+      const dRows = dRes.ok ? fromDiscussions(name, id, dRes.items || []) : [];
+      const courseRows = dedupeRows([...aRows, ...dRows]);
+      perCourse.push({
+        id,
+        name,
+        code: c.course_code,
+        rows: courseRows,
+        assignments_ok: aRes.ok,
+        assignments_count: aRows.length,
+        assignments_truncated: !!aRes.truncated,
+        discussions_ok: dRes.ok,
+        discussions_count: dRows.length,
+        canvasUrl: instructorMeta.canvasUrl,
+        primaryInstructors: instructorMeta.primaryInstructors,
+        tas: instructorMeta.tas,
+        syllabusPlain: instructorMeta.syllabusPlain,
+        syllabusHash: instructorMeta.syllabusHash,
+        policyPages: instructorMeta.policyPages,
+        syllabus_ok: instructorMeta.ok,
+      });
+      if (!aRes.ok) assignmentHardFail = true;
+      if (aRes.ok) allRows.push(...aRows);
+      if (dRes.ok) allRows.push(...dRows);
+    } catch (e) {
+      console.warn(
+        `fetchDueUniverse: skip course ${name} (${id}): ${e?.message || e}`
+      );
+      assignmentHardFail = true;
+      syllabusFail += 1;
+      perCourse.push({
+        id,
+        name,
+        code: c.course_code,
+        rows: [],
+        assignments_ok: false,
+        assignments_count: 0,
+        assignments_truncated: false,
+        discussions_ok: false,
+        discussions_count: 0,
+        canvasUrl: `${BASE}/courses/${id}`,
+        primaryInstructors: "",
+        tas: "",
+        syllabusPlain: "",
+        syllabusHash: "",
+        policyPages: [],
+        syllabus_ok: false,
+      });
+    }
   }
 
   health.assignments = {

@@ -34,7 +34,7 @@ Before major dinner RSVP: read [`.jacob/signup-preferences.md`](../../.jacob/sig
 
 ## C — Cursor browser LTI escape hatch (Jacob driving)
 
-For WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI:
+For WebAssign, ZyBooks, PlayPosit, Achieve/LearningCurve, proctored quizzes, other LTI:
 
 1. Open the tool via Canvas (Jacob completes MFA if needed).
 2. Draft steps/answers in chat.
@@ -43,9 +43,11 @@ For WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI:
 
 Never auto-click Submit in those tools. Do not use IDE browser for scripted CampusGroups RSVP — use Playwright scripts above.
 
+Process-help tips (MathType, extensions, Achieve passback lag): [`docs/CU_BROWSER.md`](../../docs/CU_BROWSER.md).
+
 ## Hard stops
 
 - Quizzes / exams / proctored → Jacob only  
-- WebAssign / ZyBooks / PlayPosit → Jacob in tool UI  
+- WebAssign / ZyBooks / PlayPosit / Achieve → Jacob in tool UI (never auto)  
 - CampusGroups RSVP → Playwright scripts only (not IDE browser)  
 - No password storage; never commit `browser/.auth/`

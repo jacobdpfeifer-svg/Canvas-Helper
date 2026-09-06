@@ -1,0 +1,229 @@
+[
+  {
+    "name": "Getting Started",
+    "items": [
+      {
+        "title": "ITLL Tour",
+        "type": "Assignment",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7746252"
+      },
+      {
+        "title": "Syllabus",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306415"
+      },
+      {
+        "title": "Schedule",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306427"
+      },
+      {
+        "title": "CU Resources",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306436"
+      },
+      {
+        "title": "About You Video",
+        "type": "Assignment",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7733673"
+      }
+    ]
+  },
+  {
+    "name": "Merton",
+    "items": [
+      {
+        "title": "Thomas Merton Reading_updated.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306464"
+      }
+    ]
+  },
+  {
+    "name": "Lorde",
+    "items": [
+      {
+        "title": "Poetry Is Not a Luxury Audre Lorde.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306485"
+      }
+    ]
+  },
+  {
+    "name": "Buber",
+    "items": [
+      {
+        "title": "Buber I-Thou.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306501"
+      }
+    ]
+  },
+  {
+    "name": "Course Videos",
+    "items": [
+      {
+        "title": "Deep-I-Thou video_2025.mp4",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7521666"
+      },
+      {
+        "title": "Aiden I-Thou Video.mov",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7696388"
+      },
+      {
+        "title": "Rhys I-Thou Video.mp4",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7696391"
+      },
+      {
+        "title": "Zoe I-Thou Video.mp4",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7696393"
+      },
+      {
+        "title": "Edu_I-Thou_Updated.mov",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7763338"
+      }
+    ]
+  },
+  {
+    "name": "Plato",
+    "items": [
+      {
+        "title": "Plato-Cave.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306538"
+      }
+    ]
+  },
+  {
+    "name": "Kant",
+    "items": [
+      {
+        "title": "Kant What is Enlightenment excerpts.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306547"
+      }
+    ]
+  },
+  {
+    "name": "Postman",
+    "items": [
+      {
+        "title": "Technopoly_ The Surrender of Culture to Technology.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306555"
+      }
+    ]
+  },
+  {
+    "name": "Singh",
+    "items": [
+      {
+        "title": "Indra's Web Singh.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7306560"
+      }
+    ]
+  },
+  {
+    "name": "Academic Support & Tutoring Services for Engineering Students",
+    "items": [
+      {
+        "title": "Academic Coaching Program",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310102"
+      },
+      {
+        "title": "Academic Support and Tutoring Services and Events",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310107"
+      },
+      {
+        "title": "Campus Tutoring for First-Year and Transfer Students",
+        "type": "ExternalUrl",
+        "html_url": "https://canvas.colorado.edu/api/v1/courses/139021/module_item_redirect/7310111",
+        "external_url": "https://www.colorado.edu/orientation/asap"
+      },
+      {
+        "title": "Course-Specific Resources",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310114"
+      },
+      {
+        "title": "Aerospace (ASEN)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310118"
+      },
+      {
+        "title": "Applied Mathematics ",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310122"
+      },
+      {
+        "title": "Chemical & Biological (BIEN & CHEN)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310126"
+      },
+      {
+        "title": "Chemistry (supporting CHEM courses)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310129"
+      },
+      {
+        "title": " Civil, Environmental & Architectural (CEAE)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310134"
+      },
+      {
+        "title": "Computer Science (CSCI)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310138"
+      },
+      {
+        "title": "Creative Technology and Design (CTD)",
+        "type": "ExternalUrl",
+        "html_url": "https://canvas.colorado.edu/api/v1/courses/139021/module_item_redirect/7310141",
+        "external_url": "https://www.colorado.edu/atlas/atlas-student-resources"
+      },
+      {
+        "title": "Integrated Design Engineering (IDE)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310145"
+      },
+      {
+        "title": "Math",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310149"
+      },
+      {
+        "title": "Mechanical (ME)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310153"
+      },
+      {
+        "title": "Physics (PHYS)",
+        "type": "Page",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7310155"
+      }
+    ]
+  },
+  {
+    "name": "Engineering Academic Success Video & One Page Resource",
+    "items": [
+      {
+        "title": "Academic Success Resources Video.mp4",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7619080"
+      },
+      {
+        "title": "CEAS Academic Success One-Pager.pdf",
+        "type": "File",
+        "html_url": "https://canvas.colorado.edu/courses/139021/modules/items/7619082"
+      }
+    ]
+  }
+]

@@ -75,9 +75,60 @@ Use when Jacob must open WebAssign, ZyBooks, PlayPosit, or a proctored quiz:
 
 Do **not** use interactive UI as the primary way to build the weekly due list — run `npm run sync` instead.
 
+## Achieve / LearningCurve / Norton EOC (process help)
+
+Macmillan Achieve and similar LTI tools are **Jacob-operated** — never auto-drive.
+
+1. Open via Canvas LTI; Jacob completes IdentiKey / publisher SSO.
+2. Agent drafts answers in chat (no em dashes in Achieve open-ended fields; meet character minima). Draft.js fields often need keyboard typing, not DOM `value` writes.
+3. **Jacob** submits in the tool UI.
+4. Canvas passback (AGS) can lag: if Achieve shows complete but Canvas is still `unsubmitted`, note `Achieve complete — Canvas passback pending` in week/course Notes. Do **not** force Grade Refresh or native `submit_assignment` for `external_tool`.
+5. LearningCurve / Norton EOC: same rule — process help only; Jacob operates the UI.
+
+## WebAssign (process help)
+
+Open via Canvas LTI or [CU WebAssign login](https://www.webassign.net/colorado/login.html). Agent drafts steps/answers; **Jacob** enters and submits. Never auto-fill or auto-submit.
+
+**UI tips (Jacob typing in the tool):**
+
+- Plain fractions/text: use WebAssign’s text fields as shown; avoid pasting into broken MathType when a plain answer works.
+- Math expressions: prefer MathType in the assignment UI (`x^2-9` style); hidden `RA_*` fields are unreliable if edited outside MathType.
+- Graph / interval answers: formats like `(3),5];` or `(-infinity,2];` — match the problem’s interval notation.
+- Past due: WebAssign → **Request Extension** (often automatic, ~3 days) before more submits will stick.
+- Work one question at a time; don’t batch-paste across reloads.
+
+## Google Calendar (school schedule)
+
+Curated classes, timed exams/presentations, and confirmed club RSVPs → dedicated subcalendar **CU Fall 2026**. See [`.jacob/calendar-policy.md`](../.jacob/calendar-policy.md).
+
+### Canonical sync
+
+```bash
+cd browser && npm run sync-calendar              # rebuild manifest + dry-run
+cd browser && npm run sync-calendar -- --apply   # push via Composio (OAuth required)
+cd browser && npm run sync-calendar -- --setup-calendar  # create subcalendar
+```
+
+Manifest: `inbox/calendar-manifest.json`. Diff report: `inbox/calendar-sync-diff.md`.
+
+**Auth paths (separate):**
+
+| Path | Purpose |
+|------|---------|
+| Composio `googlecalendar` OAuth | Bulk create/update via API (`--apply`) |
+| `browser/.auth-google` + CDP | One-time Google login + visual verification only |
+
+```bash
+cd browser && npm run open-google-calendar   # real Chrome, dedicated profile, port 9222
+```
+
+Do **not** use Canvas `.auth` for Google (different origin). Do **not** use IDE browser MCP for Google Calendar writes.
+
+After `rsvp-dinner` / `rsvp-ai-lab`, offer `sync-calendar` to add the confirmed slot.
+
 ## Security
 
-- Never commit cookies, `browser/.auth/`, or passwords.
+- Never commit cookies, `browser/.auth/`, `browser/.auth-google/`, or passwords.
 - Prefer headed mode for CU SSO.
 
 ## When a PAT arrives

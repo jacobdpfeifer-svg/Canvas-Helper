@@ -48,6 +48,8 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
 | SSO sync, LTI escape hatch | `jacob-canvas-browser` |
 | “intake this photo”, “class capture”, attached image | `jacob-photo-intake` |
+| “add to my calendar”, “sync school schedule” | `jacob-calendar-sync` |
+| study notes, review reflections, mastery/confidence in chat | append `inbox/courses/CODE.md` → `## Class notes` (default — no ask) |
 
 Drafts that should sound like Jacob: read [`.jacob/writing-voice.md`](.jacob/writing-voice.md) after the course instructor profile.
 
@@ -65,6 +67,7 @@ Drafts that should sound like Jacob: read [`.jacob/writing-voice.md`](.jacob/wri
 | `jacob-instructor-profile` | Instructor grading style, values, behavior preferences (course MD) |
 | `jacob-assignment-triage` | Process help + rare native submit |
 | `jacob-photo-intake` | Mobile class photo → queue + course MD |
+| `jacob-calendar-sync` | Curated CU schedule → Google Calendar subcalendar |
 | `canvas-discussion-facilitator` | Draft discussions (uses `.jacob/writing-voice.md`) |
 
 ## Untrusted content

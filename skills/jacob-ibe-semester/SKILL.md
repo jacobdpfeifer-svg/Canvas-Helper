@@ -5,11 +5,11 @@ description: Jacob's CU Boulder IBE Fall 2026 semester context skill. Maps live 
 
 # Jacob IBE semester
 
-Orient the agent to Jacob’s transfer record + Fall 2026 IBE load. Not a degree audit.
+Orient the agent to Jacob’s transfer record + Fall 2026 IBE load. Use the **Degree audit snapshot** in `JACOB.md` for program remaining-requirements context. Do not invent CU degree-audit decisions beyond that snapshot.
 
 ## Prerequisites
 
-- Read [`JACOB.md`](../../JACOB.md)
+- Read [`JACOB.md`](../../JACOB.md) (Identity + **Degree audit snapshot** + transfer map)
 - Prefer `inbox/week.md` + `inbox/courses/*` (from `npm run sync`). Use MCP `list_courses` only if PAT works.
 
 ## Steps
@@ -27,20 +27,21 @@ From inbox sync notes / enrolled courses list, or MCP if available. Expect Fall 
 
 If Canvas differs, trust Canvas for this-term work and note the delta.
 
-### 2. Cross-check transfers
+### 2. Cross-check transfers + audit snapshot
 
 From `JACOB.md`:
 
-- Already credited: BCOR 1025, BCOR 2202, WRTG 1150, COMM 1300, etc.
-- ECON 2999TC exists but **ECON 2010 is still enrolled** — do not skip 2010
-- Math transfers ≠ APPM 1350; 1235 is the prep path
-- Open: RFLA100C NEED SYLLABUS
+- Already credited / applied: BCOR 1025, BCOR 2202 (1.5 applied / 2.5 excess), WRTG 1150, Arts & Humanities TCs
+- ECON 2999TC exists but **ECON 2010 is still enrolled** — do not skip 2010; audit still needs **ECON 2020** after
+- APPM 1235 is on audit as **elective**, not gen-ed Math — Math slot is **APPM 1350**
+- Still open on audit: PHYS 1110, Diversity US/Global, most BCOR/BASE, GEEN sequence, eng electives/capstone, **emphasis declare**
+- Open advising: RFLA100C NEED SYLLABUS; MATH/WRTG 2999TC syllabus review if wanting specific applicability
 
 If a live course matches a credited code, flag: “possible duplicate — verify with advisor.”
 
 ### 3. Prioritize by goals
 
-1. Entrepreneurship / startup
+1. Entrepreneurship / startup (emphasis goal = Tech Entrepreneurship until Jacob declares otherwise)
 2. Software / data → **CSCI 1200** first for deep attention
 3. Then ops/strategy, aerospace, climate
 
@@ -51,6 +52,9 @@ If a live course matches a credited code, flag: “possible duplicate — verify
 
 ### Live courses
 …
+
+### Program progress (from JACOB.md audit snapshot)
+60 earned + 15 IP → 45 still needed toward 120; emphasis undeclared; key gaps: APPM 1350, ECON 2020, PHYS 1110, BCOR remainder, GEEN sequence…
 
 ### Transfer highlights (relevant)
 …

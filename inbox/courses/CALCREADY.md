@@ -1,6 +1,6 @@
 # CALCREADY — Calculus 1 Readiness Prep
 
-Updated: 2026-08-26
+Updated: 2026-08-29
 
 Sections: Canvas URL: https://canvas.colorado.edu/courses/CALCREADY
 Canvas URL: https://canvas.colorado.edu/courses/105829
@@ -146,7 +146,7 @@ Profile updated: 2026-08-24
 
 ## Syllabus / agent policy notes
 
-(synced 2026-08-26)
+(synced 2026-08-29)
 
 No `agent_writes:` marker in Canvas syllabus — MCP uses default posture
 (deny unless `COURSE_AGENT_POLICY_DEFAULT=allow`).

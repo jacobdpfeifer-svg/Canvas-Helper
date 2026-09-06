@@ -24,7 +24,7 @@ When you launch a Cloud Agent on this repo, Cursor checks out the repo on a Linu
 | Tracked (committed) | Gitignored (never commit) |
 |---------------------|---------------------------|
 | `queue.md` row | Original `.jpg` / `.heic` / `.png` |
-| Extracted notes in `inbox/courses/CODE.md` → `## Lecture captures` | Cloud VM copy (ephemeral) |
+| Extracted notes in `inbox/courses/CODE.md` → `## Class notes` | Cloud VM copy (ephemeral) |
 | | Mac `inbox/` + `processed/` folders |
 
 **Ephemeral cloud rule:** the agent must **extract OCR / summary into course MD immediately**. For `pending_mac` Canvas uploads, keep the original on your phone camera roll and AirDrop to `inbox/captures/inbox/{id}.jpg` when at your Mac.

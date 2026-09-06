@@ -115,6 +115,35 @@ describe("classifyOutcomeHint", () => {
     assert.match(hint, /outcome:lti/);
   });
 
+  it("tags Achieve/Macmillan over generic survey→written", () => {
+    const byName = classifyOutcomeHint("Achieve Intro Survey", "assignment");
+    assert.match(byName, /outcome:lti/);
+    const byDesc = classifyOutcomeHint(
+      "Econ 2010 Intro Survey",
+      "assignment",
+      '<a href="https://lmslink.bfwpub.com/index.php">Open</a>'
+    );
+    assert.match(byDesc, /outcome:lti/);
+    const byType = classifyOutcomeHint("Econ 2010 Intro Survey", "external_tool");
+    assert.match(byType, /outcome:lti/);
+  });
+
+  it("tags plain survey as written when not LTI", () => {
+    const hint = classifyOutcomeHint("Course feedback survey", "assignment");
+    assert.match(hint, /outcome:written/);
+  });
+
+  it("tags LearningCurve and EOC as LTI", () => {
+    assert.match(
+      classifyOutcomeHint("Ch. 4 LearningCurve: Equilibrium", "assignment"),
+      /outcome:lti/
+    );
+    assert.match(
+      classifyOutcomeHint("Ch. 1 EOC Problems: Core Principles", "assignment"),
+      /outcome:lti/
+    );
+  });
+
   it("tags thought projects as written reflection", () => {
     const hint = classifyOutcomeHint(
       "Thought Project #1: Your Personal Philosophy of Higher Education",

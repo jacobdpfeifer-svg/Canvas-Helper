@@ -108,9 +108,17 @@ For each open item:
 - Cross-reference catalog: "Builds on Python Introduction Pre Reading" → "Unlocks Variables and Expressions Pre Lab"
 - If title is opaque and no description → `Learn: unclear — need assignment description` (Ask once)
 
-### 6. Optional — persist arc notes
+### 6. Persist notes (defaults)
 
-After a full arc briefing, append or update **Arc notes** in `inbox/courses/CODE.md` with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections.
+**Class notes (chat):** when Jacob shares study notes, review reflections, or mastery/confidence in conversation — **immediately append** a dated bullet under `## Class notes` in `inbox/courses/CODE.md`. Do not ask permission. Infer course from context; ask once if ambiguous. If he names confidence or gaps, also append under `### Jacob mastery (self-reported)` in `## Instructor profile`. Reply with a one-line confirm (what + where).
+
+**Arc notes (briefing):** after a full arc briefing, append or update **Arc notes** with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections.
+
+**Class notes bullet format:**
+
+```markdown
+- **YYYY-MM-DD** — {topic}: {confident / gap / takeaway bullets in one line}
+```
 
 ## Output
 

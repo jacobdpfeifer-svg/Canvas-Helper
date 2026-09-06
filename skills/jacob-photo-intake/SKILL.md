@@ -32,13 +32,13 @@ Jacob attaches a photo (whiteboard, slide, handout, event selfie, homework page)
 
 | `kind` | Write to course MD | Queue `action` | `status` |
 |--------|-------------------|----------------|----------|
-| `whiteboard`, `slide`, `handout` | `## Lecture captures` bullet | `update_course_md` | `done` |
+| `whiteboard`, `slide`, `handout` | `## Class notes` bullet | `update_course_md` | `done` |
 | `syllabus_delta` | `## Syllabus / agent policy notes` or instructor profile gap | `update_course_md` | `done` |
-| `homework_problem` | `## Lecture captures` + note to check `week.md` | `update_course_md` | `done` |
+| `homework_problem` | `## Class notes` + note to check `week.md` | `update_course_md` | `done` |
 | `event_selfie` | optional one-line in COEN arc | `canvas_upload` | `pending_mac` |
 | `quiz`, `graded_work`, `unknown` | none until Jacob confirms | `needs_review` | `needs_review` |
 
-**Course MD bullet** (under `## Lecture captures`; create section if missing):
+**Course MD bullet** (under `## Class notes`; create section if missing):
 
 ```markdown
 Agent-written from photo intake (`jacob-photo-intake`). Not Canvas truth.

@@ -1,6 +1,6 @@
 # ONLINEEXP — Online Experience (Leeds)
 
-Updated: 2026-08-26
+Updated: 2026-08-29
 
 Sections: TR
 Canvas URL: https://canvas.colorado.edu/courses/135245
@@ -120,7 +120,7 @@ Profile updated: 2026-08-24
 
 ## Syllabus / agent policy notes
 
-(synced 2026-08-26)
+(synced 2026-08-29)
 
 No `agent_writes:` marker in Canvas syllabus — MCP uses default posture
 (deny unless `COURSE_AGENT_POLICY_DEFAULT=allow`).

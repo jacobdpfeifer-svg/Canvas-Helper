@@ -145,7 +145,7 @@ try {
     verification,
     url: page.url(),
     calendarReminder:
-      "Optional: agent may create Google Calendar event via Google Calendar MCP after Jacob confirms slot",
+      "Run jacob-calendar-sync: npm run sync-calendar after RSVP confirmed",
   };
 
   if (result.ok && args.log) {

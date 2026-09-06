@@ -1,0 +1,183 @@
+{
+  "fetchedAt": "2026-08-31T19:52:22.234Z",
+  "quiz": {
+    "id": 563926,
+    "title": "Reading Quiz 2 (Ch. 3 & 14 and Gallo PDF) (verbals + non-verbals; presentations; persuasion) (Remotely Proctored)",
+    "html_url": "https://canvas.colorado.edu/courses/141523/quizzes/563926",
+    "mobile_url": "https://canvas.colorado.edu/courses/141523/quizzes/563926?force_user=1&persist_headless=1",
+    "description": "<div class=\"proctorio-oembed\">\n<p>This<span>&nbsp;</span><strong>quiz includes 5 True or False question. Once started, you will have 3 minutes to complete the quiz.</strong></p>\n<ul>\n<li>Check your time in the upper right corner.&nbsp; Once you start, the timer will not stop, even if your computer/browser freezes or you get kicked out, and the exam will submit when time expires.&nbsp;</li>\n<li><strong>Access Code</strong>: You should not be asked for an access code.&nbsp; If you are, check the following:\n<ul>\n<li>You're using Google Chrome (not Safari, Firefox, etc.) and it's not maximized\n<ul>\n<li>You have Proctorio installed (<a class=\"external\" href=\"http://getproctorio.com/\" target=\"_blank\"><span>getproctorio.com</span><span class=\"screenreader-only\">&nbsp;(Links to an external site.)</span></a>) and see the Proctorio shield in the Chrome toolbar</li>\n</ul>\n</li>\n<li>You aren't logged into your Google account in Chrome</li>\n</ul>\n</li>\n<li><strong>Honor Code:</strong>\n<ul>\n<li>The exam is closed-book, closed-note, and you may not receive outside assistance</li>\n<li>You may not broadcast, copy or record any portion of the exam; copy/paste questions; nor use unauthorized copies of this or previous semester's exams.</li>\n</ul>\n</li>\n<li><strong>Technical difficulties</strong>:\n<ul>\n<li>Call Proctorio at &nbsp;866-948-9087 or 480-428-4076</li>\n<li>Not sure about your WiFi connection? Proctorio needs at least 0.5 Mbps upload speed.&nbsp;Run a<span>&nbsp;</span><a class=\"external\" href=\"http://speedtest.net/\" target=\"_blank\"><span>speed test</span><span class=\"screenreader-only\">&nbsp;(Links to an external site.)</span></a>.</li>\n</ul>\n</li>\n</ul>\n</div>\n<p><span class=\"proctorioexam\" style=\"display: none;\">73b67510a541269652ed78b8991822fb</span><span class=\"proctoriocourse\" style=\"display: none;\">141523</span></p>\n\n<p><a id=\"proctorio-embed-a\" class=\"proctorio-embed\" style=\"display: flex; flex-direction: column; align-items: center; max-width: 100%; width: auto; height: auto;\" href=\"https://getproctorio.com\" target=\"_blank\"><img id=\"proctorio-embed-img\" style=\"margin-bottom: 10px; max-width: 100%; height: auto;\" src=\"https://gbl.proctorauth.com/embed/lti\" alt=\"Get setup assistance at getproctorio.com (opens in a new tab)\" loading=\"lazy\"><img id=\"proctorio-embed-gif\" style=\"max-width: 100%; height: auto;\" src=\"https://gbl.proctorauth.com/embed/lti/enable\" alt=\"Embed Animated Gif\" loading=\"lazy\"><img id=\"proctorio-embed-empty\" style=\"height: 1000px; max-width: 100%;\" src=\"https://cdn.proctorauth.com/embed/pixel.gif\" aria-hidden=\"true\" loading=\"lazy\"></a></p>",
+    "quiz_type": "assignment",
+    "time_limit": 3,
+    "timer_autosubmit_disabled": false,
+    "shuffle_answers": true,
+    "show_correct_answers": false,
+    "scoring_policy": "keep_highest",
+    "allowed_attempts": 1,
+    "one_question_at_a_time": false,
+    "question_count": 5,
+    "points_possible": 5,
+    "cant_go_back": false,
+    "ip_filter": null,
+    "due_at": "2026-09-01T05:59:59Z",
+    "lock_at": "2026-09-01T06:05:00Z",
+    "unlock_at": "2026-08-24T06:00:00Z",
+    "published": true,
+    "locked_for_user": false,
+    "hide_results": "always",
+    "show_correct_answers_at": null,
+    "hide_correct_answers_at": null,
+    "all_dates": [
+      {
+        "due_at": "2026-09-01T05:59:59Z",
+        "unlock_at": "2026-08-24T06:00:00Z",
+        "lock_at": "2026-09-01T06:05:00Z",
+        "title": "Everyone",
+        "base": true
+      }
+    ],
+    "can_update": false,
+    "require_lockdown_browser": false,
+    "require_lockdown_browser_for_results": false,
+    "require_lockdown_browser_monitor": false,
+    "lockdown_browser_monitor_data": "",
+    "permissions": {
+      "read": true,
+      "create": false,
+      "manage": false,
+      "update": false,
+      "submit": true,
+      "preview": false,
+      "delete": false,
+      "read_statistics": false,
+      "grade": false,
+      "review_grades": false,
+      "view_answer_audits": false,
+      "manage_assign_to": false
+    },
+    "quiz_reports_url": "https://canvas.colorado.edu/api/v1/courses/141523/quizzes/563926/reports",
+    "quiz_statistics_url": "https://canvas.colorado.edu/api/v1/courses/141523/quizzes/563926/statistics",
+    "important_dates": false,
+    "quiz_submission_versions_html_url": "https://canvas.colorado.edu/courses/141523/quizzes/563926/submission_versions",
+    "assignment_id": 2788532,
+    "one_time_results": false,
+    "visible_to_everyone": true,
+    "assignment_group_id": 480216,
+    "show_correct_answers_last_attempt": false,
+    "version_number": 13,
+    "has_access_code": true,
+    "post_to_sis": false,
+    "migration_id": "g75d492f10ac8d71a5d5ea3891ee0d1ce",
+    "in_paced_course": false,
+    "question_types": [
+      "true_false_question"
+    ]
+  },
+  "questions": {
+    "error": 403,
+    "body": {
+      "status": "unauthorized",
+      "errors": [
+        {
+          "message": "user not authorized to perform that action"
+        }
+      ]
+    }
+  },
+  "submissions": {
+    "quiz_submissions": [],
+    "submissions": [],
+    "users": [],
+    "meta": {
+      "primaryCollection": "quiz_submissions"
+    }
+  },
+  "assignmentSearch": [
+    {
+      "id": 2788532,
+      "position": 2,
+      "description": "<div class=\"proctorio-oembed\">\n<p>This<span>&nbsp;</span><strong>quiz includes 5 True or False question. Once started, you will have 3 minutes to complete the quiz.</strong></p>\n<ul>\n<li>Check your time in the upper right corner.&nbsp; Once you start, the timer will not stop, even if your computer/browser freezes or you get kicked out, and the exam will submit when time expires.&nbsp;</li>\n<li><strong>Access Code</strong>: You should not be asked for an access code.&nbsp; If you are, check the following:\n<ul>\n<li>You're using Google Chrome (not Safari, Firefox, etc.) and it's not maximized\n<ul>\n<li>You have Proctorio installed (<a class=\"external\" href=\"http://getproctorio.com/\" target=\"_blank\"><span>getproctorio.com</span><span class=\"screenreader-only\">&nbsp;(Links to an external site.)</span></a>) and see the Proctorio shield in the Chrome toolbar</li>\n</ul>\n</li>\n<li>You aren't logged into your Google account in Chrome</li>\n</ul>\n</li>\n<li><strong>Honor Code:</strong>\n<ul>\n<li>The exam is closed-book, closed-note, and you may not receive outside assistance</li>\n<li>You may not broadcast, copy or record any portion of the exam; copy/paste questions; nor use unauthorized copies of this or previous semester's exams.</li>\n</ul>\n</li>\n<li><strong>Technical difficulties</strong>:\n<ul>\n<li>Call Proctorio at &nbsp;866-948-9087 or 480-428-4076</li>\n<li>Not sure about your WiFi connection? Proctorio needs at least 0.5 Mbps upload speed.&nbsp;Run a<span>&nbsp;</span><a class=\"external\" href=\"http://speedtest.net/\" target=\"_blank\"><span>speed test</span><span class=\"screenreader-only\">&nbsp;(Links to an external site.)</span></a>.</li>\n</ul>\n</li>\n</ul>\n</div>\n<p><span class=\"proctorioexam\" style=\"display: none;\">73b67510a541269652ed78b8991822fb</span><span class=\"proctoriocourse\" style=\"display: none;\">141523</span></p>\n\n<p><a id=\"proctorio-embed-a\" class=\"proctorio-embed\" style=\"display: flex; flex-direction: column; align-items: center; max-width: 100%; width: auto; height: auto;\" href=\"https://getproctorio.com\" target=\"_blank\"><img id=\"proctorio-embed-img\" style=\"margin-bottom: 10px; max-width: 100%; height: auto;\" src=\"https://gbl.proctorauth.com/embed/lti\" alt=\"Get setup assistance at getproctorio.com (opens in a new tab)\" loading=\"lazy\"><img id=\"proctorio-embed-gif\" style=\"max-width: 100%; height: auto;\" src=\"https://gbl.proctorauth.com/embed/lti/enable\" alt=\"Embed Animated Gif\" loading=\"lazy\"><img id=\"proctorio-embed-empty\" style=\"height: 1000px; max-width: 100%;\" src=\"https://cdn.proctorauth.com/embed/pixel.gif\" aria-hidden=\"true\" loading=\"lazy\"></a></p>",
+      "points_possible": 5,
+      "grading_type": "points",
+      "created_at": "2026-08-07T00:24:32Z",
+      "updated_at": "2026-08-24T06:00:35Z",
+      "due_at": "2026-09-01T05:59:59Z",
+      "final_grader_id": null,
+      "grader_count": 0,
+      "graders_anonymous_to_graders": false,
+      "grader_comments_visible_to_graders": true,
+      "grader_names_visible_to_final_grader": true,
+      "lock_at": "2026-09-01T06:05:00Z",
+      "unlock_at": "2026-08-24T06:00:00Z",
+      "assignment_group_id": 480216,
+      "peer_reviews": false,
+      "anonymous_peer_reviews": false,
+      "automatic_peer_reviews": false,
+      "intra_group_peer_reviews": false,
+      "post_to_sis": false,
+      "grade_group_students_individually": false,
+      "group_category_id": null,
+      "grading_standard_id": null,
+      "moderated_grading": false,
+      "hide_in_gradebook": false,
+      "omit_from_final_grade": false,
+      "suppress_assignment": false,
+      "anonymous_instructor_annotations": false,
+      "anonymous_grading": false,
+      "allowed_attempts": -1,
+      "annotatable_attachment_id": null,
+      "secure_params": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsdGlfYXNzaWdubWVudF9pZCI6ImMzMTYxNWM5LTk2NDktNDI0NS05Zjg3LWRmYmQ3ZjQ5ZmE2MSIsImx0aV9hc3NpZ25tZW50X2Rlc2NyaXB0aW9uIjoiXHUwMDNjZGl2IGNsYXNzPVwicHJvY3RvcmlvLW9lbWJlZFwiXHUwMDNlXG5cdTAwM2NwXHUwMDNlVGhpc1x1MDAzY3NwYW5cdTAwM2VcdTAwMjZuYnNwO1x1MDAzYy9zcGFuXHUwMDNlXHUwMDNjc3Ryb25nXHUwMDNlcXVpeiBpbmNsdWRlcyA1IFRydWUgb3IgRmFsc2UgcXVlc3Rpb24uIE9uY2Ugc3RhcnRlZCwgeW91IHdpbGwgaGF2ZSAzIG1pbnV0ZXMgdG8gY29tcGxldGUgdGhlIHF1aXouXHUwMDNjL3N0cm9uZ1x1MDAzZVx1MDAzYy9wXHUwMDNlXG5cdTAwM2N1bFx1MDAzZVxuXHUwMDNjbGlcdTAwM2VDaGVjayB5b3VyIHRpbWUgaW4gdGhlIHVwcGVyIHJpZ2h0IGNvcm5lci5cdTAwMjZuYnNwOyBPbmNlIHlvdSBzdGFydCwgdGhlIHRpbWVyIHdpbGwgbm90IHN0b3AsIGV2ZW4gaWYgeW91ciBjb21wdXRlci9icm93c2VyIGZyZWV6ZXMgb3IgeW91IGdldCBraWNrZWQgb3V0LCBhbmQgdGhlIGV4YW0gd2lsbCBzdWJtaXQgd2hlbiB0aW1lIGV4cGlyZXMuXHUwMDI2bmJzcDtcdTAwM2MvbGlcdTAwM2Vcblx1MDAzY2xpXHUwMDNlXHUwMDNjc3Ryb25nXHUwMDNlQWNjZXNzIENvZGVcdTAwM2Mvc3Ryb25nXHUwMDNlOiBZb3Ugc2hvdWxkIG5vdCBiZSBhc2tlZCBmb3IgYW4gYWNjZXNzIGNvZGUuXHUwMDI2bmJzcDsgSWYgeW91IGFyZSwgY2hlY2sgdGhlIGZvbGxvd2luZzpcblx1MDAzY3VsXHUwMDNlXG5cdTAwM2NsaVx1MDAzZVlvdSdyZSB1c2luZyBHb29nbGUgQ2hyb21lIChub3QgU2FmYXJpLCBGaXJlZm94LCBldGMuKSBhbmQgaXQncyBub3QgbWF4aW1pemVkXG5cdTAwM2N1bFx1MDAzZVxuXHUwMDNjbGlcdTAwM2VZb3UgaGF2ZSBQcm9jdG9yaW8gaW5zdGFsbGVkIChcdTAwM2NhIGNsYXNzPVwiZXh0ZXJuYWxcIiBocmVmPVwiaHR0cDovL2dldHByb2N0b3Jpby5jb20vXCIgdGFyZ2V0PVwiX2JsYW5rXCJcdTAwM2VcdTAwM2NzcGFuXHUwMDNlZ2V0cHJvY3RvcmlvLmNvbVx1MDAzYy9zcGFuXHUwMDNlXHUwMDNjc3BhbiBjbGFzcz1cInNjcmVlbnJlYWRlci1vbmx5XCJcdTAwM2VcdTAwMjZuYnNwOyhMaW5rcyB0byBhbiBleHRlcm5hbCBzaXRlLilcdTAwM2Mvc3Bhblx1MDAzZVx1MDAzYy9hXHUwMDNlKSBhbmQgc2VlIHRoZSBQcm9jdG9yaW8gc2hpZWxkIGluIHRoZSBDaHJvbWUgdG9vbGJhclx1MDAzYy9saVx1MDAzZVxuXHUwMDNjL3VsXHUwMDNlXG5cdTAwM2MvbGlcdTAwM2Vcblx1MDAzY2xpXHUwMDNlWW91IGFyZW4ndCBsb2dnZWQgaW50byB5b3VyIEdvb2dsZSBhY2NvdW50IGluIENocm9tZVx1MDAzYy9saVx1MDAzZVxuXHUwMDNjL3VsXHUwMDNlXG5cdTAwM2MvbGlcdTAwM2Vcblx1MDAzY2xpXHUwMDNlXHUwMDNjc3Ryb25nXHUwMDNlSG9ub3IgQ29kZTpcdTAwM2Mvc3Ryb25nLi4uICh0cnVuY2F0ZWQpIn0.ABPAKCFHEVzkYfunTvHSvENddDyPcptIpitEe_za4XM",
+      "lti_context_id": "c31615c9-9649-4245-9f87-dfbd7f49fa61",
+      "course_id": 141523,
+      "name": "Reading Quiz 2 (Ch. 3 & 14 and Gallo PDF) (verbals + non-verbals; presentations; persuasion) (Remotely Proctored)",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "has_submitted_submissions": true,
+      "due_date_required": false,
+      "max_name_length": 255,
+      "in_closed_grading_period": false,
+      "availability_status": {
+        "status": "open",
+        "date": "2026-09-01T06:05:00Z"
+      },
+      "graded_submissions_exist": true,
+      "is_quiz_assignment": true,
+      "can_duplicate": false,
+      "original_course_id": null,
+      "original_assignment_id": null,
+      "original_lti_resource_link_id": null,
+      "original_assignment_name": null,
+      "original_quiz_id": null,
+      "workflow_state": "published",
+      "important_dates": false,
+      "muted": true,
+      "html_url": "https://canvas.colorado.edu/courses/141523/assignments/2788532",
+      "quiz_id": 563926,
+      "anonymous_submissions": false,
+      "published": true,
+      "only_visible_to_overrides": false,
+      "visible_to_everyone": true,
+      "locked_for_user": false,
+      "submissions_download_url": "https://canvas.colorado.edu/courses/141523/quizzes/563926/submissions?zip=1",
+      "post_manually": true,
+      "anonymize_students": false,
+      "new_quizzes_anonymous_participants": false,
+      "require_lockdown_browser": false,
+      "restrict_quantitative_data": false
+    }
+  ],
+  "modulesOk": true,
+  "modHits": [],
+  "galloFiles": [],
+  "persuasionFiles": [],
+  "readingFiles": [],
+  "relevantFiles": [],
+  "pages": [],
+  "folderNames": [
+    "course files/Assigned Readings--Auslander",
+    "course files/Assigned Readings--Auslander/EI and Personality Profile Materials",
+    "course files/NEW COLOR CODE READINGS",
+    "course files",
+    "course files/course_image"
+  ]
+}

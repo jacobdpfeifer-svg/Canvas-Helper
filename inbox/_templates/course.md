@@ -40,11 +40,13 @@ Agent-written Learn / Builds-on edges (optional; `jacob-course-arc` may update).
 
 -
 
-## Lecture captures
+## Class notes
 
-Agent-written from photo intake (`jacob-photo-intake`). Not Canvas truth.
+Agent-written from chat study notes or photo intake (`jacob-photo-intake`). Not Canvas truth.
 
--
+- **YYYY-MM-DD** — {summary}
+
+(No separate mastery subsection here — use `### Jacob mastery (self-reported)` under Instructor profile.)
 
 ## Instructor profile
 
@@ -95,6 +97,10 @@ Profile updated: (agent fills via `jacob-instructor-profile` after syllabus-inta
 ### Confidence and gaps
 
 -
+
+### Jacob mastery (self-reported)
+
+(Optional — append when Jacob names confidence/gaps in chat.)
 
 ## Syllabus / agent policy notes
 

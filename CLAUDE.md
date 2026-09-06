@@ -9,7 +9,7 @@ This is **not** the upstream multi-audience product. Do not restore educator too
 ## Truth path
 
 1. Brain: `JACOB.md` triage (+ `.jacob/priority-rubric.md` when Jacob asks what’s next; `jacob-course-arc` when Jacob names a course)
-2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs + arc notes; optional dated `inbox/focus.md` Top-3 cache)
+2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs, **`## Class notes`**, arc notes; optional dated `inbox/focus.md` Top-3 cache). Chat study notes → append course MD immediately (no ask).
 3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST)
 4. Optional later: PAT + `canvas-mcp-server` for the same REST + native submits
 5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — Jacob operates; agent drafts  

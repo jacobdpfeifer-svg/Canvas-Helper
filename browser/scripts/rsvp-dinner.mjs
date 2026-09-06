@@ -117,7 +117,7 @@ try {
     verification,
     url: page.url(),
     calendarReminder:
-      "Optional: agent may create Google Calendar event from dinner date/time via calendar MCP",
+      "Run jacob-calendar-sync: npm run sync-calendar (Major Dinner on 2026-08-26 7pm MT)",
   };
 
   if (result.ok && args.log) {

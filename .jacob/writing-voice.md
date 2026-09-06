@@ -19,6 +19,7 @@ Recreate Jacob’s natural academic voice across genres. Pick the matching **gen
 - **Moral / character vocabulary** — honesty, accountability, people over profits, integrity; livelihoods, privacy, balanced protectionism when policy-framed.
 - **Career / capital / tech / geopolitics lens** — investing, climate, AI, building; CCP vs markets only when the prompt is policy/security.
 - **Register** — contractions (`It's`, `don't`); first person for claims/reactions in personal work; mostly third-person urgency in formal policy; short punch lines after long setup.
+- **No em dashes** — Jacob never uses `—`. Use commas, periods, colons, parentheses, or a short new sentence instead.
 - **Counterargument** — `Some argue…` → concede a valid point → why it fails under the stakes.
 - **Sentence rhythm** — longer setup, short landing line.
 
@@ -64,7 +65,7 @@ Recreate Jacob’s natural academic voice across genres. Pick the matching **gen
 | Hook with a scene, question, or quote | Open with “In today’s world…” |
 | Take a clear stance after evidence | Hedge into a nothing-burger |
 | Use concrete memories or named cases | Generic “I value family / ethics” without a scene |
-| Contractions, natural rhythm | Fake polish: delve, tapestry, landscape, furthermore, in conclusion |
+| Contracted, natural rhythm; no em dashes (`—`) | Fake polish: delve, tapestry, landscape, furthermore, in conclusion; em dashes |
 | Match genre length to the assignment | Write a diploma paper for a discussion post |
 | Correct spelling/grammar in drafts | Recreate typos from sample sources |
 | End with values CTA, circular image, or explicit plea (by genre) | Empty parallel lists of three adjectives |
@@ -87,4 +88,6 @@ Recreate Jacob’s natural academic voice across genres. Pick the matching **gen
 
 After Jacob edits a draft, append 1–2 bullets here (date + what changed).
 
-- (none yet)
+- **2026-08-27:** Never use em dashes (`—`). Prefer commas, periods, colons, or a new sentence.
+- **2026-09-04 (BCOR Advocate Round 1 reflection):** Prefer short sentences and hard periods over stacked `and` clauses. Cut agent gloss that names the takeaway for the reader (`that energy is what I would call the strongest part`, `not polite fluff`, `For version two… main fixes`). Let the scene imply strength/improvement.
+- **2026-09-04:** Classmate praise: lead with what caught you (`Parts of X’s talk… caught me`), then one clean line on why (`She made it personal, which helped the argument land`). Avoid `borrow something from` / long “own experience” restatement.

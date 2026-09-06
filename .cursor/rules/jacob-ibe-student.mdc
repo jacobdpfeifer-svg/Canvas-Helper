@@ -27,6 +27,7 @@ See [`docs/HYBRID.md`](../../docs/HYBRID.md).
 7. When Jacob names a **course** (brief me on CSCI, course arc): use `jacob-course-arc` + `inbox/courses/*.md` catalog.
 7b. Syllabus-first: when `Syllabus hash` changes or Theme is `(inferred)` with non-stub `_raw` → `jacob-syllabus-intake` before profile/arc.
 8. When Jacob attaches a **class photo** (intake / class capture): use `jacob-photo-intake` + `inbox/captures/queue.md`.
+8a. **Class notes default:** when Jacob shares study notes, lecture takeaways, or mastery/confidence reflections in chat (no photo required) → **immediately append** to the matching `inbox/courses/CODE.md` under `## Class notes`. Do not ask “want me to log this?” Infer course from conversation; ask once only if ambiguous. Also update `### Jacob mastery (self-reported)` when he names gaps or confidence. Reply with a one-line confirm (what + where) plus any brief study help — persistence is automatic.
 9. Do not treat DOM scraping or MCP as a second system of record — same REST facts.
 10. Never store IdentiKey passwords or commit `browser/.auth/`.
 11. Do not rebuild educator/hosted/degree-audit features; do not invent CU degree-audit decisions.
