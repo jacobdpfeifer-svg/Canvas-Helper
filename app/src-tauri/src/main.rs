@@ -3,13 +3,50 @@
 
 mod daemon;
 
+use tauri::{
+    menu::{Menu, MenuItem},
+    tray::TrayIconBuilder,
+    Manager,
+};
+use tauri_plugin_autostart::MacosLauncher;
+
 fn main() {
-    // Autostart plugin is registered in a full `tauri::Builder` setup.
-    // Cadence constants live in daemon.rs (2h weekday / 6h weekend / focus).
     daemon::tick_log("boot");
-    println!(
-        "ProductName daemon scaffold. Weekday sync {:?}, weekend {:?}",
-        daemon::SYNC_WEEKDAY,
-        daemon::SYNC_WEEKEND
-    );
+
+    tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            None,
+        ))
+        .setup(|app| {
+            let sync_now = MenuItem::with_id(app, "sync_now", "Sync now", true, None::<&str>)?;
+            let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&sync_now, &quit])?;
+
+            let mut tray = TrayIconBuilder::new()
+                .menu(&menu)
+                .tooltip("ProductName")
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                    "sync_now" => {
+                        if let Err(e) = daemon::run_canvas_sync() {
+                            eprintln!("[productname-daemon] Sync now failed: {e}");
+                        }
+                    }
+                    "quit" => {
+                        app.exit(0);
+                    }
+                    _ => {}
+                });
+
+            if let Some(icon) = app.default_window_icon() {
+                tray = tray.icon(icon.clone());
+            }
+
+            let _tray = tray.build(app)?;
+
+            daemon::spawn_cadence_loop();
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running ProductName");
 }
