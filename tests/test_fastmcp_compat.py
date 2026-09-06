@@ -4,7 +4,7 @@ These pin the exact upstream behaviors the migration (issue #145) assumes,
 originally written against fastmcp 2.x and revalidated on 3.x. If a fastmcp
 upgrade breaks one of these, it breaks the server the same way.
 
-This Jacob IBE fork is stdio-only; HTTP transport characterization was removed.
+This ProductName student build is stdio-only; HTTP transport characterization was removed.
 """
 
 import pytest

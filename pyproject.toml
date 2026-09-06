@@ -10,7 +10,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Jacob Pfeifer" },
+    { name = "ProductName" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

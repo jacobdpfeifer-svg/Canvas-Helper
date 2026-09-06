@@ -19,18 +19,5 @@ lti_catalog:
 engagement_platform:
   host: https://campusgroups.colorado.edu
   path: /engineeringconnections
-course_file_map:
-  - code: CSCI1200
-    patterns: ["csci\\s*1200"]
-  - code: APPM1235
-    patterns: ["appm\\s*1235"]
-  - code: BCOR1030
-    patterns: ["bcor\\s*1030"]
-  - code: COEN1500
-    patterns: ["coen\\s*1500"]
-  - code: ECON2010
-    patterns: ["econ\\s*2010"]
-  - code: CALCREADY
-    patterns: ["readiness\\s*prep", "calculus\\s*1\\s*readiness"]
-  - code: ONLINEEXP
-    patterns: ["online\\s*experience", "leeds.*orientation"]
+# Populated per enrollment / capture calibration — no personal term roster in shipping yaml
+course_file_map: []

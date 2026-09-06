@@ -1,6 +1,6 @@
-# Workflows (Jacob IBE fork)
+# Workflows (ProductName student platform)
 
-Kept for local/CI hygiene only — not for publishing this personal fork:
+Kept for local/CI hygiene:
 
 - `canvas-mcp-testing.yml` — pytest
 - `security-testing.yml` — security suite

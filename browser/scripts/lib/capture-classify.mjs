@@ -1,6 +1,9 @@
 /**
  * Placeholder course/kind classification for photo intake.
  * Pure functions — safe to import from tests and Mac scripts.
+ *
+ * Course codes/patterns come from schools/{slug}.yaml `course_file_map`
+ * (empty by default until the school or student calibrates enrollments).
  */
 import crypto from "node:crypto";
 import { getSchoolConfig } from "./school-config.mjs";
@@ -13,48 +16,43 @@ function schoolTimezone() {
   return getSchoolConfig().timezone || "UTC";
 }
 
-export const COURSE_CODES = [
-  "APPM1235",
-  "BCOR1030",
-  "CSCI1200",
-  "COEN1500",
-  "ECON2010",
-  "CALCREADY",
-  "ONLINEEXP",
-];
+function courseFileMap() {
+  return getSchoolConfig().course_file_map || [];
+}
 
-/** Short aliases the student might say in voice/text. */
-const USER_ALIASES = [
-  { code: "APPM1235", patterns: [/\bappm\b/i, /pre-?calc/i, /1235/i] },
-  { code: "BCOR1030", patterns: [/\bbcor\b/i, /1030/i, /communication strategy/i] },
-  { code: "CSCI1200", patterns: [/\bcsci\b/i, /1200/i, /computational thinking/i] },
-  { code: "COEN1500", patterns: [/\bcoen\b/i, /1500/i, /first-?year seminar/i, /\bfys\b/i] },
-  { code: "ECON2010", patterns: [/\becon\b/i, /2010/i, /micro/i] },
-  {
-    code: "CALCREADY",
-    patterns: [/calculus readiness/i, /calc ready/i, /readiness prep/i],
-  },
-  { code: "ONLINEEXP", patterns: [/online experience/i, /leeds orientation/i] },
-];
+/** Codes from school yaml (may be empty). */
+export function getCourseCodes() {
+  return courseFileMap().map((e) => e.code);
+}
 
-const OCR_CODE_PATTERNS = [
-  { code: "APPM1235", re: /\bAPPM\s*1235\b/i },
-  { code: "BCOR1030", re: /\bBCOR\s*1030\b/i },
-  { code: "CSCI1200", re: /\bCSCI\s*1200\b/i },
-  { code: "COEN1500", re: /\bCOEN\s*1500\b/i },
-  { code: "ECON2010", re: /\bECON\s*2010\b/i },
-  { code: "CALCREADY", re: /calculus\s*1\s*readiness/i },
-  { code: "ONLINEEXP", re: /online\s*experience/i },
-];
+/** @deprecated Prefer getCourseCodes() — snapshot at first import may be empty. */
+export const COURSE_CODES = getCourseCodes();
 
-/** Keyword → course hints from catalog themes (placeholder). */
-const KEYWORD_HINTS = [
-  { code: "BCOR1030", patterns: [/advocate/i, /playposit/i, /gen ai assignment/i] },
-  { code: "APPM1235", patterns: [/webassign/i, /recitation scan/i] },
-  { code: "CSCI1200", patterns: [/pre lab/i, /challenge activities/i, /python introduction/i] },
-  { code: "COEN1500", patterns: [/thought project/i, /major dinner/i, /ai lab workshop/i] },
-  { code: "ECON2010", patterns: [/eoc problems/i, /microeconomics/i] },
-];
+/**
+ * Primary OCR match: first yaml pattern, or a word-boundary on the code.
+ * @returns {{ code: string, re: RegExp }[]}
+ */
+function ocrCodePatterns() {
+  return courseFileMap().map((entry) => {
+    if (entry.patterns?.length) {
+      return { code: entry.code, re: entry.patterns[0] };
+    }
+    return { code: entry.code, re: new RegExp(`\\b${entry.code}\\b`, "i") };
+  });
+}
+
+/**
+ * User-text aliases: each yaml pattern as a RegExp (already compiled by school-config).
+ * @returns {{ code: string, patterns: RegExp[] }[]}
+ */
+function userAliases() {
+  return courseFileMap().map((entry) => ({
+    code: entry.code,
+    patterns: entry.patterns?.length
+      ? entry.patterns
+      : [new RegExp(`\\b${entry.code}\\b`, "i")],
+  }));
+}
 
 const SELFIE_RE =
   /\bselfie\b|major dinner|ai lab workshop|post-?event|after (the )?dinner|attended/i;
@@ -116,10 +114,10 @@ export function formatCapturedAt(d = new Date()) {
 export function parseUserCourseOverride(userText) {
   const t = String(userText || "");
   if (!t.trim()) return null;
-  for (const { code, re } of OCR_CODE_PATTERNS) {
+  for (const { code, re } of ocrCodePatterns()) {
     if (re.test(t)) return code;
   }
-  for (const { code, patterns } of USER_ALIASES) {
+  for (const { code, patterns } of userAliases()) {
     if (patterns.some((p) => p.test(t))) return code;
   }
   return null;
@@ -131,11 +129,13 @@ export function parseUserCourseOverride(userText) {
  */
 export function classifyCourseFromOcr(text) {
   const t = String(text || "");
-  for (const { code, re } of OCR_CODE_PATTERNS) {
+  for (const { code, re } of ocrCodePatterns()) {
     if (re.test(t)) return { code, confidence: "high" };
   }
-  for (const { code, patterns } of KEYWORD_HINTS) {
-    if (patterns.some((p) => p.test(t))) return { code, confidence: "med" };
+  // Secondary: any remaining yaml patterns at med confidence
+  for (const entry of courseFileMap()) {
+    const rest = (entry.patterns || []).slice(1);
+    if (rest.some((p) => p.test(t))) return { code: entry.code, confidence: "med" };
   }
   return null;
 }

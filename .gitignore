@@ -131,16 +131,11 @@ docs/compliance/
 .agents/
 internal/hosted-spec-draft/
 
-# Jacob hybrid: Playwright SSO session + deps (never commit auth)
+# Playwright SSO session + deps (never commit auth)
 browser/.auth/
 browser/.auth-gcp/
 browser/node_modules/
 
-# Photo intake — binaries stay local; only queue.md + extracted notes are tracked
-inbox/captures/inbox/
-inbox/captures/processed/
-inbox/captures/**/*.jpg
-inbox/captures/**/*.jpeg
-inbox/captures/**/*.heic
-inbox/captures/**/*.png
-inbox/captures/**/*.webp
+# Per-user memory lives under {user_root}; never commit local forks of these
+/inbox/
+/.jacob/

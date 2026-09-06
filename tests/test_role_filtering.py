@@ -1,4 +1,4 @@
-"""Tests for student-only tool registration (Jacob IBE fork)."""
+"""Tests for student-only tool registration (ProductName student platform)."""
 
 import pytest
 from fastmcp import FastMCP

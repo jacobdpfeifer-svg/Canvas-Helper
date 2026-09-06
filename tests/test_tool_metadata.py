@@ -1,4 +1,4 @@
-"""Tool-annotation contract for the student-only Jacob IBE fork."""
+"""Tool-annotation contract for the student-only ProductName Canvas MCP."""
 
 import json
 from pathlib import Path

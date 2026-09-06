@@ -8,9 +8,9 @@ Do not restore educator tools, hosted Azure, or quiz-taking automation.
 
 ## Truth path
 
-1. Brain: `USER.md` triage (+ `calibration/priority-rubric.md` for priority; `student-course-arc` when the student names a course)
-2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs + arc notes; optional dated `inbox/focus.md` Top-3 cache)
-3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST)
+1. Brain: `{user_root}/USER.md` triage (+ `{user_root}/calibration/priority-rubric.md` for priority; `student-course-arc` when the student names a course)
+2. Memory: `{user_root}/inbox/week.md` (+ `inbox/courses/*` catalogs + arc notes; optional dated `inbox/focus.md` Top-3 cache)
+3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST; honor `DEV_USER_ROOT`)
 4. Optional later: PAT + `canvas-mcp-server` for the same REST + native submits
 5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — student operates; agent drafts
 
@@ -19,14 +19,14 @@ Do not restore educator tools, hosted Azure, or quiz-taking automation.
 ```
 AGENTS.md, templates/USER.md, docs/architecture.md
 schools/               # tenant yaml (e.g. cu-boulder)
-inbox/                 # durable due-list memory (dev corpus at repo root; product uses user_root)
 browser/               # SSO auth + sync scripts (not DOM-primary)
-calibration/           # under user_root (repo .jacob/ is legacy/dev)
 src/canvas_mcp/       # optional MCP when PAT exists
 skills/                # student-* + canvas-week-plan + discussion
 app/                   # ProductName Tauri shell + daemon
-dev/                   # private-fork Jacob/IBE docs (not shipping claims)
+plugins/               # school-conditional (e.g. cu-boulder CampusGroups)
 ```
+
+Per-user data lives under `{user_root}` (`inbox/`, `calibration/`, `ledger.jsonl`) — never committed.
 
 ## Commands
 

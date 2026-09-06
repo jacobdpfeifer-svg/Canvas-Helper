@@ -1,10 +1,12 @@
 /**
  * RSVP to a COEN major dinner by major alias + date.
- * Reads .jacob/signup-preferences.md and inbox/coen-major-dinners.md.
+ * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-major-dinners.md.
  *
  * Usage:
- *   npm run rsvp-dinner -- --major cs --date 2026-08-26
- *   HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26 --log
+ *   npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name"
+ *   HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --log
+ *
+ * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
  */
 import fs from "node:fs";
 import {
@@ -21,7 +23,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { major: null, date: null, verify: true, name: "Jacob Pfeifer", log: true };
+  const args = { major: null, date: null, verify: true, name: "", log: true };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--major" && argv[i + 1]) args.major = argv[++i];
@@ -63,18 +65,24 @@ function resolveDinnerRow({ major, date, prefs }) {
 }
 
 const args = parseArgs(process.argv);
+if (!args.name.trim()) {
+  console.error(
+    'Usage: npm run rsvp-dinner -- --name "Student Name" [--major ...] [--date ...]'
+  );
+  process.exit(1);
+}
 
 let prefs = { majorDinnerDefault: "Computer Science", majorDinnerStatus: "unconfirmed" };
 try {
   prefs = parseSignupPreferences(fs.readFileSync(SIGNUP_PREFS_PATH, "utf8"));
 } catch {
-  console.warn("Warning: .jacob/signup-preferences.md not found — using defaults");
+  console.warn(`Warning: ${SIGNUP_PREFS_PATH} not found — using defaults`);
 }
 
 if (!args.major) {
   if (prefs.majorDinnerStatus !== "confirmed") {
     console.error(
-      "Major dinner preference not confirmed — ask Jacob, then set Status: confirmed in .jacob/signup-preferences.md"
+      "Major dinner preference not confirmed — set Status: confirmed in calibration/signup-preferences.md"
     );
     console.error(`Default would be: ${prefs.majorDinnerDefault}`);
     process.exit(1);

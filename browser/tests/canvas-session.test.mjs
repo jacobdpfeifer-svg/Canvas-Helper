@@ -290,26 +290,18 @@ describe("dedupeRows", () => {
 });
 
 describe("resolveCourseFile", () => {
-  const cases = [
-    ["CSCI 1200: Intro Computational Thinking", "CSCI1200"],
-    ["APPM 1235 Pre-Calculus", "APPM1235"],
-    ["BCOR 1030 Communication Strategy", "BCOR1030"],
-    ["COEN 1500 CEAS FYS", "COEN1500"],
-    ["ECON 2010 Microeconomics", "ECON2010"],
-    ["Calculus 1 Readiness Prep Course", "CALCREADY"],
-    ["Online Experience (Summer/Fall 2026, TR)", "ONLINEEXP"],
-  ];
+  it("shipping cu-boulder course_file_map is empty", () => {
+    assert.equal(COURSE_FILE_MAP.length, 0);
+  });
 
-  for (const [name, code] of cases) {
-    it(`maps ${code}`, () => {
-      const file = resolveCourseFile(name, "");
-      assert.ok(file, `expected mapping for ${name}`);
-      assert.match(file, new RegExp(`${code}\\.md$`));
-    });
-  }
+  it("falls back to Canvas course_code slug when map is empty", () => {
+    const file = resolveCourseFile("Intro Computational Thinking", "CSCI 1200");
+    assert.ok(file);
+    assert.match(file, /CSCI1200\.md$/);
+  });
 
-  it("maps all JACOB courses in COURSE_FILE_MAP", () => {
-    assert.equal(COURSE_FILE_MAP.length, 7);
+  it("returns null when no map hit and no usable course_code", () => {
+    assert.equal(resolveCourseFile("Mystery Seminar", ""), null);
   });
 });
 

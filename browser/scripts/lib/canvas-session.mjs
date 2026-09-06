@@ -318,6 +318,11 @@ export function resolveCourseFile(courseName, courseCode) {
       return path.join(COURSES_DIR, `${entry.code}.md`);
     }
   }
+  // Generic fallback when school yaml has no personal roster: Canvas course_code → CODE.md
+  const raw = String(courseCode || "").replace(/[\s_-]+/g, "");
+  if (/^[A-Za-z]{2,8}\d{3,5}[A-Za-z]?$/i.test(raw)) {
+    return path.join(COURSES_DIR, `${raw.toUpperCase()}.md`);
+  }
   return null;
 }
 
