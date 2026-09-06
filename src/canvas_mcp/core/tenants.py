@@ -15,7 +15,9 @@ from typing import Any
 import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-_SCHOOLS_DIR = _REPO_ROOT / "schools"
+_REPO_SCHOOLS_DIR = _REPO_ROOT / "schools"
+# Wheel installs copy schools → canvas_mcp/schools via hatch force-include.
+_PKG_SCHOOLS_DIR = Path(__file__).resolve().parents[1] / "schools"
 
 PRODUCT_NAME = "ProductName"
 
@@ -43,6 +45,7 @@ class SchoolConfig:
     lti_catalog: tuple[str, ...] = ()
     engagement_platform: EngagementPlatform | None = None
     course_file_map: tuple[CourseFileEntry, ...] = ()
+    legal_notice: str = ""
 
     @property
     def api_base(self) -> str:
@@ -53,7 +56,9 @@ def _schools_dir() -> Path:
     override = __import__("os").environ.get("SCHOOLS_DIR")
     if override:
         return Path(override)
-    return _SCHOOLS_DIR
+    if _PKG_SCHOOLS_DIR.is_dir() and any(_PKG_SCHOOLS_DIR.glob("*.yaml")):
+        return _PKG_SCHOOLS_DIR
+    return _REPO_SCHOOLS_DIR
 
 
 def _parse_school(raw: dict[str, Any], slug: str) -> SchoolConfig:
@@ -82,6 +87,7 @@ def _parse_school(raw: dict[str, Any], slug: str) -> SchoolConfig:
         lti_catalog=tuple(str(x) for x in (raw.get("lti_catalog") or [])),
         engagement_platform=engagement,
         course_file_map=tuple(course_map),
+        legal_notice=str(raw.get("legal_notice") or "").strip(),
     )
 
 

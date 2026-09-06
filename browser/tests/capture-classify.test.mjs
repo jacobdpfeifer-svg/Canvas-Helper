@@ -119,7 +119,7 @@ describe("classifyCapture", () => {
     assert.equal(r.kind, "event_selfie");
     assert.equal(r.action, "canvas_upload");
     assert.equal(r.status, "pending_mac");
-    assert.match(r.assignmentMatch, /Major Dinner/i);
+    assert.match(r.assignmentMatch, /post-event upload/i);
   });
 
   it("caps OCR high confidence when allowHighConfidence false", () => {

@@ -3,22 +3,22 @@
 Creates/updates write ledger rows with undo_ptr. Narrate-after for automatic
 calendar category. Uses preview→confirm when gated.
 
-Real Google API wiring is behind GOOGLE_CALENDAR_CREDENTIALS; without it the
+Real Google API wiring uses ``GOOGLE_OAUTH_CLIENT_SECRETS`` + optional
+``google-auth`` / ``google-api-python-client`` packages. Without them the
 server runs in dry-run mode that still exercises ledger + undo_ptr.
+Tokens: ``{user_root}/auth/google/token.json``.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import sys
 import uuid
 from pathlib import Path
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
-
-# Allow running from repo without install
-import sys
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
@@ -27,6 +27,7 @@ sys.path.insert(0, str(REPO / "mcp-servers"))
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 from canvas_mcp.core.permissions import allow_write, load_permissions  # noqa: E402
 from canvas_mcp.core.user_root import resolve_user_root  # noqa: E402
+from common import google_oauth  # noqa: E402
 from common.stop_rewind import engage_global_stop, rewind_last  # noqa: E402
 
 mcp = FastMCP("productname-gcal")
@@ -64,14 +65,30 @@ def create_event(
         )
         return f"❌ Blocked: {reason}"
 
-    event_id = f"evt_{uuid.uuid4().hex[:12]}"
-    event = {
-        "id": event_id,
-        "summary": summary,
-        "start": start_iso,
-        "end": end_iso,
-    }
-    _EVENTS[event_id] = event
+    service = google_oauth.calendar_service(root)
+    if service is not None:
+        remote = google_oauth.gcal_create_event(
+            service, summary=summary, start_iso=start_iso, end_iso=end_iso
+        )
+        event_id = str(remote.get("id") or f"evt_{uuid.uuid4().hex[:12]}")
+        event = {
+            "id": event_id,
+            "summary": summary,
+            "start": start_iso,
+            "end": end_iso,
+            "mode": "live",
+        }
+    else:
+        event_id = f"evt_{uuid.uuid4().hex[:12]}"
+        event = {
+            "id": event_id,
+            "summary": summary,
+            "start": start_iso,
+            "end": end_iso,
+            "mode": "dry-run",
+        }
+        _EVENTS[event_id] = event
+
     append_ledger(
         root,
         actor="gcal",
@@ -99,17 +116,46 @@ def update_event(
     ok, reason = allow_write(state, "calendar", confirmed=confirmed)
     if not ok:
         return f"❌ Blocked: {reason}"
-    prior = dict(_EVENTS.get(event_id) or {})
-    if not prior:
-        return f"❌ Unknown event {event_id}"
-    event = dict(prior)
-    if summary is not None:
-        event["summary"] = summary
-    if start_iso is not None:
-        event["start"] = start_iso
-    if end_iso is not None:
-        event["end"] = end_iso
-    _EVENTS[event_id] = event
+
+    service = google_oauth.calendar_service(root)
+    if service is not None:
+        existing = (
+            service.events().get(calendarId="primary", eventId=event_id).execute()
+        )
+        prior = {
+            "id": event_id,
+            "summary": existing.get("summary"),
+            "start": existing.get("start"),
+            "end": existing.get("end"),
+        }
+        remote = google_oauth.gcal_update_event(
+            service,
+            event_id,
+            summary=summary,
+            start_iso=start_iso,
+            end_iso=end_iso,
+        )
+        event = {
+            "id": event_id,
+            "summary": remote.get("summary", summary),
+            "start": start_iso or prior.get("start"),
+            "end": end_iso or prior.get("end"),
+            "mode": "live",
+        }
+    else:
+        prior = dict(_EVENTS.get(event_id) or {})
+        if not prior:
+            return f"❌ Unknown event {event_id}"
+        event = dict(prior)
+        if summary is not None:
+            event["summary"] = summary
+        if start_iso is not None:
+            event["start"] = start_iso
+        if end_iso is not None:
+            event["end"] = end_iso
+        event["mode"] = "dry-run"
+        _EVENTS[event_id] = event
+
     append_ledger(
         root,
         actor="gcal",
@@ -126,6 +172,17 @@ def update_event(
 def _undo_gcal(ptr: dict[str, Any]) -> bool:
     event_id = ptr.get("id")
     prior = ptr.get("prior")
+    root = _user_root()
+    service = google_oauth.calendar_service(root)
+    if service is not None and event_id:
+        try:
+            if prior:
+                google_oauth.gcal_restore_event(service, prior)
+            else:
+                google_oauth.gcal_delete_event(service, event_id)
+            return True
+        except Exception:
+            return False
     if prior:
         _EVENTS[event_id] = prior
         return True

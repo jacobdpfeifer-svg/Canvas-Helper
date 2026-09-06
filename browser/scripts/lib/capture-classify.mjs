@@ -226,9 +226,7 @@ export function classifyCapture(input = {}) {
 
   let assignmentMatch = "-";
   if (kind === "event_selfie") {
-    if (/ai lab/i.test(combined)) assignmentMatch = "AI Lab Workshop Sign Up";
-    else if (/dinner/i.test(combined)) assignmentMatch = "Assignment #1: Sign Up For Your Major Dinner";
-    else assignmentMatch = "post-event upload";
+    assignmentMatch = "post-event upload";
   }
 
   return {

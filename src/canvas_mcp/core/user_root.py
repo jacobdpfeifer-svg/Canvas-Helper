@@ -26,6 +26,7 @@ USER_SUBDIRS = (
     "skills/provisional",
     "semantic",
     "auth",
+    "sensors",
 )
 
 
