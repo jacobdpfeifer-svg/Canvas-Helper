@@ -200,18 +200,18 @@ Then restart your MCP client.
 
 ### "Bulk operations are very slow"
 
-**Problem**: Grading or analyzing large datasets takes too long.
+**Problem**: Fetching or analyzing a large number of assignments/courses takes too long.
 
-**Solution**: Use the code execution API for bulk operations:
+**Solution**: Be specific about scope instead of pulling everything at once:
 
 Instead of:
 ```
-Show me all 90 student submissions and grade them
+Show me every assignment across all my courses
 ```
 
 Use:
 ```
-Use the bulk grading code API to grade all submissions for Assignment 5
+Show me assignments due this week in CHEM 1113
 ```
 
 This keeps per-item processing out of the model's context; actual token use depends on the workload and selected output.
