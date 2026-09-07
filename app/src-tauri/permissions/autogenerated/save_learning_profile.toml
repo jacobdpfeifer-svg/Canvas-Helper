@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-learning-profile"
+description = "Enables the save_learning_profile command without any pre-configured scope."
+commands.allow = ["save_learning_profile"]
+
+[[permission]]
+identifier = "deny-save-learning-profile"
+description = "Denies the save_learning_profile command without any pre-configured scope."
+commands.deny = ["save_learning_profile"]

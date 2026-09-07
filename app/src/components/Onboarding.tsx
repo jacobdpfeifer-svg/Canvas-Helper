@@ -1,14 +1,44 @@
 import { useState } from "react";
 import { GENERIC_LEGAL, LEGAL_BY_SCHOOL } from "../legal";
+import { openCanvasSso, saveLearningProfile, saveOnboarding } from "../ipc";
+import type { LearningProfileAnswers } from "../ipc";
+import { AutonomyGame, type Autonomy } from "./learningProfile/AutonomyGame";
+import {
+  ChunkSizeGame,
+  type ChunkSize,
+} from "./learningProfile/ChunkSizeGame";
+import {
+  PracticeFormatGame,
+  type CheckDepth,
+  type PracticeFormat,
+} from "./learningProfile/PracticeFormatGame";
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
   const [school, setSchool] = useState("cu-boulder");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [cloudKey, setCloudKey] = useState("");
-  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [ssoBusy, setSsoBusy] = useState(false);
+  const [ssoError, setSsoError] = useState<string | null>(null);
+  const [finishError, setFinishError] = useState<string | null>(null);
+  const [finishing, setFinishing] = useState(false);
+
+  // Learning profile games — functional levers, not VAK labels.
+  const [practiceFormat, setPracticeFormat] = useState<PracticeFormat | null>(
+    null
+  );
+  const [checkDepth, setCheckDepth] = useState<CheckDepth | null>(null);
+  const [autonomy, setAutonomy] = useState<Autonomy | null>(null);
+  const [chunkSize, setChunkSize] = useState<ChunkSize | null>(null);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
 
   const legalText = LEGAL_BY_SCHOOL[school] || GENERIC_LEGAL;
+  const profileReady =
+    practiceFormat !== null &&
+    checkDepth !== null &&
+    autonomy !== null &&
+    chunkSize !== null;
 
   return (
     <div className="onboarding">
@@ -54,10 +84,29 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       )}
       {step === 2 && (
         <>
-          <p>Sign into Canvas (SSO opens in app browser)</p>
-          <button type="button" onClick={() => setStep(3)}>
-            I signed in
+          <p>Sign into Canvas (SSO opens in the browser helper)</p>
+          <button
+            type="button"
+            disabled={ssoBusy}
+            onClick={() => {
+              setSsoBusy(true);
+              setSsoError(null);
+              openCanvasSso()
+                .then(() => setStep(3))
+                .catch((e) => {
+                  console.error(e);
+                  setSsoError(String(e));
+                })
+                .finally(() => setSsoBusy(false));
+            }}
+          >
+            {ssoBusy ? "Opening Canvas…" : "Open Canvas & sign in"}
           </button>
+          {ssoError && (
+            <p className="error">
+              {ssoError} — fix the session, then try again.
+            </p>
+          )}
         </>
       )}
       {step === 3 && (
@@ -70,47 +119,103 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         </>
       )}
       {step === 4 && (
-        <>
-          <p>Local model (Ollama) — downloads in background (~4.7GB)</p>
-          <div className="progress">
-            <div style={{ width: `${downloadProgress}%` }} />
-          </div>
+        <div className="learning-profile-onboarding">
+          <p>Three quick ones — how do you want me to work with you?</p>
+
+          {practiceFormat === null || checkDepth === null ? (
+            <PracticeFormatGame
+              onComplete={({ practiceFormat: pf, checkDepth: cd }) => {
+                setPracticeFormat(pf);
+                setCheckDepth(cd);
+              }}
+            />
+          ) : (
+            <div className="lp-game">
+              <p className="lp-game-title">Practice format</p>
+              <p className="lp-done-note">
+                Saved as{" "}
+                {practiceFormat === "retrieval"
+                  ? "quiz/retrieval first"
+                  : "worked example first"}
+                {" · "}
+                check depth {checkDepth}.
+              </p>
+            </div>
+          )}
+
+          <AutonomyGame value={autonomy} onChange={setAutonomy} />
+          <ChunkSizeGame value={chunkSize} onChange={setChunkSize} />
+
           <button
             type="button"
+            className="primary"
+            disabled={profileSaving || !profileReady}
             onClick={() => {
-              const t = setInterval(() => {
-                setDownloadProgress((p) => {
-                  if (p >= 100) {
-                    clearInterval(t);
-                    return 100;
-                  }
-                  return p + 10;
-                });
-              }, 200);
+              if (!profileReady) return;
+              const answers: LearningProfileAnswers = {
+                practiceFormat,
+                autonomy,
+                chunkSize,
+                checkDepth,
+              };
+              setProfileSaving(true);
+              setProfileError(null);
+              saveLearningProfile(answers)
+                .then(() => setStep(5))
+                .catch((e) => {
+                  console.error(e);
+                  setProfileError(String(e));
+                })
+                .finally(() => setProfileSaving(false));
             }}
           >
-            Start download
+            {profileSaving ? "Saving…" : "Continue"}
           </button>
-          <hr />
-          <p>Or skip with your cloud API key (meets 5-min path)</p>
+          {profileError && <p className="error">{profileError}</p>}
+          <button
+            type="button"
+            className="skip"
+            onClick={() => setStep(5)}
+          >
+            Skip — I'll figure this out as I go
+          </button>
+        </div>
+      )}
+      {step === 5 && (
+        <>
+          <p>
+            Optional cloud API key for assistant calls (Anthropic, OpenAI, or
+            compatible). Skip to stay local-first / Ollama-only.
+          </p>
           <input
             value={cloudKey}
             onChange={(e) => setCloudKey(e.target.value)}
             placeholder="sk-… or Anthropic key"
+            autoComplete="off"
           />
           <button
             type="button"
             className="primary"
+            disabled={finishing}
             onClick={() => {
-              if (cloudKey || downloadProgress >= 100) onDone();
-              else if (!cloudKey) {
-                setDownloadProgress(100);
-                onDone();
-              }
+              setFinishing(true);
+              setFinishError(null);
+              saveOnboarding(school, cloudKey.trim())
+                .then(() => onDone())
+                .catch((e) => {
+                  console.error(e);
+                  setFinishError(String(e));
+                })
+                .finally(() => setFinishing(false));
             }}
           >
-            Use my cloud API key / Finish
+            {finishing
+              ? "Saving…"
+              : cloudKey.trim()
+                ? "Save key & finish"
+                : "Skip cloud key & finish"}
           </button>
+          {finishError && <p className="error">{finishError}</p>}
           <label className="telemetry">
             <input type="checkbox" /> Opt in to crash telemetry (Sentry) for beta
           </label>
