@@ -108,6 +108,8 @@ def _too_large_message() -> str:
 _CONFIRM_TTL_SECONDS = 300
 
 # Shared ConfirmationGuard — all token crypto lives here (no local wrappers).
+# Bucket-A connector MCP writes use canvas_mcp.core.connector_guards.get_connector_guard
+# (same preview → fingerprint → issue → confirm → reserve contract).
 _SUBMIT_GUARD = ConfirmationGuard(ttl_seconds=_CONFIRM_TTL_SECONDS)
 
 

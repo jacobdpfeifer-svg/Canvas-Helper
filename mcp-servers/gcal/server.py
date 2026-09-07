@@ -12,7 +12,6 @@ Tokens: ``{user_root}/auth/google/token.json``.
 from __future__ import annotations
 
 import json
-import os
 import sys
 import uuid
 from pathlib import Path
@@ -21,24 +20,17 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
-from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
-from canvas_mcp.core.permissions import allow_write, load_permissions  # noqa: E402
-from canvas_mcp.core.user_root import resolve_user_root  # noqa: E402
 from common import google_oauth  # noqa: E402
+from common.actuator import check_write, user_root  # noqa: E402
 from common.stop_rewind import engage_global_stop, rewind_last  # noqa: E402
+from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 
 mcp = FastMCP("productname-gcal")
 
 # In-memory dry-run store: event_id -> event dict
 _EVENTS: dict[str, dict[str, Any]] = {}
-
-
-def _user_root() -> Path:
-    uid = os.environ.get("PRODUCT_USER_ID", "dev")
-    return resolve_user_root(uid, create=True)
 
 
 @mcp.tool()
@@ -50,19 +42,17 @@ def create_event(
     confirmed: bool = False,
 ) -> str:
     """Create a calendar event (automatic/narrate-after by default)."""
-    root = _user_root()
-    state = load_permissions(root)
-    ok, reason = allow_write(state, "calendar", confirmed=confirmed)
+    root = user_root()
+    ok, reason = check_write(
+        root,
+        "calendar",
+        confirmed=confirmed,
+        actor="gcal",
+        tool="create_event",
+        target=summary,
+        why=why,
+    )
     if not ok:
-        append_ledger(
-            root,
-            actor="gcal",
-            tool="create_event",
-            target=summary,
-            why=why,
-            outcome="paused" if "STOP" in reason else "veto",
-            category="calendar",
-        )
         return f"❌ Blocked: {reason}"
 
     service = google_oauth.calendar_service(root)
@@ -111,9 +101,17 @@ def update_event(
     why: str = "Calendar update",
     confirmed: bool = False,
 ) -> str:
-    root = _user_root()
-    state = load_permissions(root)
-    ok, reason = allow_write(state, "calendar", confirmed=confirmed)
+    root = user_root()
+    ok, reason = check_write(
+        root,
+        "calendar",
+        confirmed=confirmed,
+        actor="gcal",
+        tool="update_event",
+        target=event_id,
+        why=why,
+        log_block=False,
+    )
     if not ok:
         return f"❌ Blocked: {reason}"
 
@@ -172,7 +170,7 @@ def update_event(
 def _undo_gcal(ptr: dict[str, Any]) -> bool:
     event_id = ptr.get("id")
     prior = ptr.get("prior")
-    root = _user_root()
+    root = user_root()
     service = google_oauth.calendar_service(root)
     if service is not None and event_id:
         try:
@@ -191,14 +189,21 @@ def _undo_gcal(ptr: dict[str, Any]) -> bool:
 
 @mcp.tool()
 def global_stop(hours: int = 24) -> str:
-    until = engage_global_stop(_user_root(), hours=hours)
+    until = engage_global_stop(user_root(), hours=hours)
     return f"STOP until {until}"
 
 
 @mcp.tool()
 def rewind(n: int = 1) -> str:
-    undone = rewind_last(_user_root(), n, handlers={"gcal_event": _undo_gcal})
+    undone = rewind_last(user_root(), n, handlers={"gcal_event": _undo_gcal})
     return json.dumps({"undone": len(undone), "ids": [u.get("target") for u in undone]})
+
+
+@mcp.tool()
+def describe_mode() -> str:
+    """Return actuator mode: dry-run | oauth-ready | live."""
+    mode = google_oauth.describe_mode(user_root())
+    return json.dumps({"mode": mode, "actuator": "gcal"})
 
 
 if __name__ == "__main__":

@@ -215,6 +215,52 @@ class TestStudentToolsDatetimeComparison:
             assert "error" not in result.lower()
 
     @pytest.mark.asyncio
+    async def test_list_my_assignment_scores_surfaces_graded_rows(self):
+        """Graded nested submissions surface score / points_possible / name."""
+        mock_assignments = [
+            {
+                "id": 1,
+                "name": "Tangent Lines Quiz",
+                "points_possible": 100,
+                "submission": {
+                    "score": 55,
+                    "workflow_state": "graded",
+                    "graded_at": "2026-09-01T12:00:00Z",
+                },
+            },
+            {
+                "id": 2,
+                "name": "Ungraded HW",
+                "points_possible": 50,
+                "submission": {"score": None, "workflow_state": "submitted"},
+            },
+            {
+                "id": 3,
+                "name": "Zero points",
+                "points_possible": 0,
+                "submission": {"score": 0, "workflow_state": "graded"},
+            },
+        ]
+
+        with patch('canvas_mcp.tools.student_tools.fetch_all_paginated_results', new_callable=AsyncMock) as mock_fetch, \
+             patch('canvas_mcp.tools.student_tools.get_course_id', new_callable=AsyncMock) as mock_course_id, \
+             patch('canvas_mcp.tools.student_tools.get_course_code', new_callable=AsyncMock) as mock_course_code:
+            mock_fetch.return_value = mock_assignments
+            mock_course_id.return_value = "12345"
+            mock_course_code.return_value = "MATH2300"
+
+            list_my_assignment_scores = get_student_tool_function('list_my_assignment_scores')
+            assert list_my_assignment_scores is not None
+
+            result = await list_my_assignment_scores(course_identifier="MATH2300")
+
+            assert "Tangent Lines Quiz" in result
+            assert "score: 55" in result
+            assert "points_possible: 100" in result
+            assert "Total graded: 1" in result
+            assert "Ungraded HW" not in result
+
+    @pytest.mark.asyncio
     async def test_get_my_upcoming_assignments_with_no_due_date(self):
         """Items with no due date at all are skipped gracefully."""
         item = self._planner_item("No Due Date Assignment", None)

@@ -100,6 +100,7 @@ READ_TOOL_CONTENT_POLICIES: dict[str, ReadToolContentPolicy] = {
     "list_discussion_topics": _fenced("fence_untrusted"),
     "list_module_items": _fenced("fence_untrusted_inline"),
     "list_modules": _fenced("fence_untrusted_inline"),
+    "list_my_assignment_scores": _fenced("fence_untrusted_inline"),
     "list_pages": _fenced("fence_untrusted"),
     "read_course_file": _fenced("fence_untrusted_inline"),
     "search_canvas_tools": _safe(

@@ -14,6 +14,7 @@ async def _get_tool_names(mcp: FastMCP) -> set[str]:
 STUDENT_READ_TOOLS = {
     "get_my_upcoming_assignments",
     "get_my_submission_status",
+    "list_my_assignment_scores",
     "get_my_course_grades",
     "get_my_todo_items",
     "get_my_peer_reviews_todo",

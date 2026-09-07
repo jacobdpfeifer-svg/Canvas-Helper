@@ -7,7 +7,6 @@ Tokens under ``{user_root}/auth/google/token.json``. Dry-run otherwise.
 from __future__ import annotations
 
 import json
-import os
 import sys
 import uuid
 from pathlib import Path
@@ -16,22 +15,16 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
-from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
-from canvas_mcp.core.permissions import allow_write, load_permissions  # noqa: E402
-from canvas_mcp.core.user_root import resolve_user_root  # noqa: E402
 from common import google_oauth  # noqa: E402
+from common.actuator import check_write, user_root  # noqa: E402
 from common.stop_rewind import rewind_last  # noqa: E402
+from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 
 mcp = FastMCP("productname-gmail")
 _DRAFTS: dict[str, dict[str, Any]] = {}
 _LABELS: dict[str, list[str]] = {}
-
-
-def _user_root() -> Path:
-    return resolve_user_root(os.environ.get("PRODUCT_USER_ID", "dev"), create=True)
 
 
 @mcp.tool()
@@ -43,9 +36,17 @@ def create_draft(
     confirmed: bool = False,
 ) -> str:
     """Save a draft only — never sends."""
-    root = _user_root()
-    state = load_permissions(root)
-    ok, reason = allow_write(state, "email_draft", confirmed=confirmed)
+    root = user_root()
+    ok, reason = check_write(
+        root,
+        "email_draft",
+        confirmed=confirmed,
+        actor="gmail",
+        tool="create_draft",
+        target=to,
+        why=why,
+        log_block=False,
+    )
     if not ok:
         return f"❌ Blocked: {reason}"
 
@@ -95,9 +96,17 @@ def apply_labels(
     confirmed: bool = False,
 ) -> str:
     """Label/archive/star — never delete. Stores prior label state for undo."""
-    root = _user_root()
-    state = load_permissions(root)
-    ok, reason = allow_write(state, "email_triage", confirmed=confirmed)
+    root = user_root()
+    ok, reason = check_write(
+        root,
+        "email_triage",
+        confirmed=confirmed,
+        actor="gmail",
+        tool="apply_labels",
+        target=message_id,
+        why=why,
+        log_block=False,
+    )
     if not ok:
         return f"❌ Blocked: {reason}"
 
@@ -150,7 +159,7 @@ def _undo_gmail_draft(ptr: dict[str, Any]) -> bool:
     draft_id = ptr.get("id")
     if not draft_id:
         return False
-    root = _user_root()
+    root = user_root()
     service = google_oauth.gmail_service(root)
     if service is not None:
         try:
@@ -166,7 +175,7 @@ def _undo_gmail_label(ptr: dict[str, Any]) -> bool:
     prior = (ptr.get("prior") or {}).get("labels")
     if not message_id or prior is None:
         return False
-    root = _user_root()
+    root = user_root()
     service = google_oauth.gmail_service(root)
     if service is not None:
         try:
@@ -189,7 +198,7 @@ def _undo_gmail_label(ptr: dict[str, Any]) -> bool:
 @mcp.tool()
 def rewind(n: int = 1) -> str:
     undone = rewind_last(
-        _user_root(),
+        user_root(),
         n,
         handlers={
             "gmail_draft": _undo_gmail_draft,
@@ -200,9 +209,22 @@ def rewind(n: int = 1) -> str:
 
 
 @mcp.tool()
+def describe_mode() -> str:
+    """Return actuator mode: dry-run | oauth-ready | live."""
+    mode = google_oauth.describe_mode(user_root())
+    return json.dumps({"mode": mode, "actuator": "gmail"})
+
+
+@mcp.tool()
 def send_email() -> str:
-    """Permanently unavailable in Phase 1."""
-    return "❌ Gmail send is disabled in Phase 1. Use create_draft."
+    """Permanently unavailable in Phase 1 — hard-blocked, no API call."""
+    return json.dumps(
+        {
+            "ok": False,
+            "blocked": True,
+            "reason": "Gmail send is disabled in Phase 1. Use create_draft.",
+        }
+    )
 
 
 if __name__ == "__main__":
