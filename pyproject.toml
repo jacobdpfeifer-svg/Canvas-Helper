@@ -42,10 +42,14 @@ google = [
     "google-auth-oauthlib>=1.2.0",
     "google-api-python-client>=2.120.0",
 ]
+diagrams = [
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+]
 
 [project.urls]
-Homepage = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
-Repository = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
+Homepage = "https://github.com/productname/canvas-mcp"
+Repository = "https://github.com/productname/canvas-mcp"
 
 [project.scripts]
 canvas-mcp-server = "canvas_mcp.server:main"

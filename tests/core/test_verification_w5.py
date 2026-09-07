@@ -131,7 +131,7 @@ def test_gate1_manifests_renamed():
     server = json.loads((root / "server.json").read_text())
     assert "jacob" not in server["name"].lower()
     app_manifest = json.loads((root / "manifest.json").read_text())
-    assert "jacob" not in json.dumps(app_manifest).lower() or True  # display may vary
+    assert "jacob" not in json.dumps(app_manifest).lower()
 
 
 def test_policy_default_deny():

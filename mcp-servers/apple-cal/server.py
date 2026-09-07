@@ -3,30 +3,23 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
+import sys
 import uuid
 from pathlib import Path
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
-import sys
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
+from common.actuator import check_write, user_root  # noqa: E402
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
-from canvas_mcp.core.permissions import allow_write, load_permissions  # noqa: E402
-from canvas_mcp.core.user_root import resolve_user_root  # noqa: E402
 
 mcp = FastMCP("productname-apple-cal")
 _EVENTS: dict[str, dict[str, Any]] = {}
 SWIFT_HELPER = Path(__file__).parent / "EventKitHelper"
-
-
-def _user_root() -> Path:
-    return resolve_user_root(os.environ.get("PRODUCT_USER_ID", "dev"), create=True)
 
 
 def _native_create(summary: str, start_iso: str, end_iso: str) -> str | None:
@@ -51,9 +44,17 @@ def create_event(
     why: str = "Apple Calendar automation",
     confirmed: bool = False,
 ) -> str:
-    root = _user_root()
-    state = load_permissions(root)
-    ok, reason = allow_write(state, "calendar", confirmed=confirmed)
+    root = user_root()
+    ok, reason = check_write(
+        root,
+        "calendar",
+        confirmed=confirmed,
+        actor="apple-cal",
+        tool="create_event",
+        target=summary,
+        why=why,
+        log_block=False,
+    )
     if not ok:
         return f"❌ Blocked: {reason}"
     event_id = _native_create(summary, start_iso, end_iso) or f"apple_{uuid.uuid4().hex[:12]}"
@@ -70,6 +71,13 @@ def create_event(
         undo_ptr=UndoPtr(kind="apple_event", id=event_id, prior=None),
     )
     return json.dumps({"status": "created", "event": event, "narrate": True})
+
+
+@mcp.tool()
+def describe_mode() -> str:
+    """Return actuator mode: live (Swift helper present) | dry-run."""
+    mode = "live" if SWIFT_HELPER.exists() else "dry-run"
+    return json.dumps({"mode": mode, "actuator": "apple-cal"})
 
 
 if __name__ == "__main__":

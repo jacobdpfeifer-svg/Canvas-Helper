@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -28,3 +29,23 @@ def test_secrets_path_requires_existing_file(monkeypatch, tmp_path):
     present.write_text("{}", encoding="utf-8")
     monkeypatch.setenv("GOOGLE_OAUTH_CLIENT_SECRETS", str(present))
     assert google_oauth.client_secrets_path() == present
+
+
+def test_gcal_gmail_describe_mode_tools_dry_run(monkeypatch, tmp_path):
+    """MCP actuators must expose describe_mode (oauth-smoke checklist)."""
+    monkeypatch.delenv("GOOGLE_OAUTH_CLIENT_SECRETS", raising=False)
+    monkeypatch.setenv("DEV_USER_ROOT", str(tmp_path))
+    monkeypatch.setenv("PRODUCT_USER_ID", "dev")
+
+    from gcal import server as gcal_server  # type: ignore
+    from gmail import server as gmail_server  # type: ignore
+
+    gcal = json.loads(gcal_server.describe_mode())
+    gmail = json.loads(gmail_server.describe_mode())
+    assert gcal["mode"] == "dry-run"
+    assert gmail["mode"] == "dry-run"
+    assert gcal["actuator"] == "gcal"
+    assert gmail["actuator"] == "gmail"
+
+    blocked = json.loads(gmail_server.send_email())
+    assert blocked["blocked"] is True

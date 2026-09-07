@@ -324,6 +324,91 @@ def register_student_tools(mcp: FastMCP) -> None:
         return "\n".join(output_lines)
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    @validate_params
+    async def list_my_assignment_scores(course_identifier: str | int | None = None) -> str:
+        """List graded assignment scores (structured) for weak-topic detection.
+
+        Reuses ``/courses/{id}/assignments?include[]=submission``. Skips rows
+        with no numeric score. Prefer this over ``get_my_submission_status``
+        when you need score / points_possible for ``find_weak_topics``.
+
+        Args:
+            course_identifier: Course code or Canvas ID (omit for all courses)
+        """
+        rows: list[dict[str, Any]] = []
+
+        if course_identifier:
+            course_id = await get_course_id(course_identifier)
+            course_display = await get_course_code(course_id) or str(course_identifier)
+            assignments = await fetch_all_paginated_results(
+                f"/courses/{course_id}/assignments",
+                params={"include[]": ["submission"], "per_page": 100},
+            )
+            if isinstance(assignments, dict) and "error" in assignments:
+                return f"Error fetching assignments: {assignments['error']}"
+            for assignment in assignments if isinstance(assignments, list) else []:
+                assignment = dict(assignment)
+                assignment["_course_name"] = course_display
+                rows.append(assignment)
+        else:
+            courses = await fetch_all_paginated_results(
+                "/courses",
+                params={"enrollment_state": "active", "per_page": 100},
+            )
+            if isinstance(courses, dict) and "error" in courses:
+                return f"Error fetching courses: {courses['error']}"
+            for course in courses if isinstance(courses, list) else []:
+                course_id = course.get("id")
+                course_name = course.get("course_code", course.get("name", "Unknown"))
+                assignments = await fetch_all_paginated_results(
+                    f"/courses/{course_id}/assignments",
+                    params={"include[]": ["submission"], "per_page": 100},
+                )
+                if isinstance(assignments, dict) and "error" in assignments:
+                    continue
+                for assignment in assignments if isinstance(assignments, list) else []:
+                    assignment = dict(assignment)
+                    assignment["_course_name"] = course_name
+                    rows.append(assignment)
+
+        output_lines = ["Graded assignment scores:\n"]
+        graded_count = 0
+        for assignment in rows:
+            submission = assignment.get("submission") or {}
+            score = submission.get("score")
+            if score is None:
+                continue
+            points = assignment.get("points_possible")
+            if points is None:
+                continue
+            try:
+                points_f = float(points)
+            except (TypeError, ValueError):
+                continue
+            if points_f <= 0:
+                continue
+
+            name = assignment.get("name", "Unnamed")
+            course_name = assignment.get("_course_name", "")
+            workflow = submission.get("workflow_state", "")
+            graded_at = submission.get("graded_at") or ""
+            graded_count += 1
+            output_lines.append(
+                f"• course: {course_name}\n"
+                f"  name: {fence_untrusted_inline(name, 'assignment name')}\n"
+                f"  score: {score}\n"
+                f"  points_possible: {points}\n"
+                f"  workflow_state: {workflow}\n"
+                f"  graded_at: {graded_at or 'n/a'}\n"
+            )
+
+        if graded_count == 0:
+            return "No graded assignments with scores found."
+
+        output_lines.append(f"\nTotal graded: {graded_count}")
+        return "\n".join(output_lines)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     async def get_my_course_grades() -> str:
         """Get your current grades across all enrolled courses."""
         courses = await fetch_all_paginated_results(
