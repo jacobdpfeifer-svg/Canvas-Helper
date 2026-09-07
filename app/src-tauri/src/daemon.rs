@@ -5,11 +5,21 @@
 //!
 //! Autostart: enable via tauri-plugin-autostart so the daemon runs on login.
 
+use serde::Serialize;
+use serde_json::Value;
 use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 use std::thread;
 use std::time::Duration;
+
+#[derive(Debug, Serialize)]
+pub struct RouteResultDto {
+    pub skill_id: Option<String>,
+    pub method: String,
+    pub ambiguous: bool,
+    pub raw: String,
+}
 
 /// Weekday sync interval during term.
 pub const SYNC_WEEKDAY: Duration = Duration::from_secs(2 * 60 * 60);
@@ -61,6 +71,43 @@ pub fn browser_dir() -> PathBuf {
         .join("browser")
 }
 
+/// Resolve repo root (parent of `browser/` / `app/`).
+pub fn repo_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("..")
+        .join("..")
+}
+
+fn forward_user_env(cmd: &mut Command) {
+    if let Ok(root) = env::var("DEV_USER_ROOT") {
+        cmd.env("DEV_USER_ROOT", root);
+    }
+    if let Ok(slug) = env::var("SCHOOL_SLUG") {
+        cmd.env("SCHOOL_SLUG", slug);
+    }
+}
+
+/// Spawn ``python3 -m <module> …`` with repo ``PYTHONPATH`` + user env.
+fn python_module(module: &str, args: &[&str]) -> Command {
+    let root = repo_root();
+    let mut cmd = Command::new("python3");
+    let mut full = vec!["-m", module];
+    full.extend_from_slice(args);
+    cmd.args(&full).current_dir(&root);
+    let src = root.join("src");
+    if src.is_dir() {
+        let existing = env::var("PYTHONPATH").unwrap_or_default();
+        let joined = if existing.is_empty() {
+            src.display().to_string()
+        } else {
+            format!("{}:{}", src.display(), existing)
+        };
+        cmd.env("PYTHONPATH", joined);
+    }
+    forward_user_env(&mut cmd);
+    cmd
+}
+
 /// Shell `npm run sync` in browser/ with DEV_USER_ROOT / SCHOOL_SLUG when set.
 pub fn run_canvas_sync() -> Result<(), String> {
     tick_log("sync");
@@ -70,12 +117,7 @@ pub fn run_canvas_sync() -> Result<(), String> {
     }
     let mut cmd = Command::new("npm");
     cmd.arg("run").arg("sync").current_dir(&browser);
-    if let Ok(root) = env::var("DEV_USER_ROOT") {
-        cmd.env("DEV_USER_ROOT", root);
-    }
-    if let Ok(slug) = env::var("SCHOOL_SLUG") {
-        cmd.env("SCHOOL_SLUG", slug);
-    }
+    forward_user_env(&mut cmd);
     let status = cmd
         .status()
         .map_err(|e| format!("failed to spawn npm run sync: {e}"))?;
@@ -83,6 +125,101 @@ pub fn run_canvas_sync() -> Result<(), String> {
         Ok(())
     } else {
         Err(format!("npm run sync exited with {status}"))
+    }
+}
+
+/// Shell `npm run open-canvas` for SSO login (onboarding "I signed in").
+pub fn run_open_canvas() -> Result<(), String> {
+    tick_log("open-canvas");
+    let browser = browser_dir();
+    if !browser.is_dir() {
+        return Err(format!("browser dir missing: {}", browser.display()));
+    }
+    let mut cmd = Command::new("npm");
+    cmd.arg("run").arg("open-canvas").current_dir(&browser);
+    forward_user_env(&mut cmd);
+    let status = cmd
+        .status()
+        .map_err(|e| format!("failed to spawn npm run open-canvas: {e}"))?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("npm run open-canvas exited with {status}"))
+    }
+}
+
+/// Call Python skill router CLI; returns structured route result.
+pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
+    tick_log("route-intent");
+    let output = python_module(
+        "canvas_mcp.core.skill_router",
+        &["--json", "--no-log", trigger],
+    )
+    .output()
+    .map_err(|e| format!("failed to spawn skill_router: {e}"))?;
+    let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if raw.is_empty() {
+        let err = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        return Err(if err.is_empty() {
+            format!("skill_router exited {}", output.status)
+        } else {
+            err
+        });
+    }
+    let value: Value = serde_json::from_str(&raw)
+        .map_err(|e| format!("skill_router JSON parse failed: {e}; raw={raw}"))?;
+    Ok(RouteResultDto {
+        skill_id: value
+            .get("skill_id")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+        method: value
+            .get("method")
+            .and_then(|v| v.as_str())
+            .unwrap_or("none")
+            .to_string(),
+        ambiguous: value
+            .get("ambiguous")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false),
+        raw,
+    })
+}
+
+/// Write the onboarding learning-profile games' answers via the Python CLI.
+pub fn run_save_learning_profile(
+    practice_format: &str,
+    autonomy: &str,
+    chunk_size: &str,
+    check_depth: &str,
+) -> Result<(), String> {
+    tick_log("save-learning-profile");
+    let output = python_module(
+        "canvas_mcp.core.learning_profile",
+        &[
+            "--json",
+            "save",
+            "--practice-format",
+            practice_format,
+            "--autonomy",
+            autonomy,
+            "--chunk-size",
+            chunk_size,
+            "--check-depth",
+            check_depth,
+        ],
+    )
+    .output()
+    .map_err(|e| format!("failed to spawn learning_profile: {e}"))?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        let err = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        Err(if err.is_empty() {
+            format!("learning_profile exited {}", output.status)
+        } else {
+            err
+        })
     }
 }
 

@@ -5,8 +5,19 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "core:event:allow-listen",
+    "core:event:allow-emit",
     "autostart:allow-enable",
     "autostart:allow-disable",
-    "autostart:allow-is-enabled"
+    "autostart:allow-is-enabled",
+    "allow-set-dock-mode",
+    "allow-show-dock",
+    "allow-hide-dock",
+    "allow-sync-canvas",
+    "allow-read-top3",
+    "allow-open-canvas-sso",
+    "allow-save-onboarding",
+    "allow-save-learning-profile",
+    "allow-route-intent"
   ]
 }

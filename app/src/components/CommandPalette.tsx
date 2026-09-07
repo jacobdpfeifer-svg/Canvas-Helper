@@ -27,6 +27,9 @@ export function CommandPalette({
         <button type="button" onClick={() => onAction("sync")}>
           Sync Canvas now
         </button>
+        <button type="button" onClick={() => onAction("brief")}>
+          Brief me (route skill)
+        </button>
       </div>
     </div>
   );

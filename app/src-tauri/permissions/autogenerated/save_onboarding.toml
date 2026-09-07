@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-onboarding"
+description = "Enables the save_onboarding command without any pre-configured scope."
+commands.allow = ["save_onboarding"]
+
+[[permission]]
+identifier = "deny-save-onboarding"
+description = "Denies the save_onboarding command without any pre-configured scope."
+commands.deny = ["save_onboarding"]
