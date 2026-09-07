@@ -9,9 +9,9 @@
     "name": "ProductName",
     "url": "https://github.com/"
   },
-  "homepage": "https://github.com/jacobdpfeifer-svg/Canvas-Helper",
-  "documentation": "https://github.com/jacobdpfeifer-svg/Canvas-Helper/blob/phase1-productname-pivot/README.md",
-  "support": "https://github.com/jacobdpfeifer-svg/Canvas-Helper/issues",
+  "homepage": "https://github.com/productname/canvas-mcp",
+  "documentation": "https://github.com/productname/canvas-mcp/blob/phase1-productname-pivot/README.md",
+  "support": "https://github.com/productname/canvas-mcp/issues",
   "license": "MIT",
   "keywords": [
     "canvas",
