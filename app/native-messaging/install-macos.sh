@@ -5,7 +5,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 HOST_PY="$ROOT/app/native-messaging/host.py"
 TEMPLATE="$ROOT/app/native-messaging/com.productname.daemon.json"
-EXT_ID="${PRODUCTNAME_EXTENSION_ID:-PRODUCTNAME_EXTENSION_ID}"
+EXT_ID="${PRODUCTNAME_EXTENSION_ID:-jkjkbgcbpakeenemjgkfohbcfbghmall}"
+if [[ ! "$EXT_ID" =~ ^[a-z]{32}$ ]]; then
+  echo "PRODUCTNAME_EXTENSION_ID must be the 32-character ID of the loaded ProductName extension" >&2
+  exit 2
+fi
 
 chmod +x "$HOST_PY"
 

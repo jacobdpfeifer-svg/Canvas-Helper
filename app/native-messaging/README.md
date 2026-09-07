@@ -25,3 +25,7 @@ PRODUCTNAME_EXTENSION_ID=<your-extension-id> \
 | `host.py` | stdio NM host (length-prefixed JSON) |
 | `com.productname.daemon.json` | Manifest template (`path` + `allowed_origins` filled by install) |
 | `install-macos.sh` | Copies manifest into Chrome/Chromium NM dirs |
+
+## Stable extension ID
+
+The unpacked extension ships with a fixed `key` in `manifest.json` so the ID is always `jkjkbgcbpakeenemjgkfohbcfbghmall`. Override with `PRODUCTNAME_EXTENSION_ID` only if you load a differently keyed build.

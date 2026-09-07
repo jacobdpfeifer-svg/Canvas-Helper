@@ -4,7 +4,7 @@
   "description": "Local-first student Canvas MCP (ProductName). SSO + REST + preview\u2192confirm writes.",
   "version": "1.11.0",
   "repository": {
-    "url": "https://github.com/jacobdpfeifer-svg/Canvas-Helper",
+    "url": "https://github.com/productname/canvas-mcp",
     "source": "github"
   },
   "tags": [

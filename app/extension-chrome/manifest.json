@@ -2,13 +2,21 @@
   "manifest_version": 3,
   "name": "ProductName Canvas Sensor",
   "version": "0.1.0",
-  "description": "Relays Canvas tab focus/URL to the local ProductName daemon. No direct writes — daemon issues MCP tool calls.",
-  "permissions": ["nativeMessaging", "tabs", "storage"],
-  "host_permissions": ["https://*.instructure.com/*", "https://canvas.colorado.edu/*"],
+  "description": "Relays Canvas tab focus/URL to the local ProductName daemon. No direct writes \u2014 daemon issues MCP tool calls.",
+  "permissions": [
+    "nativeMessaging",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.instructure.com/*",
+    "https://canvas.colorado.edu/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_title": "ProductName"
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwKkiTBlRzB02f8Nt+I0v3jJM4DDUem2EdPLk7jqtOuGIIHNDPSI+XhU1BbQTMmv4Ur5S0LwyLLDLc9Cq+QWHdYcTxJcr86oFWeGkvJAyLRf4Rssb0Vp9i5KVMkZetRIcJSlXiatls26FZakKFYbAld+aKcAxdpvrDEHzuibbRuDp3OK6TikN4G+3CtzQmWfFVnPZ11aWupz+NFFzXNgqO6+OhFIqKteDKY5zbiDvtJ4+KKua6Crogi+gIiNwEn1YCeEMNboMAgz3vyl1YFfsoEndIw4bsdps4wfevRdBqNk13kQKZvo4A6bAdx/dCWL0yLtLHAxv/e+Maw+Y0ZCTrwIDAQAB"
 }
