@@ -1,0 +1,120 @@
+# Ambient dock UI — design spec
+
+**Status (2026-09-06):** **Partially implemented.** `dock.rs` + tray toggle + peek/expanded/onboarding sizes are wired in the Tauri shell. **Not yet built:** true Hidden (no window) as the resting default, auto-peek on narrate-after, and full glass polish parity with this spec. Treat sections below as the target; verify against `app/src-tauri/src/{dock,main}.rs` before assuming behavior.
+
+What the ProductName desktop shell is supposed to be, distilled from the
+Phase 1 design discussion. This is the reference for anyone (human or agent)
+touching `app/src/App.tsx`, `app/src/styles.css`, or `app/src-tauri/src/dock.rs`.
+
+## Core concept
+
+The app is **never a normal application window**. It does not open, sit in
+the center of the screen, or behave like a document/editor. It is a small
+object that lives on your screen — closer to a physical sticky note than
+software — and the moment it has nothing to say, it is not there at all.
+
+Reference point: Cluely's floating glass overlay — small, translucent,
+always-on-top, expands/collapses rather than opening/closing a window. Where
+this project's answer differs from Cluely: no screen-reading, no GPU-hook
+invisibility trick, and it docks to a fixed screen corner rather than
+following the cursor or a call window.
+
+## The three states
+
+| State | Size (logical px) | Position | When |
+|---|---|---|---|
+| **Hidden** | — | — | Default. Nothing on screen, no Dock icon, no taskbar entry. |
+| **Peek** | 320 × 210 | Bottom-right corner of the screen's work area | The resting "sticky note" — shown after summon or a new event. |
+| **Expanded** | 400 × ~34% of screen height (clamped 420–680) | Same bottom-right corner, grows up-and-left | While the command palette, an approval sheet, or the ledger view is open. |
+| **Onboarding** | 460 × 640 | Centered | First run only, before a school + legal acceptance exist. |
+
+Peek and Expanded always share the same bottom-right anchor point, so
+expanding reads as the note growing out of itself — a drawer opening from
+the corner — never the window jumping somewhere new.
+
+### How you get from Hidden to Peek
+
+- Click the menu-bar tray icon (left-click, not the menu) — toggles
+  Hidden ↔ Peek.
+- (Planned, not yet built) auto-peek when a new narrate-after event lands,
+  so you're not required to go looking for it.
+
+### How you get from Peek to Expanded
+
+- Click the sticky note itself (opens the ledger view), or trigger the
+  command palette (⌥), or an approval sheet appears. Closing all of those
+  shrinks the window back to Peek — it does not hide, since you were just
+  looking at it.
+
+### How you get back to Hidden
+
+- Explicit × (dismiss) button in the note's control row.
+- Tray icon left-click again while visible.
+
+There is deliberately no "quit" surface inside the note itself — this is an
+ambient background utility, not an app with a title bar. Quitting the
+process is the tray menu's "Quit" item only.
+
+## Material / visual language: frosted glass, not a solid panel
+
+Two layers stack to produce the effect:
+
+1. **Native vibrancy** (`app/src-tauri/src/dock.rs::apply_glass`) — macOS
+   `NSVisualEffectView` (`HudWindow` material) applied directly to the
+   window. This is what actually blurs the real desktop sitting behind the
+   window — a CSS trick alone cannot do this because the window has nothing
+   of its own to blur.
+2. **CSS tint + border** (`app/src/styles.css`) — `backdrop-filter: blur()`
+   plus a translucent dark tint (`--glass-tint` / `--glass-tint-strong`) and
+   a 1px near-white hairline border (`--glass-border`). This is what reads
+   as "glass" rather than "a hole in your screen" — enough tint that text
+   stays legible over anything on the desktop behind it.
+
+Rules that follow from this:
+- No opaque backgrounds anywhere in the shell. Every surface (`.dock`,
+  `.onboarding`, `.palette`, `.sheet`) uses a translucent tint + blur, never
+  a solid fill.
+- The window itself is `transparent: true` + `decorations: false` +
+  `shadow: false` in `tauri.conf.json` — the CSS border-radius and
+  `box-shadow` on `.dock` are what give it visible edges and depth, not the
+  OS window chrome.
+- `alwaysOnTop: true` + `skipTaskbar: true` — it floats above your other
+  windows and never appears in the Dock, Cmd+Tab, or the taskbar. It is not
+  meant to be "an app you switch to."
+
+## Component map — what's inside each state
+
+- **Peek**: control row (⌥ palette, STOP, × dismiss) + `Top3Sticky` (up to
+  3 due items, condensed). Nothing else — this is the note.
+- **Expanded**: everything in Peek, plus `NarrateAfter` (recent automations
+  with an undo affordance) and whichever overlay triggered the expansion —
+  `CommandPalette`, `ApprovalSheet`, or `LedgerViewer`. Overlays render as
+  absolutely-positioned sheets inside the dock's own bounds (`inset: 0`
+  relative to `.dock`, not the full screen), since the window itself is
+  already the right size.
+- **Onboarding**: school picker → legal acceptance → Canvas SSO step →
+  priorities → local-model/cloud-key choice. This is the one state allowed
+  to feel like a normal small app screen, since it's a one-time flow, not
+  the ambient resting state.
+
+## Explicit non-goals
+
+- Never a full-screen or maximizable window. `resizable: false` — geometry
+  is only ever driven programmatically by `dock.rs`, never dragged by hand.
+- No screen-capture invisibility (unlike Cluely) — this app doesn't need to
+  hide from Zoom/Meet; it just needs to stay out of your way visually.
+- No cursor-following HUD — it is corner-anchored, not attached to the
+  mouse.
+- No cross-platform parity claim yet — `apply_glass` is macOS-only
+  (`NSVisualEffectMaterial::HudWindow`); Windows acrylic/Mica would hang off
+  the same call site later but isn't implemented.
+
+## Open / not yet built
+
+- Auto-peek on new narration/ledger events without a manual click.
+- A global keyboard shortcut to summon Peek from anywhere (currently only
+  the tray icon can do this; ⌥Space only works once the window is already
+  visible and focused).
+- Windows/Linux equivalents of the vibrancy call.
+- Smooth animated resize between Peek ↔ Expanded — currently an instant
+  `set_size`/`set_position` jump, not an eased slide.

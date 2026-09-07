@@ -23,7 +23,7 @@ browser/               # SSO auth + sync scripts (not DOM-primary)
 src/canvas_mcp/       # optional MCP when PAT exists
 skills/                # student-* + canvas-week-plan + discussion
 app/                   # ProductName Tauri shell + daemon
-plugins/               # school-conditional (e.g. cu-boulder CampusGroups)
+plugins/               # school-conditional Bucket-A connectors (see plugins/README.md)
 ```
 
 Per-user data lives under `{user_root}` (`inbox/`, `calibration/`, `ledger.jsonl`) — never committed.
@@ -45,8 +45,10 @@ uv run python -m pytest tests/ -q
 
 - Prefer extending SSO→API→inbox over new scrapers
 - MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` stays preview→confirm via ConfirmationGuard
+- Bucket-A connector MCP writes: dedicated `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard` — no first-write exemption
+- External tool inventory is discovery-only; gaps go to `inbox/tool-gaps.md` — never auto-fetch connector code
 - Never commit `.env` or `browser/.auth/`
 
 ## Out of scope
 
-Degree audit engines, Handshake, Azure hosting, educator grading, auto-driving LTI tools.
+Degree audit engines, Handshake, Azure hosting, educator grading, auto-driving LTI tools / Bucket-B assessment automation.
