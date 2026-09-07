@@ -22,8 +22,8 @@ Photo intake: skill `student-photo-intake` (queue under `{user_root}/inbox/captu
 
 `browser/.auth/` is gitignored — never commit it.
 
-- **sync** = source of truth for `inbox/week.md` (dated open work in the school-timezone window) and refreshes **Assignment catalog** + **Checkpoints** in `inbox/courses/*.md`. Also fetches syllabus, instructors, and policy page links.
+- **sync** = source of truth for `inbox/week.md` (dated open work in the school-timezone window) and refreshes **Assignment catalog**, **Checkpoints**, and **Tools this semester** in `inbox/courses/*.md`. Also fetches syllabus, instructors, and policy page links; writes Bucket-A connector gaps to `inbox/tool-gaps.md` (flag only — never auto-build).
 - **audit** = deeper 45-day pull + recall check vs prior week.md.
-- **CampusGroups RSVP** = Playwright only (not Cursor IDE browser). See `plugins/cu-boulder-campusgroups/` (requires `--name`).
+- **CampusGroups RSVP** = Playwright only (not Cursor IDE browser). See `plugins/cu-boulder-campusgroups/` (requires `--name`). Connector contract: [`../plugins/README.md`](../plugins/README.md).
 
 Architecture: [`../docs/architecture.md`](../docs/architecture.md).

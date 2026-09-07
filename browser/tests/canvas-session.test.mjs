@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   addSchoolDays,
+  aggregateToolInventory,
   buildWeekNoteParts,
   classifyOutcomeHint,
+  classifyToolBucket,
   COURSE_FILE_MAP,
   dedupeRows,
+  detectExternalTool,
   extractLinksFromHtml,
   filterPolicyPages,
+  formatToolsSection,
   hasCampusGroupsLink,
   hasUploadAfterEventHint,
   isCheckpoint,
@@ -22,6 +26,11 @@ import {
   stripHtmlTags,
   syllabusHash,
 } from "../scripts/lib/canvas-session.mjs";
+import {
+  findConnector,
+  hasConnector,
+  listConnectorsForSchool,
+} from "../scripts/lib/connector-registry.mjs";
 
 describe("schoolMidnightUtc", () => {
   it("returns Denver midnight in August (MDT, UTC-6)", () => {
@@ -75,6 +84,7 @@ describe("classifyOutcomeHint", () => {
   it("tags external_tool as LTI", () => {
     const hint = classifyOutcomeHint("Ch. 1 EOC Problems", "external_tool");
     assert.match(hint, /outcome:lti/);
+    assert.match(hint, /bucket:B/);
   });
 
   it("tags presentations before advocate discussion", () => {
@@ -88,6 +98,21 @@ describe("classifyOutcomeHint", () => {
   it("tags PlayPosit as LTI", () => {
     const hint = classifyOutcomeHint("I -- PlayPosit Learner Experience", "assignment");
     assert.match(hint, /outcome:lti/);
+    assert.match(hint, /bucket:B/);
+    assert.match(hint, /tool:PlayPosit/);
+  });
+
+  it("tags graded external_tool without vendor name as Bucket B", () => {
+    const hint = classifyOutcomeHint("Online homework portal", "external_tool", "", 10);
+    assert.match(hint, /outcome:lti/);
+    assert.match(hint, /bucket:B/);
+  });
+
+  it("tags ungraded admin external_tool as Bucket A", () => {
+    const hint = classifyOutcomeHint("Course gradebook viewer", "external_tool", "", "");
+    assert.match(hint, /outcome:external-admin/);
+    assert.match(hint, /bucket:A/);
+    assert.match(hint, /tool:Gradebook/);
   });
 
   it("tags thought projects as written reflection", () => {
@@ -113,6 +138,7 @@ describe("classifyOutcomeHint", () => {
     );
     assert.match(hint, /outcome:signup-external\+upload-after-event/);
     assert.match(hint, /rsvp:CampusGroups/);
+    assert.match(hint, /bucket:A/);
     assert.match(hint, /canvas_submit:post-dinner selfie/);
   });
 
@@ -138,7 +164,6 @@ describe("classifyOutcomeHint", () => {
     assert.match(hint, /outcome:signup-external\+upload-after-event/);
   });
 });
-
 describe("extractLinksFromHtml", () => {
   it("extracts href values", () => {
     const links = extractLinksFromHtml(
@@ -201,6 +226,89 @@ Updated: 2026-08-20
     });
     assert.match(merged, /## Registration log/);
     assert.match(merged, /event 385793/);
+    assert.match(merged, /## Tools this semester/);
+  });
+
+  it("writes tool inventory from catalog rows", () => {
+    const merged = mergeCourseFileContent({
+      existingContent: "",
+      courseTitle: "PHYS1110",
+      catalogRows: [
+        {
+          title: "HW1 PlayPosit",
+          type: "assignment",
+          due: "2026-09-01T12:00:00Z",
+          points: 5,
+        },
+        {
+          title: "Course gradebook viewer",
+          type: "external_tool",
+          due: "2026-08-25T12:00:00Z",
+          points: "",
+        },
+      ],
+      today: "2026-08-22",
+    });
+    assert.match(merged, /## Tools this semester/);
+    assert.match(merged, /PlayPosit/);
+    assert.match(merged, /\|\s*B\s*\|/);
+    assert.match(merged, /Gradebook/);
+    assert.match(merged, /\|\s*A\s*\|/);
+  });
+});
+
+describe("detectExternalTool and buckets", () => {
+  it("classifies assessment keywords as Bucket B with no override path", () => {
+    assert.equal(classifyToolBucket("ZyBooks Ch 2", "assignment"), "B");
+    assert.equal(detectExternalTool("Honorlock quiz", "assignment")?.slug, "honorlock");
+  });
+
+  it("classifies CampusGroups as Bucket A", () => {
+    const tool = detectExternalTool(
+      "Major Dinner",
+      "assignment",
+      '<a href="https://cglink.me/2vs/r1">RSVP</a>'
+    );
+    assert.equal(tool?.bucket, "A");
+    assert.equal(tool?.slug, "campusgroups");
+  });
+
+  it("aggregates inventory counts and preserves first-seen", () => {
+    const inventory = aggregateToolInventory(
+      [
+        {
+          title: "PlayPosit 1",
+          type: "assignment",
+          due: "2026-09-10T00:00:00Z",
+          points: 1,
+        },
+        {
+          title: "PlayPosit 2",
+          type: "assignment",
+          due: "2026-09-20T00:00:00Z",
+          points: 1,
+        },
+      ],
+      {
+        existingSection:
+          "| Tool | Bucket | Count | First seen |\n| PlayPosit | B | 1 | 2026-08-01 |",
+        today: "2026-09-01",
+      }
+    );
+    assert.equal(inventory.length, 1);
+    assert.equal(inventory[0].count, 2);
+    assert.equal(inventory[0].firstSeen, "2026-08-01");
+    assert.match(formatToolsSection(inventory), /PlayPosit/);
+  });
+});
+
+describe("connector registry", () => {
+  it("lists CampusGroups for cu-boulder and rejects unknown tools", () => {
+    const listed = listConnectorsForSchool("cu-boulder");
+    assert.ok(listed.some((c) => c.slug === "campusgroups"));
+    assert.equal(hasConnector("campusgroups", "cu-boulder"), true);
+    assert.equal(hasConnector("gradebook", "cu-boulder"), false);
+    assert.equal(findConnector("webassign", "cu-boulder"), null);
   });
 });
 
@@ -431,5 +539,64 @@ Profile updated: 2026-08-01
     assert.match(md, /agent_writes: allow \(synced 2026-08-22\)/);
     assert.match(md, /allow_tools: submit_assignment/);
     assert.match(md, /- keep me/);
+  });
+
+  it("preserves skill-owned Weak topics section", () => {
+    const existing = `# MATH2300 — Calc
+
+Updated: 2026-08-01
+
+Sections: 001
+Canvas URL:
+Primary instructor(s):
+TA(s):
+Syllabus hash:
+
+## Theme
+
+-
+
+## Checkpoints
+
+- (none)
+
+## Assignment catalog
+
+| Name | Due | Points | Type | Outcome | Status |
+|------|-----|--------|------|---------|--------|
+| | | | | | |
+
+## Arc notes
+
+-
+
+## Weak topics
+
+- \`tangent_line\` — Tangent Lines Quiz — 0.55 (2026-09-06)
+
+## Instructor profile
+
+-
+
+## Syllabus / agent policy notes
+
+-
+
+## Modules / what's next
+
+-
+
+## Worth your time defaults
+
+(See USER.md for this course.)
+`;
+    const md = mergeCourseFileContent({
+      existingContent: existing,
+      courseTitle: "MATH 2300",
+      catalogRows: [],
+      today: "2026-09-06",
+    });
+    assert.match(md, /## Weak topics/);
+    assert.match(md, /`tangent_line` — Tangent Lines Quiz — 0\.55/);
   });
 });
