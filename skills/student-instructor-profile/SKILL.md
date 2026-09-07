@@ -8,7 +8,7 @@ requires_cloud: false
 
 # Instructor profile
 
-Synthesize **how instructors grade** and **how they want students to act** into `## Instructor profile` in [`inbox/courses/CODE.md`](../../inbox/courses/).
+Synthesize **how instructors grade** and **how they want students to act** into `## Instructor profile` in `{user_root}/inbox/courses/CODE.md`.
 
 Architecture: [`docs/architecture.md`](../../docs/architecture.md). Assignment use: [`student-assignment-triage`](../student-assignment-triage/SKILL.md).
 

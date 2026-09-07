@@ -12,7 +12,8 @@ Decide Worth-your-time vs process help vs rare **native Canvas** auto-submit.
 
 ## Prerequisites
 
-- [`USER.md`](../../USER.md), [`calibration/calibrated-courses.md`](../../calibration/calibrated-courses.md)
+- Follow [`../_SESSION.md`](../_SESSION.md)
+- [`calibration/calibrated-courses.md`](../../calibration/calibrated-courses.md)
 - Items from `inbox/week.md` (preferred) or MCP
 - **Before drafts** on written / discussion / reflection / presentation-script work: read `## Instructor profile` in `inbox/courses/CODE.md`. If missing or stale (see [`student-instructor-profile`](../student-instructor-profile/SKILL.md)) → build profile first and apply formatting, AI, tone, and rubric preferences.
 - **Policy dual-check** (draft + auto-submit): read `## Syllabus / agent policy notes` in the same course file (sync-owned `agent_writes:` marker). If profile `### AI and academic integrity` forbids agent work on this assignment type → never auto-submit; draft only with the student review. If synced notes say `agent_writes: deny` or `conflict` → no auto-submit regardless of profile.

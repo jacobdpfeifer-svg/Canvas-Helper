@@ -14,10 +14,9 @@ Architecture: [`docs/architecture.md`](../../docs/architecture.md). Rubric: [`ca
 
 ## Prerequisites
 
-1. Read `USER.md` and `calibration/priority-rubric.md`
-2. Read [`inbox/week.md`](../../inbox/week.md) (and `inbox/courses/*` as needed)
-3. If inbox missing or `Updated:` older than **2 days** → refresh via `cd browser && npm run sync` (after `open-canvas` if needed)
-4. Optional: read [`inbox/focus.md`](../../inbox/focus.md) if present (dated Top 3 cache — not a competing due list)
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. Read `calibration/priority-rubric.md`
+3. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
 
 ## Triggers
 
@@ -93,7 +92,7 @@ For each item (or Top N), use this shape:
 
 When the student asks to **save** or **pin** focus (or week-plan asks to persist):
 
-Write/overwrite [`inbox/focus.md`](../../inbox/focus.md) with today’s date, Top 3, and batch queue. Do **not** duplicate the full due table — that stays in `week.md`.
+Write/overwrite `{user_root}/inbox/focus.md` with today’s date, Top 3, and batch queue. Do **not** duplicate the full due table — that stays in `week.md`.
 
 Template: dated Top-3 cache under `{user_root}/inbox/focus.md` (not a second due-list).
 
@@ -116,3 +115,4 @@ One sentence: the single first action right now.
 - Buckets / submit policy → `student-assignment-triage`
 - Full week layout → `canvas-week-plan` (should call this skill for ordered Top 3)
 - Inbox refresh → `student-inbox-week` / `npm run sync`
+- If a course `## Weak topics` entry has a known concept key → `student-concept-visual`
