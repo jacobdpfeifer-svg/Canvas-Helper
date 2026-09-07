@@ -101,6 +101,22 @@ Check your submission status across assignments.
 
 ---
 
+#### `list_my_assignment_scores`
+List graded assignment scores (structured) for weak-topic detection.
+
+**Parameters:**
+- `course_identifier` (optional): Specific course code or ID to filter
+
+**Example:**
+```
+"What are my scores in MATH 2300?"
+"List my graded assignment scores"
+```
+
+**Returns:** Per-assignment `name`, `score`, `points_possible`, `workflow_state`, and course code. Skips ungraded rows. Prefer this over `get_my_submission_status` when feeding `find_weak_topics`.
+
+---
+
 #### `get_my_submission`
 View your own submission for a single assignment, including how many attempts
 you have used and any instructor comments.

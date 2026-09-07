@@ -214,6 +214,11 @@
       "description": "List all modules in a course."
     },
     {
+      "name": "list_my_assignment_scores",
+      "category": "student",
+      "description": "List graded assignment scores for weak-topic detection."
+    },
+    {
       "name": "list_pages",
       "category": "pages",
       "description": "List pages for a specific course."

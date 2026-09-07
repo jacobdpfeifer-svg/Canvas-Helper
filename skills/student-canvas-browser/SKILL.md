@@ -1,6 +1,6 @@
 ---
 name: student-canvas-browser
-description: SSO sync Canvas REST into inbox/ without a PAT; LTI/external UI escape hatch with the student. Use for "sync Canvas", "pull todo", "open Canvas", "ZyBooks", "WebAssign", "PlayPosit".
+description: Run SSO Canvas browser sync into inbox/ without a PAT; open LTI/external tool UIs with the student. Use for "sync Canvas", "pull todo", "open Canvas", "open ZyBooks", "WebAssign", "PlayPosit" — the sync/open action itself, not week planning.
 schema_version: 1
 category: canvas_read
 requires_cloud: false
@@ -33,18 +33,24 @@ Before calendar-binding RSVP: read [`calibration/signup-preferences.md`](../../c
 
 ## C — Cursor browser LTI escape hatch (the student driving)
 
-For WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI:
+**Bucket B** (assessment-shaped): WebAssign, ZyBooks, PlayPosit, Norton/EOC/LearningCurve, proctoring (Honorlock/Respondus/etc.), or graded `external_tool` items.
 
 1. Open the tool via Canvas (the student completes MFA if needed).
 2. Draft steps/answers in chat.
 3. **The student** submits in the tool UI.
 4. Optionally mark done in `inbox/week.md`.
 
-Never auto-click Submit in those tools. Do not use IDE browser for scripted external RSVP — use Playwright plugin scripts.
+Never auto-click Submit in those tools. No connector, config flag, or “trust” override may automate Bucket B.
+
+**Bucket A** (admin / read-only surfaces, CampusGroups): registry-eligible only. Sync writes a discovery inventory under `## Tools this semester` in each course file and flags missing connectors in `inbox/tool-gaps.md`. Do **not** fetch or generate connector code — maintainers add `plugins/{school}/{tool}/` via reviewed PR ([`plugins/README.md`](../../plugins/README.md)). MCP writes from a Bucket-A connector require `ConfirmationGuard` (`connector_guards.get_connector_guard`).
+
+Do not use IDE browser for scripted external RSVP — use Playwright plugin scripts.
 
 ## Hard stops
 
 - Quizzes / exams / proctored → the student only  
 - WebAssign / ZyBooks / PlayPosit → the student in tool UI  
+- Bucket B tools → never automate (no override)  
+- Missing Bucket A connector → flag gap only; never auto-build  
 - External RSVP → Playwright plugin scripts only (not IDE browser)  
 - No password storage; never commit `browser/.auth/`

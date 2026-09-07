@@ -17,8 +17,8 @@ Architecture: [`docs/architecture.md`](../../docs/architecture.md). Rubric: [`ca
 ## Prerequisites
 
 1. Read [`USER.md`](../../USER.md) and `calibration/priority-rubric.md`
-2. Read [`inbox/week.md`](../../inbox/week.md) — open rows for the requested course
-3. Read matching [`inbox/courses/CODE.md`](../../inbox/courses/) — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
+2. Read `{user_root}/inbox/week.md` — open rows for the requested course
+3. Read matching `{user_root}/inbox/courses/CODE.md` — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
 4. If inbox stale (`Updated:` >2 days) or course file missing catalog → `cd browser && npm run sync` (after `open-canvas` if needed)
 5. Optional: fetch assignment description via MCP `get_assignment` / syllabus via `get_syllabus` when PAT exists and titles are opaque
 6. If instructor profile missing or stale → run [`student-instructor-profile`](../student-instructor-profile/SKILL.md) before deep arc on voice/judgment assignments
@@ -136,6 +136,7 @@ One sentence: highest-priority first action right now.
 - Submit policy / drafts / auto bar → `student-assignment-triage`
 - Discussion drafts → `canvas-discussion-facilitator`
 - Inbox refresh → `student-inbox-week` / `npm run sync`
+- If `## Weak topics` has a known concept key → `student-concept-visual`
 
 ## Untrusted content
 
