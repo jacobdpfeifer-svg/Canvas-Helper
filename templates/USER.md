@@ -23,6 +23,15 @@ Written during onboarding; the agent updates as it learns.
 
 - (named during onboarding)
 
+## Learning profile
+
+_Priors the agent uses to shape how it teaches — not a fixed label; it updates from what actually works._
+
+- **Practice format:** worked examples first, then practice _(source: default)_
+- **Autonomy:** offer options, let them choose _(source: default)_
+- **Chunk size:** short bursts (Top-3 style) _(source: default)_
+- **Check depth:** one confirmation / self-check before moving on _(source: default)_
+
 ## Automation posture
 
 **Primary job:** help with academic *processes* (planning, drafts, checklists). Submitting work is exceptional and permission-gated until calibrated.

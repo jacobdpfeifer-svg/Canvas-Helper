@@ -1,49 +1,49 @@
-# Architect Handback Brief — Phase 1 Pivot
+# Architect Handback Brief — Phase 1 Pivot (re-audit)
 
-**Date:** 2026-09-06 (must-fix pass after truth audit)  
+> **Superseded for architecture shape:** see [`architecture-audit-2026-09-06.md`](architecture-audit-2026-09-06.md) (macro pass — CLI fold, actuator gate, educator cut). Keep this brief for must-fix / security receipts.
+
+**Date:** 2026-09-06 (post must-fix-close re-verification; superseded prior brief claims)  
 **Repo:** TheUltimateStudent:TeacherWorkflow  
+**Branch:** `phase1-productname-pivot` @ working tree (base tip `d0f1ef1` + local WIP)  
 **Shipping name:** placeholder `ProductName` (`com.productname.student`)  
-**Verdict:** Must-fix items for de-Jacobize + ConfirmationGuard + manifest + root docs + Tauri Builder/tray are **done**. Remaining beta work is product integration (real OAuth actuators, NM host, two-user smoke, legal sheet) — not the prior truth gaps.
+**Verdict:** Prior brief over-claimed several “Done” items. This pass re-derived truth from commands, fixed reachable gaps, and left only escalate-only blockers.
 
 ---
 
 ## 1. Executive verdict
 
-| Area | Status |
-|------|--------|
-| W0 foundations (tenant, user_root, deny default, permissions, ledger) | **Shipped** |
-| W0.4 ConfirmationGuard migration | **Shipped** — call sites use `_SUBMIT_GUARD` only; no `_issue_token` / `_check_token` / local `hmac` |
-| W1 de-Jacobize | **Shipped** — skill bodies use `{active_courses}` from `list_courses`/inbox; inbox sync writes `USER.md`; Jacob-private corpus removed from this product branch |
-| W2 brain + self-improve | **Shipped** (structural; HDBSCAN optional; mem0 with MEMORY.md fallback) |
-| W3 actuators | **Scaffolded** (dry-run MCP servers + undo_ptr + Chrome sensor extension) |
-| W4 app shell | **Builder + autostart + tray + cadence loop wired**; OAuth/NM/notarized dmg still scaffold |
-| W5 verification | **Partial automated** — gates 1,5,6,7,9,10 + security suite green; E2E onboarding screencast / two-user SSO smoke not run in this pass |
+| Area | Status (this pass) | Receipt |
+|------|--------------------|---------|
+| W0 foundations (tenant, user_root, deny default, permissions, ledger) | **Shipped** | `COURSE_AGENT_POLICY_DEFAULT` → `deny` in code + `env.template` + `config/overlays/baseline.env` (added this pass) |
+| W0.4 ConfirmationGuard | **Shipped** | `student_write.py` uses `_SUBMIT_GUARD` only; no `_issue_token`/`_check_token`/`hmac.new` there |
+| W1 de-Jacobize (working tree) | **Shipped in tree** | Product-path grep clean; RSVP requires `--name` |
+| W1 de-Jacobize (git history) | **NOT resolved** | `git show 37f38b3:dev/JACOB.md` still returns Jacob profile — see Escalate |
+| W2 brain + self-improve | **Shipped (structural)** | Write-skill ban: `tests/core/test_brain_w2.py::test_ban_write_skill_shadow_and_promote` passed |
+| W3 actuators | **Dry-run proven; live unproven** | `describe_mode` now MCP-exposed; live checklist never run |
+| W4 app shell | **Builder + release binary + tray boot** | `cargo build --release` OK; binary prints `[productname-daemon] tick: boot` |
+| W5 verification | **Partial** | Full suite **612 passed, 19 skipped**; Chrome E2E / live OAuth / history purge not done |
 
-**Security suite:** `tests/security/test_student_write_invariants.py` + `tests/tools/test_student_write.py` → **97 passed** (re-verified this pass).  
+**Security suite (re-run):**  
+`PYTHONPATH=src .venv/bin/python -m pytest tests/security/test_student_write_invariants.py tests/tools/test_student_write.py -q` → **97 passed** (matches prior claim).
+
+**Full suite (re-run):**  
+`PYTHONPATH=src:mcp-servers .venv/bin/python -m pytest tests/ -q` → **612 passed, 19 skipped** (prior brief never reported full suite; `uv run` fails on path `:`).
 
 ---
 
-## 2. Diff inventory (by workstream)
+## 2. Diff inventory — corrections to prior brief
 
-### W0 — Foundations
-
-- `schools/_template.yaml`, `schools/cu-boulder.yaml`
-- `src/canvas_mcp/core/{tenants,user_root,permissions,ledger}.py`
-- Config: `COURSE_AGENT_POLICY_DEFAULT` → **`deny`**
-- [`student_write.py`](../../src/canvas_mcp/tools/student_write.py) uses `_SUBMIT_GUARD.issue/check/reserve/release/fingerprint` only
-
-### W1 — De-Jacobize (must-fix pass)
-
-- Skills renamed earlier; **bodies rewritten** to drop Fall 2026 / IBE / named-course rosters — enrollments from `list_courses` / inbox; Worth defaults from `USER.md`
-- [`manifest.json`](../../manifest.json): `productname-canvas-mcp`, long_description **~40 tools**, CLI `canvas-mcp-server`
-- Browser sync: `USER.md` in generated inbox; `schoolLocalDay` / `getSchoolConfig().timezone`; skill name `student-instructor-profile`
-- Root [`README.md`](../../README.md) / [`CLAUDE.md`](../../CLAUDE.md) productized; personal Jacob corpus deleted from this branch (lives on `main` only)
-
-### W4 — App shell (must-fix pass)
-
-- [`main.rs`](../../app/src-tauri/src/main.rs): `tauri::Builder` + `tauri-plugin-autostart` + menubar tray (**Sync now** / **Quit**)
-- [`daemon.rs`](../../app/src-tauri/src/daemon.rs): cadence loop + `run_canvas_sync()` → `npm run sync`
-- Gate: `CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check` (repo path contains `:`, which breaks default DYLD library path on macOS)
+| Prior claim (`architect-brief.md` pre this pass) | Re-audit finding | Action this pass |
+|--------------------------------------------------|------------------|------------------|
+| “Jacob-private corpus removed from this product branch” | Deleted from tree only; **blobs remain on branch history** | Documented [`history-purge.md`](./history-purge.md); escalate force-push |
+| “Chrome Native Messaging host … Done” | Host + unit test existed; template had `allowed_origins: []` + placeholder path; no stable extension ID | Stable Chrome `key` + default ID `jkjkbgcbpakeenemjgkfohbcfbghmall`; template origins filled |
+| “Replace dry-run GCal/Gmail with real OAuth … Done” | Live path **code exists**; `describe_mode` was **not** an MCP tool; live smoke **never run** | Added MCP `describe_mode` + tests; corrected [`oauth-smoke.md`](./oauth-smoke.md) |
+| “97 passed” security | True | Re-verified |
+| “two-user isolation … Done” | File exists; asserts separate roots + ledger non-cross + path escape — **not** two-device SSO | Keep as root-isolation only; escalate true two-device |
+| Gate1 `or True` noop | `test_gate1_manifests_renamed` previously always passed | Removed `or True` |
+| Onboarding “cloud-key skip” | UI + `save_onboarding` **required** cloud key | Made cloud key optional again |
+| Untracked `commands.rs`/`dock.rs`/`inbox.rs` “maybe dead” | Wired in `main.rs` invoke_handler + tray | Keep; not dead |
+| `skill_route.py` vs `skill_router.py` | CLI adapter vs implementation | Both needed |
 
 ---
 
@@ -51,41 +51,48 @@
 
 ```mermaid
 flowchart TB
-  UI["app/ React: Top3 + NarrateAfter + palette"]
-  Daemon["daemon.rs Builder tray cadence SyncNow"]
-  Router["skill_router + self_improve"]
-  Perm["permissions.yaml counters"]
-  Ledger["ledger.jsonl pinned schema"]
+  UI["app/ React dock + Top3 + Onboarding LP games"]
+  IPC["app/src/ipc.ts"]
+  Rust["main.rs tray + commands/dock/inbox"]
+  Daemon["daemon.rs cadence SyncNow skill_route CLI"]
+  Router["skill_router + skill_route CLI"]
+  LP["learning_profile + diagram_gen"]
+  Perm["permissions.yaml"]
+  Ledger["ledger.jsonl"]
   School["schools/*.yaml"]
   Canvas["canvas_mcp + ConfirmationGuard"]
-  Act["gcal / apple-cal / gmail MCP dry-run"]
-  Ext["Chrome extension sensors only"]
+  Act["gcal / gmail / apple-cal"]
+  Ext["Chrome extension + NM host"]
 
-  UI --> Daemon
+  UI --> IPC --> Rust
+  Rust --> Daemon
   Daemon --> Router
+  Daemon --> Canvas
   Router --> Perm
   Router --> Ledger
+  LP --> Router
   School --> Canvas
   Act --> Ledger
-  Act --> Perm
-  Ext -->|"Native Messaging focus"| Daemon
-  Daemon --> Canvas
+  Ext -->|"stdio NM"| Daemon
 ```
 
-**Deviations from north-star:** no live Ollama loop in daemon yet; MCP actuators are dry-run; Native Messaging host not registered; iOS Live Activity stub only.
+**Deviations from north-star (still true):** no live Ollama loop in daemon; live Google OAuth unproven; Hidden dock resting state not built; notarized dmg / iOS stub only.
 
 ---
 
 ## 4. Security posture delta
 
-| Item | Status |
-|------|--------|
-| `COURSE_AGENT_POLICY_DEFAULT` | **`deny`** |
-| Confirmation tokens | **`ConfirmationGuard` only** via `_SUBMIT_GUARD.*` |
-| Caller binding | Guard `identity_provider` → `get_request_credentials` + `credential_digest` |
-| `@validate_params` / `coerce_canvas_id` / `assert_no_identity_override` | Present — invariants green |
+| Item | Verified status | Receipt |
+|------|-----------------|---------|
+| `COURSE_AGENT_POLICY_DEFAULT` | **deny** | `get_config().course_agent_policy_default` → `deny`; `env.template` + `baseline.env` |
+| Confirmation tokens | **ConfirmationGuard only** in write path | `grep _issue_token student_write.py` empty; `_SUBMIT_GUARD.issue/check/reserve` |
+| hmac | Only inside `write_confirmation.py` (guard impl) | expected |
+| Two-user root isolation | **Pass** | `tests/core/test_two_user_isolation.py` — separate roots, ledger non-cross, escape rejected |
+| `send_email` | **Hard-blocked** | Returns `{"blocked": true, ...}`; no API call |
+| Tracked secrets | **Clean** | `git ls-files \| grep -iE '\.env$\|\.auth/\|token\.json\|client_secret'` → only `config/overlays/*.env` (non-secret overlays) |
+| Write-skill auto-promote | **Banned** | `test_ban_write_skill_shadow_and_promote` passed |
 
-### Pinned ledger row schema (artifact)
+### Pinned ledger row schema (unchanged)
 
 ```json
 {
@@ -102,26 +109,41 @@ flowchart TB
 }
 ```
 
-`undo_ptr` is `null` for irreversible Canvas submits.
-
 ---
 
 ## 5. De-Jacobize status
 
-**Clean for shipping claims:** `skills/` bodies (no Fall 2026 roster / IBE hardcodes), `TOOL_MANIFEST.json` / `server.json` / **`manifest.json`**, product `README.md` / `CLAUDE.md` / `AGENTS.md`, canvas-session + sync-week user-facing strings (`USER.md`), `schoolLocalDay` + school yaml timezone.
+**Working tree (verified clean for shipping strings):**
 
-**Removed from this product branch:** `dev/`, `.jacob/`, repo `inbox/`, Jacob Cursor rules, `IMPLEMENTATION_REMAINING.md`, `scripts/migrate-dev-user-root.py`. Root `/inbox/` and `/.jacob/` are gitignored.
+```bash
+grep -rn "Jacob\|IBE\|Fall 2026\|APPM 1235\|CSCI1200" skills/ src/ app/src schools/ \
+  manifest.json server.json README.md CLAUDE.md AGENTS.md templates/
+# → no matches
+```
 
-**Intentional CU school tenant (general):** `schools/cu-boulder.yaml` (`course_file_map: []`), `plugins/cu-boulder-campusgroups/` (RSVP requires `--name`; prefs under `{user_root}/calibration/`), `docs/schools/cu-boulder.md`.
+`Jacob Pfeifer` string hits only handoff docs (`architect-brief`, audit prompts).
+
+**RSVP:** `plugins/cu-boulder-campusgroups/rsvp-*.mjs` require `--name`; no Jacob default in call path.
+
+**Product identity:** `tauri.conf.json` `com.productname.student`; Cargo `productname`; package `productname-app`; UA `canvas-mcp/... (https://github.com/productname/canvas-mcp)`.
+
+**Still recoverable on this branch:**
+
+```text
+$ git show 37f38b3:dev/JACOB.md | head -3
+# Jacob Pfeifer — Canvas agent profile
+Personal source of truth for this fork. ...
+```
 
 ---
 
-## 6. Skills + evals
+## 6. Skills + evals (re-run)
 
-| Skill | schema_version | category (default) | 8B structural eval |
-|-------|----------------|--------------------|--------------------|
+| Skill | schema_version | category | Structural eval (this pass) |
+|-------|----------------|----------|-------------------------------|
 | student-assignment-triage | 1 | canvas_read | pass |
 | student-canvas-browser | 1 | canvas_read | pass |
+| student-concept-visual | 1 | canvas_read | pass (**new**; missing from prior table) |
 | student-course-arc | 1 | canvas_read | pass |
 | student-degree-progress | 1 | canvas_read | pass |
 | student-inbox-week | 1 | canvas_read | pass |
@@ -131,84 +153,123 @@ flowchart TB
 | canvas-week-plan | 1 | canvas_read | pass |
 | canvas-discussion-facilitator | 1 | canvas_read | pass |
 
-Write skills were **never** auto-promoted (hard ban tested). Live Llama 3.1 8B Q4 tool-calling eval not run (structural harness only).
+```text
+11/11 structural pass (llama3.1:8b-instruct-q4_K_M structural harness)
+```
+
+Live Ollama tool-call eval not run (`PRODUCTNAME_LIVE_SKILL_EVAL` unset). Write skills never auto-promoted (code + test).
 
 ---
 
-## 7. Permissions + ledger
+## 7. App / UX / NM / OAuth
 
-- Defaults match product matrix (calendar/email draft/triage/photo/sync automatic; submits gated; exams/LTI/proctoring/group/rsvp_paid never).
-- **Counters** in `permissions.yaml`; **skill bodies** on filesystem `skills/`.
-- STOP sets `global_stop_until`; rewind walks `undo_ptr` via `stop_rewind.py`.
+**Exists & verified this pass:**
+
+- Tauri `cargo check` + `cargo build --release` with `CARGO_TARGET_DIR=/tmp/productname-tauri-target`
+- Release binary launches: log `[productname-daemon] tick: boot`
+- Tray menu wired to `daemon::run_canvas_sync` / Quit; left-click → `dock::toggle`
+- `commands.rs` / `dock.rs` / `inbox.rs` wired (not orphaned)
+- Frontend IPC consolidated in `app/src/ipc.ts` (former `dockWindow.ts` removed)
+- Learning-profile onboarding games + Python CLI path
+- NM host framing unit test passes; stable extension ID + install default
+- GCal/Gmail `describe_mode` → `dry-run` without secrets
+
+**Not proven:**
+
+- Tray “Sync now” against a live Canvas SSO session
+- Chrome extension → NM host → `sensors/chrome.jsonl` on a real Chrome profile
+- Live Google OAuth consent / Calendar / Gmail draft round-trip
 
 ---
 
-## 8. App / UX slice
+## 8. Packaging / untracked WIP audit
 
-**Exists:** Top-3 sticky, NarrateAfter, ⌥Space palette UI, approval sheet, onboarding (Ollama progress / cloud-key skip + Sentry opt-in; CU + waitlist school), ledger viewer mock, STOP button, **Tauri Builder + autostart plugin + tray (Sync now / Quit) + cadence loop**.
-
-**Stubbed:** real SSO from Tauri, real Ollama download, Native Messaging host, iOS Live Activity, Stripe charges, Twilio send, notarized .dmg.
+| Path | Verdict |
+|------|---------|
+| `app/src-tauri/src/{commands,dock,inbox}.rs` | **Wired** — keep / commit when Jacob asks |
+| `app/src/ipc.ts`, `learningProfile/*` | **Wired** — keep |
+| `src/canvas_mcp/core/{diagram_gen,learning_profile,topics,connector_guards}.py` (+ CLIs folded into `skill_router` / `learning_profile`) | **Wired + tested** — see architecture-audit |
+| `skills/student-concept-visual/` | **Bundled skill**; structural pass |
+| `docs/design/ambient-dock-ui.md` | **Partially aspirational** (Hidden/auto-peek not built) — labeled |
+| `docs/design/learning-profile.md` | **v1 code exists; v2 research aspirational** — labeled |
+| `.gitignore` | Covers `/inbox/`, `/.jacob/`, `**/auth/google/`, `**/auth/cloud_key` |
 
 ---
 
-## 9. Cut / deferred
+## 9. Cut / deferred / Phase 2
 
 | Item | Notes |
 |------|-------|
-| iOS TestFlight | Stub only — **first cut line honored** |
-| Live GCal/Gmail/EventKit APIs | Dry-run stores; undo_ptr shape correct |
-| Full Tauri packaging / notarized .dmg | Scaffold only |
-| Windows / Safari / voice / class-audio / LTI / teacher | Out of Phase 1 |
+| iOS TestFlight | Stub only |
+| Live GCal/Gmail (proven) | Code ready; smoke escalate |
+| Full Tauri packaging / notarized .dmg | Escalate (Apple cert) |
+| Windows / Safari / voice / LTI / teacher | Out of Phase 1 |
+| Full-automation opt-in | Phase 2 |
+| Skill sharing opt-in | Phase 2 |
 
 ---
 
-## 10. Open risks + recommended next changes
-
-### Must-fix before beta (remaining)
-
-1. ~~Connect two-user isolation smoke (separate user roots + auth dirs).~~ **Done** — `tests/core/test_two_user_isolation.py`.
-2. ~~Replace dry-run GCal/Gmail with real OAuth; keep undo_ptr contract.~~ **Done** — `GOOGLE_OAUTH_CLIENT_SECRETS` + optional `.[google]`; dry-run fallback retained.
-3. ~~Legal: per-school policy sheet in onboarding (CU).~~ **Done** — onboarding step + `schools/*.yaml` `legal_notice`.
-4. ~~Chrome Native Messaging host manifest registration for `com.productname.daemon`.~~ **Done** — `app/native-messaging/`.
-
-### Should-fix
-
-5. ~~Live 8B tool-call evals against Ollama.~~ **Done** — gated by `PRODUCTNAME_LIVE_SKILL_EVAL` (CI stays structural).
-6. ~~Fix plugin RSVP default name still `"Jacob Pfeifer"`.~~ **Done** — `--name` required.
-7. ~~CNAME / pyproject homepage URLs audit (Dockerfile `MCP_SERVER_NAME` → `productname-canvas-mcp`).~~ **Done**.
-8. ~~Exclude root `inbox/` + `.jacob/` from release.~~ **Done** — deleted + gitignored.
-9. ~~Capture-classify hard-coded COURSE_CODES / CU selfie titles.~~ **Done** — school `course_file_map` + generic post-event match.
-
-### Phase 2
-
-10. Full-automation opt-in after clean ledger window.
-11. LTI adapters; Safari extension; Windows; skill sharing opt-in.
-
----
-
-## 11. How to verify locally
+## 10. How to verify locally
 
 ```bash
 # ConfirmationGuard + invariants
-.venv/bin/python -m pytest tests/security/test_student_write_invariants.py \
+PYTHONPATH=src .venv/bin/python -m pytest \
+  tests/security/test_student_write_invariants.py \
   tests/tools/test_student_write.py -q
 
-# Grep gates
-# no _issue_token/_check_token/hmac.new in student_write
-# no APPM 1235|IBE Fall|CSCI1200.md in skills/
-# no JACOB.md|jacob-instructor in browser/scripts
-# manifest.json name productname-canvas-mcp + ~40 tools
+# Full suite (avoid `uv run` — path contains `:`)
+PYTHONPATH=src:mcp-servers .venv/bin/python -m pytest tests/ -q
 
-# Tauri (use CARGO_TARGET_DIR outside repo — path contains ':')
+# OAuth dry-run + describe_mode tools
+PYTHONPATH=src:mcp-servers .venv/bin/python -m pytest \
+  tests/core/test_google_oauth_helpers.py -q
+
+# Tauri
 source "$HOME/.cargo/env"
 cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo build --release
 
-# Optional local user root
-export DEV_USER_ROOT=/tmp/pn-dev SCHOOL_SLUG=cu-boulder
+# Structural skills
+PYTHONPATH=src .venv/bin/python -c "from canvas_mcp.core.skill_eval import eval_all_bundled; \
+  print([(r.skill_id,r.passed) for r in eval_all_bundled()])"
 ```
 
 ---
 
-## Bottom line for architect agent
+## Punch list
 
-De-Jacobize is real in skill **bodies**, inbox-written strings, and removal of Jacob-private corpus from this product branch. ConfirmationGuard and `manifest.json` claims hold under grep/pytest. Tauri **Builder + autostart + tray + cadence** compile and run as a process; actuators OAuth and NM host remain the next integration blockers.
+### Must-fix (blocks beta) — fixed this pass
+
+1. **GCal/Gmail `describe_mode` not reachable as MCP tools** → added; dry-run returns `{"mode":"dry-run",...}`.  
+   Receipt: `PYTHONPATH=src:mcp-servers .venv/bin/python -c "from gcal import server as g; print(g.describe_mode())"` → `{"mode": "dry-run", "actuator": "gcal"}`.
+2. **`send_email` soft string-only block** → now JSON `{blocked:true}` with test.  
+   Receipt: `tests/core/test_google_oauth_helpers.py` (3 passed incl. new test).
+3. **NM template empty `allowed_origins` / no stable extension ID** → fixed key + default ID + template origin.  
+   Receipt: `com.productname.daemon.json` origins `chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/`.
+4. **`COURSE_AGENT_POLICY_DEFAULT` missing from baseline overlay** → added `deny` to `config/overlays/baseline.env`.
+5. **Gate1 noop `or True`** → removed; manifests must not contain `jacob`.
+6. **Cloud key forced at onboarding** (contradicted local-first) → optional skip restored in UI + `save_onboarding`.
+7. **Docs drift** → `architecture.md`, `oauth-smoke.md`, design docs, `deferred.md` updated to match reality.
+8. **Full suite / release build / skill structural eval** re-run and recorded (were unverified claims).
+
+### Escalate (human only)
+
+1. **History purge + force-push** of Jacob corpus blobs — [`history-purge.md`](./history-purge.md). Needs explicit force-push approval.
+2. **Live Google OAuth smoke** — real Desktop client secrets + consent — [`oauth-smoke.md`](./oauth-smoke.md).
+3. **Chrome NM round-trip on a real profile** — load unpacked extension, run `install-macos.sh`, focus Canvas tab, confirm `sensors/chrome.jsonl`.
+4. **True two-device / two-account SSO smoke** — beyond `test_two_user_isolation.py`.
+5. **Apple notarization / Stripe / Twilio prod** — paid credentials.
+6. **Product decisions** — pricing, next schools, iOS ship.
+
+### Phase 2 (still accurate)
+
+1. Full-automation opt-in after clean ledger window.
+2. LTI adapters; Safari extension; Windows; skill sharing opt-in.
+3. Ambient dock **Hidden** resting state + auto-peek on narrate-after.
+4. Learning-profile v2 signal hooks wired into live skills (beyond week-plan read).
+
+---
+
+## Bottom line
+
+The previous “must-fix closed” brief was **partially wrong**: ConfirmationGuard + security 97 + skill de-Jacobize in the **working tree** hold; OAuth “Done,” NM “Done,” and “corpus removed from branch” did **not**. This pass fixed the reachable gaps (MCP `describe_mode`, NM stable ID, policy overlay, gate1, onboarding skip, docs) and left history rewrite / live OAuth / real Chrome smoke as escalate-only.
