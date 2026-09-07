@@ -149,8 +149,9 @@ ${notes.map((n) => `- ${n}`).join("\n")}
 ## Agent next steps
 
 1. Read \`USER.md\` and triage this table (Worth / Agent / Ask).
-2. For rows marked external/LTI or assessment — process help only; the student does the tool UI.
-3. Native Canvas text/file submits: only if auto bar + calibrated course; prefer MCP when PAT exists.
+2. For rows marked external/LTI or assessment (Bucket B) — process help only; the student does the tool UI.
+3. Review \`inbox/tool-gaps.md\` for Bucket-A tools without a registry connector — flag only; never auto-build.
+4. Native Canvas text/file submits: only if auto bar + calibrated course; prefer MCP when PAT exists.
 `;
 
 fs.mkdirSync(INBOX_DIR, { recursive: true });
@@ -160,7 +161,7 @@ console.log(`Wrote ${WEEK_PATH}`);
 const courseFiles = writeCourseCatalogFiles(perCourse, { today });
 for (const cf of courseFiles) {
   console.log(
-    `Wrote ${cf.file} (catalog=${cf.catalogCount}, checkpoints=${cf.checkpoints}, syllabus=${cf.syllabus}, policyPages=${cf.policyPages})`
+    `Wrote ${cf.file} (catalog=${cf.catalogCount}, checkpoints=${cf.checkpoints}, syllabus=${cf.syllabus}, policyPages=${cf.policyPages}, tools=${cf.tools ?? 0})`
   );
 }
 

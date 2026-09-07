@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getSchoolConfig, schoolDay } from "./school-config.mjs";
+import { hasConnector, listConnectorsForSchool } from "./connector-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -41,6 +42,48 @@ export const INBOX_DIR = resolveInboxDir();
 export const COURSES_DIR = path.join(INBOX_DIR, "courses");
 export const COURSES_RAW_DIR = path.join(COURSES_DIR, "_raw");
 export const WEEK_PATH = path.join(INBOX_DIR, "week.md");
+export const TOOL_GAPS_PATH = path.join(INBOX_DIR, "tool-gaps.md");
+
+/** Assessment / proctored tooling — Bucket B; never automate. */
+export const ASSESSMENT_TOOL_RE =
+  /webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton|eoc|learningcurve/i;
+
+/** Named assessment tools for inventory labels. */
+const ASSESSMENT_TOOL_NAMES = [
+  { re: /webassign/i, name: "WebAssign", slug: "webassign" },
+  { re: /zybooks/i, name: "ZyBooks", slug: "zybooks" },
+  { re: /play\s*posit/i, name: "PlayPosit", slug: "playposit" },
+  { re: /honorlock/i, name: "Honorlock", slug: "honorlock" },
+  { re: /respondus|lockdown/i, name: "Respondus LockDown", slug: "respondus" },
+  { re: /proctor(?!ed)|proctored/i, name: "Proctoring", slug: "proctoring" },
+  { re: /\bnorton\b/i, name: "Norton", slug: "norton" },
+  { re: /\beoc\b/i, name: "EOC", slug: "eoc" },
+  { re: /learningcurve/i, name: "LearningCurve", slug: "learningcurve" },
+];
+
+/** Read-only / administrative surfaces — Bucket A; registry-eligible only. */
+const ADMIN_TOOL_NAMES = [
+  {
+    re: /campusgroups|cglink\.me|major\s*dinner|ai\s*lab\s*workshop/i,
+    name: "CampusGroups",
+    slug: "campusgroups",
+  },
+  {
+    re: /gradebook|grades?\s*view|check\s*my\s*grades?/i,
+    name: "Gradebook",
+    slug: "gradebook",
+  },
+  {
+    re: /calendar\s*feed|ical|subscribe.{0,24}calendar/i,
+    name: "Calendar feed",
+    slug: "calendar-feed",
+  },
+  {
+    re: /syllabus.*(tool|viewer|external)|external.*syllabus/i,
+    name: "Syllabus tool",
+    slug: "syllabus-tool",
+  },
+];
 
 const POLICY_PAGE_RE =
   /professional|participation|policy|syllabus|grading|integrity|gen\s*ai|expectation/i;
@@ -712,7 +755,9 @@ function formatInstructorProfileBlock(agentBody, policyPages) {
 
 /**
  * Merge sync-owned catalog/checkpoints into inbox/courses/CODE.md.
- * Preserves Theme, Arc notes, Instructor profile (agent), Syllabus, Modules, Worth when present.
+ * Preserves Theme, Arc notes, Weak topics, Instructor profile (agent),
+ * Syllabus, Modules, Worth, Lecture captures when present.
+ * Sync-owned: Checkpoints, Assignment catalog, Tools this semester.
  */
 export function mergeCourseFileContent({
   existingContent,
@@ -720,12 +765,17 @@ export function mergeCourseFileContent({
   catalogRows,
   today,
   syncMeta = {},
+  toolInventory = null,
 }) {
   const existing = String(existingContent || "");
   const header = parseCourseHeader(existing, courseTitle);
   const sections = existing ? existing : "";
   const theme = cleanSectionBody(extractSection(sections, "Theme"), "Theme");
   const arcNotes = cleanSectionBody(extractSection(sections, "Arc notes"), "Arc notes");
+  const weakTopics = cleanSectionBody(
+    extractSection(sections, "Weak topics"),
+    "Weak topics"
+  );
   const lectureCaptures = cleanSectionBody(
     extractSection(sections, "Lecture captures"),
     "Lecture captures"
@@ -771,6 +821,9 @@ export function mergeCourseFileContent({
 
   const themeBlock = isPlaceholderSection(theme) ? "-\n" : `${theme}\n`;
   const arcBlock = isPlaceholderSection(arcNotes) ? "-\n" : `${arcNotes}\n`;
+  const weakBlock = isPlaceholderSection(weakTopics)
+    ? ""
+    : `## Weak topics\n\n${weakTopics}\n\n`;
   const lectureBlock = isPlaceholderSection(lectureCaptures)
     ? ""
     : `## Lecture captures\n\n${lectureCaptures}\n\n`;
@@ -778,6 +831,14 @@ export function mergeCourseFileContent({
     instructorProfile,
     policyPages
   )}\n`;
+
+  const inventory =
+    toolInventory ||
+    aggregateToolInventory(catalogRows || [], {
+      existingSection: extractSection(sections, "Tools this semester"),
+      today: today || schoolLocalDay(),
+    });
+  const toolsBlock = formatToolsSection(inventory);
 
   return `# ${header}
 
@@ -802,9 +863,13 @@ Synced from Canvas \`/api/v1\` (open items, term window). Not the 14d due-list �
 
 ${formatCatalogTable(catalogRows)}
 
+## Tools this semester
+
+${toolsBlock}
+
 ## Arc notes
 
-${arcBlock}${lectureBlock}## Instructor profile
+${arcBlock}${weakBlock}${lectureBlock}## Instructor profile
 
 ${instructorBlock}
 ## Syllabus / agent policy notes
@@ -825,6 +890,8 @@ export function writeCourseCatalogFiles(perCourse, { today } = {}) {
   fs.mkdirSync(COURSES_DIR, { recursive: true });
   fs.mkdirSync(COURSES_RAW_DIR, { recursive: true });
   const written = [];
+  /** @type {{ code: string, courseName: string, tools: object[] }[]} */
+  const inventories = [];
 
   for (const course of perCourse || []) {
     const filePath = resolveCourseFile(course.name, course.code);
@@ -859,12 +926,24 @@ export function writeCourseCatalogFiles(perCourse, { today } = {}) {
       policyPages: course.policyPages || [],
     };
 
+    // Inventory uses all term rows (incl. complete); catalog table stays open-window.
+    const toolInventory = aggregateToolInventory(course.rows || [], {
+      existingSection: extractSection(existing, "Tools this semester"),
+      today: syncDay,
+    });
+    inventories.push({
+      code,
+      courseName: course.name || code,
+      tools: toolInventory,
+    });
+
     const md = mergeCourseFileContent({
       existingContent: existing,
       courseTitle: course.name,
       catalogRows,
       today: syncDay,
       syncMeta,
+      toolInventory,
     });
     fs.writeFileSync(filePath, md, "utf8");
     written.push({
@@ -874,26 +953,237 @@ export function writeCourseCatalogFiles(perCourse, { today } = {}) {
       checkpoints: catalogRows.filter((r) => isCheckpoint(r.title, r.type)).length,
       syllabus: !!course.syllabusPlain,
       policyPages: (course.policyPages || []).length,
+      tools: toolInventory.length,
     });
   }
 
+  writeToolGapsFile(inventories, { today: syncDay });
   return written;
 }
 
-export function classifyOutcomeHint(title, type, description = "") {
+/** @param {unknown} points */
+export function isGradedItem(points) {
+  const n = Number(points);
+  return Number.isFinite(n) && n > 0;
+}
+
+/**
+ * Detect a distinct external tool from sync row fields (no launch-URL fetch).
+ * Bucket is a property of the tool — Bucket B has no trust/override flag.
+ *
+ * @returns {{ name: string, slug: string, bucket: "A"|"B" } | null}
+ */
+export function detectExternalTool(title, type, description = "", points = "") {
+  const blob = `${title || ""} ${type || ""} ${description || ""}`;
+  const typeStr = String(type || "").toLowerCase();
+  const graded = isGradedItem(points);
+
+  for (const entry of ASSESSMENT_TOOL_NAMES) {
+    if (entry.re.test(blob)) {
+      return { name: entry.name, slug: entry.slug, bucket: "B" };
+    }
+  }
+  if (ASSESSMENT_TOOL_RE.test(blob)) {
+    return { name: "Assessment LTI", slug: "assessment-lti", bucket: "B" };
+  }
+
+  // Graded external_tool is assessment-shaped even without a known vendor name.
+  if (typeStr === "external_tool" && graded) {
+    return {
+      name: "External tool (graded)",
+      slug: "external-tool-graded",
+      bucket: "B",
+    };
+  }
+
+  for (const entry of ADMIN_TOOL_NAMES) {
+    if (entry.re.test(blob)) {
+      return { name: entry.name, slug: entry.slug, bucket: "A" };
+    }
+  }
+
+  if (typeStr === "external_tool") {
+    return {
+      name: "External tool",
+      slug: "external-tool",
+      bucket: "A",
+    };
+  }
+
+  return null;
+}
+
+/** Thin wrapper: bucket assignment only (`A` | `B` | null). */
+export function classifyToolBucket(title, type, description = "", points = "") {
+  return detectExternalTool(title, type, description, points)?.bucket ?? null;
+}
+
+/**
+ * Aggregate distinct tools from catalog/universe rows.
+ * Preserves earlier first-seen dates from a prior Tools section when present.
+ */
+export function aggregateToolInventory(rows, { existingSection = "", today } = {}) {
+  const syncDay = today || schoolLocalDay();
+  const prior = parseToolsFirstSeen(existingSection);
+  /** @type {Map<string, { name: string, slug: string, bucket: "A"|"B", count: number, firstSeen: string }>} */
+  const bySlug = new Map();
+
+  for (const row of rows || []) {
+    const tool = detectExternalTool(
+      row.title,
+      row.type,
+      row.description,
+      row.points
+    );
+    if (!tool) continue;
+    const dueDay = row.due ? schoolLocalDay(new Date(row.due)) : syncDay;
+    const candidateSeen = /^\d{4}-\d{2}-\d{2}$/.test(dueDay) ? dueDay : syncDay;
+    const prev = bySlug.get(tool.slug);
+    if (!prev) {
+      const remembered = prior.get(tool.slug);
+      bySlug.set(tool.slug, {
+        name: tool.name,
+        slug: tool.slug,
+        bucket: tool.bucket,
+        count: 1,
+        firstSeen: remembered || candidateSeen,
+      });
+    } else {
+      prev.count += 1;
+      if (candidateSeen < prev.firstSeen) prev.firstSeen = candidateSeen;
+      // Bucket B wins if the same slug ever looks assessment-shaped.
+      if (tool.bucket === "B") prev.bucket = "B";
+    }
+  }
+
+  return [...bySlug.values()].sort((a, b) => {
+    if (a.bucket !== b.bucket) return a.bucket.localeCompare(b.bucket);
+    return a.name.localeCompare(b.name);
+  });
+}
+
+/** @param {string} sectionBody */
+export function parseToolsFirstSeen(sectionBody) {
+  /** @type {Map<string, string>} */
+  const map = new Map();
+  for (const line of String(sectionBody || "").split("\n")) {
+    const m = line.match(
+      /^\|\s*([^|]+?)\s*\|\s*([AB])\s*\|\s*\d+\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|/
+    );
+    if (!m) continue;
+    const name = m[1].trim();
+    const firstSeen = m[3];
+    const slug = slugifyToolName(name);
+    if (slug && !map.has(slug)) map.set(slug, firstSeen);
+  }
+  return map;
+}
+
+function slugifyToolName(name) {
+  const known = [...ASSESSMENT_TOOL_NAMES, ...ADMIN_TOOL_NAMES].find(
+    (e) => e.name.toLowerCase() === String(name || "").toLowerCase()
+  );
+  if (known) return known.slug;
+  return String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Sync-owned markdown for ## Tools this semester. */
+export function formatToolsSection(inventory) {
+  const header =
+    "Discovery-only (no launch URLs followed). Bucket B = escape hatch only; Bucket A = registry-eligible when a reviewed connector exists — never auto-build.\n\n" +
+    "| Tool | Bucket | Count | First seen |\n|------|--------|-------|------------|";
+  if (!inventory?.length) {
+    return `${header}\n| (none detected) | | | |`;
+  }
+  return [
+    header,
+    ...inventory.map(
+      (t) =>
+        `| ${escCell(t.name)} | ${t.bucket} | ${t.count} | ${escCell(t.firstSeen)} |`
+    ),
+  ].join("\n");
+}
+
+/**
+ * Flag Bucket-A tools with no registry entry. Does not write or fetch code.
+ * @param {{ code: string, courseName: string, tools: object[] }[]} inventories
+ */
+export function writeToolGapsFile(inventories, { today } = {}) {
+  const syncDay = today || schoolLocalDay();
+  const schoolSlug = getSchoolConfig().slug || "";
+  /** @type {Map<string, { name: string, slug: string, courses: Set<string> }>} */
+  const gaps = new Map();
+
+  for (const inv of inventories || []) {
+    for (const tool of inv.tools || []) {
+      if (tool.bucket !== "A") continue;
+      if (hasConnector(tool.slug, schoolSlug)) continue;
+      const key = tool.slug;
+      let entry = gaps.get(key);
+      if (!entry) {
+        entry = { name: tool.name, slug: tool.slug, courses: new Set() };
+        gaps.set(key, entry);
+      }
+      entry.courses.add(inv.code || inv.courseName || "?");
+    }
+  }
+
+  const registered = listConnectorsForSchool(schoolSlug)
+    .map((c) => `- \`${c.id}\` → \`${c.pluginDir}\``)
+    .join("\n");
+
+  const gapRows = [...gaps.values()].sort((a, b) => a.name.localeCompare(b.name));
+  const table =
+    gapRows.length > 0
+      ? [
+          "| Tool | Courses | Notes |",
+          "|------|---------|-------|",
+          ...gapRows.map(
+            (g) =>
+              `| ${escCell(g.name)} | ${escCell([...g.courses].sort().join(", "))} | No connector in registry — flag only; do not auto-build |`
+          ),
+        ].join("\n")
+      : "_None — every Bucket-A tool detected this sync has a registry entry (or none detected)._";
+
+  const md = `# Tool connector gaps
+
+Updated: ${syncDay}
+
+Bucket-A tools from course inventories with **no** matching entry in the static connector registry (\`browser/scripts/lib/connector-registry.mjs\`).
+
+Agent action: flag only (this file). Do **not** fetch, write, or execute connector code. A maintainer may add \`plugins/{school}/{tool}/\` via reviewed PR — see \`plugins/README.md\`.
+
+## Gaps
+
+${table}
+
+## Registered Bucket-A connectors (${schoolSlug || "school"})
+
+${registered || "_None registered for this school._"}
+`;
+
+  fs.mkdirSync(INBOX_DIR, { recursive: true });
+  fs.writeFileSync(TOOL_GAPS_PATH, md, "utf8");
+  return { path: TOOL_GAPS_PATH, gapCount: gapRows.length };
+}
+
+export function classifyOutcomeHint(title, type, description = "", points = "") {
   const blob = `${title || ""} ${type || ""}`.toLowerCase();
   const typeStr = String(type || "").toLowerCase();
   const descHtml = String(description || "").toLowerCase();
 
-  if (
-    /webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton/.test(
-      blob
-    ) ||
-    typeStr === "external_tool" ||
-    /eoc|learningcurve/.test(blob)
-  ) {
-    return "outcome:lti; external/LTI — browser+student; never auto";
+  const tool = detectExternalTool(title, type, description, points);
+  if (tool?.bucket === "B") {
+    return `outcome:lti; bucket:B; tool:${tool.name}; external/LTI — browser+student; never auto`;
   }
+  // Bucket A admin tools that are not CampusGroups signup flows.
+  if (tool?.bucket === "A" && tool.slug !== "campusgroups") {
+    return `outcome:external-admin; bucket:A; tool:${tool.name}; registry-eligible — flag gap if no connector; never auto-build`;
+  }
+
   if (/\bquiz\b|exam|midterm|final/.test(blob)) {
     return "outcome:quiz; assessment — student only";
   }
@@ -912,7 +1202,7 @@ export function classifyOutcomeHint(title, type, description = "") {
   if (externalSignup) {
     let outcome = "outcome:signup-external";
     if (uploadAfter) outcome += "+upload-after-event";
-    let extra = "rsvp:CampusGroups";
+    let extra = "bucket:A; tool:CampusGroups; rsvp:CampusGroups";
     if (uploadAfter) extra += "; canvas_submit:post-dinner selfie";
     return `${outcome}; ${extra}`;
   }

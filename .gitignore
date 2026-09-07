@@ -136,6 +136,10 @@ browser/.auth/
 browser/.auth-gcp/
 browser/node_modules/
 
+# Onboarding / OAuth secrets if DEV_USER_ROOT points inside the repo
+**/auth/cloud_key
+**/auth/google/
+
 # Per-user memory lives under {user_root}; never commit local forks of these
 /inbox/
 /.jacob/
