@@ -3,6 +3,7 @@ name: student-instructor-profile
 description: Build and maintain per-course instructor grading and behavior preferences from Canvas (syllabus, rubrics, policy pages, announcements) plus external faculty research. Use when the student asks how a professor grades, what they value, professor preferences, or before drafting written/discussion/reflection work.
 schema_version: 1
 category: canvas_read
+model_tier: reliable
 requires_cloud: false
 ---
 
@@ -12,21 +13,9 @@ Synthesize **how instructors grade** and **how they want students to act** into 
 
 Architecture: [`docs/architecture.md`](../../docs/architecture.md). Assignment use: [`student-assignment-triage`](../student-assignment-triage/SKILL.md).
 
-## Triggers
+## Instructions
 
-- "how does [prof/course] grade" / "professor preferences" / "what does [instructor] care about"
-- Before a full draft on written, discussion, reflection, presentation script, or case work
-- After sync when `Syllabus hash` in course MD changed vs last profile `Profile updated:` date
-- The student asks for a full instructor breakdown
-
-## Prerequisites
-
-1. Read [`USER.md`](../../USER.md)
-2. Resolve course → `inbox/courses/CODE.md` (fuzzy-match utterance to enrollments / `inbox/courses/*.md` / `list_courses` — see [`student-course-arc`](../student-course-arc/SKILL.md))
-3. If inbox stale (>2 days) or syllabus hash missing → `cd browser && npm run sync` (after `open-canvas` if needed)
-4. Read `inbox/courses/_raw/CODE-syllabus.txt` when present (sync cache)
-
-## Cache rules
+### Cache rules
 
 Use existing profile when **all** are true:
 
@@ -39,7 +28,7 @@ If `Syllabus hash` is `(pending sync)` or validate-profiles flags missing `(syll
 
 Otherwise refresh.
 
-## Post-grade feedback (optional)
+### Post-grade feedback (optional)
 
 When the student shares graded work with instructor comments:
 
@@ -47,7 +36,7 @@ When the student shares graded work with instructor comments:
 2. Bump `Profile updated:` date
 3. Note in `### Confidence and gaps` what was learned
 
-## Data sources (priority order)
+### Data sources (priority order)
 
 | Priority | Source | How |
 |----------|--------|-----|
@@ -66,8 +55,6 @@ When the student shares graded work with instructor comments:
 4. External never justifies violating integrity or AI policy
 5. Tag bullets: `(syllabus)`, `(assignment: Title)`, `(announcement)`, `(inferred)`, `(external, unverified)`
 6. Multiple teachers → list all; note section/TA uncertainty
-
-## Steps
 
 ### 1. Gather Canvas text
 
@@ -152,6 +139,34 @@ Profile updated: … | Syllabus hash: …
 ### Apply on next assignment
 One sentence: the single most important preference for open work right now.
 ```
+
+## Context
+
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. Resolve course → `inbox/courses/CODE.md` (fuzzy-match utterance to enrollments / `inbox/courses/*.md` / `list_courses` — see [`student-course-arc`](../student-course-arc/SKILL.md))
+3. If inbox stale (>2 days) or syllabus hash missing → `cd browser && npm run sync` (after `open-canvas` if needed)
+4. Read `inbox/courses/_raw/CODE-syllabus.txt` when present (sync cache)
+5. `schools/{slug}.yaml` faculty search domain for external research only
+
+## Tools available
+
+Read only. No submit tools from this skill. Writes are limited to `## Instructor profile` in the course file.
+
+- `get_assignment_details` — rubric / description for high-stakes items
+- `get_syllabus` — syllabus when the sync cache is missing
+- `get_page_content` — policy pages from the synced URL list
+- `list_announcements` — grading clarifications from the last 30 days
+- `get_my_submission` — graded comments when the student has graded work
+- `list_courses` — resolve the course when the name is ambiguous
+
+## Triggers
+
+- "how does [prof/course] grade" / "professor preferences" / "what does [instructor] care about"
+- Before a full draft on written, discussion, reflection, presentation script, or case work
+- After sync when `Syllabus hash` in course MD changed vs last profile `Profile updated:` date
+- The student asks for a full instructor breakdown
 
 ## Hand-offs
 

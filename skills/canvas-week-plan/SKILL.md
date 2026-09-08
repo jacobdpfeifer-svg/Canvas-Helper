@@ -3,6 +3,7 @@ name: canvas-week-plan
 description: Build a weekly plan and schedule from inbox/week.md (after sync). Triages with USER.md. Use for "what's due this week", "plan my week", "weekly check", "schedule my assignments" — not raw inbox file maintenance.
 schema_version: 1
 category: canvas_read
+model_tier: fast
 requires_cloud: false
 ---
 
@@ -12,22 +13,15 @@ Generate the student’s weekly plan from the **single due-list contract** (`inb
 
 Architecture: [`docs/architecture.md`](../../docs/architecture.md).
 
-## Prerequisites
-
-- Follow [`../_SESSION.md`](../_SESSION.md)
-- Read `calibration/calibrated-courses.md`
-- Courses = `{active_courses}` from inbox / MCP `list_courses` — never a hard-coded roster
-- Read the **Learning profile** section of `USER.md` ([schema](../../docs/design/learning-profile.md)) — priors, not fixed labels
-
-## Steps
+## Instructions
 
 ### 1. Load memory
 
-After session boot: if MCP PAT works **and** inbox is still stale, you may call `get_my_upcoming_assignments` — then **write results into inbox**. Do not maintain a second informal list.
+After session boot: if MCP PAT works **and** inbox is still stale, you may call `get_my_upcoming_assignments` — then **write results into inbox**. Do not maintain a second informal list. Do not paste the full week file into this prompt; use the supplied inbox slice.
 
 ### 2. Gather extras
 
-- Course notes: `inbox/courses/*.md`
+- Course notes: `inbox/courses/*.md` for the courses named in this turn's slice
 - Optional MCP: grades / peer reviews / submission status when PAT is up
 
 ### 3. Triage
@@ -77,3 +71,30 @@ Quick stats → Worth your time → External/LTI → Agent can handle → Ask �
 ## Goal lens
 
 Flag team/pitch/project/build work that matches career priorities in `USER.md` early.
+
+## Context
+
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. `{user_root}/inbox/week.md` — due-list rows for this turn (volatile slice, already supplied)
+3. Read `calibration/calibrated-courses.md`
+4. Read `calibration/priority-rubric.md`
+5. Courses = `{active_courses}` from the supplied slice / MCP `list_courses` — never a hard-coded roster
+6. Learning profile is already in the stable prefix ([schema](../../docs/design/learning-profile.md)) — priors, not fixed labels. Do not re-paste `USER.md`.
+7. Optional: `inbox/courses/*.md` for courses in this turn's slice
+
+## Tools available
+
+Read only. No submit tools from this skill.
+
+- `get_my_upcoming_assignments` — only if PAT works and the inbox is still stale; write results into inbox, do not keep a second list
+- Grades / peer reviews / submission status — optional read when PAT is up
+- Do not auto-submit — hand off native Canvas submit to `student-assignment-triage`
+
+## Triggers
+
+- what's due this week
+- plan my week
+- weekly check
+- schedule my assignments

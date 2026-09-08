@@ -233,6 +233,12 @@ def test_compact_from_ledger_applies_explicit_signals_only(user_root: Path) -> N
     assert ledger.read_text(encoding="utf-8").count("\n") == 3
 
 
+def test_cli_has_no_compact_subcommand() -> None:
+    """Replay stays unwired until learning_signal writers and a watermark exist."""
+    with pytest.raises(SystemExit):
+        lp_cli_main(["compact"])
+
+
 def test_cli_save_includes_check_depth(user_root: Path, capsys: pytest.CaptureFixture[str]) -> None:
     rc = lp_cli_main(
         [

@@ -1,17 +1,14 @@
-"""Skill eval harness — each active skill must pass on small local models.
+"""Skill eval harness — structural checks, optional live provider probe.
 
 Marks ``requires_cloud: true`` skills as skipped for local eval.
 
-Set ``PRODUCTNAME_LIVE_SKILL_EVAL=1`` to attempt a live Ollama tool-call probe
-(``OLLAMA_HOST``, default ``http://127.0.0.1:11434``). CI stays structural.
+Set ``PRODUCTNAME_LIVE_SKILL_EVAL=1`` to probe the provider that production
+would use for that skill's tier. CI stays structural and offline.
 """
 
 from __future__ import annotations
 
-import json
 import os
-import urllib.error
-import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -34,59 +31,46 @@ def _live_eval_enabled() -> bool:
     )
 
 
-def _ollama_chat(model: str, prompt: str) -> str | None:
-    host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
-    payload = json.dumps(
-        {
-            "model": model,
-            "stream": False,
-            "messages": [{"role": "user", "content": prompt}],
-        }
-    ).encode("utf-8")
-    req = urllib.request.Request(
-        f"{host}/api/chat",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
-        return None
-    message = data.get("message") or {}
-    content = message.get("content")
-    return str(content) if content else None
-
-
-def _live_tool_call_probe(skill: SkillMeta, model: str) -> EvalResult | None:
+def _live_tool_call_probe(skill: SkillMeta) -> EvalResult | None:
     """Optional live probe — returns None to keep structural result."""
     if not _live_eval_enabled():
         return None
-    prompt = (
-        f"You are evaluating skill `{skill.skill_id}`.\n"
-        f"Description: {skill.description}\n"
+    from .prompt_assembly import run_skill_turn
+    from .user_root import resolve_user_root
+
+    trigger = (
+        f"Evaluate skill `{skill.skill_id}`. "
         "Reply with exactly one line: TOOL_OK if you can follow the skill, "
         "else TOOL_FAIL."
     )
-    content = _ollama_chat(model, prompt)
-    if content is None:
+    try:
+        root = resolve_user_root("dev", create=True)
+    except ValueError:
         return EvalResult(
             skill.skill_id,
             False,
             True,
-            "live eval skipped — Ollama unreachable",
+            "live eval skipped — no user root",
         )
+    result = run_skill_turn(skill, root, trigger)
+    if getattr(result, "error", None) or not getattr(result, "content", None):
+        return EvalResult(
+            skill.skill_id,
+            False,
+            True,
+            "live eval skipped — provider unreachable",
+        )
+    content = result.content
     ok = "TOOL_OK" in content.upper()
     return EvalResult(
         skill.skill_id,
         ok,
         False,
-        "live ollama ok" if ok else f"live ollama failed: {content[:120]}",
+        "live provider ok" if ok else f"live provider failed: {content[:120]}",
     )
 
 
-def eval_skill(skill_md: Path, *, model: str = "llama3.1:8b-instruct-q4_K_M") -> EvalResult:
+def eval_skill(skill_md: Path, *, model: str | None = None) -> EvalResult:
     """Structural eval (schema + category + prompt budget). LLM live eval optional."""
     try:
         skill = load_skill(skill_md)
@@ -107,10 +91,11 @@ def eval_skill(skill_md: Path, *, model: str = "llama3.1:8b-instruct-q4_K_M") ->
     if not skill.description:
         return EvalResult(skill.skill_id, False, False, "missing description")
 
-    live = _live_tool_call_probe(skill, model)
+    live = _live_tool_call_probe(skill)
     if live is not None:
         return live
-    return EvalResult(skill.skill_id, True, False, f"structural ok for {model}")
+    label = model or "configured-provider"
+    return EvalResult(skill.skill_id, True, False, f"structural ok for {label}")
 
 
 def eval_all_bundled(skills_root: Path | None = None) -> list[EvalResult]:

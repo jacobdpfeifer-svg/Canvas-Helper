@@ -3,20 +3,16 @@
 Anthropic / Hermes / agentskills.io compatible. Every skill MUST declare
 ``schema_version`` in frontmatter; unsupported versions are refused.
 
-Intent match: embedding cosine over skill docs with keyword-overlap fallback.
+Intent match: explicit trigger metadata, then embedding cosine, then keyword overlap.
 Low confidence / ambiguous top-2 is logged for a later small-LLM escalate hedge
 (not implemented here).
 """
 
 from __future__ import annotations
 
-import json
 import math
-import os
 import re
 import time
-import urllib.error
-import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -41,6 +37,20 @@ WRITE_SKILL_CATEGORIES = frozenset(
         "canvas_group",
         "canvas_exam_proctored",
         "calendar_delete",
+    }
+)
+
+# Judgment, vision, or ConfirmationGuard-adjacent skills. Missing frontmatter
+# still pins these; write categories always upgrade to reliable.
+RELIABLE_SKILL_IDS = frozenset(
+    {
+        "student-course-arc",
+        "student-instructor-profile",
+        "student-assignment-triage",
+        "canvas-discussion-facilitator",
+        "student-concept-visual",
+        "student-photo-intake",
+        "student-degree-progress",
     }
 )
 
@@ -71,6 +81,7 @@ class SkillMeta:
     requires_cloud: bool
     path: Path
     body: str
+    model_tier: str = "fast"
     frontmatter: dict[str, Any] = field(default_factory=dict)
     provisional: bool = False
 
@@ -84,14 +95,27 @@ class RouteResult:
     skill: SkillMeta | None
     scores: list[tuple[str, float]]
     ambiguous: bool
-    method: str  # embedding | keyword | none
+    method: str  # structured | embedding | keyword | none
     query_embedding: list[float] | None = None
+    model_tier: str | None = None
 
 
 _FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n(.*)$", re.DOTALL)
 _TRIGGERS_RE = re.compile(
     r"^##\s+Triggers?\s*\n(.*?)(?=\n##\s|\Z)", re.DOTALL | re.IGNORECASE
 )
+
+
+def resolve_model_tier(skill_id: str, category: str, frontmatter: dict[str, Any]) -> str:
+    """One tier per skill. Write categories always win over frontmatter."""
+    if category in WRITE_SKILL_CATEGORIES:
+        return "reliable"
+    raw = str(frontmatter.get("model_tier") or "").strip().lower()
+    if raw in ("fast", "reliable"):
+        return raw
+    if skill_id in RELIABLE_SKILL_IDS:
+        return "reliable"
+    return "fast"
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, Any], str]:
@@ -117,16 +141,18 @@ def load_skill(path: Path, *, provisional: bool = False) -> SkillMeta:
             f"(got {schema_version!r}, supported={sorted(SUPPORTED_SCHEMA_VERSIONS)})"
         )
     skill_id = path.parent.name
+    category = str(fm.get("category") or "canvas_read")
     return SkillMeta(
         skill_id=skill_id,
         name=str(fm.get("name") or skill_id),
         description=str(fm.get("description") or ""),
         schema_version=schema_version,
-        category=str(fm.get("category") or "canvas_read"),
+        category=category,
         requires_cloud=str(fm.get("requires_cloud") or "false").lower()
         in ("1", "true", "yes"),
         path=path,
         body=body,
+        model_tier=resolve_model_tier(skill_id, category, fm),
         frontmatter=fm,
         provisional=provisional,
     )
@@ -253,37 +279,73 @@ def embed_rank(
     return top or list(items)
 
 
-def ollama_embed(
-    text: str,
-    *,
-    model: str | None = None,
-    host: str | None = None,
-    timeout: float = 15.0,
-) -> list[float] | None:
-    """Fetch an embedding from local Ollama. Returns None if unreachable."""
-    host = (host or os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")).rstrip(
-        "/"
-    )
-    model = model or os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text")
-    payload = json.dumps({"model": model, "prompt": text}).encode("utf-8")
-    req = urllib.request.Request(
-        f"{host}/api/embeddings",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
-        return None
-    emb = data.get("embedding")
-    if not isinstance(emb, list) or not emb:
-        return None
-    try:
-        return [float(x) for x in emb]
-    except (TypeError, ValueError):
-        return None
+_QUOTE_RE = re.compile(r"""["“”']([^"“”']{2,})["“”']""")
+
+
+def _normalize_phrase(text: str) -> str:
+    text = text.lower().replace("’", "'").replace("“", '"').replace("”", '"')
+    text = re.sub(r"\[[^\]]*\]", " ", text)
+    text = re.sub(r"\{[^}]*\}", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _phrase_tokens(phrase: str) -> list[str]:
+    cleaned = _normalize_phrase(phrase).strip(" .")
+    return [tok for tok in re.findall(r"[a-z0-9']+", cleaned) if tok]
+
+
+def _phrase_matches(query: str, phrase: str) -> int:
+    """Return token length if ``phrase`` appears in ``query``, else 0."""
+    tokens = _phrase_tokens(phrase)
+    if len(tokens) < 2:
+        return 0
+    pattern = r"\b" + r"\s+".join(re.escape(tok) for tok in tokens) + r"\b"
+    if re.search(pattern, _normalize_phrase(query)):
+        return len(tokens)
+    return 0
+
+
+def explicit_trigger_phrases(skill: SkillMeta) -> list[str]:
+    """Quoted and bullet phrases from ``## Triggers``, plus quoted description."""
+    phrases: list[str] = []
+    triggers = _TRIGGERS_RE.search(skill.body or "")
+    if triggers:
+        for line in triggers.group(1).splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            bullet = re.sub(r"^[-*]\s*", "", stripped)
+            quoted = _QUOTE_RE.findall(bullet)
+            if quoted:
+                phrases.extend(quoted)
+                continue
+            for part in re.split(r"\s+/\s+", bullet):
+                part = part.strip(" -")
+                if part:
+                    phrases.append(part)
+    phrases.extend(_QUOTE_RE.findall(skill.description or ""))
+    name = (skill.name or "").strip()
+    if name:
+        phrases.append(name)
+    skill_id = skill.skill_id.replace("-", " ")
+    if skill_id and skill_id != name.lower():
+        phrases.append(skill_id)
+    return phrases
+
+
+def structured_hit_score(skill: SkillMeta, trigger: str) -> int:
+    """Specificity score for an explicit metadata hit. 0 means no match."""
+    best = 0
+    for phrase in explicit_trigger_phrases(skill):
+        best = max(best, _phrase_matches(trigger, phrase))
+    return best
+
+
+def _provider_embed(text: str) -> list[float] | None:
+    """Fast-tier embeddings. Blank key returns None — no local server."""
+    from .llm_provider import get_provider
+
+    return get_provider("fast").embed(text)
 
 
 def _keyword_scores(skills: list[SkillMeta], trigger: str) -> list[tuple[float, SkillMeta]]:
@@ -307,6 +369,12 @@ def filter_candidates(
     return [s for s in skills if not s.requires_cloud]
 
 
+def _with_tier(result: RouteResult) -> RouteResult:
+    if result.skill is not None:
+        result.model_tier = result.skill.model_tier
+    return result
+
+
 def route_skill(
     skills: list[SkillMeta],
     trigger: str,
@@ -316,16 +384,29 @@ def route_skill(
     cosine_min: float = COSINE_MIN,
     cosine_margin: float = COSINE_MARGIN,
 ) -> RouteResult:
-    """Rank skills for ``trigger``; prefer embeddings, else keyword overlap."""
+    """Rank skills: explicit trigger metadata, then embeddings, else keywords."""
     candidates = filter_candidates(skills, allow_cloud=allow_cloud)
     if not candidates or not trigger.strip():
         return RouteResult(None, [], False, "none")
 
-    embed_fn = embedder if embedder is not None else ollama_embed
+    structured_scores = []
+    for skill in candidates:
+        score = structured_hit_score(skill, trigger)
+        if score:
+            structured_scores.append((score, skill))
+    winner, pool = structured_narrow(candidates, structured_scores)
+    if winner is not None:
+        ordered = sorted(
+            structured_scores, key=lambda item: (-item[0], item[1].skill_id)
+        )
+        score_pairs = [(skill.skill_id, float(score)) for score, skill in ordered]
+        return _with_tier(RouteResult(winner, score_pairs, False, "structured"))
+
+    embed_fn = embedder if embedder is not None else _provider_embed
     query_emb = embed_fn(trigger)
     if query_emb is not None:
         scored: list[tuple[float, SkillMeta]] = []
-        for skill in candidates:
+        for skill in pool:
             doc_emb = embed_fn(skill_doc(skill))
             if doc_emb is None:
                 continue
@@ -339,13 +420,15 @@ def route_skill(
             )
             score_pairs = [(s.skill_id, float(sc)) for sc, s in scored]
             if ambiguous:
-                return RouteResult(
-                    None, score_pairs, True, "embedding", query_emb
+                return _with_tier(
+                    RouteResult(None, score_pairs, True, "embedding", query_emb)
                 )
-            return RouteResult(best, score_pairs, False, "embedding", query_emb)
+            return _with_tier(
+                RouteResult(best, score_pairs, False, "embedding", query_emb)
+            )
 
     # Keyword fallback (also used when embeddings unavailable).
-    kw = _keyword_scores(candidates, trigger)
+    kw = _keyword_scores(pool, trigger)
     if not kw:
         return RouteResult(None, [], False, "none", query_emb)
     score_pairs = [(s.skill_id, float(sc)) for sc, s in kw]
@@ -353,8 +436,10 @@ def route_skill(
     best_score, best = kw[0]
     ambiguous = len(kw) > 1 and kw[1][0] == best_score
     if ambiguous:
-        return RouteResult(None, score_pairs, True, "keyword", query_emb)
-    return RouteResult(best, score_pairs, False, "keyword", query_emb)
+        return _with_tier(
+            RouteResult(None, score_pairs, True, "keyword", query_emb)
+        )
+    return _with_tier(RouteResult(best, score_pairs, False, "keyword", query_emb))
 
 
 def select_skill(
@@ -420,10 +505,42 @@ def route_intent(
                     "router_scores": result.scores[:10],
                     "router_ambiguous": result.ambiguous,
                     "allow_cloud": allow_cloud,
+                    "model_tier": result.model_tier,
                 },
             ),
         )
     return result
+
+
+def execute_intent(
+    trigger: str,
+    *,
+    user_root: Path | None = None,
+    allow_cloud: bool = False,
+    embedder: EmbedFn | None = None,
+    log: bool = True,
+    provider: Any | None = None,
+) -> tuple[RouteResult, Any | None]:
+    """Route, then run the matched skill through prompt_assembly.chat_assembled."""
+    result = route_intent(
+        trigger,
+        user_root=user_root,
+        allow_cloud=allow_cloud,
+        embedder=embedder,
+        log=log,
+    )
+    if result.skill is None or user_root is None:
+        return result, None
+    from .prompt_assembly import run_skill_turn
+
+    chat = run_skill_turn(
+        result.skill,
+        user_root,
+        trigger,
+        provider=provider,
+        embedder=embedder,
+    )
+    return result, chat
 
 
 def bundled_skills_dir() -> Path:
@@ -438,6 +555,7 @@ def main(argv: list[str] | None = None) -> int:
 
         python -m canvas_mcp.core.skill_router "what should I do first"
         DEV_USER_ROOT=/tmp/pn python -m canvas_mcp.core.skill_router --json "plan my week"
+        python -m canvas_mcp.core.skill_router --execute --json "what should I do first"
     """
     import argparse
     import json
@@ -468,6 +586,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Override user root (else DEV_USER_ROOT / default)",
     )
+    parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="After routing, run the matched skill through cache-ordered prompt assembly",
+    )
     args = parser.parse_args(argv)
     trigger = " ".join(args.trigger).strip()
     root = args.user_root
@@ -477,22 +600,43 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError:
             root = None
 
-    result = route_intent(
-        trigger,
-        user_root=root,
-        allow_cloud=args.allow_cloud,
-        log=not args.no_log and root is not None,
-    )
+    chat = None
+    if args.execute:
+        if root is None:
+            print("user root required to execute", file=sys.stderr)
+            return 1
+        result, chat = execute_intent(
+            trigger,
+            user_root=root,
+            allow_cloud=args.allow_cloud,
+            log=not args.no_log,
+        )
+    else:
+        result = route_intent(
+            trigger,
+            user_root=root,
+            allow_cloud=args.allow_cloud,
+            log=not args.no_log and root is not None,
+        )
     payload = {
         "skill_id": result.skill.skill_id if result.skill else None,
         "method": result.method,
         "ambiguous": result.ambiguous,
         "scores": result.scores[:8],
+        "model_tier": result.model_tier,
     }
+    if args.execute:
+        payload["content"] = getattr(chat, "content", "") if chat else ""
+        payload["error"] = getattr(chat, "error", None) if chat else "unmatched"
     if args.json:
         print(json.dumps(payload))
+    elif args.execute:
+        print(payload.get("content") or "")
     else:
         print(payload["skill_id"] or "")
+    if args.execute:
+        failed = result.skill is None or chat is None or getattr(chat, "error", None)
+        return 1 if failed else 0
     return 0 if result.skill is not None else 1
 
 

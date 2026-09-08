@@ -3,6 +3,7 @@ name: student-concept-visual
 description: Generate a precise diagram for a math/spatial concept the student is struggling with (tangent lines, derivatives, etc.), from a direct question or a detected weak topic. Use when the student asks to have a concept explained or shown visually.
 schema_version: 1
 category: canvas_read
+model_tier: reliable
 requires_cloud: false
 ---
 
@@ -12,20 +13,7 @@ Emit a **deterministic** matplotlib diagram for a diagram-able math/spatial conc
 
 Requires optional deps: `uv pip install -e '.[diagrams]'` (matplotlib + numpy).
 
-## Prerequisites
-
-1. Read `{user_root}/USER.md` and `calibration/learning-profile.yaml` (for framing only)
-2. If proactive / “why am I struggling” → read matching `{user_root}/inbox/courses/CODE.md` **`## Weak topics`**
-3. Know renderable keys from `canvas_mcp.core.diagram_gen.list_concept_keys()` (today: `tangent_line`, `derivative_slope`, `secant_vs_tangent`, `chain_rule_composition`)
-4. Keyword map: `canvas_mcp.core.topics.CONCEPT_KEYWORDS` / `match_concept_key`
-
-## Triggers
-
-- “explain tangent lines” / “I don’t get derivatives” / “show me a diagram of X”
-- “why am I struggling with X” / low-score follow-up after a briefing
-- Course file has a `## Weak topics` row with a known concept key
-
-## Steps
+## Instructions
 
 ### 1. Resolve concept key
 
@@ -70,6 +58,30 @@ Same pattern as [`canvas-week-plan`](../canvas-week-plan/SKILL.md):
 - `chunk_size: short` → keep prose tight; `long` → allow a slightly fuller walkthrough
 
 Do **not** hide the diagram based on profile fields.
+
+## Context
+
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. Learning profile is already in the stable prefix — framing only; do not re-paste `USER.md` or `calibration/learning-profile.yaml`
+3. If proactive / “why am I struggling” → read matching `{user_root}/inbox/courses/CODE.md` **`## Weak topics`**
+4. Renderable keys from `canvas_mcp.core.diagram_gen.list_concept_keys()` (today: `tangent_line`, `derivative_slope`, `secant_vs_tangent`, `chain_rule_composition`)
+5. Keyword map: `canvas_mcp.core.topics.CONCEPT_KEYWORDS` / `match_concept_key`
+
+## Tools available
+
+Read only. No submit tools from this skill.
+
+- `list_my_assignment_scores` — refresh weak topics when the course file has none
+- `render_concept_diagram` — local diagram renderer, not a Canvas write
+- Never a generative image API for geometric correctness
+
+## Triggers
+
+- “explain tangent lines” / “I don’t get derivatives” / “show me a diagram of X”
+- “why am I struggling with X” / low-score follow-up after a briefing
+- Course file has a `## Weak topics` row with a known concept key
 
 ## Output
 

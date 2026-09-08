@@ -18,6 +18,7 @@ pub struct RouteResultDto {
     pub skill_id: Option<String>,
     pub method: String,
     pub ambiguous: bool,
+    pub model_tier: Option<String>,
     pub raw: String,
 }
 
@@ -182,6 +183,10 @@ pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
             .get("ambiguous")
             .and_then(|v| v.as_bool())
             .unwrap_or(false),
+        model_tier: value
+            .get("model_tier")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
         raw,
     })
 }

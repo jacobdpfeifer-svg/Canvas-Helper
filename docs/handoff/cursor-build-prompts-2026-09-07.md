@@ -303,18 +303,42 @@ restating it.
 
 ## Prompt E: Give compact_from_ledger a manual invocation point (no auto-scheduling)
 
+**Correction (2026-09-07, post-audit):** an earlier pass tried to add a bare
+`compact` CLI subcommand for this and had to revert it — `tests/core/test_learning_profile.py::test_cli_has_no_compact_subcommand`
+already documents why: *"Replay stays unwired until learning_signal writers and a
+watermark exist."* Without a watermark (a persisted marker of what's already been
+compacted), re-running `compact --since X` over an overlapping window double-applies
+the same ledger rows and corrupts `signal_counts`. Do not add a CLI subcommand without
+first adding the watermark — see the updated task below.
+
 ```
 learning_profile.py has compact_from_ledger(user_root, since=...) — it reads recent
 ledger rows, applies only explicit learning_signal entries via record_signal(), and
 returns a CompactSummary(applied, skipped). It has tests but is currently uncallable
 from outside a Python REPL — no CLI, no Tauri command, nothing.
 
-Add ONE way to invoke it manually:
+First, add a watermark so this is safe to run more than once:
+- Persist "last compacted timestamp" somewhere in the student's user_root (a small
+  file, e.g. `{user_root}/.learning_profile_compact_watermark`, or a field on the
+  profile itself — match whatever persistence pattern user_root.py already uses
+  elsewhere in this repo, don't invent a new one). compact_from_ledger should read
+  the watermark as the default `since` when none is passed explicitly, and advance it
+  to "now" after a successful run, so re-running with no arguments never re-applies
+  the same rows. An explicit `--since` should still be allowed to override it (for a
+  deliberate replay), but the default path must be idempotent.
+- Update/add a test proving: two consecutive no-argument compact calls apply each
+  ledger row exactly once combined, not once each.
+
+Then add ONE way to invoke it manually:
 - learning_profile.py already has a CLI (main() with argparse, subcommands "save" and
   "signal" — see around line 388). Add a third subcommand, e.g.
   `python -m canvas_mcp.core.learning_profile compact [--since ISO_TIMESTAMP]`, that
   calls compact_from_ledger and prints the CompactSummary (respect the existing
   --json flag pattern already in this CLI).
+- Update or remove tests/core/test_learning_profile.py::test_cli_has_no_compact_subcommand
+  — it currently asserts this subcommand does NOT exist, written before the watermark
+  existed. Once the watermark lands, replace it with a test that the subcommand exists
+  and is idempotent (see above), don't just delete it.
 
 Do NOT:
 - Wire this into daemon.rs's cadence loop or any scheduled/cron path.

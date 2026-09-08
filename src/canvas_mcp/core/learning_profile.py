@@ -314,7 +314,9 @@ def compact_from_ledger(
     Append-only ledger is not rewritten. Only rows with
     ``learning_signal: {field, value, delta?}`` are applied, via
     :func:`record_signal` — never inferred from skill/outcome/why.
-    Not wired to a schedule; call manually.
+    Not a CLI, daemon, Tauri, or request-path caller. Replay is not
+    idempotent: there is no applied-watermark, and nothing writes
+    ``learning_signal`` yet. Do not schedule this until both exist.
     """
     from .ledger import Ledger
 
@@ -398,6 +400,11 @@ def main(argv: list[str] | None = None) -> int:
             --field practice_format --value retrieval --delta 1
 
         DEV_USER_ROOT=/tmp/pn python -m canvas_mcp.core.learning_profile show --json
+
+    ``compact_from_ledger`` exists but is deliberately not exposed here yet: without a
+    watermark, replaying an overlapping ``--since`` window would double-apply the same
+    ``learning_signal`` rows and corrupt signal_counts. Call it directly from Python
+    (or add a CLI subcommand together with a watermark file) once that's designed.
     """
     import argparse
     import json

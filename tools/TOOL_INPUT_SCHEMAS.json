@@ -1,0 +1,1265 @@
+{
+  "comment_on_my_submission": {
+    "additionalProperties": false,
+    "properties": {
+      "assignment_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas assignment ID"
+      },
+      "comment": {
+        "description": "The comment text",
+        "type": "string"
+      },
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "assignment_id",
+      "comment"
+    ],
+    "type": "object"
+  },
+  "download_course_file": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "file_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas file ID"
+      },
+      "save_directory": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Local directory to save to (default: system temp dir, must exist)"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "file_id"
+    ],
+    "type": "object"
+  },
+  "get_assignment_details": {
+    "additionalProperties": false,
+    "properties": {
+      "assignment_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas assignment ID"
+      },
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "assignment_id"
+    ],
+    "type": "object"
+  },
+  "get_conversation_details": {
+    "additionalProperties": false,
+    "properties": {
+      "auto_mark_read": {
+        "default": true,
+        "description": "Mark as read when viewed",
+        "type": "boolean"
+      },
+      "conversation_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Conversation ID"
+      },
+      "include_messages": {
+        "default": true,
+        "description": "Include all messages",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "conversation_id"
+    ],
+    "type": "object"
+  },
+  "get_course_content_overview": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_modules": {
+        "default": true,
+        "description": "Include modules and their items (default: True)",
+        "type": "boolean"
+      },
+      "include_pages": {
+        "default": true,
+        "description": "Include pages information (default: True)",
+        "type": "boolean"
+      },
+      "include_syllabus": {
+        "default": true,
+        "description": "Include syllabus content (default: True)",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "get_course_details": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "get_course_structure": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_unpublished": {
+        "default": true,
+        "description": "Include unpublished modules and items (default: True)",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "get_discussion_entry_details": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "entry_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion entry ID"
+      },
+      "include_replies": {
+        "default": true,
+        "description": "Fetch and include replies (default: True)",
+        "type": "boolean"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id",
+      "entry_id"
+    ],
+    "type": "object"
+  },
+  "get_discussion_topic_details": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id"
+    ],
+    "type": "object"
+  },
+  "get_discussion_with_replies": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_replies": {
+        "default": false,
+        "description": "Fetch detailed replies for all entries (default: False)",
+        "type": "boolean"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id"
+    ],
+    "type": "object"
+  },
+  "get_front_page": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "get_my_course_grades": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+  },
+  "get_my_enrollments": {
+    "additionalProperties": false,
+    "properties": {
+      "include_concluded": {
+        "default": false,
+        "description": "Also include concluded/completed courses\n(default False = active courses only).",
+        "type": "boolean"
+      }
+    },
+    "type": "object"
+  },
+  "get_my_peer_reviews_todo": {
+    "additionalProperties": false,
+    "properties": {
+      "assignment_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Canvas assignment ID to check directly, bypassing\nthe per-course discovery scan. Use this when you already know which\nassignment has your peer review \u2014 the discovery scan only queries\nassignments whose \"peer_reviews\" flag came back true on the course's\nassignment listing, so an assignment where that flag is missing or\nstale for any reason would otherwise be silently skipped."
+      },
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Course code or Canvas ID (omit for all courses).\nRequired if assignment_identifier is given."
+      }
+    },
+    "type": "object"
+  },
+  "get_my_profile": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+  },
+  "get_my_submission": {
+    "additionalProperties": false,
+    "properties": {
+      "assignment_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas assignment ID"
+      },
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "assignment_id"
+    ],
+    "type": "object"
+  },
+  "get_my_submission_status": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Course code or Canvas ID (omit for all courses)"
+      }
+    },
+    "type": "object"
+  },
+  "get_my_todo_items": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+  },
+  "get_my_upcoming_assignments": {
+    "additionalProperties": false,
+    "properties": {
+      "days": {
+        "default": 7,
+        "description": "Number of days to look ahead (default: 7)",
+        "type": "integer"
+      }
+    },
+    "type": "object"
+  },
+  "get_page_content": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "page_url_or_id": {
+        "description": "Page URL slug or page ID",
+        "type": "string"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "page_url_or_id"
+    ],
+    "type": "object"
+  },
+  "get_page_details": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "page_url_or_id": {
+        "description": "Page URL slug or page ID",
+        "type": "string"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "page_url_or_id"
+    ],
+    "type": "object"
+  },
+  "get_syllabus": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "max_chars": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Optional positive cap on the returned characters per\nsection. When exceeded, the content is truncated with an explicit\n\"[truncated...]\" marker. Defaults to None (no truncation)."
+      },
+      "output_format": {
+        "default": "text",
+        "description": "\"text\" (plain text, default), \"html\" (raw HTML body),\nor \"both\" (plain text followed by raw HTML)",
+        "type": "string"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "get_unread_count": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+  },
+  "list_announcements": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "description": "Course code or Canvas ID",
+        "type": "string"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "list_assignments": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "list_conversations": {
+    "additionalProperties": false,
+    "properties": {
+      "filter_ids": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Conversation IDs to filter by"
+      },
+      "filter_mode": {
+        "default": "and",
+        "description": "\"and\" or \"or\" for filter_ids",
+        "type": "string"
+      },
+      "include_all_ids": {
+        "default": false,
+        "description": "Include all participant IDs",
+        "type": "boolean"
+      },
+      "include_participants": {
+        "default": true,
+        "description": "Include participant info",
+        "type": "boolean"
+      },
+      "scope": {
+        "default": "unread",
+        "description": "\"unread\", \"starred\", \"sent\", \"archived\", or \"all\"",
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "list_course_files": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "order": {
+        "default": "desc",
+        "description": "\"asc\" or \"desc\" (default: desc)",
+        "type": "string"
+      },
+      "search_term": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Filter files by name"
+      },
+      "sort": {
+        "default": "updated_at",
+        "description": "Sort field: name, size, created_at, updated_at, content_type (default: updated_at)",
+        "type": "string"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "list_courses": {
+    "additionalProperties": false,
+    "properties": {
+      "include_all": {
+        "default": false,
+        "description": "Include all enrollments instead of only current active ones.",
+        "type": "boolean"
+      },
+      "include_concluded": {
+        "default": false,
+        "description": "Include concluded/past enrollments in the results.",
+        "type": "boolean"
+      }
+    },
+    "type": "object"
+  },
+  "list_discussion_entries": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_full_content": {
+        "default": false,
+        "description": "Fetch full content for each entry (default: False)",
+        "type": "boolean"
+      },
+      "include_replies": {
+        "default": false,
+        "description": "Fetch replies for each entry (default: False)",
+        "type": "boolean"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id"
+    ],
+    "type": "object"
+  },
+  "list_discussion_topics": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_announcements": {
+        "default": false,
+        "description": "Also list the course's announcements\nalongside its discussion topics (default: False). Each entry is\nlabelled \"Type: Announcement\" or \"Type: Discussion\".",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "list_module_items": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_content_details": {
+        "default": true,
+        "description": "Include additional content details (default: True)",
+        "type": "boolean"
+      },
+      "module_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "The module ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "module_id"
+    ],
+    "type": "object"
+  },
+  "list_modules": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "include_items": {
+        "default": false,
+        "description": "Include summary of items in each module",
+        "type": "boolean"
+      },
+      "search_term": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Filter modules by name"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "list_my_assignment_scores": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Course code or Canvas ID (omit for all courses)"
+      }
+    },
+    "type": "object"
+  },
+  "list_pages": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "order": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": "asc",
+        "description": "'asc' or 'desc'"
+      },
+      "published": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Filter by published status (None for all)"
+      },
+      "search_term": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Filter pages containing this term"
+      },
+      "sort": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": "title",
+        "description": "Sort by 'title', 'created_at', or 'updated_at'"
+      }
+    },
+    "required": [
+      "course_identifier"
+    ],
+    "type": "object"
+  },
+  "mark_conversations_read": {
+    "additionalProperties": false,
+    "properties": {
+      "conversation_ids": {
+        "description": "List of conversation IDs to mark as read",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "conversation_ids"
+    ],
+    "type": "object"
+  },
+  "mark_module_item_done": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "item_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas module item ID"
+      },
+      "module_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas module ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "module_id",
+      "item_id"
+    ],
+    "type": "object"
+  },
+  "post_discussion_entry": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "message": {
+        "description": "Entry message content",
+        "type": "string"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id",
+      "message"
+    ],
+    "type": "object"
+  },
+  "read_course_file": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "file_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas file ID"
+      },
+      "max_size_mb": {
+        "default": 25.0,
+        "description": "Maximum file size in MB to read (default: 25). Clamped server-side to\nREAD_FILE_MAX_SIZE_MB (default 100). Files larger than the effective limit are\nrejected to avoid excessive memory usage.",
+        "type": "number"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "file_id"
+    ],
+    "type": "object"
+  },
+  "reply_to_discussion_entry": {
+    "additionalProperties": false,
+    "properties": {
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "entry_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion entry ID to reply to"
+      },
+      "message": {
+        "description": "Reply message content",
+        "type": "string"
+      },
+      "topic_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Discussion topic ID"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "topic_id",
+      "entry_id",
+      "message"
+    ],
+    "type": "object"
+  },
+  "search_canvas_tools": {
+    "additionalProperties": false,
+    "properties": {
+      "detail_level": {
+        "default": "signatures",
+        "description": "\"names\", \"signatures\" (recommended), or \"full\"",
+        "enum": [
+          "names",
+          "signatures",
+          "full"
+        ],
+        "type": "string"
+      },
+      "query": {
+        "default": "",
+        "description": "Search term to filter tools (empty = all)",
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "submit_assignment": {
+    "additionalProperties": false,
+    "properties": {
+      "assignment_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Canvas assignment ID"
+      },
+      "body": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "HTML/text content for online_text_entry"
+      },
+      "comment": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Optional comment to include with the submission"
+      },
+      "confirmation_token": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Token from the preview call; omit to preview"
+      },
+      "course_identifier": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "description": "Course code or Canvas ID"
+      },
+      "file_contents": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Inline files as [{\"name\": ..., \"content_base64\": ...}]"
+      },
+      "file_paths": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Local file paths (local stdio servers only, any file type)"
+      },
+      "submission_type": {
+        "description": "online_text_entry, online_url, or online_upload",
+        "type": "string"
+      },
+      "url": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "URL for online_url"
+      }
+    },
+    "required": [
+      "course_identifier",
+      "assignment_id",
+      "submission_type"
+    ],
+    "type": "object"
+  }
+}
