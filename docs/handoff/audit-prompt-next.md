@@ -24,8 +24,11 @@ A finding at this level is not "line 42 has a hardcoded string." It's "these two
 3. **No refactor theater.** Renaming files, moving code between directories, or extracting an interface with one implementation is not a structural fix unless it actually removes duplication, clarifies an owning module, or cuts a real dependency.
 4. **Justify every subsystem's right to exist.** For each major module/directory, you should be able to state in one sentence what it owns and why nothing else could own it. If you can't, that's a finding.
 5. **Weigh against the stated scope in [`CLAUDE.md`](../../CLAUDE.md) and `docs/architecture.md`.** Educator tools, hosted Azure, and quiz-taking automation are permanently out — flag anything that's silently rebuilding toward them, even partially.
-6. **Every structural change needs a before/after**: what owned this concern before, what owns it now, and the test/build command proving nothing broke.
-7. **Don't trade macro problems for macro risk.** A restructure that touches security invariants (ConfirmationGuard, tenant isolation, permissions defaults) needs the existing security test suite green before and after, not just "looks equivalent."
+6. **Category claims need a fresh tree grep, not a file list.** If a finding says a *category* of content is gone (educator/grading, quiz-solving, hosted Azure, a duplicated concern), re-grep the whole affected tree yourself before writing "swept" or "removed." Naming the files you already deleted is not a sweep. `examples/common_issues.md` survived a pass that claimed educator residue was fully swept because the pass never re-grepped `examples/`.
+7. **Watch for same-window pairs before adding a module.** The common miss is two things landing together that are one concern (`skill_route.py` / `skill_router.py`, `learning_profile_cli.py` / `learning_profile.py`, three actuator servers reinventing one gate). Before adding a CLI next to a library, a second provider module, or a daemon spawn that bypasses the existing gate, merge or delete. Model-provider is the live instance of this risk: one factory (`llm_provider.get_provider`), chat only through `prompt_assembly.chat_assembled` / `chat_skill`. Do not add `llm_provider_cli.py`, a second chat call site, or a fourth actuator protocol.
+8. **Every structural change needs a before/after**: what owned this concern before, what owns it now, and the test/build command proving nothing broke.
+9. **Don't trade macro problems for macro risk.** A restructure that touches security invariants (ConfirmationGuard, tenant isolation, permissions defaults) needs the existing security test suite green before and after, not just "looks equivalent."
+10. **Do not re-open unsigned product calls or the pre-ship walk as code work.** Open decisions and the human verification list live in [`pre-ship-decisions.md`](./pre-ship-decisions.md). Escalate-only stays escalate-only until Jacob signs.
 
 ### Escalate-only list (propose the change, do NOT execute it)
 
@@ -33,7 +36,7 @@ A finding at this level is not "line 42 has a hardcoded string." It's "these two
 - Anything requiring a real paid credential you don't have.
 - Anything that would delete or rewrite the *design* of a subsystem the user hasn't reviewed yet (as opposed to consolidating an already-agreed design's implementation).
 
-Propose these with a one-paragraph rationale and a rough diff-shape, and stop there.
+Propose these with a one-paragraph rationale and a rough diff-shape, and stop there. If the item is already a row in [`pre-ship-decisions.md`](./pre-ship-decisions.md), do not re-propose it — point at that file.
 
 ---
 
@@ -42,6 +45,7 @@ Propose these with a one-paragraph rationale and a rough diff-shape, and stop th
 ### 1. Whole-repo shape
 
 - Walk the top-level layout (`AGENTS.md`, `schools/`, `browser/`, `src/canvas_mcp/`, `skills/`, `app/`, `plugins/`, `mcp-servers/`, `docs/`) and ask: does this map cleanly onto the five items in the "Truth path" in `CLAUDE.md`, or has it accreted extra layers? Name anything that doesn't map.
+- Standing out-of-scope grep (do this every pass; do not declare the category closed from a prior file list). Search `examples/`, `skills/`, `docs/`, and `src/` for grading / bulk-grade / quiz-solve / quiz-taking automation / hosted-Azure language. Refusal and "out of scope" mentions are fine; live how-to or educator automation is a leak. Fix the leak; do not restore educator tools.
 - Count and characterize the "routing" logic: `src/canvas_mcp/core/skill_router.py` vs the new untracked `src/canvas_mcp/core/skill_route.py` — read both in full. If they overlap, decide which one is the real implementation and remove the other, updating every caller. Don't leave both "for now."
 - Same treatment for `src/canvas_mcp/core/learning_profile.py` / `learning_profile_cli.py` / `diagram_gen.py` and the new `app/src/components/learningProfile/` — is this one feature with a coherent frontend/backend contract, or two half-built ideas that happened to land in the same window? If the backend and frontend don't actually talk to each other yet, say so and either wire them or park the whole feature behind a clear "not yet integrated" boundary instead of scattering half-pieces across the tree.
 

@@ -28,7 +28,8 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 
 ## Explicitly stub / out of truth path
 
-- **`app/billing/`**, **`app/mobile/`** — Phase-2 placeholders; not wired into the truth path.
+- **`app/billing/`**, **`app/mobile/`** — Phase-2 placeholders; not wired into the truth path. Ship-or-delete is unsigned — see [`docs/handoff/pre-ship-decisions.md`](handoff/pre-ship-decisions.md).
+- **`src/canvas_mcp/`** — optional PAT MCP (truth-path step 4). Identity (track upstream vs ProductName-owned fork) is unsigned; `CHANGELOG.md` is still the upstream canvas-mcp history.
 - **`app/telemetry/`** — opt-in Sentry helper only.
 - **Educator grading / quiz-taking / hosted Azure** — permanently out of scope (see `CLAUDE.md`).
 
