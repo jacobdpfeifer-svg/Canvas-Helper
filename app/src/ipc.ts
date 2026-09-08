@@ -9,6 +9,7 @@ export type RouteResult = {
   skill_id: string | null;
   method: string;
   ambiguous: boolean;
+  model_tier: string | null;
   raw: string;
 };
 

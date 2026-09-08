@@ -3,6 +3,7 @@ name: student-degree-progress
 description: Semester context skill. Maps live Canvas enrollments to transfer notes and career goals from USER.md. Use for "semester overview", "what am I taking", "transfer credits", "am I on track".
 schema_version: 1
 category: canvas_read
+model_tier: reliable
 requires_cloud: false
 ---
 
@@ -10,21 +11,16 @@ requires_cloud: false
 
 Orient the agent to the student’s transfer notes + this-term enrollments. Not a degree audit.
 
-## Prerequisites
-
-- Read [`USER.md`](../../USER.md)
-- Prefer `inbox/week.md` + `inbox/courses/*` (from `npm run sync`). Call MCP `list_courses` / `get_my_enrollments` when API access works.
-
-## Steps
+## Instructions
 
 ### 1. Confirm live enrollments (`{active_courses}`)
 
 Resolve the active set from (in order):
 
 1. MCP `list_courses` (or `get_my_enrollments`) when available
-2. Else course codes/titles from `inbox/week.md` + filenames under `inbox/courses/*.md`
+2. Else course codes/titles from the supplied inbox slice + filenames under `inbox/courses/*.md`
 
-Do **not** hardcode a term roster in this skill. If Canvas differs from notes in `USER.md`, trust Canvas for this-term work and note the delta.
+Do **not** hardcode a term roster in this skill. If Canvas differs from notes in `USER.md`, trust Canvas for this-term work and note the delta. Do not read the full `inbox/week.md` into this prompt.
 
 ### 2. Cross-check transfers
 
@@ -59,11 +55,27 @@ Rank deep-attention courses using career priorities and “Worth by default” /
 2. …
 ```
 
-## Tools
+## Context
 
-| Tool | Purpose |
-|------|---------|
-| `list_courses` / `get_my_enrollments` | Live schedule |
-| `get_course_details` / `get_syllabus` | Policies |
-| `get_my_course_grades` | Standing |
-| `get_course_structure` | Module map when useful |
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. Transfer / credit notes and career priorities in `USER.md` — learning profile is already in the stable prefix; do not re-paste it
+3. `{user_root}/inbox/week.md` + `inbox/courses/*` (from `npm run sync`) — course codes from the supplied slice and course filenames, not a second due-list
+4. `calibration/priority-rubric.md` for goal-fit ranking
+
+## Tools available
+
+Read only. No submit tools from this skill.
+
+- `list_courses` / `get_my_enrollments` — live schedule
+- `get_course_details` / `get_syllabus` — policies
+- `get_my_course_grades` — standing
+- `get_course_structure` — module map when useful
+
+## Triggers
+
+- semester overview
+- what am I taking
+- transfer credits
+- am I on track

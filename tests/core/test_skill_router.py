@@ -9,12 +9,16 @@ import pytest
 
 from canvas_mcp.core.skill_router import (
     SkillMeta,
+    bundled_skills_dir,
     load_skill,
-    main as skill_router_main,
+    resolve_model_tier,
     route_intent,
     route_skill,
     select_skill,
     skill_doc,
+)
+from canvas_mcp.core.skill_router import (
+    main as skill_router_main,
 )
 from canvas_mcp.core.user_root import ensure_user_root
 
@@ -212,4 +216,60 @@ def test_cli_json_routes_bundled_skill(tmp_path, capsys):
 
     payload = json.loads(capsys.readouterr().out)
     assert payload["skill_id"] == "canvas-week-plan"
-    assert payload["method"] in ("keyword", "embedding", "none")
+    assert payload["method"] in ("structured", "keyword", "embedding", "none")
+    assert payload["model_tier"] == "fast"
+
+
+def test_structured_trigger_skips_embedder():
+    skills = [
+        _meta(
+            "canvas-week-plan",
+            description='Use for "plan my week"',
+            body="## Triggers\n\n- plan my week\n",
+        ),
+        _meta("student-task-brief", description="priority brief what first"),
+    ]
+
+    def _boom(_text: str) -> list[float]:
+        raise AssertionError("embedder must not run after a unique metadata hit")
+
+    result = route_skill(skills, "plan my week what is due", embedder=_boom)
+    assert result.method == "structured"
+    assert result.skill is not None
+    assert result.skill.skill_id == "canvas-week-plan"
+    assert result.model_tier == "fast"
+
+
+def test_write_category_forces_reliable_tier(tmp_path):
+    skill_dir = tmp_path / "submit-hw"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: submit-hw\ndescription: submit work\n"
+        "schema_version: 1\ncategory: canvas_submit\n"
+        "model_tier: fast\nrequires_cloud: false\n---\n# x\n",
+        encoding="utf-8",
+    )
+    skill = load_skill(skill_dir / "SKILL.md")
+    assert skill.model_tier == "reliable"
+    assert resolve_model_tier("submit-hw", "canvas_submit", {"model_tier": "fast"}) == (
+        "reliable"
+    )
+
+
+def test_degree_progress_loads_reliable():
+    skill = load_skill(bundled_skills_dir() / "student-degree-progress" / "SKILL.md")
+    assert skill.model_tier == "reliable"
+    assert resolve_model_tier("student-degree-progress", "canvas_read", {}) == "reliable"
+
+
+def test_frontmatter_model_tier_loads(tmp_path):
+    skill_dir = tmp_path / "student-course-arc"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: student-course-arc\ndescription: course arc\n"
+        "schema_version: 1\ncategory: canvas_read\n"
+        "model_tier: reliable\nrequires_cloud: false\n---\n# arc\n",
+        encoding="utf-8",
+    )
+    skill = load_skill(skill_dir / "SKILL.md")
+    assert skill.model_tier == "reliable"

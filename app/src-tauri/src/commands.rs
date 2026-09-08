@@ -56,7 +56,7 @@ pub fn save_onboarding(school_slug: String, cloud_key: String) -> Result<(), Str
         return Err("school slug is required".into());
     }
     inbox::save_school_slug(&school_slug)?;
-    // Cloud key is optional — a blank key means no key is stored.
+    // Cloud key is optional. A blank key stores nothing — there is no local-model path.
     if !cloud_key.trim().is_empty() {
         inbox::save_cloud_key(&cloud_key)?;
     }

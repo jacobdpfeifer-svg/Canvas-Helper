@@ -3,6 +3,7 @@ name: student-task-brief
 description: Goal-oriented priority, briefing, and first step for the student's Canvas work. Use for "priority", "brief me", "what should I do first", "optimize my time", "what matters", or a single-assignment deep dive.
 schema_version: 1
 category: canvas_read
+model_tier: fast
 requires_cloud: false
 ---
 
@@ -82,20 +83,18 @@ Template: dated Top-3 cache under `{user_root}/inbox/focus.md` (not a second due
 
 ## Context
 
-Do not paste the inbox here — this turn’s slice is supplied after the learning profile.
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
 
 1. Follow [`../_SESSION.md`](../_SESSION.md)
-2. Read `calibration/priority-rubric.md`
-3. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
+2. `{user_root}/inbox/week.md` — due-list rows for this turn (volatile slice, already supplied)
+3. Read `calibration/priority-rubric.md`
+4. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
 
 ## Tools available
 
 Read only. No submit tools from this skill.
 
-- `{user_root}/inbox/week.md` — due-list rows for this turn (volatile slice)
-- `{user_root}/inbox/focus.md` — optional dated Top-3 cache
-- `calibration/priority-rubric.md` — P0–P3 rubric
-- Native auto-submit only via `student-assignment-triage` when every `USER.md` criterion passes
+Native auto-submit only via `student-assignment-triage` when every `USER.md` criterion passes.
 
 ## Triggers
 

@@ -3,6 +3,7 @@ name: student-course-arc
 description: Course-scoped learning arc — theme, checkpoints, priority-ordered assignments with learn/build-on/autonomy. Use when the student names a class ("brief me on [course]", "course arc for [dept]").
 schema_version: 1
 category: canvas_read
+model_tier: reliable
 requires_cloud: false
 ---
 
@@ -14,36 +15,20 @@ Week-wide priority stays on [`student-task-brief`](../student-task-brief/SKILL.m
 
 Architecture: [`docs/architecture.md`](../../docs/architecture.md). Rubric: [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md). Triage: [`student-assignment-triage`](../student-assignment-triage/SKILL.md).
 
-## Prerequisites
+## Instructions
 
-1. Read [`USER.md`](../../USER.md) and `calibration/priority-rubric.md`
-2. Read `{user_root}/inbox/week.md` — open rows for the requested course
-3. Read matching `{user_root}/inbox/courses/CODE.md` — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
-4. If inbox stale (`Updated:` >2 days) or course file missing catalog → `cd browser && npm run sync` (after `open-canvas` if needed)
-5. Optional: fetch assignment description via MCP `get_assignment` / syllabus via `get_syllabus` when PAT exists and titles are opaque
-6. If instructor profile missing or stale → run [`student-instructor-profile`](../student-instructor-profile/SKILL.md) before deep arc on voice/judgment assignments
-
-## Triggers
-
-- "brief me on [course]" / "what's going on in [course]"
-- "course arc" / "learning arc" / "what am I building toward in [course]"
-- "what should I learn from [assignment]" in a course context
-- Any class-named ask that is **not** a week-wide "what's next" (hand off week asks to `student-task-brief`)
-
-## Resolve course
+### Resolve course
 
 Match the student’s utterance to an enrolled course — never a hard-coded stub table:
 
-1. List files under `inbox/courses/*.md` (basename = `CODE`) and titles from `inbox/week.md`
+1. List files under `inbox/courses/*.md` (basename = `CODE`) and titles from the supplied inbox slice
 2. Optionally confirm against MCP `list_courses` when available
 3. Fuzzy-match dept code, number, short title, or nickname the student uses
 4. If ambiguous → ask which course
 
-## Steps
-
 ### 1. Gather rows
 
-- **Open work:** filter `inbox/week.md` table rows for this course (canonical open due-list)
+- **Open work:** filter the supplied inbox slice for this course (canonical open due-list). Do not read the full `inbox/week.md` into this prompt.
 - **Full arc:** read **Assignment catalog** and **Checkpoints** from `inbox/courses/CODE.md`
 - Do **not** treat the catalog as a competing due-list for urgency; `week.md` drives what's due now
 
@@ -107,6 +92,32 @@ For each open item:
 ### 6. Optional — persist arc notes
 
 After a full arc briefing, append or update **Arc notes** in `inbox/courses/CODE.md` with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections.
+
+## Context
+
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile. Do not read the full `inbox/week.md` into this prompt.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. `{user_root}/inbox/week.md` — open rows for the requested course (volatile slice, already supplied)
+3. Read matching `{user_root}/inbox/courses/CODE.md` — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
+4. Read [`USER.md`](../../USER.md) course defaults and `calibration/priority-rubric.md` — learning profile is already in the stable prefix; do not re-paste it
+5. If inbox stale (`Updated:` >2 days) or course file missing catalog → `cd browser && npm run sync` (after `open-canvas` if needed). After sync, still use the supplied slice.
+6. If instructor profile missing or stale → run [`student-instructor-profile`](../student-instructor-profile/SKILL.md) before deep arc on voice/judgment assignments
+
+## Tools available
+
+Read only. No submit tools from this skill. Never auto-submit or take quizzes/exams.
+
+- `list_courses` — confirm the named course when the slice is ambiguous
+- `get_assignment_details` / `get_syllabus` — optional when PAT exists and titles are opaque
+- Do not overwrite sync-owned catalog or checkpoints
+
+## Triggers
+
+- "brief me on [course]" / "what's going on in [course]"
+- "course arc" / "learning arc" / "what am I building toward in [course]"
+- "what should I learn from [assignment]" in a course context
+- Any class-named ask that is **not** a week-wide "what's next" (hand off week asks to `student-task-brief`)
 
 ## Output
 

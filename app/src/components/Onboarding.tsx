@@ -184,8 +184,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       {step === 5 && (
         <>
           <p>
-            Optional cloud API key for assistant calls. Skip this to finish
-            without a key — you can add one later.
+            Optional hosted API key for assistant calls. Skip to finish without
+            a key. You can add one later.
           </p>
           <input
             value={cloudKey}

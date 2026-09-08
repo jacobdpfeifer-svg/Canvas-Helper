@@ -141,6 +141,26 @@ async def test_tool_manifest_matches_registry_exactly():
 
 
 @pytest.mark.asyncio
+async def test_tool_input_schemas_match_registry_exactly():
+    schemas_path = Path(__file__).parent.parent / "tools" / "TOOL_INPUT_SCHEMAS.json"
+    schemas = json.loads(schemas_path.read_text())
+
+    registered = {tool.name for tool in await _registry().list_tools()}
+    schema_names = set(schemas)
+
+    missing = registered - schema_names
+    extra = schema_names - registered
+    assert not missing and not extra, (
+        "tools/TOOL_INPUT_SCHEMAS.json is out of sync with the live registry "
+        "(prompt_assembly.py builds tool specs from this file for every model call):\n"
+        f"  undocumented tools (add a schema): {sorted(missing)}\n"
+        f"  stale schema entries (remove or rename): {sorted(extra)}"
+    )
+    non_object = [name for name, schema in schemas.items() if schema.get("type", "object") != "object"]
+    assert not non_object, f"tool schemas must be object schemas: {non_object}"
+
+
+@pytest.mark.asyncio
 async def test_list_courses_boolean_parameters_have_descriptions():
     async with Client(_registry()) as client:
         tools = {tool.name: tool for tool in await client.list_tools()}

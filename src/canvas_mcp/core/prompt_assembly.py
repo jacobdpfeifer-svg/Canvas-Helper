@@ -7,8 +7,9 @@ Stable prefix first so hosted providers can cache overlapping context:
 3. Learning profile (stable per student)
 4. Volatile last: this turn's inbox slice
 
+``run_skill_turn`` is the only skill-turn entry. It assembles, then
 ``chat_assembled`` is the only path that may call ``LLMProvider.chat``.
-Payload types match that protocol. This module does not implement a provider.
+This module does not implement a provider.
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from .learning_profile import _render_user_md_block, load_learning_profile
+from .llm_provider import ChatMessage, ToolSpec, provider_for_skill
 from .skill_router import (
     EmbedFn,
     SkillMeta,
@@ -28,20 +30,6 @@ from .skill_router import (
     embed_rank,
     structured_narrow,
 )
-
-try:
-    from .llm_provider import ChatMessage, ToolSpec
-except ImportError:  # Prompt A types; assembly payload only.
-    @dataclass
-    class ChatMessage:
-        role: str
-        content: str
-
-    @dataclass
-    class ToolSpec:
-        name: str
-        description: str = ""
-        parameters: dict[str, Any] = field(default_factory=dict)
 
 
 class _ChatProvider(Protocol):
@@ -71,6 +59,8 @@ _OUTCOME_RE = re.compile(r"\boutcome:([a-z_]+)\b", re.IGNORECASE)
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _MANIFEST = _REPO_ROOT / "tools" / "TOOL_MANIFEST.json"
+_SCHEMAS = _REPO_ROOT / "tools" / "TOOL_INPUT_SCHEMAS.json"
+_EMPTY_SCHEMA: dict[str, Any] = {"type": "object", "properties": {}}
 
 
 class ToolListChanged(RuntimeError):
@@ -142,8 +132,28 @@ def load_manifest_tools() -> list[dict[str, Any]]:
     return [item for item in tools if isinstance(item, dict) and item.get("name")]
 
 
+def load_frozen_schemas() -> dict[str, dict[str, Any]]:
+    """Frozen input schemas. Never call live ``list_tools`` at assembly time."""
+    raw = json.loads(_SCHEMAS.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        return {}
+    return {
+        str(name): schema
+        for name, schema in raw.items()
+        if isinstance(schema, dict)
+    }
+
+
+def _schema_for(name: str, schemas: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    schema = schemas.get(name)
+    if not isinstance(schema, dict) or schema.get("type") != "object":
+        return dict(_EMPTY_SCHEMA)
+    return schema
+
+
 def tools_for_skill(skill: SkillMeta) -> list[ToolSpec]:
     """Deterministic tool schemas for a skill. Never live ``list_tools``."""
+    schemas = load_frozen_schemas()
     selected = []
     for item in load_manifest_tools():
         name = str(item["name"])
@@ -158,7 +168,7 @@ def tools_for_skill(skill: SkillMeta) -> list[ToolSpec]:
         ToolSpec(
             name=str(item["name"]),
             description=str(item.get("description") or ""),
-            parameters={},
+            parameters=_schema_for(str(item["name"]), schemas),
         )
         for item in selected
     ]
@@ -320,6 +330,27 @@ def _narrow_rows(
     return ranked, "embedding"
 
 
+def load_catalog_for_trigger(user_root: Path, trigger: str) -> str | None:
+    """Read ``inbox/courses/CODE.md`` when the trigger names a course.
+
+    Basename match on the normalized course code. Missing file means no
+    catalog slice — callers must not stitch inbox text into a prompt.
+    """
+    query = extract_meta_query(trigger)
+    if not query.course:
+        return None
+    courses = Path(user_root) / "inbox" / "courses"
+    if not courses.is_dir():
+        return None
+    needle = _norm_course(query.course)
+    for path in sorted(courses.glob("*.md")):
+        if path.name.startswith("_"):
+            continue
+        if _norm_course(path.stem) == needle:
+            return path.read_text(encoding="utf-8")
+    return None
+
+
 def session_boot_text() -> str:
     path = bundled_skills_dir() / "_SESSION.md"
     return path.read_text(encoding="utf-8")
@@ -361,13 +392,20 @@ def assemble_turn(
     volatile = f"<!-- cache:volatile -->\n{volatile.strip()}\n"
 
     tools_blob = json.dumps(
-        [{"name": tool.name, "description": tool.description} for tool in tools],
+        [
+            {
+                "name": tool.name,
+                "description": tool.description,
+                "parameters": tool.parameters,
+            }
+            for tool in tools
+        ],
         sort_keys=True,
     )
     prefix = f"<!-- cache:tools -->\n{tools_blob}\n{system}\n{profile}"
     messages = [
         ChatMessage(role="system", content=system),
-        ChatMessage(role="system", content=profile),
+        ChatMessage(role="system", content=profile, cache_breakpoint=True),
         ChatMessage(role="user", content=f"{trigger.strip()}\n\n{volatile}"),
     ]
     return AssembledTurn(
@@ -385,3 +423,37 @@ def assemble_turn(
 def chat_assembled(provider: _ChatProvider, turn: AssembledTurn) -> Any:
     """Only supported call into ``LLMProvider.chat``."""
     return provider.chat(turn.messages, turn.tools)
+
+
+def chat_skill(skill: SkillMeta, turn: AssembledTurn) -> Any:
+    """Resolve the provider once for this skill call. Do not re-resolve mid-turn."""
+    provider = provider_for_skill(skill)
+    return chat_assembled(provider, turn)
+
+
+def run_skill_turn(
+    skill: SkillMeta,
+    user_root: Path,
+    trigger: str,
+    *,
+    provider: _ChatProvider | None = None,
+    session: ToolSession | None = None,
+    embedder: EmbedFn | None = None,
+    week_md: str | None = None,
+    catalog_md: str | None = None,
+) -> Any:
+    """Assemble one skill turn and send it. The only production chat entry."""
+    if catalog_md is None:
+        catalog_md = load_catalog_for_trigger(user_root, trigger)
+    turn = assemble_turn(
+        skill,
+        user_root,
+        trigger,
+        week_md=week_md,
+        catalog_md=catalog_md,
+        session=session,
+        embedder=embedder,
+    )
+    if provider is None:
+        return chat_skill(skill, turn)
+    return chat_assembled(provider, turn)
