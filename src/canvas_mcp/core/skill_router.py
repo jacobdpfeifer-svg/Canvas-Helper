@@ -171,6 +171,46 @@ def skill_doc(skill: SkillMeta) -> str:
     return " ".join(p for p in parts if p)
 
 
+def _item_identity(item: Any) -> str:
+    if isinstance(item, SkillMeta):
+        return item.skill_id
+    if isinstance(item, dict):
+        return str(
+            item.get("id")
+            or item.get("assignment")
+            or item.get("name")
+            or item.get("course")
+            or ""
+        )
+    return str(item)
+
+
+def structured_narrow(
+    items: list[Any],
+    scores: list[tuple[int, Any]],
+    *,
+    identity: Callable[[Any], str] | None = None,
+) -> tuple[Any | None, list[Any]]:
+    """Shared structured-filter-first decision (skill routing and inbox slices).
+
+    ``scores`` are ``(hit_count, item)`` for explicit metadata hits only.
+    Returns ``(winner, pool)``:
+
+    - unique top score → that item, pool of one (caller must not embed)
+    - tied leaders → no winner, pool is the tie
+    - no hits → no winner, pool is every item
+    """
+    if not scores:
+        return None, list(items)
+    ident = identity or _item_identity
+    scored = sorted(scores, key=lambda item: (-item[0], ident(item[1])))
+    best = scored[0][0]
+    leaders = [item for score, item in scored if score == best]
+    if len(leaders) == 1:
+        return leaders[0], leaders
+    return None, leaders
+
+
 def _cosine(a: list[float], b: list[float]) -> float:
     if not a or not b or len(a) != len(b):
         return 0.0
@@ -184,6 +224,33 @@ def _cosine(a: list[float], b: list[float]) -> float:
     if na <= 0.0 or nb <= 0.0:
         return 0.0
     return dot / (math.sqrt(na) * math.sqrt(nb))
+
+
+def embed_rank(
+    query: str,
+    items: list[Any],
+    embedder: EmbedFn,
+    text_of: Callable[[Any], str],
+    *,
+    max_keep: int = 12,
+) -> list[Any]:
+    """Rank ``items`` by cosine. Callers must not add a second embedding path."""
+    if not query.strip() or not items:
+        return list(items)
+    query_emb = embedder(query)
+    if not query_emb:
+        return list(items)
+    scored: list[tuple[float, Any]] = []
+    for item in items:
+        emb = embedder(text_of(item))
+        if emb is None:
+            continue
+        scored.append((_cosine(query_emb, emb), item))
+    if not scored:
+        return list(items)
+    scored.sort(key=lambda item: (-item[0], _item_identity(item[1])))
+    top = [item for score, item in scored if score > 0][:max_keep]
+    return top or list(items)
 
 
 def ollama_embed(

@@ -1,0 +1,387 @@
+"""Cache-ordered prompt assembly for one skill turn.
+
+Stable prefix first so hosted providers can cache overlapping context:
+
+1. Tool schemas (frozen for the session; identical across turns)
+2. System: skill instructions + shared session boot
+3. Learning profile (stable per student)
+4. Volatile last: this turn's inbox slice
+
+``chat_assembled`` is the only path that may call ``LLMProvider.chat``.
+Payload types match that protocol. This module does not implement a provider.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Protocol
+
+from .learning_profile import _render_user_md_block, load_learning_profile
+from .skill_router import (
+    EmbedFn,
+    SkillMeta,
+    bundled_skills_dir,
+    embed_rank,
+    structured_narrow,
+)
+
+try:
+    from .llm_provider import ChatMessage, ToolSpec
+except ImportError:  # Prompt A types; assembly payload only.
+    @dataclass
+    class ChatMessage:
+        role: str
+        content: str
+
+    @dataclass
+    class ToolSpec:
+        name: str
+        description: str = ""
+        parameters: dict[str, Any] = field(default_factory=dict)
+
+
+class _ChatProvider(Protocol):
+    def chat(
+        self, messages: list[ChatMessage], tools: list[ToolSpec] | None = None
+    ) -> Any: ...
+
+
+_WRITE_TOOL_NAMES = frozenset(
+    {
+        "submit_assignment",
+        "post_discussion_entry",
+        "reply_to_discussion_entry",
+        "comment_on_my_submission",
+        "mark_module_item_done",
+        "mark_conversations_read",
+    }
+)
+
+_COURSE_RE = re.compile(r"\b([A-Za-z]{2,8})\s*-?\s*(\d{3,5}[A-Za-z]?)\b")
+_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_TYPE_RE = re.compile(
+    r"(?:type:|(?<=\s))(quiz|discussion_topic|discussion|assignment|calendar_event)\b",
+    re.IGNORECASE,
+)
+_OUTCOME_RE = re.compile(r"\boutcome:([a-z_]+)\b", re.IGNORECASE)
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_MANIFEST = _REPO_ROOT / "tools" / "TOOL_MANIFEST.json"
+
+
+class ToolListChanged(RuntimeError):
+    """Tool schemas changed mid-session; that busts the cached prefix."""
+
+
+@dataclass(frozen=True)
+class MetaQuery:
+    course: str | None = None
+    due_on_or_before: str | None = None
+    assignment_type: str | None = None
+    outcome: str | None = None
+
+    @property
+    def has_constraint(self) -> bool:
+        return any(
+            (self.course, self.due_on_or_before, self.assignment_type, self.outcome)
+        )
+
+
+@dataclass
+class AssembledTurn:
+    tools: list[ToolSpec]
+    tools_hash: str
+    messages: list[ChatMessage]
+    system: str
+    profile: str
+    volatile: str
+    prefix: str
+    method: str
+
+    def rendered(self) -> str:
+        return f"{self.prefix}\n<!-- cache:volatile -->\n{self.volatile}"
+
+
+@dataclass
+class ToolSession:
+    """Freeze the tool list the first time a skill category is assembled."""
+
+    _hashes: dict[str, str] = field(default_factory=dict)
+
+    def freeze(self, key: str, tools: list[ToolSpec]) -> str:
+        digest = tools_hash(tools)
+        prior = self._hashes.get(key)
+        if prior is not None and prior != digest:
+            raise ToolListChanged(
+                f"tool list for {key} changed mid-session ({prior} -> {digest})"
+            )
+        self._hashes[key] = digest
+        return digest
+
+
+def tools_hash(tools: list[ToolSpec]) -> str:
+    payload = [
+        {
+            "name": tool.name,
+            "description": tool.description,
+            "parameters": tool.parameters,
+        }
+        for tool in tools
+    ]
+    blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def load_manifest_tools() -> list[dict[str, Any]]:
+    raw = json.loads(_MANIFEST.read_text(encoding="utf-8"))
+    tools = raw.get("tools") or []
+    return [item for item in tools if isinstance(item, dict) and item.get("name")]
+
+
+def tools_for_skill(skill: SkillMeta) -> list[ToolSpec]:
+    """Deterministic tool schemas for a skill. Never live ``list_tools``."""
+    selected = []
+    for item in load_manifest_tools():
+        name = str(item["name"])
+        category = str(item.get("category") or "")
+        if not skill.is_write_skill and (
+            category == "student_write" or name in _WRITE_TOOL_NAMES
+        ):
+            continue
+        selected.append(item)
+    selected.sort(key=lambda item: str(item["name"]))
+    return [
+        ToolSpec(
+            name=str(item["name"]),
+            description=str(item.get("description") or ""),
+            parameters={},
+        )
+        for item in selected
+    ]
+
+
+def _norm_course(value: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", value.lower())
+
+
+def extract_meta_query(text: str) -> MetaQuery:
+    course = None
+    match = _COURSE_RE.search(text or "")
+    if match:
+        course = f"{match.group(1)}{match.group(2)}"
+    due = None
+    date = _DATE_RE.search(text or "")
+    if date:
+        due = date.group(1)
+    assignment_type = None
+    type_match = _TYPE_RE.search(text or "")
+    if type_match:
+        assignment_type = type_match.group(1).lower()
+    outcome = None
+    outcome_match = _OUTCOME_RE.search(text or "")
+    if outcome_match:
+        outcome = outcome_match.group(1).lower()
+    return MetaQuery(
+        course=course,
+        due_on_or_before=due,
+        assignment_type=assignment_type,
+        outcome=outcome,
+    )
+
+
+def _parse_md_table(text: str) -> list[dict[str, str]]:
+    headers: list[str] | None = None
+    rows: list[dict[str, str]] = []
+    for line in text.splitlines():
+        if not line.strip().startswith("|"):
+            headers = None
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if not cells or all(set(cell) <= set("-: ") for cell in cells):
+            continue
+        if headers is None:
+            headers = [cell.lower() for cell in cells]
+            continue
+        if len(cells) < len(headers):
+            continue
+        rows.append({headers[i]: cells[i] for i in range(len(headers))})
+    return rows
+
+
+def _row_text(row: dict[str, str]) -> str:
+    return " ".join(
+        row.get(key, "")
+        for key in ("course", "assignment", "name", "due", "type", "notes", "outcome")
+    )
+
+
+def _metadata_hits(row: dict[str, str], query: MetaQuery) -> int:
+    if not query.has_constraint:
+        return 0
+    hits = 0
+    course = _norm_course(row.get("course", ""))
+    notes = row.get("notes", "")
+    outcome = (row.get("outcome") or "").lower()
+    if not outcome:
+        found = _OUTCOME_RE.search(notes)
+        if found:
+            outcome = found.group(1).lower()
+    if query.course and _norm_course(query.course) in course:
+        hits += 1
+    if query.due_on_or_before:
+        due = (row.get("due") or "")[:10]
+        if due and due <= query.due_on_or_before:
+            hits += 1
+    if query.assignment_type:
+        typ = (row.get("type") or "").lower()
+        if query.assignment_type in typ or query.assignment_type in notes.lower():
+            hits += 1
+    if query.outcome and query.outcome in outcome:
+        hits += 1
+    return hits
+
+
+def _render_rows(rows: list[dict[str, str]], *, title: str) -> str:
+    if not rows:
+        return f"## {title}\n\n(none)\n"
+    headers = list(rows[0].keys())
+    lines = [
+        f"## {title}",
+        "",
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    for row in rows:
+        lines.append("| " + " | ".join(row.get(header, "") for header in headers) + " |")
+    return "\n".join(lines) + "\n"
+
+
+def select_inbox_slice(
+    week_md: str,
+    trigger: str,
+    *,
+    catalog_md: str | None = None,
+    embedder: EmbedFn | None = None,
+    course: str | None = None,
+) -> tuple[str, str]:
+    """Pick the week/catalog rows for this turn.
+
+    Uses :func:`structured_narrow` (the same helper skill routing can use).
+    Embeddings run only when that helper does not narrow the set.
+    """
+    query = extract_meta_query(trigger)
+    if course and not query.course:
+        query = MetaQuery(
+            course=course,
+            due_on_or_before=query.due_on_or_before,
+            assignment_type=query.assignment_type,
+            outcome=query.outcome,
+        )
+    week_rows = _parse_md_table(week_md)
+    picked, method = _narrow_rows(week_rows, trigger, query, embedder=embedder)
+    parts = [_render_rows(picked, title="Inbox slice")]
+    if catalog_md:
+        catalog_rows = _parse_md_table(catalog_md)
+        if query.course:
+            for row in catalog_rows:
+                row.setdefault("course", query.course)
+        catalog_picked, _catalog_method = _narrow_rows(
+            catalog_rows, trigger, query, embedder=embedder
+        )
+        parts.append(_render_rows(catalog_picked, title="Catalog slice"))
+    return "\n".join(parts), method
+
+
+def _narrow_rows(
+    rows: list[dict[str, str]],
+    trigger: str,
+    query: MetaQuery,
+    *,
+    embedder: EmbedFn | None,
+) -> tuple[list[dict[str, str]], str]:
+    scores = [
+        (hits, row)
+        for row in rows
+        if (hits := _metadata_hits(row, query))
+    ]
+    winner, pool = structured_narrow(rows, scores)
+    narrowed = bool(scores) and (winner is not None or len(pool) < len(rows))
+    if narrowed:
+        return pool, "metadata"
+    if embedder is None:
+        return list(rows), "unfiltered"
+    ranked = embed_rank(trigger, rows, embedder, _row_text)
+    if ranked == rows:
+        return list(rows), "unfiltered"
+    return ranked, "embedding"
+
+
+def session_boot_text() -> str:
+    path = bundled_skills_dir() / "_SESSION.md"
+    return path.read_text(encoding="utf-8")
+
+
+def assemble_turn(
+    skill: SkillMeta,
+    user_root: Path,
+    trigger: str,
+    *,
+    week_md: str | None = None,
+    catalog_md: str | None = None,
+    session: ToolSession | None = None,
+    embedder: EmbedFn | None = None,
+) -> AssembledTurn:
+    """Build the cache-ordered prompt for one skill invocation."""
+    tools = tools_for_skill(skill)
+    holder = session if session is not None else ToolSession()
+    digest = holder.freeze(skill.category, tools)
+
+    system = (
+        "<!-- cache:system -->\n"
+        f"# Skill: {skill.skill_id}\n\n"
+        f"{skill.body.strip()}\n\n"
+        f"{session_boot_text().strip()}\n"
+    )
+    profile_block = _render_user_md_block(load_learning_profile(user_root)).strip()
+    profile = f"<!-- cache:profile -->\n{profile_block}\n"
+
+    if week_md is None:
+        week_path = Path(user_root) / "inbox" / "week.md"
+        week_md = week_path.read_text(encoding="utf-8") if week_path.is_file() else ""
+    volatile, method = select_inbox_slice(
+        week_md,
+        trigger,
+        catalog_md=catalog_md,
+        embedder=embedder,
+    )
+    volatile = f"<!-- cache:volatile -->\n{volatile.strip()}\n"
+
+    tools_blob = json.dumps(
+        [{"name": tool.name, "description": tool.description} for tool in tools],
+        sort_keys=True,
+    )
+    prefix = f"<!-- cache:tools -->\n{tools_blob}\n{system}\n{profile}"
+    messages = [
+        ChatMessage(role="system", content=system),
+        ChatMessage(role="system", content=profile),
+        ChatMessage(role="user", content=f"{trigger.strip()}\n\n{volatile}"),
+    ]
+    return AssembledTurn(
+        tools=tools,
+        tools_hash=digest,
+        messages=messages,
+        system=system,
+        profile=profile,
+        volatile=volatile,
+        prefix=prefix,
+        method=method,
+    )
+
+
+def chat_assembled(provider: _ChatProvider, turn: AssembledTurn) -> Any:
+    """Only supported call into ``LLMProvider.chat``."""
+    return provider.chat(turn.messages, turn.tools)

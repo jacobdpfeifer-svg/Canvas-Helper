@@ -12,23 +12,7 @@ Compute **priority**, a high-level **briefing**, and an outcome-shaped **first s
 
 Architecture: [`docs/architecture.md`](../../docs/architecture.md). Rubric: [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md).
 
-## Prerequisites
-
-1. Follow [`../_SESSION.md`](../_SESSION.md)
-2. Read `calibration/priority-rubric.md`
-3. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
-
-## Triggers
-
-- priority / what’s important / what matters
-- brief me / briefing
-- what should I do first / next step
-- optimize my time / time box
-- single-assignment deep dive
-
-**Class-scoped asks** (e.g. “brief me on [course]”, “what’s going on in [dept]”) → hand off to [`student-course-arc`](../student-course-arc/SKILL.md), not week mode below.
-
-## Steps
+## Instructions
 
 ### 1. Classify each open item
 
@@ -95,6 +79,33 @@ When the student asks to **save** or **pin** focus (or week-plan asks to persist
 Write/overwrite `{user_root}/inbox/focus.md` with today’s date, Top 3, and batch queue. Do **not** duplicate the full due table — that stays in `week.md`.
 
 Template: dated Top-3 cache under `{user_root}/inbox/focus.md` (not a second due-list).
+
+## Context
+
+Do not paste the inbox here — this turn’s slice is supplied after the learning profile.
+
+1. Follow [`../_SESSION.md`](../_SESSION.md)
+2. Read `calibration/priority-rubric.md`
+3. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
+
+## Tools available
+
+Read only. No submit tools from this skill.
+
+- `{user_root}/inbox/week.md` — due-list rows for this turn (volatile slice)
+- `{user_root}/inbox/focus.md` — optional dated Top-3 cache
+- `calibration/priority-rubric.md` — P0–P3 rubric
+- Native auto-submit only via `student-assignment-triage` when every `USER.md` criterion passes
+
+## Triggers
+
+- priority / what’s important / what matters
+- brief me / briefing
+- what should I do first / next step
+- optimize my time / time box
+- single-assignment deep dive
+
+**Class-scoped asks** (e.g. “brief me on [course]”, “what’s going on in [dept]”) → hand off to [`student-course-arc`](../student-course-arc/SKILL.md), not week mode below.
 
 ## Output (week mode)
 

@@ -184,13 +184,13 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       {step === 5 && (
         <>
           <p>
-            Optional cloud API key for assistant calls (Anthropic, OpenAI, or
-            compatible). Skip to stay local-first / Ollama-only.
+            Optional cloud API key for assistant calls. Skip this to finish
+            without a key — you can add one later.
           </p>
           <input
             value={cloudKey}
             onChange={(e) => setCloudKey(e.target.value)}
-            placeholder="sk-… or Anthropic key"
+            placeholder="Cloud API key"
             autoComplete="off"
           />
           <button
