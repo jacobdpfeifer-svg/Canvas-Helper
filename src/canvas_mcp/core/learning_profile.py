@@ -287,6 +287,69 @@ def apply_onboarding_answers(
     return profile
 
 
+@dataclass
+class CompactSummary:
+    applied: int
+    skipped: int
+
+
+def _parse_since(value: datetime | str | None) -> datetime | None:
+    if value is None or value == "":
+        return None
+    if isinstance(value, datetime):
+        parsed = value
+    else:
+        parsed = datetime.fromisoformat(str(value))
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def compact_from_ledger(
+    user_root: Path,
+    since: datetime | str | None = None,
+) -> CompactSummary:
+    """Apply explicit ledger ``learning_signal`` rows onto the profile.
+
+    Append-only ledger is not rewritten. Only rows with
+    ``learning_signal: {field, value, delta?}`` are applied, via
+    :func:`record_signal` — never inferred from skill/outcome/why.
+    Not wired to a schedule; call manually.
+    """
+    from .ledger import Ledger
+
+    cutoff = _parse_since(since)
+    applied = 0
+    skipped = 0
+    for row in Ledger(user_root).read_all():
+        if cutoff is not None:
+            ts = _parse_since(row.get("ts"))
+            if ts is None or ts < cutoff:
+                skipped += 1
+                continue
+        signal = row.get("learning_signal")
+        if not isinstance(signal, dict):
+            skipped += 1
+            continue
+        field_name = signal.get("field")
+        value = signal.get("value")
+        delta = signal.get("delta", 1)
+        if (
+            not isinstance(field_name, str)
+            or not isinstance(value, str)
+            or not isinstance(delta, int)
+        ):
+            skipped += 1
+            continue
+        try:
+            record_signal(user_root, field_name, value, delta=delta)
+        except ValueError:
+            skipped += 1
+            continue
+        applied += 1
+    return CompactSummary(applied=applied, skipped=skipped)
+
+
 def record_signal(
     user_root: Path,
     field_name: str,

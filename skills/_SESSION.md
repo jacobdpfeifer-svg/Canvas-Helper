@@ -9,4 +9,6 @@ Skills defer to this file for the common open — do not restate it in full.
 5. External / LTI / proctored work → process help only; the student uses the tool UI.
 6. Native Canvas auto-submit only via [`student-assignment-triage`](student-assignment-triage/SKILL.md) when every criterion passes; always show preview + **why auto**.
 
+Use only the inbox and learning-profile content that bears on the current task. Disregard the rest instead of trying to use everything provided.
+
 Triage buckets (Worth / External / Agent / Ask) live only in `student-assignment-triage` — other skills link there instead of copying the table.
