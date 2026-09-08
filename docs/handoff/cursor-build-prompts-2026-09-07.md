@@ -207,3 +207,131 @@ auto-run unattended without a product decision).
   files as a demonstrated pattern, plus skills/_SESSION.md, plus the new
   learning_profile.py function and its test.
 ```
+
+---
+
+## Status update (2026-09-07, later same night)
+
+A research agent partially implemented pieces of Prompt B ahead of schedule (see commit
+`06187ed`): `src/canvas_mcp/core/prompt_assembly.py` (cache-ordered assembly),
+`structured_narrow`/`embed_rank` in `skill_router.py`, `compact_from_ledger` in
+`learning_profile.py`, and the sectioned-skill-file pattern demonstrated on
+`skills/student-task-brief/SKILL.md`. All of it currently has **zero callers** — nothing
+in the app actually invokes any of it yet. Prompts C, D, E below are the finish-the-wiring
+follow-ups, each scoped to exactly one of the three context-system pieces. They supersede
+the relevant parts of Prompt B (items 1, 2, 5) — don't redo that work, extend it.
+
+---
+
+## Prompt C: Wire cache-ordered prompt assembly as the only assembly path
+
+```
+prompt_assembly.py already exists (src/canvas_mcp/core/prompt_assembly.py) and
+implements the correct ordering — tool schemas, then skill instructions, then learning
+profile, then the volatile inbox slice last, so stable content sits in the cacheable
+prefix. Problem: nothing calls it. Find every place in this codebase that currently
+assembles a prompt/message list for a model call (search skill_router.py, the daemon
+CLI entry points, and anywhere a skill's instructions + profile + inbox content get
+combined into something sent to a model) and route it through
+prompt_assembly.chat_assembled instead of assembling ad hoc.
+
+Do not duplicate the ordering logic anywhere else — if you find a second place
+building a message list by hand, that's a bug to fix, not a second valid pattern.
+
+This depends on llm_provider.py existing (Prompt A item 1) — if that hasn't landed
+yet in this session, implement llm_provider.py's ChatMessage/ToolSpec/chat() surface
+first (prompt_assembly.py already has a fallback shim for these types when the import
+fails — replace the shim usage with the real import once llm_provider.py exists, don't
+leave both).
+
+## Verification
+
+- grep for anywhere a list of messages/prompt content is being hand-assembled outside
+  prompt_assembly.py — there should be none left after this change.
+- Add or update a test that asserts, for one real skill invocation, the actual
+  assembled payload sent toward the provider has tool schemas first, skill+profile
+  content next, and the current inbox slice last — not just that prompt_assembly.py's
+  own unit tests pass in isolation.
+- Full suite green, matching or exceeding current baseline (619 passed, 19 skipped as
+  of commit 06187ed).
+```
+
+---
+
+## Prompt D: Roll out the structured skill-file pattern to the remaining 10 skills
+
+```
+skills/student-task-brief/SKILL.md was converted tonight to a sectioned format
+(## Instructions / ## Context / ## Tools available / ## Triggers) instead of prose,
+because small models follow labeled structure more reliably than freeform text. The
+other 10 bundled skills are still prose-format:
+
+canvas-discussion-facilitator, canvas-week-plan, student-assignment-triage,
+student-canvas-browser, student-concept-visual, student-course-arc,
+student-degree-progress, student-inbox-week, student-instructor-profile,
+student-photo-intake
+
+Convert each to the same section pattern demonstrated in student-task-brief/SKILL.md:
+- ## Instructions — the actual step-by-step procedure (was previously "## Steps" or
+  unlabeled prose)
+- ## Context — what inputs this skill reads and where from (user_root paths,
+  calibration files, etc.), explicitly noting what's supplied as the volatile
+  per-turn slice vs. what the skill should read directly
+- ## Tools available — explicit tool/capability list, including whether this skill
+  can call write/submit tools or is read-only (mirror student-task-brief's "Read
+  only. No submit tools from this skill." pattern for read-only skills)
+- ## Triggers — phrases/intents that route to this skill (skill_router already uses
+  something like this for routing; consolidate, don't duplicate, if a triggers list
+  already exists elsewhere in the file)
+
+Preserve every skill's existing content and behavior exactly — this is a
+reorganization into labeled sections, not a rewrite of what each skill does. Do not
+change schema_version or category unless a section move genuinely requires it. Keep
+each skill's link to skills/_SESSION.md for the shared boot sequence instead of
+restating it.
+
+## Verification
+
+- Full suite green (structural skill eval — eval_all_bundled() — must still report
+  11/11 pass after the conversion, matching the current baseline from
+  docs/handoff/architect-brief.md §6).
+- Diff each converted skill file and confirm no procedural content was dropped, only
+  reorganized under the new headers.
+```
+
+---
+
+## Prompt E: Give compact_from_ledger a manual invocation point (no auto-scheduling)
+
+```
+learning_profile.py has compact_from_ledger(user_root, since=...) — it reads recent
+ledger rows, applies only explicit learning_signal entries via record_signal(), and
+returns a CompactSummary(applied, skipped). It has tests but is currently uncallable
+from outside a Python REPL — no CLI, no Tauri command, nothing.
+
+Add ONE way to invoke it manually:
+- learning_profile.py already has a CLI (main() with argparse, subcommands "save" and
+  "signal" — see around line 388). Add a third subcommand, e.g.
+  `python -m canvas_mcp.core.learning_profile compact [--since ISO_TIMESTAMP]`, that
+  calls compact_from_ledger and prints the CompactSummary (respect the existing
+  --json flag pattern already in this CLI).
+
+Do NOT:
+- Wire this into daemon.rs's cadence loop or any scheduled/cron path.
+- Add a Tauri command or UI button that triggers it automatically.
+- Call it from anywhere in the request-handling path (skill_router, prompt_assembly).
+
+This is intentionally a manual, deliberate action for now — auto-running unattended
+writes to the learning profile is a product decision, not something to default to
+just because the plumbing exists. If you think it should be automatic, say so in your
+summary of this change instead of wiring it — that's a call for the founder to make.
+
+## Verification
+
+- `PYTHONPATH=src .venv/bin/python -m canvas_mcp.core.learning_profile compact
+  --since <some-iso-date>` runs against a test user_root and prints a sensible
+  summary.
+- Full suite green.
+- grep confirms compact_from_ledger has exactly one new caller (the CLI subcommand)
+  and no daemon/Tauri/scheduled callers were added.
+```
