@@ -1,6 +1,8 @@
 # Packaging notes (Phase A prep)
 
-Notarized `.dmg` / distribution signing is **deferred** until Sync → Top3 and the skill router make the app worth installing (plan items 1–2).
+Notarized `.dmg` / distribution signing is **deferred on an unsigned product call**, not because the old code trigger is still unmet.
+
+The previous trigger ("Sync → Top3 and the skill router make the app worth installing") looks close to met: skill router consolidated, skills structural-pass, tray binary boots. That does **not** mean packaging is approved. "Worth installing" is Jacob's call, recorded unsigned in [`pre-ship-decisions.md`](./pre-ship-decisions.md). Do not start notarization, and do not treat this file as stale-by-accident, until that row is signed.
 
 ## Build locally (already documented)
 

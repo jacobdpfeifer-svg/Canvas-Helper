@@ -13,7 +13,7 @@ Every audit pass so far in this repo has been run by an agent grading its own ho
 ### Ground rules
 
 1. **Reproduce, don't read.** For every command a brief claims to have run and every output it quotes, run it yourself, right now, and diff the real output against the quoted one. A brief that quotes a command output you cannot reproduce is a false claim until proven otherwise.
-2. **Check the diff, not the narrative.** For every "consolidated X and Y" or "removed dead code Z" claim, look at the actual git history (`git log`, `git show`, `git diff <range>`) for the commits that pass produced. If the described merge/removal isn't in the diff, the claim is false regardless of how convincing the prose is.
+2. **Check the diff, not the narrative.** For every "consolidated X and Y" or "removed dead code Z" claim, look at the actual git history (`git log`, `git show`, `git diff <range>`) for the commits that pass produced. If the described merge/removal isn't in the diff, the claim is false regardless of how convincing the prose is. For a *category* claim ("educator residue fully swept," "no Ollama chat path left"), re-derive the category boundary yourself and grep the whole affected tree — do not trust the pass's enumeration of which files were in it.
 3. **Check for refactor theater retroactively.** If a prior pass claims to have fixed a structural/macro finding, confirm the fix actually removed duplication or clarified ownership — not just renamed files, added a wrapper, or moved code sideways. Re-read both "before" and "after" if you can reconstruct "before" from git history.
 4. **Check that fixes didn't break what they touched.** Run the full test suite now:
    ```bash
