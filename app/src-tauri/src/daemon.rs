@@ -149,12 +149,43 @@ pub fn run_open_canvas() -> Result<(), String> {
     }
 }
 
+/// Shell `npm run check-session` — headless probe of browser/.auth cookies.
+/// Used by onboarding to skip the sign-in step when a session is already open.
+pub fn run_check_canvas_session() -> Result<bool, String> {
+    tick_log("check-session");
+    let browser = browser_dir();
+    if !browser.is_dir() {
+        return Err(format!("browser dir missing: {}", browser.display()));
+    }
+    let mut cmd = Command::new("npm");
+    cmd.arg("run").arg("check-session").current_dir(&browser);
+    forward_user_env(&mut cmd);
+    let output = cmd
+        .output()
+        .map_err(|e| format!("failed to spawn npm run check-session: {e}"))?;
+    if !output.status.success() {
+        return Err(format!(
+            "npm run check-session exited with {}",
+            output.status
+        ));
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let line = stdout
+        .lines()
+        .rev()
+        .find(|l| l.trim_start().starts_with('{'))
+        .ok_or_else(|| "check-session produced no JSON output".to_string())?;
+    let parsed: Value =
+        serde_json::from_str(line).map_err(|e| format!("bad check-session JSON: {e}"))?;
+    Ok(parsed.get("loggedIn").and_then(Value::as_bool).unwrap_or(false))
+}
+
 /// Call Python skill router CLI; returns structured route result.
 pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
     tick_log("route-intent");
     let output = python_module(
         "canvas_mcp.core.skill_router",
-        &["--json", "--no-log", trigger],
+        &["--json", trigger],
     )
     .output()
     .map_err(|e| format!("failed to spawn skill_router: {e}"))?;

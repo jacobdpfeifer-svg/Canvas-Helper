@@ -184,6 +184,29 @@ def test_bundled_skills_load_and_route_keyword(tmp_path):
     assert (tmp_path / "episodic.db").is_file()
 
 
+def test_route_intent_logs_n_rows_without_no_log(tmp_path):
+    """Non-``--no-log`` path accumulates N rows in episodic.db (daemon default)."""
+    import sqlite3
+
+    ensure_user_root(tmp_path)
+    n = 3
+    for i in range(n):
+        route_intent(
+            f"plan my week what is due #{i}",
+            user_root=tmp_path,
+            embedder=lambda _: None,
+            log=True,
+        )
+    db = tmp_path / "episodic.db"
+    assert db.is_file()
+    con = sqlite3.connect(db)
+    try:
+        count = con.execute("SELECT COUNT(*) FROM requests").fetchone()[0]
+    finally:
+        con.close()
+    assert count == n
+
+
 def test_load_skill_requires_schema(tmp_path):
     skill_dir = tmp_path / "bad-skill"
     skill_dir.mkdir()

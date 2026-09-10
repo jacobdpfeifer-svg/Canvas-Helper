@@ -458,8 +458,30 @@ def assemble_turn(
 
 
 def chat_assembled(provider: _ChatProvider, turn: AssembledTurn) -> Any:
-    """Only supported call into ``LLMProvider.chat``."""
+    """Only supported call into ``LLMProvider.chat`` for skill turns."""
     return provider.chat(turn.messages, turn.tools)
+
+
+def chat_synthesis(
+    *,
+    system: str,
+    user: str,
+    provider: _ChatProvider | None = None,
+    tier: str = "fast",
+) -> Any:
+    """Read-only one-shot synthesis (distill / shadow critic). No tools.
+
+    Builds messages here so call sites never hand-assemble ``ChatMessage``.
+    """
+    from .llm_provider import get_provider
+
+    if provider is None:
+        provider = get_provider(tier)
+    messages = [
+        ChatMessage(role="system", content=system),
+        ChatMessage(role="user", content=user),
+    ]
+    return provider.chat(messages, None)
 
 
 def chat_skill(skill: SkillMeta, turn: AssembledTurn) -> Any:
