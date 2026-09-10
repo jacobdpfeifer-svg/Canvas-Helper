@@ -332,24 +332,41 @@ def compact_from_ledger(
     Append-only ledger is not rewritten. Only rows with
     ``learning_signal: {field, value, delta?}`` are applied, via
     :func:`record_signal` — never inferred from skill/outcome/why.
-    Not a CLI, daemon, Tauri, or request-path caller. Replay is not
-    idempotent: there is no applied-watermark, and nothing writes
-    ``learning_signal`` yet. Do not schedule this until both exist.
+    Not a CLI, daemon, Tauri, or request-path caller.
+
+    Default ``since`` is the persisted
+    ``.learning_profile_compact_watermark`` (unix timestamp). After a
+    successful pass the watermark advances to the max processed row ``ts``.
+    Explicit ``since`` still overrides. Do not schedule unattended until
+    something writes ``learning_signal`` rows.
     """
     from .ledger import Ledger
+    from .watermark import LEARNING_PROFILE_COMPACT, read_watermark, write_watermark
 
-    cutoff = _parse_since(since)
+    explicit = since is not None and since != ""
+    if explicit:
+        cutoff = _parse_since(since)
+    else:
+        wm = read_watermark(user_root, LEARNING_PROFILE_COMPACT)
+        cutoff = (
+            datetime.fromtimestamp(wm, tz=timezone.utc) if wm is not None else None
+        )
+
     applied = 0
     skipped = 0
+    max_ts: float | None = None
     for row in Ledger(user_root).read_all():
+        ts = _parse_since(row.get("ts"))
         if cutoff is not None:
-            ts = _parse_since(row.get("ts"))
-            if ts is None or ts < cutoff:
+            # Watermark / since: process rows strictly after the cutoff.
+            if ts is None or ts <= cutoff:
                 skipped += 1
                 continue
         signal = row.get("learning_signal")
         if not isinstance(signal, dict):
             skipped += 1
+            if ts is not None:
+                max_ts = ts.timestamp() if max_ts is None else max(max_ts, ts.timestamp())
             continue
         field_name = signal.get("field")
         value = signal.get("value")
@@ -360,13 +377,22 @@ def compact_from_ledger(
             or not isinstance(delta, int)
         ):
             skipped += 1
+            if ts is not None:
+                max_ts = ts.timestamp() if max_ts is None else max(max_ts, ts.timestamp())
             continue
         try:
             record_signal(user_root, field_name, value, delta=delta)
         except ValueError:
             skipped += 1
+            if ts is not None:
+                max_ts = ts.timestamp() if max_ts is None else max(max_ts, ts.timestamp())
             continue
         applied += 1
+        if ts is not None:
+            max_ts = ts.timestamp() if max_ts is None else max(max_ts, ts.timestamp())
+
+    if max_ts is not None:
+        write_watermark(user_root, LEARNING_PROFILE_COMPACT, max_ts)
     return CompactSummary(applied=applied, skipped=skipped)
 
 
@@ -420,10 +446,11 @@ def main(argv: list[str] | None = None) -> int:
 
         DEV_USER_ROOT=/tmp/pn python -m canvas_mcp.core.learning_profile show --json
 
-    ``compact_from_ledger`` exists but is deliberately not exposed here yet: without a
-    watermark, replaying an overlapping ``--since`` window would double-apply the same
-    ``learning_signal`` rows and corrupt signal_counts. Call it directly from Python
-    (or add a CLI subcommand together with a watermark file) once that's designed.
+    ``compact_from_ledger`` uses a watermark
+    (``.learning_profile_compact_watermark``) for idempotent replay but is
+    deliberately not exposed here yet — add a ``compact`` CLI subcommand only
+    once ``learning_signal`` writers exist (Prompt E). Call it directly from
+    Python until then.
     """
     import argparse
     import json

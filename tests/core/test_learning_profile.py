@@ -256,6 +256,39 @@ def test_compact_from_ledger_applies_explicit_signals_only(user_root: Path) -> N
     assert ledger.read_text(encoding="utf-8").count("\n") == 3
 
 
+def test_compact_from_ledger_watermark_idempotent(user_root: Path) -> None:
+    import json
+
+    from canvas_mcp.core.watermark import LEARNING_PROFILE_COMPACT, read_watermark
+
+    ledger = user_root / "ledger.jsonl"
+    rows = [
+        {
+            "ts": "2026-09-02T00:00:00+00:00",
+            "actor": "skill",
+            "skill": "student-task-brief",
+            "tool": "record_signal",
+            "target": "chunk_size",
+            "preview_hash": None,
+            "why": "format feedback",
+            "outcome": "success",
+            "undo_ptr": None,
+            "category": "canvas_read",
+            "learning_signal": {"field": "chunk_size", "value": "long", "delta": 1},
+        },
+    ]
+    ledger.write_text(json.dumps(rows[0]) + "\n", encoding="utf-8")
+
+    first = compact_from_ledger(user_root)
+    assert first.applied == 1
+    assert read_watermark(user_root, LEARNING_PROFILE_COMPACT) is not None
+
+    second = compact_from_ledger(user_root)
+    assert second.applied == 0
+    after = load_learning_profile(user_root)
+    assert after.signal_counts["chunk_size"]["long"] == 1
+
+
 def test_cli_has_no_compact_subcommand() -> None:
     """Replay stays unwired until learning_signal writers and a watermark exist."""
     with pytest.raises(SystemExit):

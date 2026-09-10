@@ -4,7 +4,7 @@ Code-bar items that used to wait on "worth installing" are no longer the hold. W
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Self-improve LLM critic (`draft_provisional_skill` / `shadow_test`) | Deferred | Write-skill hard ban already enforced; template + boolean critic stubs remain until episodic routing data exists |
+| Self-improve pipeline auto-run | Unsigned product call | `run_self_improve` (cluster → draft → shadow, real LLM critic, no auto-promote) is manual-CLI-only by design; wiring it to a daemon/cron loop is a product call, not a stub gap |
 | Billing / Twilio | Unsigned product call | Stubs in `app/billing/` — ship or delete, do not wire. See [`pre-ship-decisions.md`](./pre-ship-decisions.md) |
 | `app/mobile/` | Unsigned product call | Phase-2 stub; same decision row as billing |
 | Tauri ambient-dock model | Unsigned product call | Partially built; do not replace or finish Hidden/auto-peek without a signature |
