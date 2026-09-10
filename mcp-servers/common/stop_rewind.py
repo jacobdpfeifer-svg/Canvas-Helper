@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from canvas_mcp.core.ledger import Ledger, append_ledger
 from canvas_mcp.core.permissions import load_permissions, save_permissions

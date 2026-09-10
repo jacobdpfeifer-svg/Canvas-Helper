@@ -36,6 +36,6 @@ def test_connector_guard_preview_confirm_flow() -> None:
 def test_get_connector_guard_requires_id() -> None:
     try:
         get_connector_guard("")
-        assert False, "expected ValueError"
+        raise AssertionError("expected ValueError")
     except ValueError:
         pass

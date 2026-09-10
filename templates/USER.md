@@ -25,9 +25,9 @@ Written during onboarding; the agent updates as it learns.
 
 ## Learning profile
 
-_Priors the agent uses to shape how it teaches — not a fixed label; it updates from what actually works._
+_Start bias and initiation levers — not a learner type. Retrieval is still required for teachable work; a fluent pass is not mastery._
 
-- **Practice format:** worked examples first, then practice _(source: default)_
+- **Start bias:** start with a worked example, then retrieve _(source: default)_
 - **Autonomy:** offer options, let them choose _(source: default)_
 - **Chunk size:** short bursts (Top-3 style) _(source: default)_
 - **Check depth:** one confirmation / self-check before moving on _(source: default)_

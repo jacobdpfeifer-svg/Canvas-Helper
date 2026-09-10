@@ -30,6 +30,15 @@ fn main() {
             commands::open_canvas_sso,
             commands::save_onboarding,
             commands::save_learning_profile,
+            commands::read_due_reviews,
+            commands::read_brief_streak,
+            commands::read_learn_progress,
+            commands::read_evaluation_compare,
+            commands::record_review_outcome,
+            commands::read_commitment,
+            commands::set_commitment,
+            commands::resolve_commitment,
+            commands::read_check_intention,
             commands::route_intent,
         ])
         .setup(|app| {

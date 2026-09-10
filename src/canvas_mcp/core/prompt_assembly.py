@@ -5,7 +5,9 @@ Stable prefix first so hosted providers can cache overlapping context:
 1. Tool schemas (frozen for the session; identical across turns)
 2. System: skill instructions + shared session boot
 3. Learning profile (stable per student)
-4. Volatile last: this turn's inbox slice
+4. Volatile last: this turn's inbox slice (teaching skills also get a teach-hint,
+   a brief-streak line when one is open, at most two due learn-loop reviews,
+   and a per-course retention tally when claims exist)
 
 ``run_skill_turn`` is the only skill-turn entry. It assembles, then
 ``chat_assembled`` is the only path that may call ``LLMProvider.chat``.
@@ -21,7 +23,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
+from .habit import streak_payload
+from .learn_loop import (
+    render_coverage_clock,
+    render_due_reviews,
+    render_progress,
+    surfaces_due_reviews,
+)
 from .learning_profile import _render_user_md_block, load_learning_profile
+from .teach_hint import is_teaching_skill, render_teach_hint
 from .llm_provider import ChatMessage, ToolSpec, provider_for_skill
 from .skill_router import (
     EmbedFn,
@@ -389,6 +399,33 @@ def assemble_turn(
         catalog_md=catalog_md,
         embedder=embedder,
     )
+    if is_teaching_skill(skill.skill_id):
+        hint = render_teach_hint(
+            user_root,
+            trigger,
+            volatile,
+            catalog_md=catalog_md,
+        )
+        if hint.strip():
+            volatile = f"{hint.strip()}\n\n{volatile.strip()}"
+        streak_line = str(streak_payload(user_root).get("line") or "")
+        if streak_line:
+            volatile = f"{streak_line}\n\n{volatile.strip()}"
+        from .progress import trail_payload
+
+        trail_line = str(trail_payload(user_root).get("line") or "")
+        if trail_line:
+            volatile = f"{trail_line}\n\n{volatile.strip()}"
+    if surfaces_due_reviews(skill.skill_id):
+        reviews = render_due_reviews(user_root, week_md=week_md)
+        coverage = render_coverage_clock(user_root, week_md=week_md)
+        lead_parts = [part.strip() for part in (coverage, reviews) if part.strip()]
+        if is_teaching_skill(skill.skill_id):
+            progress = render_progress(user_root)
+            if progress.strip():
+                lead_parts.append(progress.strip())
+        if lead_parts:
+            volatile = "\n\n".join(lead_parts) + f"\n\n{volatile.strip()}"
     volatile = f"<!-- cache:volatile -->\n{volatile.strip()}\n"
 
     tools_blob = json.dumps(

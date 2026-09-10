@@ -191,12 +191,144 @@ pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
     })
 }
 
+fn python_json(module: &str, args: &[&str]) -> Result<Value, String> {
+    let output = python_module(module, args)
+        .output()
+        .map_err(|e| format!("failed to spawn {module}: {e}"))?;
+    if !output.status.success() {
+        let err = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        return Err(if err.is_empty() {
+            format!("{module} exited {}", output.status)
+        } else {
+            err
+        });
+    }
+    let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    serde_json::from_str(&raw).map_err(|e| format!("{module} JSON parse failed: {e}; raw={raw}"))
+}
+
+/// Due claims for the dock session. Empty `items` when nothing is scheduled.
+pub fn run_due_reviews() -> Result<Value, String> {
+    tick_log("due-reviews");
+    python_json("canvas_mcp.core.learn_loop", &["--json", "due"])
+}
+
+/// Brief-day streak. Does not increment — only a written brief does.
+pub fn run_brief_streak() -> Result<Value, String> {
+    tick_log("brief-streak");
+    python_json("canvas_mcp.core.habit", &["--json", "show"])
+}
+
+/// Per-course stability counts. Empty `courses` when no claims are stored.
+pub fn run_learn_progress() -> Result<Value, String> {
+    tick_log("learn-progress");
+    python_json("canvas_mcp.core.learn_loop", &["--json", "progress"])
+}
+
+const EVAL_NOTE: &str =
+    "A single window is not causal. A longer brief count is exposure, not success.";
+
+/// Diff the last two recorded snapshots. Never passes `--record`.
+pub fn run_evaluation_compare() -> Result<Value, String> {
+    tick_log("evaluation-compare");
+    let output = python_module("canvas_mcp.core.learn_loop", &["evaluate", "--compare"])
+        .output()
+        .map_err(|e| format!("failed to spawn canvas_mcp.core.learn_loop: {e}"))?;
+    let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if let Ok(value) = serde_json::from_str::<Value>(&raw) {
+        if value.is_object() {
+            return Ok(value);
+        }
+    }
+    Ok(serde_json::json!({
+        "ok": false,
+        "reason": "compare unavailable",
+        "note": EVAL_NOTE,
+    }))
+}
+
+/// Current commitment. Does not create or resolve one.
+pub fn run_read_commitment() -> Result<Value, String> {
+    tick_log("read-commitment");
+    python_json("canvas_mcp.core.commitment", &["--json", "status"])
+}
+
+/// Store one student-authored commitment. Refuses if one is already open.
+pub fn run_set_commitment(
+    text: &str,
+    deadline: &str,
+    course: &str,
+    linked_item_id: &str,
+) -> Result<Value, String> {
+    tick_log("set-commitment");
+    let mut owned = vec![
+        "--json".to_string(),
+        "add".into(),
+        "--text".into(),
+        text.to_string(),
+        "--deadline".into(),
+        deadline.to_string(),
+    ];
+    if !course.is_empty() {
+        owned.push("--course".into());
+        owned.push(course.to_string());
+    }
+    if !linked_item_id.is_empty() {
+        owned.push("--linked-item-id".into());
+        owned.push(linked_item_id.to_string());
+    }
+    let refs: Vec<&str> = owned.iter().map(|part| part.as_str()).collect();
+    python_json("canvas_mcp.core.commitment", &refs)
+}
+
+/// Student-scored close. Does not infer the outcome from activity.
+pub fn run_resolve_commitment(status: &str) -> Result<Value, String> {
+    tick_log("resolve-commitment");
+    python_json(
+        "canvas_mcp.core.commitment",
+        &["--json", "resolve", "--status", status],
+    )
+}
+
+/// Record a retrieval score. `same_session` must stay false for a scheduled dock check.
+pub fn run_record_review_outcome(
+    item_id: &str,
+    outcome: &str,
+    same_session: bool,
+) -> Result<Value, String> {
+    tick_log("review-outcome");
+    let mut args = vec![
+        "--json",
+        "outcome",
+        "--id",
+        item_id,
+        "--outcome",
+        outcome,
+    ];
+    if same_session {
+        args.push("--same-session");
+    }
+    python_json("canvas_mcp.core.learn_loop", &args)
+}
+
+/// Student's optional start line from the learning profile. Empty when unset.
+pub fn run_read_check_intention() -> Result<String, String> {
+    tick_log("read-check-intention");
+    let value = python_json("canvas_mcp.core.learning_profile", &["--json", "show"])?;
+    Ok(value
+        .get("if_then")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .to_string())
+}
+
 /// Write the onboarding learning-profile games' answers via the Python CLI.
 pub fn run_save_learning_profile(
     practice_format: &str,
     autonomy: &str,
     chunk_size: &str,
     check_depth: &str,
+    if_then: &str,
 ) -> Result<(), String> {
     tick_log("save-learning-profile");
     let output = python_module(
@@ -212,6 +344,8 @@ pub fn run_save_learning_profile(
             chunk_size,
             "--check-depth",
             check_depth,
+            "--if-then",
+            if_then,
         ],
     )
     .output()

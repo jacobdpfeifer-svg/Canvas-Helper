@@ -28,9 +28,7 @@ CONCEPT_KEYWORDS: list[tuple[str, str]] = [
 ]
 
 # Flat map for skill docs / callers that want dict lookup of single tokens.
-KEYWORD_TO_CONCEPT: dict[str, str] = {
-    keyword: concept for keyword, concept in CONCEPT_KEYWORDS
-}
+KEYWORD_TO_CONCEPT: dict[str, str] = dict(CONCEPT_KEYWORDS)
 
 
 @dataclass(frozen=True)

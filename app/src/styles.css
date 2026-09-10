@@ -110,6 +110,84 @@ button.ghost.dismiss {
   letter-spacing: 0.04em;
 }
 
+.streak-line {
+  margin: -0.15rem 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.commitment-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.commitment-actions button {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.4rem;
+}
+
+.commitment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+}
+
+.commitment-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--muted);
+}
+
+.commitment-form input {
+  font: inherit;
+}
+
+.retention {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--glass-divider);
+}
+
+.retention h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.retention ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.retention li {
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--glass-divider);
+  font-size: 0.82rem;
+}
+
+.retention li:first-child {
+  border-top: none;
+}
+
+.retention strong,
+.retention span,
+.retention em {
+  display: block;
+}
+
+.retention span,
+.retention em {
+  color: var(--muted);
+  font-style: normal;
+  font-size: 0.75rem;
+}
+
 .top3 ol {
   list-style: none;
   padding: 0;
@@ -148,6 +226,61 @@ button.ghost.dismiss {
   color: var(--muted);
   font-style: normal;
   font-size: 0.78rem;
+}
+
+.check-entry {
+  -webkit-app-region: no-drag;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--glass-divider);
+}
+
+.check-intention,
+.check-chip {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.check-start {
+  text-align: left;
+}
+
+.check-intention-opt {
+  display: block;
+  margin: 0.6rem 0;
+  font-size: 0.85rem;
+}
+
+.review-session {
+  -webkit-app-region: no-drag;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  overflow-y: auto;
+}
+
+.review-progress,
+.review-course,
+.review-hint,
+.review-why,
+.review-result {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.review-claim {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.review-scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 .narrate {

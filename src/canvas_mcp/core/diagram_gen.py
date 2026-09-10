@@ -202,8 +202,8 @@ def _render_secant_vs_tangent(params: dict[str, Any]) -> Any:
     sy = y0 + secant_m * (sx - x0)
     ax.plot(sx, sy, color="#6a4c93", linewidth=2, label=f"secant (h={h:g})")
     ax.scatter([x0, x1], [y0, y1], color="#6a4c93", zorder=5)
-    ax.annotate(f"x₀", (x0, y0), textcoords="offset points", xytext=(-18, 8), fontsize=9)
-    ax.annotate(f"x₀+h", (x1, y1), textcoords="offset points", xytext=(6, 8), fontsize=9)
+    ax.annotate("x₀", (x0, y0), textcoords="offset points", xytext=(-18, 8), fontsize=9)
+    ax.annotate("x₀+h", (x1, y1), textcoords="offset points", xytext=(6, 8), fontsize=9)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Secant approaching the tangent as h → 0")
@@ -228,7 +228,6 @@ def _render_chain_rule_composition(params: dict[str, Any]) -> Any:
 
     x = np.linspace(x_min, x_max, 200)
     u = p * x + q
-    y_comp = r * u**2 + s
     u0 = p * x0 + q
     y0 = r * u0**2 + s
 

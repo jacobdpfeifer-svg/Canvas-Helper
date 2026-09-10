@@ -32,6 +32,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [chunkSize, setChunkSize] = useState<ChunkSize | null>(null);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [checkFirst, setCheckFirst] = useState(false);
 
   const legalText = LEGAL_BY_SCHOOL[school] || GENERIC_LEGAL;
   const profileReady =
@@ -133,18 +134,25 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             <div className="lp-game">
               <p className="lp-game-title">Practice format</p>
               <p className="lp-done-note">
-                Saved as{" "}
-                {practiceFormat === "retrieval"
-                  ? "quiz/retrieval first"
-                  : "worked example first"}
+                Saved as start with a worked example, then retrieve
                 {" · "}
-                check depth {checkDepth}.
+                check depth {checkDepth}. A fluent pass here does not set how
+                you learn.
               </p>
             </div>
           )}
 
           <AutonomyGame value={autonomy} onChange={setAutonomy} />
           <ChunkSizeGame value={chunkSize} onChange={setChunkSize} />
+
+          <label className="check-intention-opt">
+            <input
+              type="checkbox"
+              checked={checkFirst}
+              onChange={(e) => setCheckFirst(e.target.checked)}
+            />{" "}
+            When I open the dock, I do the 2-minute check first.
+          </label>
 
           <button
             type="button"
@@ -157,6 +165,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                 autonomy,
                 chunkSize,
                 checkDepth,
+                ifThen: checkFirst
+                  ? "When I open the dock, I do the 2-minute check first."
+                  : "",
               };
               setProfileSaving(true);
               setProfileError(null);

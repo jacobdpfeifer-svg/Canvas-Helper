@@ -15,6 +15,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
 from common.actuator import check_write, user_root  # noqa: E402
+
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 
 mcp = FastMCP("productname-apple-cal")

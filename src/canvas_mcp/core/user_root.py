@@ -11,7 +11,7 @@ and tests without writing under the OS app-support path).
 from __future__ import annotations
 
 import os
-import sys
+import platform
 from pathlib import Path
 
 from .tenants import PRODUCT_NAME
@@ -21,6 +21,7 @@ USER_SUBDIRS = (
     "inbox",
     "inbox/courses",
     "inbox/captures",
+    "inbox/learn",
     "calibration",
     "skills/active",
     "skills/provisional",
@@ -32,9 +33,9 @@ USER_SUBDIRS = (
 
 def default_app_support_root(product: str = PRODUCT_NAME) -> Path:
     """OS-standard application support directory for the product."""
-    if sys.platform == "darwin":
+    if platform.system() == "Darwin":
         return Path.home() / "Library" / "Application Support" / product
-    if sys.platform == "win32":
+    if os.name == "nt":
         appdata = os.environ.get("APPDATA")
         if appdata:
             return Path(appdata) / product

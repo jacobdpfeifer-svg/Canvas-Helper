@@ -9,6 +9,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
 from common.actuator import check_write, user_root  # noqa: E402
+
 from canvas_mcp.core.permissions import load_permissions, save_permissions  # noqa: E402
 from canvas_mcp.core.user_root import ensure_user_root  # noqa: E402
 

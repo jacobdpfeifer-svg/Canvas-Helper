@@ -8,6 +8,8 @@ rather than hand-editing that section; it is overwritten on every save.
 Fields are functional teaching levers, not personality labels. There is no
 visual/auditory/kinesthetic axis here on purpose — see
 ``docs/design/learning-profile.md`` for the research this schema is built on.
+``practice_format`` is a start bias only (example then retrieve, or retrieve
+first). It never skips retrieval or the scheduled check in ``learn_loop``.
 Every field starts as a cheap onboarding-game guess (``source:
 onboarding_game``) and is expected to be overridden by real format-specific
 feedback (``source: observed``) via :func:`record_signal` — the same
@@ -21,7 +23,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import yaml
 
@@ -63,7 +65,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[3]
 _USER_MD_TEMPLATE = _REPO_ROOT / "templates" / "USER.md"
 
 _FIELD_LABELS: dict[str, str] = {
-    "practice_format": "Practice format",
+    "practice_format": "Start bias",
     "autonomy": "Autonomy",
     "chunk_size": "Chunk size",
     "check_depth": "Check depth",
@@ -71,8 +73,8 @@ _FIELD_LABELS: dict[str, str] = {
 
 _VALUE_COPY: dict[str, dict[str, str]] = {
     "practice_format": {
-        "worked_example": "worked examples first, then practice",
-        "retrieval": "quiz/retrieval first, then explain",
+        "worked_example": "start with a worked example, then retrieve",
+        "retrieval": "start with retrieval, then feedback (retrieval still required)",
     },
     "autonomy": {
         "directive": "tell them the next step directly",
@@ -100,6 +102,8 @@ class LearningProfile:
     chunk_size_source: Source = "default"
     check_depth: CheckDepth = "thorough"
     check_depth_source: Source = "default"
+    # Student's own start line. Not a teaching lever and not a learner-type field.
+    if_then: str = ""
     updated_at: str | None = None
     # signal_counts[field][value] = net tally from record_signal; internal
     # bookkeeping only, never rendered into USER.md.
@@ -122,6 +126,7 @@ class LearningProfile:
             "chunk_size_source": self.chunk_size_source,
             "check_depth": self.check_depth,
             "check_depth_source": self.check_depth_source,
+            "if_then": self.if_then,
             "updated_at": self.updated_at,
             "signal_counts": {
                 k: dict(v) for k, v in self.signal_counts.items()
@@ -143,6 +148,14 @@ def _safe_source(value: Any, fallback: str = "default") -> str:
     return text if text in ("default", "onboarding_game", "observed") else fallback
 
 
+def _clean_if_then(value: Any) -> str:
+    """Keep a short start line. Empty stays empty; never infer one."""
+    if not isinstance(value, str):
+        return ""
+    text = " ".join(value.split())
+    return text[:180]
+
+
 def _parse(raw: dict[str, Any]) -> LearningProfile:
     base = default_learning_profile()
     counts: dict[str, dict[str, int]] = {}
@@ -162,20 +175,21 @@ def _parse(raw: dict[str, Any]) -> LearningProfile:
 
     return LearningProfile(
         schema_version=LEARNING_PROFILE_SCHEMA_VERSION,
-        practice_format=_safe_choice(
+        practice_format=cast(PracticeFormat, _safe_choice(
             raw.get("practice_format"), "practice_format", base.practice_format
-        ),
-        practice_format_source=_safe_source(raw.get("practice_format_source")),
-        autonomy=_safe_choice(raw.get("autonomy"), "autonomy", base.autonomy),
-        autonomy_source=_safe_source(raw.get("autonomy_source")),
-        chunk_size=_safe_choice(
+        )),
+        practice_format_source=cast(Source, _safe_source(raw.get("practice_format_source"))),
+        autonomy=cast(Autonomy, _safe_choice(raw.get("autonomy"), "autonomy", base.autonomy)),
+        autonomy_source=cast(Source, _safe_source(raw.get("autonomy_source"))),
+        chunk_size=cast(ChunkSize, _safe_choice(
             raw.get("chunk_size"), "chunk_size", base.chunk_size
-        ),
-        chunk_size_source=_safe_source(raw.get("chunk_size_source")),
-        check_depth=_safe_choice(
+        )),
+        chunk_size_source=cast(Source, _safe_source(raw.get("chunk_size_source"))),
+        check_depth=cast(CheckDepth, _safe_choice(
             raw.get("check_depth"), "check_depth", base.check_depth
-        ),
-        check_depth_source=_safe_source(raw.get("check_depth_source")),
+        )),
+        check_depth_source=cast(Source, _safe_source(raw.get("check_depth_source"))),
+        if_then=_clean_if_then(raw.get("if_then")),
         updated_at=raw.get("updated_at") if isinstance(raw.get("updated_at"), str) else None,
         signal_counts=counts,
     )
@@ -202,7 +216,7 @@ def _render_user_md_block(profile: LearningProfile) -> str:
     lines = [
         _USER_MD_HEADING,
         "",
-        "_Priors the agent uses to shape how it teaches — not a fixed label; it updates from what actually works._",
+        "_Start bias and initiation levers — not a learner type. Retrieval is still required for teachable work; a fluent pass is not mastery._",
         "",
     ]
     for fname in PROFILE_FIELDS:
@@ -210,6 +224,8 @@ def _render_user_md_block(profile: LearningProfile) -> str:
         source = profile.source_of(fname)
         copy = _VALUE_COPY[fname].get(value, value)
         lines.append(f"- **{_FIELD_LABELS[fname]}:** {copy} _(source: {source})_")
+    if profile.if_then:
+        lines.append(f"- **When I start:** {profile.if_then}")
     if profile.updated_at:
         lines.append("")
         lines.append(f"_Last updated: {profile.updated_at}_")
@@ -265,22 +281,24 @@ def apply_onboarding_answers(
     autonomy: Autonomy,
     chunk_size: ChunkSize,
     check_depth: CheckDepth = "thorough",
+    if_then: str = "",
 ) -> LearningProfile:
     """Write the onboarding games' results as fresh, resettable priors."""
     now = datetime.now(timezone.utc).isoformat()
     profile = LearningProfile(
-        practice_format=_safe_choice(
+        practice_format=cast(PracticeFormat, _safe_choice(
             practice_format, "practice_format", DEFAULTS["practice_format"]
-        ),
+        )),
         practice_format_source="onboarding_game",
-        autonomy=_safe_choice(autonomy, "autonomy", DEFAULTS["autonomy"]),
+        autonomy=cast(Autonomy, _safe_choice(autonomy, "autonomy", DEFAULTS["autonomy"])),
         autonomy_source="onboarding_game",
-        chunk_size=_safe_choice(chunk_size, "chunk_size", DEFAULTS["chunk_size"]),
+        chunk_size=cast(ChunkSize, _safe_choice(chunk_size, "chunk_size", DEFAULTS["chunk_size"])),
         chunk_size_source="onboarding_game",
-        check_depth=_safe_choice(
+        check_depth=cast(CheckDepth, _safe_choice(
             check_depth, "check_depth", DEFAULTS["check_depth"]
-        ),
+        )),
         check_depth_source="onboarding_game",
+        if_then=_clean_if_then(if_then),
         updated_at=now,
     )
     save_learning_profile(user_root, profile)
@@ -394,7 +412,8 @@ def main(argv: list[str] | None = None) -> int:
 
         python -m canvas_mcp.core.learning_profile save \\
             --practice-format retrieval --autonomy directive \\
-            --chunk-size long --check-depth thorough
+            --chunk-size long --check-depth thorough \\
+            --if-then "When I open the dock, I do the 2-minute check first."
 
         python -m canvas_mcp.core.learning_profile signal \\
             --field practice_format --value retrieval --delta 1
@@ -408,7 +427,6 @@ def main(argv: list[str] | None = None) -> int:
     """
     import argparse
     import json
-    import sys
 
     from .user_root import resolve_user_root
 
@@ -452,6 +470,11 @@ def main(argv: list[str] | None = None) -> int:
         default="thorough",
         help="Confidence-calibration prior (default: thorough)",
     )
+    save.add_argument(
+        "--if-then",
+        default="",
+        help="Optional start line the student wrote (not a learner type)",
+    )
 
     signal = sub.add_parser(
         "signal",
@@ -473,6 +496,7 @@ def main(argv: list[str] | None = None) -> int:
             autonomy=args.autonomy,
             chunk_size=args.chunk_size,
             check_depth=args.check_depth,
+            if_then=args.if_then,
         )
     elif args.cmd == "signal":
         allowed = FIELD_VALUES[args.field]

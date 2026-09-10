@@ -49,13 +49,28 @@ print(p)
 - 1–2 sentence caption tied to the diagram (axes/labels that are actually on the PNG).
 - Optional **Why this matters** line: agent-authored plain-text analogy only. Label it as non-precision. Available to every student asking about the concept — not gated by learning style.
 
-### 4. Learning-profile framing (never gates the diagram)
+### 4. Encode, then retrieve (never gates the diagram)
 
-Same pattern as [`canvas-week-plan`](../canvas-week-plan/SKILL.md):
+The PNG is the encode step (dual coding for spatial material — a property of the concept, not a learner style). After the caption:
 
-- `practice_format: retrieval` → ask a quick check-question about the diagram before explaining
-- `practice_format: worked_example` → walk through the diagram directly
-- `chunk_size: short` → keep prose tight; `long` → allow a slightly fuller walkthrough
+1. Ask the student to label or regenerate the relation from memory (source and figure closed).
+2. Give feedback on the method. Do not fill the blank.
+3. If they miss, write a learn item even when Canvas has no score yet:
+
+```bash
+python -m canvas_mcp.core.learn_loop add \
+  --course "<course if known>" \
+  --claim "<what they failed to regenerate>" \
+  --kind declarative \
+  --checkpoint-due YYYY-MM-DD
+python -m canvas_mcp.core.learn_loop outcome \
+  --id "<id>" \
+  --outcome miss
+```
+
+A same-sitting “I can see it now” after you show the figure is `--same-session` and does not count as a delayed hit. “I know this” is not mastery.
+
+Start order follows the Teach-hint / Due reviews start line when present: experienced courses may retrieve before the walkthrough; a miss or a novice starts with the figure, then retrieves. `chunk_size: short` → tight prose; `long` → a slightly fuller walkthrough.
 
 Do **not** hide the diagram based on profile fields.
 
@@ -94,7 +109,7 @@ Caption: 1–2 sentences.
 
 Why this matters (analogy — not geometrically precise): …
 
-Check / walkthrough: … (shaped by practice_format / chunk_size)
+Check: label or regenerate the relation from memory (not a viewing question).
 ```
 
 ## Hand-offs

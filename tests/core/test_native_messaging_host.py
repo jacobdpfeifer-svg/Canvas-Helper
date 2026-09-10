@@ -23,7 +23,7 @@ def test_native_host_appends_sensor(tmp_path, monkeypatch):
         input=framed,
         capture_output=True,
         check=True,
-        env={**dict(**{k: v for k, v in __import__("os").environ.items()}), "DEV_USER_ROOT": str(tmp_path)},
+        env={**dict(__import__("os").environ), "DEV_USER_ROOT": str(tmp_path)},
     )
     assert len(proc.stdout) >= 4
     (out_len,) = struct.unpack("<I", proc.stdout[:4])

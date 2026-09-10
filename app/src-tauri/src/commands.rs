@@ -72,13 +72,83 @@ pub fn save_learning_profile(
     autonomy: String,
     chunk_size: String,
     check_depth: String,
+    if_then: Option<String>,
 ) -> Result<(), String> {
     daemon::run_save_learning_profile(
         &practice_format,
         &autonomy,
         &chunk_size,
         &check_depth,
+        if_then.as_deref().unwrap_or(""),
     )
+}
+
+/// Due retrieval checks (at most two). Does not invent cards from the week list.
+#[tauri::command]
+pub fn read_due_reviews() -> Result<serde_json::Value, String> {
+    daemon::run_due_reviews()
+}
+
+/// Brief-day streak line. Empty `line` when there is nothing to show.
+#[tauri::command]
+pub fn read_brief_streak() -> Result<serde_json::Value, String> {
+    daemon::run_brief_streak()
+}
+
+/// Per-course retention counts from stored claims. Not a skill tree.
+#[tauri::command]
+pub fn read_learn_progress() -> Result<serde_json::Value, String> {
+    daemon::run_learn_progress()
+}
+
+/// Last two evaluation snapshots. Does not record one.
+#[tauri::command]
+pub fn read_evaluation_compare() -> Result<serde_json::Value, String> {
+    daemon::run_evaluation_compare()
+}
+
+/// Open commitment and one-time check-in. Does not create or resolve.
+#[tauri::command]
+pub fn read_commitment() -> Result<serde_json::Value, String> {
+    daemon::run_read_commitment()
+}
+
+/// Store one student-authored commitment. Refuses if one is already open.
+#[tauri::command]
+pub fn set_commitment(
+    text: String,
+    deadline: String,
+    course: Option<String>,
+    linked_item_id: Option<String>,
+) -> Result<serde_json::Value, String> {
+    daemon::run_set_commitment(
+        &text,
+        &deadline,
+        course.as_deref().unwrap_or(""),
+        linked_item_id.as_deref().unwrap_or(""),
+    )
+}
+
+/// Student-scored close: met, not_met, or dropped.
+#[tauri::command]
+pub fn resolve_commitment(status: String) -> Result<serde_json::Value, String> {
+    daemon::run_resolve_commitment(&status)
+}
+
+/// Student-scored retrieval. Dock checks of scheduled items pass same_session=false.
+#[tauri::command]
+pub fn record_review_outcome(
+    item_id: String,
+    outcome: String,
+    same_session: Option<bool>,
+) -> Result<serde_json::Value, String> {
+    daemon::run_record_review_outcome(&item_id, &outcome, same_session.unwrap_or(false))
+}
+
+/// Optional implementation intention written at onboarding. Empty if skipped.
+#[tauri::command]
+pub fn read_check_intention() -> Result<String, String> {
+    daemon::run_read_check_intention()
 }
 
 /// Route a natural-language trigger via the Python skill router CLI.
