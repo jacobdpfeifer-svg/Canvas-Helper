@@ -18,6 +18,15 @@
     "allow-open-canvas-sso",
     "allow-save-onboarding",
     "allow-save-learning-profile",
+    "allow-read-due-reviews",
+    "allow-read-brief-streak",
+    "allow-read-learn-progress",
+    "allow-read-evaluation-compare",
+    "allow-record-review-outcome",
+    "allow-read-commitment",
+    "allow-set-commitment",
+    "allow-resolve-commitment",
+    "allow-read-check-intention",
     "allow-route-intent"
   ]
 }

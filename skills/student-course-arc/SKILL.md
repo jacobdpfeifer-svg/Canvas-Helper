@@ -55,13 +55,13 @@ List quizzes/exams from **Checkpoints** section (or catalog rows with `outcome:q
 
 - What it likely tests (from prior catalog items before that due date)
 - Which open items feed it
-- Mode: **Worth** — the student takes it; agent may prep a study checklist only
+- Mode: **Worth** — the student takes it; agent extracts claims and writes learn items, not a study checklist or a night-before cram
 
 Never auto-submit or take quizzes/exams.
 
 ### 5. Per-assignment arc cards (open work, priority order)
 
-For each open item:
+Use the shared card in [`student-task-brief`](../student-task-brief/SKILL.md) (Check / Walkthrough / If-then / Format used). Obey the Teach-hint. Do not restate format rules. Keep the arc fields on the same card:
 
 ```markdown
 ### [P#] Assignment title
@@ -69,9 +69,12 @@ For each open item:
 - Learn: 1–3 objectives — tag `(inferred)` or `(from prompt)` if description fetched
 - Builds on: prior items in this course (catalog order / naming patterns)
 - Unlocks / feeds: later catalog items or next checkpoint
+- Check: one question they answer before opening the file
+- Walkthrough: 2–4 steps, only when the hint says worked_example
+- If-then: If it's after [anchor], open [link] and do [micro-step] for [time box]
 - Autonomy: Worth | LTI (you in tool) | Agent draft | Ask — what agent can prep without the student
-- First step: one concrete action
 - Time box: 5 / 15 / 30 / 60+ min
+- Format used: retrieval | worked_example
 ```
 
 **Autonomy rules** (from `student-assignment-triage` + `USER.md`):
@@ -89,9 +92,31 @@ For each open item:
 - Cross-reference catalog for Builds-on / Unlocks edges
 - If title is opaque and no description → `Learn: unclear — need assignment description` (Ask once)
 
-### 6. Optional — persist arc notes
+### 6. Prior knowledge (course-scoped)
 
-After a full arc briefing, append or update **Arc notes** in `inbox/courses/CODE.md` with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections.
+Maintain one line in this course's `inbox/courses/CODE.md` arc notes. Missing at teach time is treated as **novice** (example, then retrieve). Write the line only from evidence, never from silence:
+
+```bash
+python -m canvas_mcp.core.teach_hint set-prior \
+  --course "<CODE>" \
+  --value novice|developing|experienced
+```
+
+Seed from an explicit ask (“new to this field or reviewing?”), syllabus tone, or early graded outcomes already in the catalog. Never infer it from silence, open rates, or personality labels.
+
+- `novice` or missing → example, then retrieve, even if the global start bias is retrieval (the Teach-hint already applies this)
+- `experienced` → retrieval first unless they ask for a walkthrough; a miss still starts the next check with a worked example
+- `developing` → global start bias for order only
+
+`practice_format` is start order. Retrieval is still required. Do not skip the scheduled check.
+
+If the student says “quiz me” / “walk me through”, record it with `python -m canvas_mcp.core.teach_hint reply --text "<their words>"` before rewriting the card.
+
+When you name a Do-first item, write the focus handoff the same way task-brief does (`teach_hint write-focus`). When a quiz, exam, or concept feeds a checkpoint, `learn_loop add` each claim (not `write-nudge`, not a checklist).
+
+### 7. Optional — persist arc notes
+
+After a full arc briefing, append or update **Arc notes** in `inbox/courses/CODE.md` with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections. Keep the `prior_knowledge:` line when you rewrite arc notes.
 
 ## Context
 
@@ -99,7 +124,7 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 
 1. Follow [`../_SESSION.md`](../_SESSION.md)
 2. `{user_root}/inbox/week.md` — open rows for the requested course (volatile slice, already supplied)
-3. Read matching `{user_root}/inbox/courses/CODE.md` — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, **`## Instructor profile`**
+3. Read matching `{user_root}/inbox/courses/CODE.md` — **Assignment catalog**, **Checkpoints**, cached **Theme** / **Arc notes**, `prior_knowledge:`, **`## Instructor profile`**
 4. Read [`USER.md`](../../USER.md) course defaults and `calibration/priority-rubric.md` — learning profile is already in the stable prefix; do not re-paste it
 5. If inbox stale (`Updated:` >2 days) or course file missing catalog → `cd browser && npm run sync` (after `open-canvas` if needed). After sync, still use the supplied slice.
 6. If instructor profile missing or stale → run [`student-instructor-profile`](../student-instructor-profile/SKILL.md) before deep arc on voice/judgment assignments
@@ -134,11 +159,13 @@ Source: inbox/week.md + inbox/courses/[CODE].md (Updated: …)
 ### Checkpoints
 …
 
+If the slice has `## Coverage` for this course, repeat that one line here (`due_now` / `in_the_gap` / `unextracted`). Do not turn it into a score or say they are behind. `unextracted` means extract claims, not rest.
+
 ### Open work (priority order)
 …cards…
 
 ### Do first in this course
-One sentence: highest-priority first action right now.
+One sentence: highest-priority first action right now. If the slice starts with `Open with:`, ask that check first.
 ```
 
 ## Hand-offs

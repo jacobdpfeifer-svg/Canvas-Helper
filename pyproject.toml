@@ -119,6 +119,10 @@ strict_equality = true
 module = "tests.*"
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = ["matplotlib", "matplotlib.*", "numpy", "numpy.*", "mem0", "mem0.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
@@ -139,4 +143,5 @@ dev = [
     # use importorskip, so relying on a transitive PyYAML would let the gate
     # skip silently — the exact failure mode it exists to prevent.
     "pyyaml>=6.0",
+    "types-PyYAML>=6.0",
 ]

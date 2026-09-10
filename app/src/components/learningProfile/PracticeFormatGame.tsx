@@ -9,7 +9,7 @@ export type PracticeFormatResult = {
   checkDepth: CheckDepth;
 };
 
-type Phase = "choose" | "experience" | "confidence" | "reveal" | "react";
+type Phase = "choose" | "experience" | "confidence" | "reveal";
 
 function mapCheckDepth(
   confidence: "low" | "high",
@@ -45,14 +45,10 @@ export function PracticeFormatGame({
       ? ["worked_example", "retrieval"]
       : ["retrieval", "worked_example"];
 
-  const finishReaction = (helped: boolean) => {
-    if (!path) return;
-    const practiceFormat: PracticeFormat = helped
-      ? path
-      : path === "retrieval"
-        ? "worked_example"
-        : "retrieval";
-    onComplete({ practiceFormat, checkDepth });
+  const finish = () => {
+    // A fluent pass, or "that felt helpful", does not set the teaching model.
+    // Start bias stays example-then-retrieve. Retrieval is still required later.
+    onComplete({ practiceFormat: "worked_example", checkDepth });
   };
 
   return (
@@ -189,23 +185,13 @@ export function PracticeFormatGame({
               ))}
             </ol>
           )}
-          <button type="button" onClick={() => setPhase("react")}>
+          <p className="lp-prompt">
+            Feeling sure is not the same as remembering. Ease is a weak signal —
+            we still check this later. Start bias stays example, then retrieve.
+          </p>
+          <button type="button" onClick={finish}>
             Continue
           </button>
-        </div>
-      )}
-
-      {phase === "react" && (
-        <div className="lp-experience">
-          <p className="lp-prompt">How was that framing?</p>
-          <div className="lp-choices">
-            <button type="button" onClick={() => finishReaction(true)}>
-              That helped
-            </button>
-            <button type="button" onClick={() => finishReaction(false)}>
-              That was confusing
-            </button>
-          </div>
         </div>
       )}
     </div>

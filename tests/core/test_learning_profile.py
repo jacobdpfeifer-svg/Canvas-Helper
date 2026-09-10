@@ -36,6 +36,7 @@ def test_default_profile_has_no_vak_fields(user_root: Path) -> None:
     assert profile.chunk_size == "short"
     assert profile.check_depth == "thorough"
     assert profile.practice_format_source == "default"
+    assert profile.if_then == ""
     assert not hasattr(profile, "visual")
     assert (user_root / "calibration" / "learning-profile.yaml").is_file()
 
@@ -57,11 +58,33 @@ def test_apply_onboarding_answers_sets_source_and_renders_user_md(
 
     text = (user_root / "USER.md").read_text(encoding="utf-8")
     assert "## Learning profile" in text
-    assert "quiz/retrieval first" in text
+    assert "start with retrieval, then feedback" in text
     assert "tell them the next step directly" in text
     assert "trust and proceed" in text
     # Sections after the block (added later) survive the replace.
     assert "## Communication preferences" in text
+
+
+def test_if_then_is_optional_start_line_not_a_teaching_lever(user_root: Path) -> None:
+    profile = apply_onboarding_answers(
+        user_root,
+        practice_format="worked_example",
+        autonomy="choices",
+        chunk_size="short",
+        if_then="  When I open the dock, I do the 2-minute check first.  ",
+    )
+    assert profile.if_then == "When I open the dock, I do the 2-minute check first."
+    text = (user_root / "USER.md").read_text(encoding="utf-8")
+    assert "When I start:" in text
+    assert "2-minute check first" in text
+    # Empty stays empty — do not invent an intention.
+    cleared = apply_onboarding_answers(
+        user_root,
+        practice_format="worked_example",
+        autonomy="choices",
+        chunk_size="short",
+    )
+    assert cleared.if_then == ""
 
 
 def test_learning_profile_section_replaced_not_duplicated(user_root: Path) -> None:
@@ -73,7 +96,7 @@ def test_learning_profile_section_replaced_not_duplicated(user_root: Path) -> No
     )
     text = (user_root / "USER.md").read_text(encoding="utf-8")
     assert text.count("## Learning profile") == 1
-    assert "worked examples first" in text
+    assert "start with a worked example, then retrieve" in text
 
 
 def test_record_signal_does_not_flip_below_threshold(user_root: Path) -> None:
@@ -113,7 +136,7 @@ def test_save_learning_profile_seeds_user_md_when_missing(tmp_path: Path) -> Non
     assert (root / "calibration" / "learning-profile.yaml").is_file()
     text = (root / "USER.md").read_text(encoding="utf-8")
     assert text.count("## Learning profile") == 1
-    assert "quiz/retrieval first" in text
+    assert "start with retrieval, then feedback" in text
     assert "tell them the next step directly" in text
 
 
@@ -128,7 +151,7 @@ def test_save_learning_profile_seeds_stub_without_template(
     save_learning_profile(root, lp.default_learning_profile())
     text = (root / "USER.md").read_text(encoding="utf-8")
     assert "## Learning profile" in text
-    assert "worked examples first" in text
+    assert "start with a worked example, then retrieve" in text
 
 
 def test_cli_signal_records_and_can_flip(user_root: Path, capsys: pytest.CaptureFixture[str]) -> None:
@@ -262,3 +285,4 @@ def test_cli_save_includes_check_depth(user_root: Path, capsys: pytest.CaptureFi
     payload = json.loads(capsys.readouterr().out)
     assert payload["check_depth"] == "light"
     assert payload["check_depth_source"] == "onboarding_game"
+    assert payload["if_then"] == ""

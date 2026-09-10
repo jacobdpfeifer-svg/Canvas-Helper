@@ -1,10 +1,12 @@
 # Learning Profile — research + design v2
 
-**Status (2026-09-06):** **v1 code exists** (`learning_profile.py`, CLI, Tauri
-`save_learning_profile`, onboarding games under `app/src/components/learningProfile/`,
-tests in `tests/core/test_learning_profile.py`). This document’s deeper v2
-research / signal-hook phases remain **aspirational** until wired — do not
-treat Part 1 research claims as shipped product behavior.
+**Status (2026-09-08):** the **learn loop** is the teaching model
+(`canvas_mcp.core.learn_loop`, `{user_root}/inbox/learn/items.yaml`).
+`practice_format` is a **start bias** only — example then retrieve, or
+retrieve first. It does not decide whether retrieval happens. Same-session
+fluency and “that felt helpful” do not set the model. Part 1 research below
+still applies; the “no scheduler” recommendation in §1.5 is superseded by an
+exam-relative expanding schedule (not SM-2/FSRS).
 
 **Relation to v1:** This document supersedes the first-pass draft. v1 shipped the
 schema, onboarding priors, YAML + `USER.md` render path, and
@@ -471,7 +473,7 @@ Communication posture in [`templates/USER.md`](../../templates/USER.md)
 ### 2.7 Updated non-goals
 
 - No VAK / meshing labels or quizzes
-- No permanent “learner type” badge
+- No permanent “learner type” badge (class event marks in [`class-standings.md`](class-standings.md) are not this)
 - Profile **biases defaults only** — never restricts formats or opportunity
 - No growth-mindset messaging UI (replicated effects too small / conditional)
 - No WMC, ADHD, anxiety, or mindset fields or silent inference
@@ -482,6 +484,14 @@ Communication posture in [`templates/USER.md`](../../templates/USER.md)
 - Do **not** wire `skill_router` accept/veto → `record_signal`
 - No shame / streak / guilt interrupt spam
 - No restoring hosted educator grading, proctoring, or quiz-taking automation
+
+The dock retrieval session is the student-facing surface for `learn_loop` due
+claims (at most two, student-scored, no answer key). It is not a learning streak,
+heart, league, or notification. A peek chip may show how many checks are due and the
+nearest checkpoint; an optional onboarding if–then (`if_then` on the profile
+YAML) is the student's own start line, not a learner-type field. The dock may
+also read a quiet brief-continuity line; that line is not learning evidence and
+does not write this profile. Guilt copy, hearts, and leagues stay non-goals.
 
 ### 2.8 Onboarding (v1 shipped; v2 does not block on richer games)
 
@@ -559,3 +569,4 @@ Shipped after the v2 design draft above (code, not research-only):
 - **Richer games:** `app/src/components/learningProfile/*` — Game 1 try→confidence→reveal→react; Game 3 Top-3 cadence chips; autonomy forced choice unchanged.
 - **`record_signal` producer:** CLI `signal` subcommand + `canvas-week-plan` format-feedback step (not RequestLog).
 - **`check_depth`:** fourth schema field (`light`|`thorough`), onboarding confidence probe, week-plan shaping rule.
+- **Dock retrieval session:** `learn_loop --json due|outcome` → Tauri `read_due_reviews` / `record_review_outcome`. Peek shows a check only when items are due. Optional `if_then` start line. A quiet brief-continuity line may be read; it is not a learning streak. No guilt interrupt, hearts, or leagues.

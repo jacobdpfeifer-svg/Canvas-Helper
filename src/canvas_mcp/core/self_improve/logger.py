@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -84,7 +84,7 @@ def log_request(user_root: Path, entry: RequestLog) -> int:
             ),
         )
         con.commit()
-        return int(cur.lastrowid)
+        return int(cur.lastrowid or 0)
     finally:
         con.close()
 

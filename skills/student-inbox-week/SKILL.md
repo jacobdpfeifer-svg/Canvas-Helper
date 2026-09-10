@@ -28,7 +28,7 @@ cd browser && npm run sync
 3. Flag WebAssign / ZyBooks / PlayPosit / proctored in Notes.
 4. Update `inbox/courses/CODE.md` for deep notes when useful (sync also refreshes **Assignment catalog** + **Checkpoints**).
 5. Offer `canvas-week-plan`, `student-task-brief`, or `student-course-arc` (when the student names a course).
-6. If the student asks to save focus: write `{user_root}/inbox/focus.md` from `student-task-brief` Top 3. Never treat focus as a competing due-list — `week.md` stays canonical.
+6. If the student asks to save focus: write `{user_root}/inbox/focus.md` with `python -m canvas_mcp.core.teach_hint write-focus` (Open with + Format + Top 3), as in `student-task-brief`. Pass `--obstacle` only if they name the cue. Never treat focus as a competing due-list — `week.md` stays canonical.
 
 ### Rules
 

@@ -12,7 +12,7 @@ pub const MAIN_WINDOW: &str = "main";
 const MARGIN_LOGICAL: f64 = 20.0;
 
 const PEEK_W: f64 = 320.0;
-const PEEK_H: f64 = 210.0;
+const PEEK_H: f64 = 300.0;
 const EXPANDED_W: f64 = 400.0;
 const EXPANDED_HEIGHT_FRACTION: f64 = 0.34;
 const ONBOARDING_W: f64 = 460.0;

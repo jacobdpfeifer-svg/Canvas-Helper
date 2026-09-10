@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-record-review-outcome"
+description = "Enables the record_review_outcome command without any pre-configured scope."
+commands.allow = ["record_review_outcome"]
+
+[[permission]]
+identifier = "deny-record-review-outcome"
+description = "Denies the record_review_outcome command without any pre-configured scope."
+commands.deny = ["record_review_outcome"]

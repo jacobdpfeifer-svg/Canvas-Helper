@@ -1,7 +1,7 @@
-//! Parse `{user_root}/inbox/week.md` into Top-3 sticky items.
+//! Parse `{user_root}/inbox/focus.md` into the practice peek.
 //!
-//! Until `focus.md` exists, derive Top-3 from the due-window table (soonest
-//! open rows already ordered by sync-week).
+//! Prefer `Open with:` (the closed-book check). Do not fall back to
+//! `week.md` — that due-list is not a retrieval.
 
 use serde::Serialize;
 use std::env;
@@ -64,6 +64,10 @@ pub fn week_md_path() -> PathBuf {
     user_root().join("inbox").join("week.md")
 }
 
+pub fn focus_md_path() -> PathBuf {
+    user_root().join("inbox").join("focus.md")
+}
+
 pub fn auth_dir() -> PathBuf {
     user_root().join("auth")
 }
@@ -122,14 +126,100 @@ pub fn parse_week_top3(md: &str, limit: usize) -> Vec<Top3Item> {
     items
 }
 
+/// Parse the practice handoff. `Open with:` becomes the first item's subtitle
+/// so Today shows the check, not only the assignment title.
+pub fn parse_focus_top3(md: &str, limit: usize) -> Vec<Top3Item> {
+    let mut open_with = String::new();
+    let mut items = Vec::new();
+    for line in md.lines() {
+        let trimmed = line.trim();
+        if let Some(rest) = trimmed.strip_prefix("Open with:") {
+            let text = rest.trim();
+            if !text.is_empty() {
+                open_with = text.to_string();
+            }
+            continue;
+        }
+        let Some(rest) = strip_numbered_item(trimmed) else {
+            continue;
+        };
+        let (title, due) = split_focus_item(rest);
+        if title.is_empty() {
+            continue;
+        }
+        items.push(Top3Item {
+            id: format!("focus-{}", items.len() + 1),
+            title,
+            due,
+        });
+        if items.len() >= limit {
+            break;
+        }
+    }
+    if items.is_empty() && !open_with.is_empty() {
+        items.push(Top3Item {
+            id: "focus-1".to_string(),
+            title: "Open with".to_string(),
+            due: open_with,
+        });
+        return items;
+    }
+    if !items.is_empty() && !open_with.is_empty() {
+        items[0].due = open_with;
+    }
+    items
+}
+
+fn strip_numbered_item(line: &str) -> Option<&str> {
+    let mut chars = line.chars();
+    let first = chars.next()?;
+    if !first.is_ascii_digit() {
+        return None;
+    }
+    let rest = chars.as_str();
+    let after_digits = rest.trim_start_matches(|c: char| c.is_ascii_digit());
+    let after_digits = after_digits.trim_start();
+    let body = after_digits.strip_prefix('.')?.trim();
+    if body.is_empty() { None } else { Some(body) }
+}
+
+fn split_focus_item(body: &str) -> (String, String) {
+    let parts: Vec<&str> = body
+        .split(" — ")
+        .map(str::trim)
+        .filter(|part| !part.is_empty())
+        .collect();
+    if parts.is_empty() {
+        return (body.to_string(), String::new());
+    }
+    let mut due = String::new();
+    let mut title_parts: Vec<&str> = Vec::new();
+    for part in &parts {
+        let lower = part.to_ascii_lowercase();
+        if lower.starts_with("due ") {
+            due = part[4..].trim().to_string();
+        } else if lower.starts_with("check:") {
+            continue;
+        } else if title_parts.len() < 2 {
+            title_parts.push(*part);
+        }
+    }
+    let title = if title_parts.is_empty() {
+        parts[0].to_string()
+    } else {
+        title_parts.join(" — ")
+    };
+    (title, due)
+}
+
 pub fn read_top3(limit: usize) -> Result<Vec<Top3Item>, String> {
-    let path = week_md_path();
-    if !path.is_file() {
+    let focus = focus_md_path();
+    if !focus.is_file() {
         return Ok(Vec::new());
     }
-    let md = fs::read_to_string(&path)
-        .map_err(|e| format!("failed to read {}: {e}", path.display()))?;
-    Ok(parse_week_top3(&md, limit))
+    let md = fs::read_to_string(&focus)
+        .map_err(|e| format!("failed to read {}: {e}", focus.display()))?;
+    Ok(parse_focus_top3(&md, limit))
 }
 
 pub fn save_school_slug(slug: &str) -> Result<(), String> {
@@ -172,5 +262,26 @@ mod tests {
         assert_eq!(items[0].title, "BCOR: Draft discussion");
         assert_eq!(items[0].due, "2026-09-07 23:59");
         assert_eq!(items[2].id, "week-3");
+    }
+
+    #[test]
+    fn focus_open_with_is_first_subtitle() {
+        let md = r#"Updated: 2026-09-08
+Open with: state the chain rule for sin(x^2); do not open notes
+Format: worked_example
+
+1. MATH — Chain rule set — due Thu — Check: state the rule
+2. CSCI — Quiz 1 — due Fri — Check: close the notes
+"#;
+        let items = parse_focus_top3(md, 3);
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].title, "MATH — Chain rule set");
+        assert_eq!(
+            items[0].due,
+            "state the chain rule for sin(x^2); do not open notes"
+        );
+        assert_eq!(items[1].title, "CSCI — Quiz 1");
+        assert_eq!(items[1].due, "Fri");
+        assert_eq!(items[0].id, "focus-1");
     }
 }

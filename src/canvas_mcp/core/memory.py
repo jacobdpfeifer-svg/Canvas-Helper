@@ -20,7 +20,7 @@ def add_memory(
 ) -> dict[str, Any]:
     """Extract and store a long-term memory fact."""
     try:
-        from mem0 import Memory  # type: ignore
+        from mem0 import Memory
 
         mem = Memory()
         result = mem.add(text, user_id=user_id, metadata=metadata or {})
@@ -42,7 +42,7 @@ def search_memory(
     limit: int = 5,
 ) -> list[str]:
     try:
-        from mem0 import Memory  # type: ignore
+        from mem0 import Memory
 
         mem = Memory()
         hits = mem.search(query, user_id=user_id, limit=limit)

@@ -9,9 +9,7 @@ import json
 import random
 from pathlib import Path
 
-import pytest
-
-from canvas_mcp.core.ledger import UndoPtr, append_ledger, validate_entry, Ledger
+from canvas_mcp.core.ledger import Ledger, UndoPtr, append_ledger, validate_entry
 from canvas_mcp.core.permissions import (
     CATEGORIES,
     NEVER_AUTO,
@@ -41,9 +39,10 @@ def test_gate5_permissions_fuzz():
 
 
 def test_gate6_write_skills_never_shadowed():
+    import tempfile
+
     from canvas_mcp.core.self_improve.shadow import shadow_test
     from canvas_mcp.core.user_root import ensure_user_root
-    import tempfile
 
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)

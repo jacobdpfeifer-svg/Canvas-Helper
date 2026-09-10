@@ -13,7 +13,6 @@ from canvas_mcp.core.self_improve.logger import RequestLog, log_request
 from canvas_mcp.core.self_improve.promoter import promote_skill
 from canvas_mcp.core.self_improve.shadow import shadow_test
 from canvas_mcp.core.skill_eval import eval_all_bundled
-from canvas_mcp.core.skill_router import load_skill
 from canvas_mcp.core.user_root import ensure_user_root
 
 

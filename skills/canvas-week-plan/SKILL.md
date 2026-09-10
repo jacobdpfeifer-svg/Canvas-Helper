@@ -33,40 +33,33 @@ Use buckets from [`student-assignment-triage`](../student-assignment-triage/SKIL
 Apply [`student-task-brief`](../student-task-brief/SKILL.md) + [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md):
 
 - Rank open inbox rows **P0–P3**
-- Emit full briefing cards for **Top 3** (Why / Outcome / First step / Time box / Mode)
+- Emit full briefing cards for **Top 3** using the shared card in [`student-task-brief`](../student-task-brief/SKILL.md) (Check / Walkthrough / If-then / Format used). Do not restate format, spacing, or diagram rules here — obey the Teach-hint in this turn's slice.
 - Batch same-platform LTI; list deferred P3 briefly
-- End with one **Do first** sentence
-- Shape each card with the Learning profile:
-  - `practice_format: retrieval` → open **First step** with a quick self-check question ("could you explain X before opening it?") before the walkthrough; `worked_example` → lead with the walkthrough itself.
-  - `autonomy: directive` → state the next step as an instruction; `choices` → offer 2 reasonable next steps and let the student pick.
-  - `chunk_size: short` → keep Top-3 in small, separately time-boxed steps (Top-3 style); `long` → it's fine to present one consolidated block for a single sit-down.
-  - `check_depth: thorough` → keep a self-check even when `practice_format: worked_example`; `light` → do **not** stack an extra confirmation on top of retrieval-first.
-  - On each Top-3 card, tag the format used as `Format used: retrieval|worked_example` (whichever framing you actually applied to that card's First step).
+- End with one **Do first** sentence. If the slice starts with `Open with:`, ask that check before the new Top-3. If `## Practice` names one overdue item, that clause comes first and replaces a stale Open with.
+- When you emit Top 3, write the focus handoff and any learn items exactly as task-brief section 6 specifies (`teach_hint write-focus` / `learn_loop add`). That write is the save if the student asked to pin focus.
+- Pre-reading: one pass, then close the source and retrieve. Do not “note 3 takeaways” while the text is open.
+- Quiz / exam: extract claims and schedule them until the checkpoint. Cramming the night before is the illusion of mastery, not the plan.
+- If `## Due reviews` is in the slice, those checks outrank a new passive reading of the same material. Workflow items (signup, calendar, busywork) stay on the do-loop — do not store them as learn items.
+- If `## Practice` or `## Coverage` is in the slice, say that one line in the plan. `in_the_gap` means nothing is due — the gap is the practice. `unextracted` means a quiz is listed and no claims exist yet; do not call that rest. If Practice names one overdue item, start there and do not backfill. Do not add a brief-continuity count, a score, or a second due-list. Brief continuity is not learning evidence.
+- If a review-budget line is present, say it once. The student may still study past it. A trail line is not a streak and not learning evidence unless it is the chain sentence for a delayed hit. Do not invent a check to feed the trail. A path or a kept commitment is not a delayed hit. If a commitment or check-in line is present, offer that one action and do not mark it kept.
 
-If the student asks to save focus, write `{user_root}/inbox/focus.md` from the Top 3 (not a second due-list).
+### 5. Format reply
 
-### 5. Format feedback (required once per week-plan turn)
-
-After presenting Top-3 + **Do first**, ask once:
-
-> Was the [quiz-first / worked-example] framing helpful for the Do-first item?
-
-Then record a **format-specific** signal (never treat palette/route success as a learning-profile signal):
+If the student says “quiz me”, “quiz me instead”, “walk me through”, or “just show me”, record it before rewriting the card (same command as task-brief section 7):
 
 ```bash
-# Helped → value = format used on Do-first
-# Confusing → value = the opposite format
-python -m canvas_mcp.core.learning_profile signal \
-  --field practice_format --value <used_or_opposite> --delta 1
+python -m canvas_mcp.core.teach_hint reply --text "<their words>"
 ```
 
-Honor `DEV_USER_ROOT` if set. Autonomy / chunk_size / check_depth stay prior-only until a skill has a real signal for those fields.
+A direct reformat request is a start-bias signal only. It does not skip retrieval or the scheduled check. Do not treat palette/route success, silence, time-on-page, or “that felt helpful” as a learning signal. Autonomy / chunk_size / check_depth stay prior-only until a skill has an equally explicit control for those fields.
+
+Do not ask whether the framing felt helpful. If a check felt easy, say ease is a weak signal and keep the scheduled review.
 
 ### 6. Output
 
 Note **source** (`inbox` from sso-session-api / MCP / merge). Include:
 
-Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → **Focus briefing (Top 3 + batch + Do first)** → format-feedback question.
+Quick stats → Worth your time → External/LTI → Agent can handle → Ask → By course → **Focus briefing (Top 3 + batch + Do first)**. If the slice has `## Due reviews` or `Open with:`, that closed-book check is first.
 
 ## Goal lens
 
