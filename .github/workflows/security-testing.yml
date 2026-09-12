@@ -2,9 +2,9 @@ name: Security Testing
 
 on:
   push:
-    branches: [ main, development ]
+    branches: [ main, development, phase1-productname-pivot ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, phase1-productname-pivot ]
   schedule:
     # Run weekly security scans
     - cron: '0 0 * * 0'

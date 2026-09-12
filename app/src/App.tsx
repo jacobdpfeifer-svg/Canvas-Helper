@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nearestCheckpoint, Top3Sticky } from "./components/Top3Sticky";
 import { CommitmentPanel } from "./components/Commitment";
 import { ReviewSession } from "./components/ReviewSession";
-import { NarrateAfter } from "./components/NarrateAfter";
 import { CommandPalette } from "./components/CommandPalette";
-import { ApprovalSheet } from "./components/ApprovalSheet";
 import { Onboarding } from "./components/Onboarding";
 import { LedgerViewer } from "./components/LedgerViewer";
+import { IconClose, IconCommand } from "./components/Icons";
+import { Skeleton } from "./components/Skeleton";
 import {
   hideDock,
   onInboxUpdated,
+  onSyncFailed,
   readBriefStreak,
   readCheckIntention,
   readCommitment,
@@ -35,16 +36,30 @@ import {
   type Trail,
 } from "./ipc";
 
+function RetentionSkeletonRows({ count = 2 }: { count?: number }) {
+  return (
+    <ul aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <li key={i} className="retention-skeleton-row">
+          <Skeleton className="skeleton-line" width={i === 0 ? "34%" : "42%"} />
+          <Skeleton className="skeleton-line-sm" width={i === 0 ? "72%" : "58%"} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const forceSkeleton =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).has("force_skeleton");
+
 export function App() {
   const [onboarded, setOnboarded] = useState(
     () => localStorage.getItem("pn_onboarded") === "1"
   );
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [approval, setApproval] = useState<null | {
-    title: string;
-    why: string;
-  }>(null);
   const [showLedger, setShowLedger] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
   const [dueReviews, setDueReviews] = useState<DueReview[]>([]);
   const [sessionItems, setSessionItems] = useState<DueReview[]>([]);
   const [practice, setPractice] = useState<PracticeSurface>({
@@ -87,9 +102,27 @@ export function App() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [routeHint, setRouteHint] = useState<string | null>(null);
 
-  const expanded = paletteOpen || approval !== null || showLedger || reviewOpen;
+  const [dueReady, setDueReady] = useState(false);
+  const [progressReady, setProgressReady] = useState(false);
+  const [commitmentReady, setCommitmentReady] = useState(false);
+  const [evalReady, setEvalReady] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
+  const dueReadyRef = useRef(false);
+  const progressReadyRef = useRef(false);
+  const commitmentReadyRef = useRef(false);
+  const evalReadyRef = useRef(false);
+  dueReadyRef.current = dueReady;
+  progressReadyRef.current = progressReady;
+  commitmentReadyRef.current = commitmentReady;
+  evalReadyRef.current = evalReady;
+
+  const expanded = paletteOpen || showLedger || reviewOpen;
 
   const refreshTop3 = () => {
+    const isRefetch = dueReadyRef.current;
+    if (isRefetch) setUpdating(true);
+
     readDueReviews()
       .then((payload) => {
         setDueLoadFailed(false);
@@ -104,6 +137,8 @@ export function App() {
       })
       .catch((e) => {
         console.error("read_due_reviews failed", e);
+        // First load: clear to idle/error empty. Refetch: keep stale data.
+        if (dueReadyRef.current) return;
         setDueLoadFailed(true);
         setDueReviews([]);
         setSessionItems([]);
@@ -130,6 +165,10 @@ export function App() {
         setBudget({ now: 0, later: 0, later_checkpoint: null, line: "" });
         setTrail({ line: "", learning: [], workflow: [] });
         setGarden({ note: "", courses: [] });
+      })
+      .finally(() => {
+        setDueReady(true);
+        setUpdating(false);
       });
     readCheckIntention()
       .then(setIfThen)
@@ -138,22 +177,29 @@ export function App() {
       .then((payload) => setStreakLine(payload.line || ""))
       .catch((e) => {
         console.error("read_brief_streak failed", e);
-        setStreakLine("");
+        if (!dueReadyRef.current) setStreakLine("");
       });
     readLearnProgress()
       .then((payload) => setProgress(payload.courses))
       .catch((e) => {
         console.error("read_learn_progress failed", e);
-        setProgress([]);
-      });
+        if (!progressReadyRef.current) setProgress([]);
+      })
+      .finally(() => setProgressReady(true));
     readEvaluationCompare()
       .then(setEvalCompare)
-      .catch(() => setEvalCompare({ ok: false }));
+      .catch(() => {
+        if (!evalReadyRef.current) setEvalCompare({ ok: false });
+      })
+      .finally(() => setEvalReady(true));
     readCommitment()
       .then(setCommitmentState)
-      .catch(() =>
-        setCommitmentState({ commitment: null, check_in: null, line: "" })
-      );
+      .catch(() => {
+        if (!commitmentReadyRef.current) {
+          setCommitmentState({ commitment: null, check_in: null, line: "" });
+        }
+      })
+      .finally(() => setCommitmentReady(true));
   };
 
   useEffect(() => {
@@ -171,12 +217,22 @@ export function App() {
   useEffect(() => {
     if (!onboarded) return;
     refreshTop3();
-    let unlisten: (() => void) | undefined;
-    onInboxUpdated(() => refreshTop3()).then((fn) => {
-      unlisten = fn;
+    let unlistenInbox: (() => void) | undefined;
+    let unlistenSync: (() => void) | undefined;
+    onInboxUpdated(() => {
+      setSyncError(null);
+      refreshTop3();
+    }).then((fn) => {
+      unlistenInbox = fn;
+    });
+    onSyncFailed((message) => {
+      setSyncError(message || "Sync failed");
+    }).then((fn) => {
+      unlistenSync = fn;
     });
     return () => {
-      unlisten?.();
+      unlistenInbox?.();
+      unlistenSync?.();
     };
   }, [onboarded]);
 
@@ -204,7 +260,13 @@ export function App() {
       ? practice.line
       : "");
   const displayTop3 = dueLoadFailed
-    ? []
+    ? [
+        {
+          id: "due-error",
+          title: "Couldn’t load checks",
+          due: "Try Sync from the command palette",
+        },
+      ]
     : duePeek.length > 0
       ? duePeek
       : recoveryLine
@@ -226,27 +288,21 @@ export function App() {
       <header className="dock-controls">
         <button
           type="button"
-          className="ghost"
+          className="ghost icon-btn"
           title="Command palette (⌥Space)"
+          aria-label="Open command palette"
           onClick={() => setPaletteOpen(true)}
         >
-          ⌥
+          <IconCommand />
         </button>
         <button
           type="button"
-          className="ghost stop"
-          title="STOP all automation for 24h"
-          onClick={() => window.alert("STOP engaged 24h")}
-        >
-          STOP
-        </button>
-        <button
-          type="button"
-          className="ghost dismiss"
+          className="ghost dismiss icon-btn"
           title="Hide"
+          aria-label="Hide dock"
           onClick={() => hideDock()}
         >
-          ×
+          <IconClose />
         </button>
       </header>
 
@@ -282,6 +338,8 @@ export function App() {
           streakLine={streakLine}
           budgetLine={budget.line}
           trailLine={trail.line}
+          loading={!dueReady || forceSkeleton}
+          updating={updating && !forceSkeleton}
           onStartCheck={() => {
             setSessionItems(dueReviews);
             setReviewOpen(true);
@@ -289,8 +347,19 @@ export function App() {
         />
       )}
       {routeHint && <p className="route-hint">{routeHint}</p>}
+      {syncError && (
+        <p className="route-hint" role="alert">
+          Sync failed: {syncError}
+        </p>
+      )}
 
-      {expanded && trail.learning.length + trail.workflow.length > 0 && (
+      {expanded && (!dueReady || forceSkeleton) && (
+        <section className="retention" aria-label="Trail" aria-busy="true">
+          <h2>This week</h2>
+          <RetentionSkeletonRows count={3} />
+        </section>
+      )}
+      {expanded && dueReady && !forceSkeleton && trail.learning.length + trail.workflow.length > 0 && (
         <section className="retention" aria-label="Trail">
           <h2>This week</h2>
           <ul>
@@ -310,7 +379,13 @@ export function App() {
         </section>
       )}
 
-      {expanded && garden.courses.length > 0 && (
+      {expanded && (!dueReady || forceSkeleton) && (
+        <section className="retention" aria-label="Semester garden" aria-busy="true">
+          <h2>Garden</h2>
+          <RetentionSkeletonRows count={2} />
+        </section>
+      )}
+      {expanded && dueReady && !forceSkeleton && garden.courses.length > 0 && (
         <section className="retention" aria-label="Semester garden">
           <h2>Garden</h2>
           {garden.note ? <p className="check-chip">{garden.note}</p> : null}
@@ -325,7 +400,13 @@ export function App() {
         </section>
       )}
 
-      {expanded && progress.length > 0 && (
+      {expanded && (!progressReady || forceSkeleton) && (
+        <section className="retention" aria-label="Retention" aria-busy="true">
+          <h2>Retention</h2>
+          <RetentionSkeletonRows count={2} />
+        </section>
+      )}
+      {expanded && progressReady && !forceSkeleton && progress.length > 0 && (
         <section className="retention" aria-label="Retention">
           <h2>Retention</h2>
           <ul>
@@ -348,7 +429,13 @@ export function App() {
         </section>
       )}
 
-      {expanded && evalCompare.ok && evalCompare.before && evalCompare.after && evalCompare.deltas && (
+      {expanded &&
+        evalReady &&
+        !forceSkeleton &&
+        evalCompare.ok &&
+        evalCompare.before &&
+        evalCompare.after &&
+        evalCompare.deltas && (
         <section className="retention" aria-label="Evaluation compare">
           <h2>Retention</h2>
           <ul>
@@ -373,7 +460,14 @@ export function App() {
         </section>
       )}
 
-      {expanded && (
+      {expanded && (!commitmentReady || forceSkeleton) && (
+        <section className="retention" aria-label="Commitment" aria-busy="true">
+          <h2>Commitment</h2>
+          <Skeleton className="skeleton-line" width="88%" />
+          <Skeleton className="skeleton-line-sm" width="55%" />
+        </section>
+      )}
+      {expanded && commitmentReady && !forceSkeleton && (
         <CommitmentPanel
           state={commitment}
           onSet={async (input) => {
@@ -387,47 +481,26 @@ export function App() {
         />
       )}
 
-      {expanded && (
-        <NarrateAfter
-          items={[
-            {
-              id: "n1",
-              text: "Moved Wednesday study block because your flight changed",
-              why: "calendar sync detected conflict",
-            },
-            {
-              id: "n2",
-              text: "Drafted email to professor — saved to Drafts",
-              why: "inbox triage matched office-hours template",
-            },
-          ]}
-          onUndo={(id) => console.log("undo", id)}
-        />
-      )}
-
       {paletteOpen && (
         <CommandPalette
           onClose={() => setPaletteOpen(false)}
           onAction={(action) => {
             setPaletteOpen(false);
-            if (action === "approve-demo") {
-              setApproval({
-                title: "Submit assignment preview",
-                why: "Course calibrated; mechanical busywork",
-              });
-            } else if (action === "sync") {
+            if (action === "sync") {
+              setSyncError(null);
               syncCanvas()
                 .then((r) => {
                   if (!r.ok) {
                     console.error("sync failed", r.error);
-                    window.alert(r.error || "Sync failed");
+                    setSyncError(r.error || "Sync failed");
                   } else {
+                    setSyncError(null);
                     refreshTop3();
                   }
                 })
                 .catch((e) => {
                   console.error(e);
-                  window.alert(String(e));
+                  setSyncError(String(e));
                 });
             } else if (action === "brief") {
               routeIntent("what should I do first")
@@ -447,15 +520,6 @@ export function App() {
                 .catch((e) => console.error("route_intent failed", e));
             }
           }}
-        />
-      )}
-
-      {approval && (
-        <ApprovalSheet
-          title={approval.title}
-          why={approval.why}
-          onApprove={() => setApproval(null)}
-          onSkip={() => setApproval(null)}
         />
       )}
 

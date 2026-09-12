@@ -18,7 +18,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
 from common import google_oauth  # noqa: E402
-from common.actuator import check_write, user_root  # noqa: E402
+from common.actuator import gate_connector_write, user_root  # noqa: E402
 from common.stop_rewind import rewind_last  # noqa: E402
 
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
@@ -28,28 +28,40 @@ _DRAFTS: dict[str, dict[str, Any]] = {}
 _LABELS: dict[str, list[str]] = {}
 
 
+def _labels_fingerprint(labels: list[str] | None) -> str:
+    return ",".join(sorted(labels or []))
+
+
 @mcp.tool()
 def create_draft(
     to: str,
     subject: str,
     body: str,
     why: str = "Email draft automation",
-    confirmed: bool = False,
+    confirmation_token: str | None = None,
 ) -> str:
     """Save a draft only — never sends."""
     root = user_root()
-    ok, reason = check_write(
+    gate = gate_connector_write(
         root,
         "email_draft",
-        confirmed=confirmed,
-        actor="gmail",
+        connector_id="gmail",
         tool="create_draft",
+        fingerprint_parts=[to, subject, body, why],
+        preview_lines=[
+            f"To: {to}",
+            f"Subject: {subject}",
+            f"Body ({len(body)} chars):\n{body}",
+            f"Why: {why}",
+        ],
+        confirmation_token=confirmation_token,
+        actor="gmail",
         target=to,
         why=why,
         log_block=False,
     )
-    if not ok:
-        return f"❌ Blocked: {reason}"
+    if gate.kind != "proceed":
+        return gate.message
 
     service = google_oauth.gmail_service(root)
     if service is not None:
@@ -94,22 +106,37 @@ def apply_labels(
     add_labels: list[str] | None = None,
     remove_labels: list[str] | None = None,
     why: str = "Email triage",
-    confirmed: bool = False,
+    confirmation_token: str | None = None,
 ) -> str:
     """Label/archive/star — never delete. Stores prior label state for undo."""
     root = user_root()
-    ok, reason = check_write(
+    add = list(add_labels or [])
+    remove = list(remove_labels or [])
+    gate = gate_connector_write(
         root,
         "email_triage",
-        confirmed=confirmed,
-        actor="gmail",
+        connector_id="gmail",
         tool="apply_labels",
+        fingerprint_parts=[
+            message_id,
+            _labels_fingerprint(add),
+            _labels_fingerprint(remove),
+            why,
+        ],
+        preview_lines=[
+            f"Message ID: {message_id}",
+            f"Add labels: {', '.join(sorted(add)) or '(none)'}",
+            f"Remove labels: {', '.join(sorted(remove)) or '(none)'}",
+            f"Why: {why}",
+        ],
+        confirmation_token=confirmation_token,
+        actor="gmail",
         target=message_id,
         why=why,
         log_block=False,
     )
-    if not ok:
-        return f"❌ Blocked: {reason}"
+    if gate.kind != "proceed":
+        return gate.message
 
     service = google_oauth.gmail_service(root)
     if service is not None:
@@ -120,18 +147,18 @@ def apply_labels(
         remote = google_oauth.gmail_modify_labels(
             service,
             message_id,
-            add_labels=add_labels,
-            remove_labels=remove_labels,
+            add_labels=add,
+            remove_labels=remove,
         )
         labels = list(remote.get("labelIds") or [])
         mode = "live"
     else:
         prior = list(_LABELS.get(message_id, []))
         labels = list(prior)
-        for lab in remove_labels or []:
+        for lab in remove:
             if lab in labels:
                 labels.remove(lab)
-        for lab in add_labels or []:
+        for lab in add:
             if lab not in labels:
                 labels.append(lab)
         _LABELS[message_id] = labels

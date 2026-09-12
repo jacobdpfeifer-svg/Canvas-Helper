@@ -1,6 +1,6 @@
 ---
 name: canvas-discussion-facilitator
-description: Student discussion helper. Drafts posts/replies for review by default; posts only when the student explicitly approves. Use for discussions, forum participation, reply drafts.
+description: Student discussion helper. Drafts posts/replies for the student to paste in Canvas. Never posts on their behalf. Use for discussions, forum participation, reply drafts.
 schema_version: 1
 category: canvas_read
 model_tier: reliable
@@ -9,7 +9,7 @@ requires_cloud: false
 
 # Canvas Discussion Facilitator
 
-Browse and draft discussion work for the student’s active courses. **Default: draft only.** Post or reply only when the student explicitly says to.
+Browse and draft discussion work for the student’s active courses. **Draft and preview only.** This product never posts or replies in Canvas for the student — discussion entries are visible to classmates and the instructor (canvas-focus pivot).
 
 ## Instructions
 
@@ -21,13 +21,13 @@ Use `list_courses` if unspecified. Prefer the student’s active-term enrollment
 
 `list_discussion_topics` → pick topic → `list_discussion_entries` / `get_discussion_entry_details`.
 
-### 3. Draft (default)
+### 3. Draft (always)
 
-Write a reply/post the student can edit. Do **not** call `post_discussion_entry` or `reply_to_discussion_entry` until they say e.g. “post it” / “send the reply.”
+Write a reply/post the student can edit. Optionally call `post_discussion_entry` or `reply_to_discussion_entry` for a **preview** of wording and topic context — those tools never POST to Canvas.
 
-### 4. Post (only with explicit approval)
+### 4. Student posts themselves
 
-After clear yes to that exact action, post/reply with the approved text.
+Show the draft/preview in chat. Tell the student to paste and post it in Canvas. Do **not** claim the product posted it, and do not invent a confirmation/execute path.
 
 ### 5. Live / classmate-facing work
 
@@ -46,7 +46,7 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 
 ## Tools available
 
-Draft by default. No `submit_assignment` from this skill.
+Draft and preview only. No `submit_assignment` from this skill. No real Canvas discussion POST from this skill.
 
 Read:
 
@@ -55,10 +55,10 @@ Read:
 - `list_discussion_entries` — posts
 - `get_discussion_entry_details` — full post
 
-Write only after the student explicitly approves that exact action:
+Preview only (never posts):
 
-- `post_discussion_entry` — new post
-- `reply_to_discussion_entry` — reply
+- `post_discussion_entry` — preview a new top-level post
+- `reply_to_discussion_entry` — preview a reply
 
 ## Triggers
 

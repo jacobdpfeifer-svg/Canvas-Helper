@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Process pending_mac rows in inbox/captures/queue.md.
- * Requires SSO session (npm run open-canvas) and local photo in inbox/captures/inbox/.
+ * Process pending_mac rows in inbox/captures/queue.md — preview only.
+ *
+ * Canvas-focus pivot: never uploads or submits to Canvas. Match course /
+ * assignment and show what the student should upload themselves.
  *
  * Usage:
  *   node scripts/process-capture-queue.mjs [--dry-run] [--id CAPTURE_ID]
@@ -14,12 +16,8 @@ import {
   parseCourseIdFromMd,
   readCaptureQueue,
   resolveCaptureFile,
-  touchQueueUpdated,
-  updateCaptureQueueRow,
-  writeCaptureQueue,
-  PROCESSED_DIR,
 } from "./lib/capture-queue.mjs";
-import { uploadAndSubmitAssignment } from "./lib/capture-upload.mjs";
+import { previewCaptureSubmit } from "./lib/capture-upload.mjs";
 import {
   apiAllPages,
   launchCanvasContext,
@@ -27,15 +25,14 @@ import {
 } from "./lib/canvas-session.mjs";
 
 const args = process.argv.slice(2);
-const dryRun = args.includes("--dry-run");
 const idFlag = args.indexOf("--id");
 const onlyId = idFlag >= 0 ? args[idFlag + 1] : null;
 
 function usage() {
   console.log(`Usage: npm run process-capture-queue [-- --dry-run] [-- --id CAPTURE_ID]
 
-Processes queue rows with status pending_mac when matching files exist in inbox/captures/inbox/.
-Student must confirm uploads — pass CONFIRM=1 to submit (otherwise dry-run preview).`);
+Preview queue rows with status pending_mac when matching files exist in inbox/captures/inbox/.
+Never uploads or submits (canvas-focus pivot) — CONFIRM=1 is ignored; upload in Canvas yourself.`);
 }
 
 if (args.includes("--help") || args.includes("-h")) {
@@ -43,7 +40,11 @@ if (args.includes("--help") || args.includes("-h")) {
   process.exit(0);
 }
 
-const confirm = process.env.CONFIRM === "1";
+if (process.env.CONFIRM === "1") {
+  console.warn(
+    "CONFIRM=1 is ignored: live photo submit is hard-blocked (canvas-focus pivot)."
+  );
+}
 
 /**
  * @param {Array<{ id: number|string, name: string }>} assignments
@@ -114,44 +115,17 @@ async function main() {
         continue;
       }
 
+      const preview = previewCaptureSubmit({
+        courseId,
+        assignmentId,
+        filePath,
+      });
       console.log(
-        `\n${row.id}: ${row.course_guess} → assignment ${assignmentId}\n  file: ${filePath}\n  match: ${row.assignment_match}`
+        `\n${row.id}: ${row.course_guess} → assignment ${assignmentId}\n` +
+          `  file: ${filePath}\n` +
+          `  match: ${row.assignment_match}\n` +
+          `  [preview] ${preview.message}`
       );
-
-      if (dryRun || !confirm) {
-        console.log("  [preview] would upload + submit (set CONFIRM=1 to execute)");
-        continue;
-      }
-
-      try {
-        await uploadAndSubmitAssignment(page, {
-          courseId,
-          assignmentId,
-          filePath,
-        });
-        fs.mkdirSync(PROCESSED_DIR, { recursive: true });
-        const dest = path.join(PROCESSED_DIR, path.basename(filePath));
-        fs.renameSync(filePath, dest);
-        const updated = updateCaptureQueueRow(queueContent, row.id, {
-          status: "uploaded",
-          notes: `${row.notes}; uploaded ${new Date().toISOString()}`,
-        });
-        if (updated.found) {
-          queueContent = touchQueueUpdated(updated.content);
-          writeCaptureQueue(queueContent);
-        }
-        console.log(`  [ok] uploaded and submitted; archived to processed/`);
-      } catch (e) {
-        const fail = updateCaptureQueueRow(queueContent, row.id, {
-          status: "failed",
-          notes: `${row.notes}; error: ${String(e.message || e)}`,
-        });
-        if (fail.found) {
-          queueContent = touchQueueUpdated(fail.content);
-          writeCaptureQueue(queueContent);
-        }
-        console.error(`  [fail] ${e.message || e}`);
-      }
     }
   } finally {
     await context.close();

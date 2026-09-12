@@ -1,17 +1,48 @@
-"""Shared actuator bootstrap — user_root + write gate."""
+"""Shared actuator bootstrap — user_root + write gate + ConfirmationGuard."""
 
 from __future__ import annotations
 
+import inspect
+import re
 import sys
 from pathlib import Path
+
+import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
-from common.actuator import check_write, user_root  # noqa: E402
+from common.actuator import (  # noqa: E402
+    check_write,
+    gate_connector_write,
+    release_connector_confirmation,
+    user_root,
+)
 
+from canvas_mcp.core.connector_guards import reset_connector_guards  # noqa: E402
 from canvas_mcp.core.permissions import load_permissions, save_permissions  # noqa: E402
 from canvas_mcp.core.user_root import ensure_user_root  # noqa: E402
+
+_TOKEN_RE = re.compile(r"confirmation_token='([^']+)'")
+
+
+@pytest.fixture(autouse=True)
+def _reset_guards():
+    reset_connector_guards()
+    yield
+    reset_connector_guards()
+
+
+def _set_posture(root: Path, category: str, posture: str) -> None:
+    state = load_permissions(root)
+    state.categories[category].posture = posture  # type: ignore[assignment]
+    save_permissions(root, state)
+
+
+def _extract_token(preview: str) -> str:
+    match = _TOKEN_RE.search(preview)
+    assert match, f"no confirmation_token in preview:\n{preview}"
+    return match.group(1)
 
 
 def test_actuator_user_root_honors_dev(tmp_path, monkeypatch):
@@ -39,3 +70,259 @@ def test_check_write_blocks_never_category(tmp_path, monkeypatch):
     )
     assert not ok
     assert reason
+
+
+def test_gate_automatic_proceeds_without_token(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "automatic")
+    gate = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "2026-01-01T10:00:00", "2026-01-01T11:00:00", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert gate.kind == "proceed"
+    assert gate.confirmation_token is None
+
+
+def test_gate_gated_no_token_returns_preview(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    gate = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "a", "b", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert gate.kind == "preview"
+    assert "NOTHING has been written yet" in gate.message
+    assert "Summary: Study" in gate.message
+    assert _extract_token(gate.message)
+
+
+def test_gate_gated_forged_token_rejected(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    gate = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "a", "b", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token="9999999999.deadbeef.f" * 4,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert gate.kind == "blocked"
+    assert "malformed" in gate.message.lower() or "confirmation" in gate.message.lower()
+
+
+def test_gate_gated_wrong_content_token_rejected(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    preview = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "a", "b", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    token = _extract_token(preview.message)
+    gate = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["DIFFERENT", "a", "b", "why"],
+        preview_lines=["Summary: DIFFERENT"],
+        confirmation_token=token,
+        actor="gcal",
+        target="DIFFERENT",
+        why="why",
+        log_block=False,
+    )
+    assert gate.kind == "blocked"
+    assert "does not match" in gate.message
+
+
+def test_gate_gated_valid_token_proceeds_once(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    parts = ["Study", "a", "b", "why"]
+    preview = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    token = _extract_token(preview.message)
+    first = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=token,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert first.kind == "proceed"
+    assert first.confirmation_token == token
+
+    second = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=token,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert second.kind == "blocked"
+    assert "already used" in second.message.lower()
+
+
+def test_gate_never_blocks_even_with_preview_token(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    preview = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "a", "b", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    token = _extract_token(preview.message)
+    _set_posture(tmp_path, "calendar", "never")
+    gate = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=["Study", "a", "b", "why"],
+        preview_lines=["Summary: Study"],
+        confirmation_token=token,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert gate.kind == "blocked"
+    assert "Blocked" in gate.message
+
+
+def test_release_connector_confirmation_allows_retry(tmp_path):
+    ensure_user_root(tmp_path)
+    _set_posture(tmp_path, "calendar", "gated")
+    parts = ["Study", "a", "b", "why"]
+    preview = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=None,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    token = _extract_token(preview.message)
+    first = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=token,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert first.kind == "proceed"
+    release_connector_confirmation("gcal", first.confirmation_token)
+    retry = gate_connector_write(
+        tmp_path,
+        "calendar",
+        connector_id="gcal",
+        tool="create_event",
+        fingerprint_parts=parts,
+        preview_lines=["Summary: Study"],
+        confirmation_token=token,
+        actor="gcal",
+        target="Study",
+        why="why",
+        log_block=False,
+    )
+    assert retry.kind == "proceed"
+
+
+def test_write_tools_no_longer_expose_confirmed_bool():
+    import importlib.util
+
+    sys.path.insert(0, str(REPO / "mcp-servers"))
+    from gcal import server as gcal_server  # noqa: E402
+    from gmail import server as gmail_server  # noqa: E402
+
+    apple_path = REPO / "mcp-servers" / "apple-cal" / "server.py"
+    spec = importlib.util.spec_from_file_location("apple_cal_server", apple_path)
+    assert spec and spec.loader
+    apple_server = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(apple_server)
+
+    for fn in (
+        gcal_server.create_event,
+        gcal_server.update_event,
+        gmail_server.create_draft,
+        gmail_server.apply_labels,
+        apple_server.create_event,
+    ):
+        params = inspect.signature(fn).parameters
+        assert "confirmed" not in params
+        assert "confirmation_token" in params

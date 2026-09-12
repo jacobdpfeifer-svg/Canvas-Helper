@@ -1,4 +1,4 @@
-//! ProductName local daemon — sync cadence, sensors, self-improve cron, ledger.
+//! ProductName local daemon — sync cadence, sensors, ledger.
 //!
 //! Canvas sync: every 2h on term weekdays, 6h weekends, plus event-driven when
 //! the Chrome extension reports Canvas tab focus. Never sub-5-minute polling.
@@ -126,6 +126,30 @@ pub fn run_canvas_sync() -> Result<(), String> {
         Ok(())
     } else {
         Err(format!("npm run sync exited with {status}"))
+    }
+}
+
+/// First-run deep crawl: same `npm run sync`, but widened to the whole term
+/// (`DAYS`/`CATALOG_DAYS`≈150) instead of the daily 14-day window, so course
+/// catalogs are populated before the student ever asks. Fired once, right
+/// after onboarding confirms a Canvas session — never on the daily cadence.
+pub fn run_bootstrap_sync() -> Result<(), String> {
+    tick_log("bootstrap-sync");
+    let browser = browser_dir();
+    if !browser.is_dir() {
+        return Err(format!("browser dir missing: {}", browser.display()));
+    }
+    let mut cmd = Command::new("npm");
+    cmd.arg("run").arg("sync").current_dir(&browser);
+    cmd.env("DAYS", "150").env("CATALOG_DAYS", "150");
+    forward_user_env(&mut cmd);
+    let status = cmd
+        .status()
+        .map_err(|e| format!("failed to spawn npm run sync (bootstrap): {e}"))?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("npm run sync (bootstrap) exited with {status}"))
     }
 }
 

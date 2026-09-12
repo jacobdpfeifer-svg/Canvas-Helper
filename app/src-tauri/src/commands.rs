@@ -50,18 +50,68 @@ pub fn open_canvas_sso() -> Result<(), String> {
     daemon::run_open_canvas()
 }
 
+/// Headless probe: is there already a valid Canvas session in browser/.auth?
+/// Onboarding calls this before showing the sign-in step.
 #[tauri::command]
-pub fn save_onboarding(school_slug: String, cloud_key: String) -> Result<(), String> {
+pub fn check_canvas_session() -> Result<bool, String> {
+    daemon::run_check_canvas_session()
+}
+
+/// Fire-and-forget deep first-sync, launched the moment onboarding confirms
+/// a Canvas session (silent cookie hit or fresh SSO login) — runs in the
+/// background while the student finishes the rest of the wizard, so the
+/// dock already has a full-term picture by the time they land on it.
+/// Does not block the caller and swallows its own errors: the daily
+/// `sync_canvas` cadence will retry on the normal schedule regardless.
+#[tauri::command]
+pub fn bootstrap_canvas_sync(app: AppHandle) -> Result<(), String> {
+    thread::spawn(move || {
+        if daemon::run_bootstrap_sync().is_ok() {
+            emit_inbox_updated(&app);
+        }
+    });
+    Ok(())
+}
+
+#[tauri::command]
+pub fn save_onboarding(
+    school_slug: String,
+    cloud_key: String,
+    priorities: Option<String>,
+    sentry_opt_in: Option<bool>,
+    waitlist_email: Option<String>,
+) -> Result<(), String> {
     if school_slug.trim().is_empty() {
         return Err("school slug is required".into());
     }
-    inbox::save_school_slug(&school_slug)?;
+    let slug = school_slug.trim();
+    if slug == "waitlist" {
+        let email = waitlist_email.as_deref().unwrap_or("").trim();
+        if email.is_empty() {
+            return Err("waitlist email is required when your school is not listed".into());
+        }
+        inbox::save_waitlist_email(email)?;
+        inbox::save_school_slug("waitlist")?;
+        if let Some(opt_in) = sentry_opt_in {
+            inbox::save_sentry_opt_in(opt_in)?;
+        }
+        return Ok(());
+    }
+    inbox::save_school_slug(slug)?;
     // Cloud key is optional. A blank key stores nothing — there is no local-model path.
     if !cloud_key.trim().is_empty() {
         inbox::save_cloud_key(&cloud_key)?;
     }
+    if let Some(text) = priorities.as_deref() {
+        if !text.trim().is_empty() {
+            inbox::save_priorities(text)?;
+        }
+    }
+    if let Some(opt_in) = sentry_opt_in {
+        inbox::save_sentry_opt_in(opt_in)?;
+    }
     // Honor school for subsequent sync shells in this process.
-    std::env::set_var("SCHOOL_SLUG", school_slug.trim());
+    std::env::set_var("SCHOOL_SLUG", slug);
     Ok(())
 }
 

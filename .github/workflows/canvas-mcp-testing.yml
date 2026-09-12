@@ -2,9 +2,9 @@ name: Canvas MCP Enhancement Testing
 
 on:
   push:
-    branches: [ main, development ]
+    branches: [ main, development, phase1-productname-pivot ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, phase1-productname-pivot ]
 
 permissions:
   contents: read

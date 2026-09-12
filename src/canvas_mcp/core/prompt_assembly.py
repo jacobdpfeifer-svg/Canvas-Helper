@@ -31,7 +31,6 @@ from .learn_loop import (
     surfaces_due_reviews,
 )
 from .learning_profile import _render_user_md_block, load_learning_profile
-from .teach_hint import is_teaching_skill, render_teach_hint
 from .llm_provider import ChatMessage, ToolSpec, provider_for_skill
 from .skill_router import (
     EmbedFn,
@@ -40,6 +39,7 @@ from .skill_router import (
     embed_rank,
     structured_narrow,
 )
+from .teach_hint import is_teaching_skill, render_teach_hint
 
 
 class _ChatProvider(Protocol):

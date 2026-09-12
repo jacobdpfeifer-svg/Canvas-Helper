@@ -757,112 +757,104 @@ def register_shared_discussion_tools(mcp: FastMCP) -> None:
 
         return result
 
-    @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=False))
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     @validate_params
     async def post_discussion_entry(course_identifier: str | int,
                                   topic_id: str | int,
                                   message: str) -> str:
-        """Post a new top-level entry to a discussion topic.
+        """Preview a new top-level discussion entry. Never posts it.
 
-        IMPORTANT: Never use this tool to post or work around a failed course
-        announcement. If create_announcement failed (e.g. insufficient
-        permissions), report the failure to the user — do NOT post the
-        content as a discussion instead.
+        Read-only by design (canvas-focus pivot,
+        docs/handoff/canvas-focus-pivot-2026-09-11.md): a discussion post is
+        visible to classmates and the instructor, so this product does not
+        post it for you. Use this to check wording and topic context — then
+        post it yourself in Canvas.
 
         Args:
             course_identifier: Course code or Canvas ID
             topic_id: Discussion topic ID
-            message: Entry message content
+            message: Entry message content to preview
         """
+        if not (message or "").strip():
+            return "Error: message cannot be empty"
+
         # Backstop for issue 239: never publish our provenance fence markers.
         if contains_fence_markers(message):
             return FENCE_LEAK_ERROR
 
         course_id = await get_course_id(course_identifier)
+        if not course_id:
+            return f"Error: Could not find course {course_identifier}"
 
-        # Prepare the entry data
-        data = {
-            "message": message
-        }
-
-        # Post the entry
-        response = await make_canvas_request(
-            "post", f"/courses/{course_id}/discussion_topics/{topic_id}/entries",
-            data=data
-        )
-
-        if "error" in response:
-            return f"Error posting discussion entry: {response['error']}"
-
-        # Get context information for confirmation
         topic_response = await make_canvas_request(
             "get", f"/courses/{course_id}/discussion_topics/{topic_id}"
         )
-
         topic_title = "Unknown Topic"
-        if "error" not in topic_response:
+        if isinstance(topic_response, dict) and "error" not in topic_response:
             topic_title = topic_response.get("title", "Unknown Topic")
+        elif isinstance(topic_response, dict) and "error" in topic_response:
+            return f"Error fetching discussion topic: {topic_response['error']}"
 
-        # Extract entry details from response
-        entry_id = response.get("id")
-        entry_created_at = format_date(response.get("created_at"))
-        entry_user_name = response.get("user_name", "You")
-
-        # Build confirmation message
         course_display = await get_course_code(course_id) or course_identifier
-        result = "Discussion entry posted successfully!\n\n"
-        result += f"Course: {course_display}\n"
-        result += f"Discussion Topic: {topic_title} (ID: {topic_id})\n"
-        result += f"Entry ID: {entry_id}\n"
-        result += f"Entry Author: {entry_user_name}\n"
-        result += f"Posted: {entry_created_at}\n\n"
-        result += f"Your Entry:\n{message}\n"
+        return (
+            "📋 Discussion entry preview — this tool never posts.\n\n"
+            f"Course: {course_display}\n"
+            f"Discussion Topic: {fence_untrusted_inline(topic_title, 'discussion topic')} "
+            f"(ID: {topic_id})\n\n"
+            f"Your Entry ({len(message)} chars):\n{message}\n\n"
+            "➡️  NOTHING has been posted, and this tool cannot post it for "
+            "you. Show this preview in chat, then post it yourself in Canvas."
+        )
 
-        return result
-
-    @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=False))
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
     @validate_params
     async def reply_to_discussion_entry(course_identifier: str | int,
                                       topic_id: str | int,
                                       entry_id: str | int,
                                       message: str) -> str:
-        """Reply to a student's discussion entry/comment.
+        """Preview a reply to a discussion entry. Never posts it.
+
+        Read-only by design (canvas-focus pivot,
+        docs/handoff/canvas-focus-pivot-2026-09-11.md): a discussion reply is
+        visible to classmates and the instructor, so this product does not
+        post it for you. Use this to check wording — then reply yourself in
+        Canvas.
 
         Args:
             course_identifier: Course code or Canvas ID
             topic_id: Discussion topic ID
-            entry_id: Discussion entry ID to reply to
-            message: Reply message content
+            entry_id: Discussion entry ID you would reply to
+            message: Reply message content to preview
         """
+        if not (message or "").strip():
+            return "Error: message cannot be empty"
+
         # Backstop for issue 239: never publish our provenance fence markers.
         if contains_fence_markers(message):
             return FENCE_LEAK_ERROR
 
         course_id = await get_course_id(course_identifier)
+        if not course_id:
+            return f"Error: Could not find course {course_identifier}"
 
-        # Ensure IDs are strings
-        topic_id_str = str(topic_id)
-        entry_id_str = str(entry_id)
-
-        data = {
-            "message": message
-        }
-
-        response = await make_canvas_request(
-            "post",
-            f"/courses/{course_id}/discussion_topics/{topic_id_str}/entries/{entry_id_str}/replies",
-            data=data
+        topic_response = await make_canvas_request(
+            "get", f"/courses/{course_id}/discussion_topics/{topic_id}"
         )
+        topic_title = "Unknown Topic"
+        if isinstance(topic_response, dict) and "error" not in topic_response:
+            topic_title = topic_response.get("title", "Unknown Topic")
+        elif isinstance(topic_response, dict) and "error" in topic_response:
+            return f"Error fetching discussion topic: {topic_response['error']}"
 
-        if "error" in response:
-            return f"Error posting reply: {response['error']}"
-
-        reply_id = response.get("id")
         course_display = await get_course_code(course_id) or course_identifier
-
-        return f"Reply posted successfully in course {course_display}:\n" + \
-               f"Topic ID: {topic_id}\n" + \
-               f"Original Entry ID: {entry_id}\n" + \
-               f"Reply ID: {reply_id}\n" + \
-               f"Message: {truncate_text(message, 200)}"
+        return (
+            "📋 Discussion reply preview — this tool never posts.\n\n"
+            f"Course: {course_display}\n"
+            f"Discussion Topic: {fence_untrusted_inline(topic_title, 'discussion topic')} "
+            f"(ID: {topic_id})\n"
+            f"Reply-to entry ID: {entry_id}\n\n"
+            f"Your Reply ({len(message)} chars):\n{truncate_text(message, 2000)}\n\n"
+            "➡️  NOTHING has been posted, and this tool cannot post it for "
+            "you. Show this preview in chat, then reply yourself in Canvas."
+        )
 

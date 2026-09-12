@@ -241,6 +241,28 @@ pub fn save_cloud_key(key: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Career / course priorities note from onboarding (plain text).
+pub fn save_priorities(text: &str) -> Result<(), String> {
+    let root = user_root().join("calibration");
+    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+    fs::write(root.join("priorities.txt"), text.trim()).map_err(|e| e.to_string())
+}
+
+/// Persist Sentry opt-in for the local daemon / telemetry helper.
+pub fn save_sentry_opt_in(opt_in: bool) -> Result<(), String> {
+    let root = user_root().join("calibration");
+    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+    let value = if opt_in { "1" } else { "0" };
+    fs::write(root.join("sentry_opt_in"), value).map_err(|e| e.to_string())
+}
+
+/// Waitlist email when the student's school is not yet supported.
+pub fn save_waitlist_email(email: &str) -> Result<(), String> {
+    let root = user_root().join("calibration");
+    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+    fs::write(root.join("waitlist_email.txt"), email.trim()).map_err(|e| e.to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

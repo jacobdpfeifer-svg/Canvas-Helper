@@ -135,7 +135,7 @@ def test_budget_caps_now_and_does_not_change_due_reviews(tmp_path: Path) -> None
         add_item(
             root,
             course="MATH",
-            claim=f"claim {index}",
+            claim=f"state fact number {index} about the unit",
             kind="declarative",
             checkpoint_due="2026-09-20",
             now=past,

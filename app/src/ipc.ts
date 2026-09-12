@@ -51,18 +51,54 @@ export async function openCanvasSso(): Promise<void> {
   await invoke("open_canvas_sso");
 }
 
+/** Headless probe: is there already a valid Canvas session in browser/.auth? */
+export async function checkCanvasSession(): Promise<boolean> {
+  if (!isTauri()) return false;
+  return invoke<boolean>("check_canvas_session");
+}
+
+/**
+ * Fire-and-forget: kick off the deep, full-term first sync as soon as
+ * onboarding confirms a Canvas session. Runs in the background while the
+ * student finishes the rest of the wizard — never awaited, never blocks
+ * onboarding progress.
+ */
+export function bootstrapCanvasSync(): void {
+  if (!isTauri()) return;
+  void invoke("bootstrap_canvas_sync").catch((e) => {
+    console.error("bootstrap sync failed to launch", e);
+  });
+}
+
 export async function saveOnboarding(
   schoolSlug: string,
-  cloudKey: string
+  cloudKey: string,
+  options?: {
+    priorities?: string;
+    sentryOptIn?: boolean;
+    waitlistEmail?: string;
+  }
 ): Promise<void> {
   if (!isTauri()) {
     localStorage.setItem("pn_school", schoolSlug);
     localStorage.setItem("pn_cloud_key", cloudKey);
+    if (options?.priorities) {
+      localStorage.setItem("pn_priorities", options.priorities);
+    }
+    if (options?.sentryOptIn !== undefined) {
+      localStorage.setItem("pn_sentry_opt_in", options.sentryOptIn ? "1" : "0");
+    }
+    if (options?.waitlistEmail) {
+      localStorage.setItem("pn_waitlist_email", options.waitlistEmail);
+    }
     return;
   }
   await invoke("save_onboarding", {
     schoolSlug,
     cloudKey,
+    priorities: options?.priorities ?? null,
+    sentryOptIn: options?.sentryOptIn ?? null,
+    waitlistEmail: options?.waitlistEmail ?? null,
   });
 }
 
@@ -441,4 +477,11 @@ export async function onInboxUpdated(
 ): Promise<UnlistenFn | (() => void)> {
   if (!isTauri()) return () => undefined;
   return listen("inbox-updated", () => handler());
+}
+
+export async function onSyncFailed(
+  handler: (message: string) => void
+): Promise<UnlistenFn | (() => void)> {
+  if (!isTauri()) return () => undefined;
+  return listen<string>("sync-failed", (event) => handler(event.payload));
 }

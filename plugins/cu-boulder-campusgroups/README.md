@@ -15,6 +15,12 @@ Scripts (also thinly re-exported from `browser/scripts/` for npm run):
 Uses shared `browser/.auth` Playwright profile. IDE browser has no SSO.
 
 Write-capable actions today are Playwright RSVP CLIs (student confirms in the
-terminal). Any future MCP write tool for this connector **must** use
+terminal). This is an **explicit student-operated escape hatch** — running RSVP
+registers the student on CampusGroups (visible externally). Keep for CU private
+beta; product call before public ship is keep-as-escape-hatch vs remove (see
+[`docs/handoff/deferred.md`](../../docs/handoff/deferred.md)).
+
+Any future MCP write tool for this connector that is **student-private** must use
 `canvas_mcp.core.connector_guards.get_connector_guard("cu-boulder/campusgroups")`
-(ConfirmationGuard preview → confirm) — no read-only exemption on first write.
+(ConfirmationGuard preview → confirm). Do not add an execute path for actions
+visible to someone else (canvas-focus pivot).

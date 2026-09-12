@@ -1,6 +1,6 @@
 # Ambient dock UI — design spec
 
-**Status (2026-09-06):** **Partially implemented.** `dock.rs` + tray toggle + peek/expanded/onboarding sizes are wired in the Tauri shell. **Not yet built:** true Hidden (no window) as the resting default, auto-peek on narrate-after, and full glass polish parity with this spec. Treat sections below as the target; verify against `app/src-tauri/src/{dock,main}.rs` before assuming behavior.
+**Status (2026-09-10):** **Partially implemented.** `dock.rs` + tray toggle + peek/expanded/onboarding sizes are wired in the Tauri shell. Visual language is **Selective Instrument Glass** (frosted shell + opaque-enough content planes) — see MASTER. **Not yet built:** true Hidden (no window) as the resting default, auto-peek on narrate-after. Treat sections below as the target; verify against `app/src-tauri/src/{dock,main}.rs` before assuming behavior.
 
 What the ProductName desktop shell is supposed to be, distilled from the
 Phase 1 design discussion. This is the reference for anyone (human or agent)
@@ -24,7 +24,7 @@ following the cursor or a call window.
 | State | Size (logical px) | Position | When |
 |---|---|---|---|
 | **Hidden** | — | — | Default. Nothing on screen, no Dock icon, no taskbar entry. |
-| **Peek** | 320 × 210 | Bottom-right corner of the screen's work area | The resting "sticky note" — shown after summon or a new event. |
+| **Peek** | 320 × 300 | Bottom-right corner of the screen's work area | The resting "sticky note" — shown after summon or a new event. Height fits Top3 + optional check CTA; keep in sync with `PEEK_H` in `dock.rs`. |
 | **Expanded** | 400 × ~34% of screen height (clamped 420–680) | Same bottom-right corner, grows up-and-left | While the command palette, an approval sheet, or the ledger view is open. |
 | **Onboarding** | 460 × 640 | Centered | First run only, before a school + legal acceptance exist. |
 
@@ -55,25 +55,51 @@ There is deliberately no "quit" surface inside the note itself — this is an
 ambient background utility, not an app with a title bar. Quitting the
 process is the tray menu's "Quit" item only.
 
-## Material / visual language: frosted glass, not a solid panel
+## Visual craft — Selective Instrument Glass
 
-Two layers stack to produce the effect:
+Tokens, type, anti-patterns, and component craft rules live in
+[`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md).
+Agents touching the dock UI must follow MASTER; this section is the short map.
+
+- **Direction:** physical sticky note + Raycast-grade chrome. Frosted shell,
+  opaque-enough content. Not a SaaS dashboard, cream/terracotta editorial,
+  full Apple Liquid Glass, or purple glass pack.
+- **Type:** Source Serif 4 (display: “Today”, ProductName) + IBM Plex Sans
+  (UI) + IBM Plex Mono (due times / ledger). Fonts must load for real.
+- **Accent:** ink cobalt (`--accent` / `#6B8CFF`), surgical — not mint/teal AI-HUD.
+- **Surfaces:** shell ladder (`--surface-0` peek → `--surface-1` expanded)
+  stays translucent enough for ambient presence; content planes
+  (`--surface-2` sheets / palette / dense lists) are opaque-enough so
+  wallpaper cannot wash out text. Paper-edge hairline on the dock top only.
+- **Icons:** thin stroke SVG — never emoji or lone unicode as brand chrome.
+- **Motion:** eased Peek↔Expanded resize (~180ms); short sheet/palette enter
+  (opacity + 4–8px rise); honor `prefers-reduced-motion`. No shimmer or
+  refractive motion.
+
+## Material / visual language: frosted shell + opaque-enough content
+
+Two layers stack on the **window shell** only:
 
 1. **Native vibrancy** (`app/src-tauri/src/dock.rs::apply_glass`) — macOS
    `NSVisualEffectView` (`HudWindow` material) applied directly to the
    window. This is what actually blurs the real desktop sitting behind the
    window — a CSS trick alone cannot do this because the window has nothing
    of its own to blur.
-2. **CSS tint + border** (`app/src/styles.css`) — `backdrop-filter: blur()`
-   plus a translucent dark tint (`--glass-tint` / `--glass-tint-strong`) and
-   a 1px near-white hairline border (`--glass-border`). This is what reads
-   as "glass" rather than "a hole in your screen" — enough tint that text
-   stays legible over anything on the desktop behind it.
+2. **CSS tint + border** (`app/src/styles.css`) — light `backdrop-filter:
+   blur()` on `.dock` (and onboarding shell) plus the shell surface tint
+   (`--surface-0` / `--surface-1`, aliased historically as `--glass-tint*`)
+   and a 1px near-white hairline border (`--border`). Enough tint that the
+   sticky reads as glass, not a hole in the screen.
+
+**Content planes** (`.sheet`, `.palette`, Top3 list, ledger, narrate) use
+`--surface-2` (or stronger) **without** stacked `backdrop-filter`. Blur
+once on the shell; keep lists and approval copy readable over busy
+wallpapers. Optional faint glass on floating control chips only — never on
+paragraph text.
 
 Rules that follow from this:
-- No opaque backgrounds anywhere in the shell. Every surface (`.dock`,
-  `.onboarding`, `.palette`, `.sheet`) uses a translucent tint + blur, never
-  a solid fill.
+- Frosted shell + opaque-enough content planes — not “glass everywhere,”
+  and not a fully opaque app chrome that kills the sticky metaphor.
 - The window itself is `transparent: true` + `decorations: false` +
   `shadow: false` in `tauri.conf.json` — the CSS border-radius and
   `box-shadow` on `.dock` are what give it visible edges and depth, not the
@@ -81,6 +107,8 @@ Rules that follow from this:
 - `alwaysOnTop: true` + `skipTaskbar: true` — it floats above your other
   windows and never appears in the Dock, Cmd+Tab, or the taskbar. It is not
   meant to be "an app you switch to."
+- When the OS prefers reduced transparency, fall back to `--surface-solid`
+  on the shell so text stays legible.
 
 ## Component map — what's inside each state
 
@@ -116,5 +144,5 @@ Rules that follow from this:
   the tray icon can do this; ⌥Space only works once the window is already
   visible and focused).
 - Windows/Linux equivalents of the vibrancy call.
-- Smooth animated resize between Peek ↔ Expanded — currently an instant
-  `set_size`/`set_position` jump, not an eased slide.
+- (Polish) Further tune Peek↔Expanded easing if the stepped resize in
+  `dock.rs` still feels jumpy on high-DPI displays.
