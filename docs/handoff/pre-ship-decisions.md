@@ -17,7 +17,7 @@ Order is privacy first, then “can we claim this works.”
 
 | # | Check | Needs | Procedure | Done |
 |---|-------|-------|-----------|------|
-| 1 | Git-history purge of the Jacob corpus | ~~Explicit approval to rewrite and force-push~~ — not needed | [`history-purge.md`](./history-purge.md). **2026-09-12 verified:** `37f38b3` (dev/JACOB.md) is not an ancestor of `phase1-productname-pivot` and not present on any of the 17 pushed `origin/*` branches — never exposed. Local `pre-purge-backup` tag deleted; dangling object pruned via `git gc`. | **done — verified clean** |
+| 1 | Git-history purge of the Jacob corpus | Explicit approval to rewrite and force-push | [`history-purge.md`](./history-purge.md). **Completed 2026-09-12:** `git filter-repo` stripped `dev/` / `.jacob/` / `inbox/`; `git show 37f38b3:dev/JACOB.md` now fails; `phase1-productname-pivot` force-pushed. Local `pre-purge-backup` tag deleted earlier. | **done** |
 | 2 | Live Google OAuth smoke | Real Google Cloud OAuth client | [`oauth-smoke.md`](./oauth-smoke.md) — Jacob runs (read/draft only) | |
 | 3 | Chrome Native Messaging round-trip | Loaded extension + real Chrome profile | Host framing unit-tested only — Jacob runs | |
 | 4 | Real two-device SSO | Second device or account | Root isolation tests ≠ two SSO sessions — Jacob runs | |

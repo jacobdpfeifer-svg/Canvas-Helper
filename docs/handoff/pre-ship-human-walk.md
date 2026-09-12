@@ -5,7 +5,7 @@ Signed product decisions (2026-09-12): vendored MCP, delete billing/mobile, park
 ## Before public testers
 
 1. [x] Sign product decision rows 1–4
-2. [ ] History purge + force-push (verify `git show 37f38b3:dev/JACOB.md` fails after rewrite) — [`history-purge.md`](./history-purge.md)
+2. [x] History purge + force-push — `git show 37f38b3:dev/JACOB.md` fails; see [`history-purge.md`](./history-purge.md)
 3. [ ] Counsel/review of [`docs/legal/privacy.md`](../legal/privacy.md) and [`docs/legal/terms.md`](../legal/terms.md)
 4. [ ] Live OAuth smoke — read/draft only ([`oauth-smoke.md`](./oauth-smoke.md)) — **Jacob**
 5. [ ] Chrome Native Messaging round-trip — **Jacob**
