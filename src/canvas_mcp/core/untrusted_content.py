@@ -85,6 +85,17 @@ READ_TOOL_CONTENT_POLICIES: dict[str, ReadToolContentPolicy] = {
     "get_my_upcoming_assignments": _fenced("fence_untrusted_inline"),
     "get_page_content": _fenced("fence_untrusted"),
     "get_page_details": _fenced("fence_untrusted"),
+    # Read-only preview since the canvas-focus pivot (2026-09-11) — never
+    # submits. Assignment name is instructor-authored, fenced like
+    # get_my_submission.
+    "submit_assignment": _fenced("fence_untrusted_inline"),
+    # Read-only preview since the canvas-focus pivot (2026-09-11) — never
+    # posts. Echoes only the student's own comment text, no Canvas-authored
+    # content in the preview.
+    "comment_on_my_submission": _safe(
+        "Preview echoes only the caller-supplied comment text; no "
+        "instructor/Canvas-authored content is rendered."
+    ),
     "get_syllabus": _fenced("fence_untrusted"),
     "get_unread_count": _safe(
         "Returns only a numeric unread-conversation count."

@@ -4,13 +4,19 @@ Bucket-A connectors (see ``plugins/README.md`` and
 ``browser/scripts/lib/connector-registry.mjs``) may eventually expose MCP tools
 that write to or act on the student account. Those writes must use the same
 preview → fingerprint → issue-token → confirm → reserve flow as
-``submit_assignment`` (``tools/student_write.py`` / ``ConfirmationGuard``).
+``ConfirmationGuard`` provides generally.
+
+``submit_assignment`` (``tools/student_write.py``) is NOT an example to follow
+here anymore — it is read-only preview only since the canvas-focus pivot
+(``docs/handoff/canvas-focus-pivot-2026-09-11.md``) and has no
+``ConfirmationGuard`` of its own left to reuse. A connector write that is
+visible to, or binding on, another person should not exist at all per that
+pivot; one that only affects the student's own local state may still use this
+module.
 
 Rules
 -----
-- Instantiate a **dedicated** guard per connector via ``get_connector_guard``,
-  or reuse ``student_write._SUBMIT_GUARD`` only when the write surface is
-  equivalent to assignment submission.
+- Instantiate a **dedicated** guard per connector via ``get_connector_guard``.
 - No connector gets an implicit "safe because read-only" exemption for its
   first write-capable action.
 - Bucket-B (assessment / proctored) tools must never call this module — they

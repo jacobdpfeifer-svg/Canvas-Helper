@@ -1,20 +1,20 @@
-"""Self-improving skill loop (Hermes/Voyager pattern).
+"""Request logging + episodic-to-semantic memory distillation.
 
-Safety floor (NOT an eval quality gate): never shadow-test or auto-promote
-write skills. Enforced in shadow.py / promoter.py via category allowlist.
+The cluster → draft → shadow → promote skill-writing pipeline that used to
+live alongside these (``cluster.py`` / ``drafter.py`` / ``shadow.py`` /
+``promoter.py`` / ``run.py``) is deleted — no external demand signal for an
+agent that rewrites its own prompts from its own shadow runs. See
+``docs/handoff/canvas-focus-pivot-2026-09-11.md``. ``log_request`` and
+``distill_episodic_to_semantic`` stay: request logging feeds
+``skill_router.route_intent``, and distillation feeds ``MEMORY.md`` directly
+from things the student already said, not from a self-rewriting pipeline.
 """
 
-from .cluster import detect_repeat_clusters
-from .drafter import draft_provisional_skill
+from .distill import distill_episodic_to_semantic
 from .logger import RequestLog, log_request
-from .promoter import promote_skill
-from .shadow import shadow_test
 
 __all__ = [
     "RequestLog",
     "log_request",
-    "detect_repeat_clusters",
-    "draft_provisional_skill",
-    "shadow_test",
-    "promote_skill",
+    "distill_episodic_to_semantic",
 ]

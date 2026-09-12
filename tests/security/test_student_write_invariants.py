@@ -19,10 +19,7 @@ from canvas_mcp.core.course_policy import (
     parse_policy_body,
     reset_policy_cache,
 )
-from canvas_mcp.tools.student_write import (
-    register_student_write_tools,
-    reset_pending_confirmations,
-)
+from canvas_mcp.tools.student_write import register_student_write_tools
 
 ALL_WRITE_TOOLS = "submit_assignment,comment_on_my_submission,mark_module_item_done"
 
@@ -58,11 +55,9 @@ def get_tools(**env):
 def _clean_state():
     reset_config()
     reset_policy_cache()
-    reset_pending_confirmations()
     yield
     reset_config()
     reset_policy_cache()
-    reset_pending_confirmations()
 
 
 class TestNoIdentityOverride:
@@ -107,8 +102,11 @@ class TestNoIdentityOverride:
         )
 
     @pytest.mark.asyncio
-    async def test_submitted_body_carries_no_identity_fields(self):
-        """Assert on what actually goes over the wire."""
+    async def test_submit_assignment_preview_never_posts(self):
+        """submit_assignment is read-only (canvas-focus pivot): assert no POST.
+
+        See docs/handoff/canvas-focus-pivot-2026-09-11.md.
+        """
         tools = get_tools(
             STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS, COURSE_AGENT_POLICY_ENABLED="false"
         )
@@ -116,15 +114,12 @@ class TestNoIdentityOverride:
             "id": 42, "name": "Essay", "submission_types": ["online_text_entry"],
             "allowed_attempts": -1,
         }
-        posts = []
 
         async def responder(method, endpoint, **kwargs):
-            if method == "get":
-                if endpoint.endswith("/submissions/self"):
-                    return {"attempt": 0}
-                return assignment
-            posts.append(kwargs.get("data"))
-            return {"submitted_at": "2026-07-30T10:00:00Z", "attempt": 1}
+            assert method == "get", f"submit_assignment must never {method}"
+            if endpoint.endswith("/submissions/self"):
+                return {"attempt": 0}
+            return assignment
 
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -132,76 +127,42 @@ class TestNoIdentityOverride:
         ), patch(
             "canvas_mcp.tools.student_write.make_canvas_request", new=responder
         ):
-            preview = await tools["submit_assignment"](
+            result = await tools["submit_assignment"](
                 course_identifier="T", assignment_id=42,
                 submission_type="online_text_entry", body="essay",
             )
-            token = preview.split("confirmation_token='")[1].split("'")[0]
-            await tools["submit_assignment"](
-                course_identifier="T", assignment_id=42,
-                submission_type="online_text_entry", body="essay",
-                confirmation_token=token,
-            )
 
-        assert posts, "nothing was submitted"
-        sent = posts[0]
-        assert set(sent) <= {
-            "submission[submission_type]", "submission[body]",
-            "submission[url]", "submission[file_ids][]", "comment[text_comment]",
-        }, f"unexpected outbound fields: {set(sent)}"
+        assert "NOTHING has been submitted" in result
 
+    @pytest.mark.asyncio
+    async def test_comment_preview_never_writes(self):
+        """comment_on_my_submission is also read-only (canvas-focus pivot).
 
-class TestConfirmationIsCallerBound:
-    """On a hosted server every request carries a different student's token."""
-
-    def test_fingerprint_differs_per_caller(self):
-        """Otherwise one student could redeem another's confirmation.
-
-        Without caller binding, two students at the same attempt number on the
-        same assignment produce the same fingerprint, so a token issued to one
-        would verify for the other.
+        A submission comment is visible to the instructor, so this is no
+        longer a live write to assert an identity-override guard on. The
+        guard itself (``assert_no_identity_override``) is still tested
+        directly above; it stays available in ``core/course_policy.py`` for
+        the next Bucket-A connector write that needs it.
         """
-        import canvas_mcp.tools.student_write as sw
+        tools = get_tools(
+            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS, COURSE_AGENT_POLICY_ENABLED="false"
+        )
 
-        class _Creds:
-            def __init__(self, token):
-                self.api_token = token
+        async def responder(method, endpoint, **kwargs):
+            raise AssertionError(f"comment_on_my_submission must never {method}")
 
-        with patch.object(sw, "get_request_credentials", return_value=_Creds("aaa")):
-            first = sw._submission_fingerprint("1", "2", "online_text_entry", "digest", 0)
-        with patch.object(sw, "get_request_credentials", return_value=_Creds("bbb")):
-            second = sw._submission_fingerprint("1", "2", "online_text_entry", "digest", 0)
+        with patch(
+            "canvas_mcp.tools.student_write.get_course_id",
+            new=AsyncMock(return_value="123"),
+        ), patch(
+            "canvas_mcp.tools.student_write.make_canvas_request", new=responder
+        ):
+            result = await tools["comment_on_my_submission"](
+                course_identifier="T", assignment_id=42,
+                comment="here you go",
+            )
 
-        assert first != second
-
-    def test_token_issued_to_one_student_fails_for_another(self):
-        import canvas_mcp.tools.student_write as sw
-
-        class _Creds:
-            def __init__(self, token):
-                self.api_token = token
-
-        with patch.object(sw, "get_request_credentials", return_value=_Creds("aaa")):
-            fingerprint = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0)
-            token = sw._SUBMIT_GUARD.issue(fingerprint)
-        with patch.object(sw, "get_request_credentials", return_value=_Creds("bbb")):
-            other = sw._submission_fingerprint("1", "2", "online_text_entry", "d", 0)
-
-        assert sw._SUBMIT_GUARD.check(token, fingerprint) is None
-        assert sw._SUBMIT_GUARD.check(token, other) is not None
-
-    def test_caller_identity_does_not_expose_the_credential(self):
-        """The handle must not be the token, nor reversible to it."""
-        import canvas_mcp.tools.student_write as sw
-
-        class _Creds:
-            api_token = "super-secret-canvas-token"
-
-        with patch.object(sw, "get_request_credentials", return_value=_Creds()):
-            identity = sw._SUBMIT_GUARD.caller_identity()
-
-        assert "super-secret-canvas-token" not in identity
-        assert len(identity) == 64  # sha256 hex
+        assert "NOTHING has been posted" in result
 
 
 class TestInlineFilenames:
