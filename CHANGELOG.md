@@ -1,5 +1,12 @@
 # Changelog
 
+> **Upstream changelog.** This file documents releases of the vendored
+> [vishalsachdev/canvas-mcp](https://github.com/vishalsachdev/canvas-mcp) MCP
+> package (`src/canvas_mcp/`). It is **not** the ProductName product release
+> log — ProductName is a local-first student Canvas companion that vendors this
+> MCP as an optional PAT client. See [`vendor/README.md`](vendor/README.md) and
+> [`docs/architecture.md`](docs/architecture.md).
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

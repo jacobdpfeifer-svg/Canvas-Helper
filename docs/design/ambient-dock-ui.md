@@ -1,6 +1,6 @@
 # Ambient dock UI — design spec
 
-**Status (2026-09-10):** **Partially implemented.** `dock.rs` + tray toggle + peek/expanded/onboarding sizes are wired in the Tauri shell. Visual language is **Selective Instrument Glass** (frosted shell + opaque-enough content planes) — see MASTER. **Not yet built:** true Hidden (no window) as the resting default, auto-peek on narrate-after. Treat sections below as the target; verify against `app/src-tauri/src/{dock,main}.rs` before assuming behavior.
+**Status (2026-09-12):** **Parked** (signed product decision). Peek/expanded/onboarding + tray are as-built in the Tauri shell. Visual language remains Selective Instrument Glass. **Not building in this phase:** true Hidden resting default, narrate-auto-peek, or a shell replacement. Alternatives: [`docs/handoff/ui-shell-alternatives.md`](../handoff/ui-shell-alternatives.md).
 
 What the ProductName desktop shell is supposed to be, distilled from the
 Phase 1 design discussion. This is the reference for anyone (human or agent)

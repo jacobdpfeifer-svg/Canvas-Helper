@@ -1,0 +1,28 @@
+---
+description: Paper Instrument UI craft for the ambient dock — follow MASTER + anti-patterns
+globs: app/src/**/*.{tsx,ts,css},app/index.html,docs/design/ambient-dock-ui.md,design-system/**/*
+alwaysApply: false
+---
+
+# UI craft — ProductName ambient dock
+
+When changing dock UI, read and obey:
+
+1. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — tokens, type, anti-patterns
+2. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — geometry, states, glass rules
+
+## Must
+
+- Keep the frosted corner sticky note (never a normal app window / SaaS dashboard)
+- Load Source Serif 4 + IBM Plex Sans/Mono for real (no Inter / Geist / system-only primary)
+- Ink cobalt accent (`--accent` / `#6B8CFF`); surface ladder `--surface-0/1/2`
+- Sentence-case titles; serif for “Today” / ProductName; mono for due times / ledger
+- Thin SVG icons only (`app/src/components/Icons.tsx` pattern)
+- Honor `prefers-reduced-motion`; prefer opacity/transform transitions — never `transition-all`
+
+## Must not
+
+- Purple / pink / indigo gradients; mint/teal AI-HUD accent (`#5fd6ae`)
+- 3-up feature card grids; `rounded-2xl` monoculture; glow orbs; emoji icons
+- Uppercase + tracking HUD section labels
+- Opaque solid fills on `.dock` / overlays (translucent tint + blur only)

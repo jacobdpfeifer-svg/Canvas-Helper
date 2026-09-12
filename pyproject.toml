@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "canvas-mcp"
 version = "1.11.0"
-description = "Local-first student Canvas MCP (ProductName) — SSO + REST + preview→confirm writes"
+description = "Vendored student-trimmed fork of vishalsachdev/canvas-mcp + ProductName local companion"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
