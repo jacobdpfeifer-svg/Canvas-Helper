@@ -1,51 +1,52 @@
 """Tier 1 student write tools (#170).
 
-These are the first tools that let an agent act *on* Canvas on a student's
-behalf rather than only read. Four properties are load-bearing:
+Canvas-focus pivot (see ``docs/handoff/canvas-focus-pivot-2026-09-11.md``):
+this product does not act on a student's behalf toward anyone else. Both
+tools whose Canvas write would be visible to the instructor are now preview
+only, with no execution path and no confirmation-token flow to redeem:
 
-1. **No identity override on the wire.** The submit endpoint
-   (``POST /courses/:id/assignments/:id/submissions``) is not structurally
-   self-scoped: Canvas accepts ``submission[user_id]`` there when the token
-   carries grading permission, and a real person can hold mixed student and TA
-   enrollments. So rather than trusting the tool profile, every outbound write
-   body is checked against an identity-override denylist immediately before it
-   is sent (``assert_no_identity_override``).
-2. **Operator ceiling.** A tool absent from ``STUDENT_WRITE_TOOLS`` is never
+- ``submit_assignment`` previews points, due date, accepted types and
+  attempts remaining, then always ends in "submit this yourself in Canvas."
+- ``comment_on_my_submission`` previews the comment text, then always ends
+  in "add this yourself in Canvas."
+
+``mark_module_item_done`` still executes for real — it is a private,
+self-only completion toggle with no visibility to anyone else, so it was not
+in scope of that pivot. Two properties remain load-bearing across this file:
+
+1. **Operator ceiling.** A tool absent from ``STUDENT_WRITE_TOOLS`` is never
    registered, so it never enters the MCP tool list. The default is empty.
-3. **Instructor agency.** Within that ceiling, a per-course policy can further
-   restrict writes, and it is re-checked immediately before the write itself,
-   not merely during the preview. See ``core/course_policy.py``.
-4. **Confirmation bound to content.** ``submit_assignment`` will not submit on
-   a bare boolean. The preview issues a short-lived, single-use token bound to
-   the target, the payload hash and the observed attempt number, so an agent
-   cannot submit without first surfacing a preview, and cannot submit something
-   other than what was previewed.
+2. **Instructor agency.** Within that ceiling, a per-course policy can further
+   restrict even previewing, re-checked on every call. See
+   ``core/course_policy.py``.
 
-Group assignments are refused in Tier 1: a submission to a group assignment
-becomes the whole group's submission, affecting students who never consented,
-and those shared-attempt semantics deserve their own decision.
+``assert_no_identity_override`` (identity-override denylist for outbound
+write bodies) has no live call site left in this file — neither remaining
+preview writes anything, and ``mark_module_item_done`` sends no body at all.
+It stays available in ``core/course_policy.py`` for the next Bucket-A
+connector write that needs it; see ``core/connector_guards.py``.
+
+Group assignments are refused in ``submit_assignment``'s preview: a
+submission to a group assignment becomes the whole group's submission,
+affecting students who never consented, and those shared-attempt semantics
+deserve their own decision even for a preview.
 """
 
 from __future__ import annotations
 
 import base64
 import binascii
-import hashlib
 import os
-import tempfile
 from typing import Any
 
 from fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
 from ..core.cache import get_course_id
-from ..core.client import make_canvas_request, upload_file_to_storage
+from ..core.client import make_canvas_request
 from ..core.config import get_config
-from ..core.course_policy import (
-    assert_no_identity_override,
-    check_student_write_allowed,
-)
-from ..core.credentials import get_request_credentials, is_http_request_active
+from ..core.course_policy import check_student_write_allowed
+from ..core.credentials import is_http_request_active
 from ..core.dates import format_date
 from ..core.file_validation import (
     DEFAULT_MAX_FILE_SIZE_BYTES,
@@ -59,7 +60,7 @@ from ..core.untrusted_content import (
     fence_untrusted_inline,
 )
 from ..core.validation import coerce_canvas_id, validate_params
-from ..core.write_confirmation import ConfirmationGuard, unconfirmed_write_warning
+from ..core.write_confirmation import unconfirmed_write_warning
 
 # Submission types this tool supports. Quiz and discussion types are absent by
 # design: quiz-taking is refused for this student fork (academic integrity),
@@ -103,32 +104,6 @@ def _too_large_message() -> str:
         "submission. Submit fewer or smaller files, or upload them in Canvas."
     )
 
-# How long a confirmation token stays valid. Long enough for a human to read a
-# preview and answer, short enough that course state cannot drift far.
-_CONFIRM_TTL_SECONDS = 300
-
-# Shared ConfirmationGuard — all token crypto lives here (no local wrappers).
-# Bucket-A connector MCP writes use canvas_mcp.core.connector_guards.get_connector_guard
-# (same preview → fingerprint → issue → confirm → reserve contract).
-_SUBMIT_GUARD = ConfirmationGuard(ttl_seconds=_CONFIRM_TTL_SECONDS)
-
-
-def _identity_provider() -> str:
-    """Patchable identity: uses this module's get_request_credentials import."""
-    credentials = get_request_credentials()
-    if credentials is None:
-        return "stdio"
-    return _SUBMIT_GUARD.credential_digest(credentials.api_token)
-
-
-_SUBMIT_GUARD.set_identity_provider(_identity_provider)
-
-
-def reset_pending_confirmations() -> None:
-    """Discard redeemed-token state (used by tests)."""
-    _SUBMIT_GUARD.reset()
-
-
 class _PreparedFile:
     """A file staged for upload, with its bytes already resolved.
 
@@ -145,61 +120,6 @@ class _PreparedFile:
     @property
     def size(self) -> int:
         return len(self.content)
-
-
-def _submission_fingerprint(
-    course_id: str,
-    assignment_id: str,
-    submission_type: str,
-    payload_digest: str,
-    attempt: int,
-    allowed_attempts: int | None = None,
-) -> str:
-    """Bind a confirmation via ConfirmationGuard.fingerprint (+ identity provider)."""
-    return _SUBMIT_GUARD.fingerprint(
-        course_id,
-        assignment_id,
-        submission_type,
-        payload_digest,
-        str(attempt),
-        str(allowed_attempts),
-    )
-
-
-def _digest_payload(
-    body: str | None,
-    url: str | None,
-    comment: str | None,
-    files: list[_PreparedFile],
-) -> str:
-    """Hash the exact content that would be submitted.
-
-    Every field is length-prefixed rather than concatenated, because plain
-    concatenation is ambiguous: a file named ``a.txt`` holding ``XPAYLOAD``
-    would hash identically to one named ``a.txtX`` holding ``PAYLOAD``. That
-    would let a token approve content other than what was previewed, which is
-    precisely the guarantee this digest exists to provide.
-
-    ``comment`` is covered too. The preview displays it, so a confirmation that
-    did not commit to it could swap in text the student never saw before it
-    reached their instructor.
-    """
-    hasher = hashlib.sha256()
-
-    def absorb(chunk: bytes) -> None:
-        hasher.update(len(chunk).to_bytes(8, "big"))
-        hasher.update(chunk)
-
-    absorb((body or "").encode())
-    absorb((url or "").encode())
-    absorb((comment or "").encode())
-    absorb(len(files).to_bytes(8, "big"))
-    for prepared in files:
-        absorb(prepared.name.encode())
-        absorb(prepared.content)
-    return hasher.hexdigest()
-
-
 
 
 def _describe_attempts(assignment: dict, submission: dict) -> str:
@@ -377,145 +297,6 @@ def _prepare_files(
     return prepared, None
 
 
-async def _final_preflight(
-    course_id: str,
-    assignment_id: str,
-    submission_type: str,
-    payload_digest: str,
-    confirmed_fingerprint: str,
-) -> str | None:
-    """Re-verify EVERY precondition immediately before the submit call.
-
-    Returns an error message if anything has changed, or None if the write may
-    proceed.
-
-    This exists because arbitrary time passes between the earlier checks and the
-    POST: the policy read, and for uploads a multi-step round trip per file. Any
-    precondition checked earlier can have changed in that window, so all of them
-    are re-checked here rather than only the attempt count. Three extra requests
-    on a rare, irreversible, attempt-consuming operation is a trade worth making.
-
-    If the state cannot be re-read, that counts as changed. Proceeding would mean
-    submitting without the guarantee the student was promised.
-    """
-    # The instructor may have revoked agent writes while uploads were running,
-    # and the earlier grant may have been served from a cache that has since
-    # expired. The authoritative check is the last one before the write.
-    allowed, reason = await check_student_write_allowed(course_id, "submit_assignment")
-    if not allowed:
-        return f"❌ Submission blocked. {reason}"
-
-    assignment = await make_canvas_request(
-        "get", f"/courses/{course_id}/assignments/{assignment_id}"
-    )
-    submission = await make_canvas_request(
-        "get", f"/courses/{course_id}/assignments/{assignment_id}/submissions/self"
-    )
-    if (
-        not isinstance(assignment, dict)
-        or "error" in assignment
-        or not isinstance(submission, dict)
-        or "error" in submission
-    ):
-        return (
-            "❌ Could not re-check your attempt count just before submitting, so "
-            "nothing was submitted. Try again shortly."
-        )
-
-    # The assignment may have become a group assignment in the meantime, which
-    # the tool refuses outright: submitting would bind classmates who never
-    # agreed to it and spend a shared attempt.
-    if assignment.get("group_category_id"):
-        return (
-            "❌ This became a group assignment while the submission was being "
-            "prepared, so nothing was submitted. Agent-assisted submission is "
-            "not supported for group assignments. Please submit it in Canvas."
-        )
-
-    current = _submission_fingerprint(
-        course_id,
-        assignment_id,
-        submission_type,
-        payload_digest,
-        submission.get("attempt") or 0,
-        assignment.get("allowed_attempts"),
-    )
-    if current != confirmed_fingerprint:
-        return (
-            "❌ Your submission state changed while this was being prepared "
-            "(another submission landed, or the attempt limit changed). Nothing "
-            "was submitted. Check get_my_submission, then preview again."
-        )
-    return None
-
-
-async def _upload_one(
-    course_id: str, assignment_id: str, prepared: _PreparedFile
-) -> tuple[str | None, str | None]:
-    """Run Canvas's 3-step upload for one file. Returns ``(file_id, error)``.
-
-    Step 1 targets ``/submissions/self/files``, which *is* structurally
-    self-scoped: the slot Canvas hands back belongs to the calling user's own
-    submission and cannot be redirected at another student.
-    """
-    slot = await make_canvas_request(
-        "post",
-        f"/courses/{course_id}/assignments/{assignment_id}/submissions/self/files",
-        data={
-            "name": prepared.name,
-            "size": prepared.size,
-            "content_type": prepared.mime_type,
-        },
-        use_form_data=True,
-    )
-    if isinstance(slot, dict) and "error" in slot:
-        return None, f"❌ Failed to request an upload slot for '{prepared.name}': {slot['error']}"
-
-    upload_url = slot.get("upload_url")
-    if not upload_url:
-        return None, f"❌ Canvas returned no upload URL for '{prepared.name}'."
-
-    # Step 2 writes the bytes through a temp file, because the storage helper
-    # takes a path. The bytes are passed through verbatim: no decoding, no
-    # transcoding, no content inspection, no OCR. Whether they are a JPEG, a
-    # PDF or a zip is not this server's business.
-    handle_fd, temp_path = tempfile.mkstemp()
-    try:
-        with os.fdopen(handle_fd, "wb") as handle:
-            handle.write(prepared.content)
-        stored = await upload_file_to_storage(
-            upload_url=upload_url,
-            upload_params=slot.get("upload_params", {}),
-            file_path=temp_path,
-            filename=prepared.name,
-            content_type=prepared.mime_type,
-        )
-    finally:
-        os.unlink(temp_path)
-
-    if isinstance(stored, dict) and "error" in stored:
-        return None, f"❌ Upload failed for '{prepared.name}': {stored['error']}"
-
-    # Canvas storage answers in more than one shape. A 200/201 whose body is
-    # empty or non-JSON yields {"success": true} with no id, and a redirect
-    # confirmation can nest the file under "attachment". Check each documented
-    # shape before concluding the upload produced nothing usable.
-    file_id = (
-        stored.get("id")
-        or (stored.get("attachment") or {}).get("id")
-        or (stored.get("file") or {}).get("id")
-    )
-    if not file_id:
-        if stored.get("success"):
-            return None, (
-                f"❌ '{prepared.name}' uploaded, but Canvas returned no file ID "
-                "to attach it with, so the submission was not sent. Check "
-                "whether the file appears in Canvas before retrying."
-            )
-        return None, f"❌ Canvas did not return a file ID for '{prepared.name}'."
-    return str(file_id), None
-
-
 def register_student_write_tools(mcp: FastMCP) -> None:
     """Register Tier 1 student tools.
 
@@ -595,7 +376,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
 
     if "submit_assignment" in enabled:
 
-        @mcp.tool(annotations=ToolAnnotations(destructiveHint=True, idempotentHint=False))
+        @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
         @validate_params
         async def submit_assignment(
             course_identifier: str | int,
@@ -606,14 +387,15 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             file_paths: list[str] | None = None,
             file_contents: list[dict[str, str]] | None = None,
             comment: str | None = None,
-            confirmation_token: str | None = None,
         ) -> str:
-            """Submit one of YOUR OWN assignments. Consumes an attempt.
+            """Preview one of YOUR OWN assignment submissions. Never submits.
 
-            Two-step by design. Call without confirmation_token for a preview
-            (points, submission types, content, token). Always surface that
-            preview in the chat. Redeem the token only when the student approved or
-            USER.md auto-submit criteria fully pass (never for quizzes).
+            Read-only by design (canvas-focus pivot,
+            docs/handoff/canvas-focus-pivot-2026-09-11.md): a submission is
+            visible to your instructor and consumes an attempt, so this
+            product does not act on your behalf here. Use this to check
+            points, due date, accepted types, and attempts remaining — then
+            submit it yourself in Canvas.
 
             Args:
                 course_identifier: Course code or Canvas ID
@@ -623,8 +405,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 url: URL for online_url
                 file_paths: Local file paths (local stdio servers only, any file type)
                 file_contents: Inline files as [{"name": ..., "content_base64": ...}]
-                comment: Optional comment to include with the submission
-                confirmation_token: Token from the preview call; omit to preview
+                comment: Optional comment you would attach to the submission
             """
             if submission_type not in _SUPPORTED_TYPES:
                 return (
@@ -669,17 +450,17 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 return (
                     "❌ This looks like a quiz or LTI assessment "
                     f"(types: {', '.join(assignment.get('submission_types') or []) or 'unknown'}). "
-                    "Agent submit is blocked for quizzes/exams — the student must take it in Canvas."
+                    "Take it in Canvas — this tool never handles quizzes."
                 )
 
             # A group submission becomes the whole group's submission and
             # consumes a shared attempt, affecting students who never consented.
-            # That needs its own decision, so Tier 1 declines rather than guess.
+            # Refused even for a preview.
             if assignment.get("group_category_id"):
                 return (
-                    "❌ This is a group assignment. Agent-assisted submission is "
-                    "not supported for group assignments, because it would submit "
-                    "on behalf of your whole group. Please submit it in Canvas."
+                    "❌ This is a group assignment. Submit it in Canvas — "
+                    "previewing here would still describe a submission that "
+                    "affects classmates who never consented."
                 )
 
             accepted_types = assignment.get("submission_types") or []
@@ -693,10 +474,6 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 "get",
                 f"/courses/{course_id}/assignments/{assignment_id}/submissions/self",
             )
-            # Attempt state is not optional context here: it is what the preview
-            # reports and what the confirmation commits to. Substituting zero on
-            # a failed read would show the student a false attempt count and
-            # make the drift check vacuous, so stop instead.
             if not isinstance(submission, dict) or "error" in submission:
                 detail = (
                     submission.get("error")
@@ -704,11 +481,9 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                     else "unexpected response from Canvas"
                 )
                 return (
-                    "❌ Could not read your current submission state, so the "
-                    f"attempt count is unknown: {detail}\n"
-                    "Nothing was submitted. Try again shortly."
+                    "❌ Could not read your current submission state: "
+                    f"{detail}"
                 )
-            attempt = submission.get("attempt") or 0
 
             prepared, prep_error = _prepare_files(
                 file_paths,
@@ -718,157 +493,58 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if prep_error:
                 return prep_error
 
-            digest = _digest_payload(body, url, comment, prepared)
-            fingerprint = _submission_fingerprint(
-                course_id,
-                str(assignment_id),
-                submission_type,
-                digest,
-                attempt,
-                assignment.get("allowed_attempts"),
-            )
+            preview = [
+                "📋 Submission preview — this tool never submits.",
+                "",
+                # Assignment name is instructor-authored — fenced (issue 239),
+                # same as get_my_submission.
+                f"Assignment: {fence_untrusted_inline(assignment.get('name', str(assignment_id)), 'assignment name')}",
+                f"Requested type: {submission_type}",
+                f"Accepted types: {', '.join(accepted_types) or 'none'}",
+                f"Points possible: {assignment.get('points_possible', 'N/A')}",
+            ]
+            if assignment.get("due_at"):
+                preview.append(f"Due: {format_date(assignment['due_at'])}")
+            if assignment.get("lock_at"):
+                preview.append(f"Locks: {format_date(assignment['lock_at'])}")
+            preview.append(_describe_attempts(assignment, submission))
+            preview.append("")
 
-            if not confirmation_token:
-                token = _SUBMIT_GUARD.issue(fingerprint)
-
-                preview = [
-                    "📋 Submission preview — NOTHING has been submitted yet.",
-                    "",
-                    f"Assignment: {assignment.get('name', assignment_id)}",
-                    f"Requested type: {submission_type}",
-                    f"Accepted types: {', '.join(accepted_types) or 'none'}",
-                    f"Points possible: {assignment.get('points_possible', 'N/A')}",
-                ]
-                if assignment.get("due_at"):
-                    preview.append(f"Due: {format_date(assignment['due_at'])}")
-                if assignment.get("lock_at"):
-                    preview.append(f"Locks: {format_date(assignment['lock_at'])}")
-                preview.append(_describe_attempts(assignment, submission))
-                preview.append("")
-
-                if submission_type == "online_text_entry":
-                    # Shown in full, deliberately. The token authorizes the whole
-                    # body, so truncating here would ask the student to confirm
-                    # text they were never shown — which is exactly the thing
-                    # this preview exists to prevent.
-                    text = body or ""
-                    preview.append(f"Content ({len(text)} chars):\n{text}")
-                elif submission_type == "online_url":
-                    preview.append(f"URL: {url}")
-                else:
-                    preview.append("Files:")
-                    for item in prepared:
-                        preview.append(f"• {item.name} ({item.mime_type}, {item.size} bytes)")
-                if comment:
-                    preview.append(f"\nComment: {comment}")
-
-                preview.append(
-                    "\n➡️  Always show this preview (and any why-auto rationale) in chat. "
-                    "To submit, call again with "
-                    f"confirmation_token='{token}' and identical content.\n"
-                    "Redeem without asking only when USER.md auto-submit "
-                    "criteria fully pass and the course is calibrated. "
-                    "This consumes an attempt and cannot be undone."
-                )
-                return "\n".join(preview)
-
-            token_error = _SUBMIT_GUARD.check(confirmation_token, fingerprint)
-            if token_error:
-                return token_error
-
-            # Claim the confirmation BEFORE any awaited work. File uploads sit
-            # between here and the submit call, so two overlapping confirmations
-            # could otherwise both pass validation during those uploads and both
-            # submit, spending two attempts. Reserving first makes that
-            # impossible; every path that ends without submitting releases it
-            # again, so a failed upload still does not cost a fresh preview.
-            if not _SUBMIT_GUARD.reserve(confirmation_token):
-                return (
-                    "❌ That confirmation was already used. Nothing was "
-                    "submitted. Run the preview again."
-                )
-
-            # Re-check policy at the moment of the write, so an instructor's
-            # change between preview and confirm takes effect.
-            allowed, reason = await check_student_write_allowed(
-                course_id, "submit_assignment"
-            )
-            if not allowed:
-                _SUBMIT_GUARD.release(confirmation_token)
-                return f"❌ Submission blocked. {reason}"
-
-            data: dict[str, Any] = {"submission[submission_type]": submission_type}
             if submission_type == "online_text_entry":
-                data["submission[body]"] = body
+                text = body or ""
+                preview.append(f"Content ({len(text)} chars):\n{text}")
             elif submission_type == "online_url":
-                data["submission[url]"] = url
+                preview.append(f"URL: {url}")
             else:
-                file_ids = []
+                preview.append("Files:")
                 for item in prepared:
-                    file_id, upload_error = await _upload_one(
-                        course_id, str(assignment_id), item
-                    )
-                    if upload_error:
-                        # Release the claim: nothing was submitted, so the
-                        # student can retry without re-previewing.
-                        _SUBMIT_GUARD.release(confirmation_token)
-                        return f"{upload_error}\nNothing was submitted."
-                    file_ids.append(file_id)
-                data["submission[file_ids][]"] = file_ids
-
+                    preview.append(f"• {item.name} ({item.mime_type}, {item.size} bytes)")
             if comment:
-                data["comment[text_comment]"] = comment
+                preview.append(f"\nComment: {comment}")
 
-            assert_no_identity_override(data)
-
-            # Re-verify every precondition immediately before the write. See
-            # _final_preflight: arbitrary time has passed since the earlier
-            # checks, so policy, group status and attempt state are all rechecked
-            # rather than trusted.
-            preflight_error = await _final_preflight(
-                course_id, str(assignment_id), submission_type, digest, fingerprint
+            preview.append(
+                "\n➡️  NOTHING has been submitted, and this tool cannot submit "
+                "it for you. Show this preview in chat, then submit it "
+                "yourself in Canvas."
             )
-            if preflight_error:
-                _SUBMIT_GUARD.release(confirmation_token)
-                return preflight_error
-
-            # The claim taken above stands from here on. Even if this call
-            # errors, the token is not released: Canvas may have accepted the
-            # submission and only lost the reply, and a blind retry would spend
-            # a second attempt.
-            response = await make_canvas_request(
-                "post",
-                f"/courses/{course_id}/assignments/{assignment_id}/submissions",
-                data=data,
-                use_form_data=True,
-            )
-            if isinstance(response, dict) and "error" in response:
-                return (
-                    f"❌ Submission failed: {response['error']}\n"
-                    "Check get_my_submission before retrying — if Canvas accepted "
-                    "it and only the reply was lost, retrying would spend another "
-                    "attempt."
-                )
-
-            lines = ["✅ Submitted.", f"Assignment: {assignment.get('name', assignment_id)}"]
-            if response.get("submitted_at"):
-                lines.append(f"Submitted at: {format_date(response['submitted_at'])}")
-            if response.get("attempt"):
-                lines.append(f"Attempt: {response['attempt']}")
-            if response.get("late"):
-                lines.append("⚠️  Canvas marked this submission LATE.")
-            return "\n".join(lines)
+            return "\n".join(preview)
 
     if "comment_on_my_submission" in enabled:
 
-        @mcp.tool(annotations=ToolAnnotations(destructiveHint=False, idempotentHint=False))
+        @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
         @validate_params
         async def comment_on_my_submission(
             course_identifier: str | int,
             assignment_id: str | int,
             comment: str,
         ) -> str:
-            """Add a comment to YOUR OWN submission.
+            """Preview a comment on YOUR OWN submission. Never posts it.
+
+            Read-only by design (canvas-focus pivot,
+            docs/handoff/canvas-focus-pivot-2026-09-11.md): a submission
+            comment is visible to your instructor, so this product does not
+            post it for you. Use this to check the wording, then add it
+            yourself in Canvas.
 
             Args:
                 course_identifier: Course code or Canvas ID
@@ -897,19 +573,12 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if not allowed:
                 return f"❌ Comment blocked. {reason}"
 
-            data = {"comment[text_comment]": comment}
-            assert_no_identity_override(data)
-
-            response = await make_canvas_request(
-                "put",
-                f"/courses/{course_id}/assignments/{assignment_id}/submissions/self",
-                data=data,
-                use_form_data=True,
+            return (
+                "📋 Comment preview — this tool never posts it.\n\n"
+                f"Comment ({len(comment)} chars):\n{comment}\n\n"
+                "➡️  NOTHING has been posted, and this tool cannot post it "
+                "for you. Add this comment yourself in Canvas."
             )
-            if isinstance(response, dict) and "error" in response:
-                return f"❌ Comment failed: {response['error']}"
-
-            return "✅ Comment added to your submission."
 
     if "mark_module_item_done" in enabled:
 

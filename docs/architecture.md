@@ -27,7 +27,7 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 | Browser sync | SSO cookies → REST → inbox | `browser/` (`npm run sync`) |
 | Desktop shell | Tray, dock geometry, IPC, cadence | `app/src-tauri` (`main` / `daemon` / `dock` / `commands` / `inbox`) + React `app/src/ipc.ts` |
 | Sensors | Canvas-tab focus events only | `app/extension-chrome` → `app/native-messaging` → `{user_root}/sensors/` |
-| Actuators | Calendar / Gmail dry-run (+ optional live OAuth) | `mcp-servers/{gcal,gmail,apple-cal}` + `common/actuator.py` |
+| Actuators | Calendar / Gmail — read + draft only. `create_event`/`update_event`/`send_email` are hard-blocked, no API call (canvas-focus pivot, [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](handoff/canvas-focus-pivot-2026-09-11.md)) | `mcp-servers/{gcal,gmail,apple-cal}` + `common/actuator.py` |
 | Plugins | School Bucket-A connectors (static registry) | `plugins/` + `browser/scripts/lib/connector-registry.mjs` |
 
 ## Explicitly stub / out of truth path
@@ -36,6 +36,11 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 - **`src/canvas_mcp/`** — optional PAT MCP (truth-path step 4). Identity (track upstream vs ProductName-owned fork) is unsigned; `CHANGELOG.md` is still the upstream canvas-mcp history.
 - **`app/telemetry/`** — opt-in Sentry helper only.
 - **Educator grading / quiz-taking / hosted Azure** — permanently out of scope (see `CLAUDE.md`).
+- **`src/canvas_mcp/core/self_improve/{cluster,drafter,shadow,promoter,run}.py`** —
+  deleted 2026-09-11 (canvas-focus pivot). `logger.py` (request logging, feeds
+  `skill_router.route_intent`) and `distill.py` (episodic → semantic memory)
+  remain; the cluster-detect → draft → shadow-test → promote pipeline that
+  used to sit alongside them does not.
 
 ## Design docs (status)
 

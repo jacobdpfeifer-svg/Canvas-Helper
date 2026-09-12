@@ -38,22 +38,10 @@ def test_gate5_permissions_fuzz():
             assert not ok
 
 
-def test_gate6_write_skills_never_shadowed():
-    import tempfile
-
-    from canvas_mcp.core.self_improve.shadow import shadow_test
-    from canvas_mcp.core.user_root import ensure_user_root
-
-    with tempfile.TemporaryDirectory() as td:
-        root = Path(td)
-        ensure_user_root(root)
-        bad = root / "skills" / "provisional" / "x"
-        bad.mkdir(parents=True)
-        (bad / "SKILL.md").write_text(
-            "---\nname: x\ndescription: d\nschema_version: 1\n"
-            "category: canvas_submit\nrequires_cloud: false\n---\n# x\n"
-        )
-        assert not shadow_test(bad / "SKILL.md").allowed
+# Gate #6 (write skills never shadow-tested/promoted) tested the
+# cluster/draft/shadow/promote self-improve pipeline, which is deleted — see
+# docs/handoff/canvas-focus-pivot-2026-09-11.md. Nothing left to gate: with
+# no promotion pipeline, a write skill cannot be auto-promoted at all.
 
 
 def test_gate7_ledger_schema_and_undo_ptr(tmp_path):

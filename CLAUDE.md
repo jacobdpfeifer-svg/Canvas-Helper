@@ -44,7 +44,7 @@ uv run python -m pytest tests/ -q
 ## Coding standards
 
 - Prefer extending SSO→API→inbox over new scrapers
-- MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` stays preview→confirm via ConfirmationGuard
+- MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` is preview-only (readOnlyHint, no execution path — canvas-focus pivot) and never gains a confirm/execute branch back
 - Bucket-A connector MCP writes: dedicated `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard` — no first-write exemption
 - External tool inventory is discovery-only; gaps go to `inbox/tool-gaps.md` — never auto-fetch connector code
 - Never commit `.env` or `browser/.auth/`
@@ -52,3 +52,5 @@ uv run python -m pytest tests/ -q
 ## Out of scope
 
 Degree audit engines, Handshake, Azure hosting, educator grading, auto-driving LTI tools / Bucket-B assessment automation.
+
+**Canvas-focus pivot (2026-09-11, [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](docs/handoff/canvas-focus-pivot-2026-09-11.md)):** this product reads Canvas and helps a student plan and study. It does not act on a student's behalf toward anyone else. Do not add: a real send path for email, a real write path for calendar events, RateMyProfessors scraping (their ToS prohibits it), or any self-rewriting-prompts pipeline (`self_improve` cluster/draft/shadow/promote — deleted, don't re-add). `submit_assignment` is preview-only and stays that way. Any gamification on `learn_loop`/`habit` must have no losable state — no streaks, no leaderboards.

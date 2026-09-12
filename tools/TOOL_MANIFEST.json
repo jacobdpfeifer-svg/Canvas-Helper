@@ -56,7 +56,7 @@
     {
       "name": "comment_on_my_submission",
       "category": "student_write",
-      "description": "Add a comment to YOUR OWN submission."
+      "description": "Preview a comment on YOUR OWN submission. Never posts it — read-only."
     },
     {
       "name": "download_course_file",
@@ -256,7 +256,7 @@
     {
       "name": "submit_assignment",
       "category": "student_write",
-      "description": "Submit one of YOUR OWN assignments. Consumes an attempt."
+      "description": "Preview one of YOUR OWN assignment submissions. Never submits — read-only."
     }
   ]
 }

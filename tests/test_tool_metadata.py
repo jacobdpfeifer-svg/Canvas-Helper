@@ -25,23 +25,18 @@ def _registry() -> FastMCP:
     return mcp
 
 
-DESTRUCTIVE = {
-    "submit_assignment",
-}
+DESTRUCTIVE: set[str] = set()
 
 ADDITIVE = {
     "post_discussion_entry",
     "reply_to_discussion_entry",
     "mark_conversations_read",
-    "comment_on_my_submission",
     "mark_module_item_done",
 }
 
 NOT_IDEMPOTENT = {
     "post_discussion_entry",
     "reply_to_discussion_entry",
-    "submit_assignment",
-    "comment_on_my_submission",
 }
 
 
@@ -111,6 +106,8 @@ async def test_read_tools_are_marked_read_only():
         "get_syllabus",
         "read_course_file",
         "get_my_upcoming_assignments",
+        "submit_assignment",
+        "comment_on_my_submission",
     ):
         assert tools[name].annotations.readOnlyHint is True
 

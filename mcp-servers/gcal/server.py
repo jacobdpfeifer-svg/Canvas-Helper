@@ -1,21 +1,19 @@
-"""Google Calendar MCP server (Phase 1).
+"""Google Calendar MCP server — read-only + blocked writes (canvas-focus pivot).
 
-Creates/updates write ledger rows with undo_ptr. Narrate-after for automatic
-calendar category. Uses preview→confirm when gated.
-
-Real Google API wiring uses ``GOOGLE_OAUTH_CLIENT_SECRETS`` + optional
-``google-auth`` / ``google-api-python-client`` packages. Without them the
-server runs in dry-run mode that still exercises ledger + undo_ptr.
-Tokens: ``{user_root}/auth/google/token.json``.
+Phase 1 shipped ``create_event``/``update_event`` as real writes gated by
+``ConfirmationGuard``. That's cut: a calendar write is an action a student
+would otherwise take themselves, and this product does not act on a
+student's behalf toward anything outside their own head — including their
+own calendar. See ``docs/handoff/canvas-focus-pivot-2026-09-11.md``. Both
+tools are now hard-blocked, no API call, mirroring
+``mcp-servers/gmail/server.py``'s ``send_email`` stub.
 """
 
 from __future__ import annotations
 
 import json
 import sys
-import uuid
 from pathlib import Path
-from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
@@ -23,186 +21,54 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "mcp-servers"))
 
 from common import google_oauth  # noqa: E402
-from common.actuator import check_write, user_root  # noqa: E402
-from common.stop_rewind import engage_global_stop, rewind_last  # noqa: E402
-
-from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
+from common.actuator import user_root  # noqa: E402
+from common.stop_rewind import engage_global_stop  # noqa: E402
 
 mcp = FastMCP("productname-gcal")
 
-# In-memory dry-run store: event_id -> event dict
-_EVENTS: dict[str, dict[str, Any]] = {}
+_BLOCKED_REASON = (
+    "Calendar writes are disabled — this product reads and plans, it does not "
+    "act on your calendar for you. Add this to your calendar yourself."
+)
 
 
 @mcp.tool()
 def create_event(
-    summary: str,
-    start_iso: str,
-    end_iso: str,
-    why: str = "Calendar automation",
-    confirmed: bool = False,
+    summary: str = "",
+    start_iso: str = "",
+    end_iso: str = "",
+    why: str = "",
+    confirmation_token: str | None = None,
 ) -> str:
-    """Create a calendar event (automatic/narrate-after by default)."""
-    root = user_root()
-    ok, reason = check_write(
-        root,
-        "calendar",
-        confirmed=confirmed,
-        actor="gcal",
-        tool="create_event",
-        target=summary,
-        why=why,
-    )
-    if not ok:
-        return f"❌ Blocked: {reason}"
-
-    service = google_oauth.calendar_service(root)
-    if service is not None:
-        remote = google_oauth.gcal_create_event(
-            service, summary=summary, start_iso=start_iso, end_iso=end_iso
-        )
-        event_id = str(remote.get("id") or f"evt_{uuid.uuid4().hex[:12]}")
-        event = {
-            "id": event_id,
-            "summary": summary,
-            "start": start_iso,
-            "end": end_iso,
-            "mode": "live",
-        }
-    else:
-        event_id = f"evt_{uuid.uuid4().hex[:12]}"
-        event = {
-            "id": event_id,
-            "summary": summary,
-            "start": start_iso,
-            "end": end_iso,
-            "mode": "dry-run",
-        }
-        _EVENTS[event_id] = event
-
-    append_ledger(
-        root,
-        actor="gcal",
-        tool="create_event",
-        target=event_id,
-        why=why,
-        outcome="success",
-        category="calendar",
-        undo_ptr=UndoPtr(kind="gcal_event", id=event_id, prior=None),
-    )
-    return json.dumps({"status": "created", "event": event, "narrate": True})
+    """Permanently unavailable — hard-blocked, no API call. Plan the event yourself."""
+    return json.dumps({"ok": False, "blocked": True, "reason": _BLOCKED_REASON})
 
 
 @mcp.tool()
 def update_event(
-    event_id: str,
+    event_id: str = "",
     summary: str | None = None,
     start_iso: str | None = None,
     end_iso: str | None = None,
-    why: str = "Calendar update",
-    confirmed: bool = False,
+    why: str = "",
+    confirmation_token: str | None = None,
 ) -> str:
-    root = user_root()
-    ok, reason = check_write(
-        root,
-        "calendar",
-        confirmed=confirmed,
-        actor="gcal",
-        tool="update_event",
-        target=event_id,
-        why=why,
-        log_block=False,
-    )
-    if not ok:
-        return f"❌ Blocked: {reason}"
-
-    service = google_oauth.calendar_service(root)
-    if service is not None:
-        existing = (
-            service.events().get(calendarId="primary", eventId=event_id).execute()
-        )
-        prior = {
-            "id": event_id,
-            "summary": existing.get("summary"),
-            "start": existing.get("start"),
-            "end": existing.get("end"),
-        }
-        remote = google_oauth.gcal_update_event(
-            service,
-            event_id,
-            summary=summary,
-            start_iso=start_iso,
-            end_iso=end_iso,
-        )
-        event = {
-            "id": event_id,
-            "summary": remote.get("summary", summary),
-            "start": start_iso or prior.get("start"),
-            "end": end_iso or prior.get("end"),
-            "mode": "live",
-        }
-    else:
-        prior = dict(_EVENTS.get(event_id) or {})
-        if not prior:
-            return f"❌ Unknown event {event_id}"
-        event = dict(prior)
-        if summary is not None:
-            event["summary"] = summary
-        if start_iso is not None:
-            event["start"] = start_iso
-        if end_iso is not None:
-            event["end"] = end_iso
-        event["mode"] = "dry-run"
-        _EVENTS[event_id] = event
-
-    append_ledger(
-        root,
-        actor="gcal",
-        tool="update_event",
-        target=event_id,
-        why=why,
-        outcome="success",
-        category="calendar",
-        undo_ptr=UndoPtr(kind="gcal_event", id=event_id, prior=prior),
-    )
-    return json.dumps({"status": "updated", "event": event, "narrate": True})
-
-
-def _undo_gcal(ptr: dict[str, Any]) -> bool:
-    event_id = ptr.get("id")
-    prior = ptr.get("prior")
-    root = user_root()
-    service = google_oauth.calendar_service(root)
-    if service is not None and event_id:
-        try:
-            if prior:
-                google_oauth.gcal_restore_event(service, prior)
-            else:
-                google_oauth.gcal_delete_event(service, event_id)
-            return True
-        except Exception:
-            return False
-    if prior:
-        _EVENTS[event_id] = prior
-        return True
-    return bool(_EVENTS.pop(event_id, None) is not None)
+    """Permanently unavailable — hard-blocked, no API call. Edit the event yourself."""
+    return json.dumps({"ok": False, "blocked": True, "reason": _BLOCKED_REASON})
 
 
 @mcp.tool()
 def global_stop(hours: int = 24) -> str:
+    """Kill switch: pause all gated automation for this student. Kept even
+    though gcal itself no longer writes — this is the only place an agent
+    exposes it, and it is a student-protective control, not automation."""
     until = engage_global_stop(user_root(), hours=hours)
     return f"STOP until {until}"
 
 
 @mcp.tool()
-def rewind(n: int = 1) -> str:
-    undone = rewind_last(user_root(), n, handlers={"gcal_event": _undo_gcal})
-    return json.dumps({"undone": len(undone), "ids": [u.get("target") for u in undone]})
-
-
-@mcp.tool()
 def describe_mode() -> str:
-    """Return actuator mode: dry-run | oauth-ready | live."""
+    """Return actuator mode: dry-run | oauth-ready | live (read-only regardless)."""
     mode = google_oauth.describe_mode(user_root())
     return json.dumps({"mode": mode, "actuator": "gcal"})
 

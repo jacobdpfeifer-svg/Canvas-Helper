@@ -70,7 +70,10 @@ For each primary instructor name:
 
 - Faculty directory / department bio using the school yaml search domain
 - Research interests (signals essay/reflection values)
-- RateMyProfessors / Reddit only as weak hints — never override Canvas
+- Never fetch or cite RateMyProfessors — their ToS prohibits automated
+  access, see [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](../../docs/handoff/canvas-focus-pivot-2026-09-11.md). What students used RMP for
+  (grading strictness, format pickiness) comes from the syllabus and rubric
+  sources above instead.
 
 ### 3. Synthesize into course MD
 
