@@ -5,7 +5,10 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
-from canvas_mcp.core.learning_profile import apply_onboarding_answers, load_learning_profile
+from canvas_mcp.core.learning_profile import (
+    apply_onboarding_answers,
+    load_learning_profile,
+)
 from canvas_mcp.core.prompt_assembly import assemble_turn
 from canvas_mcp.core.skill_router import bundled_skills_dir, load_skill
 from canvas_mcp.core.teach_hint import (

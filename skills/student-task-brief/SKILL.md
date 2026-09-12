@@ -47,13 +47,13 @@ Classify each open item as `workflow` (do-loop only) or teachable (`declarative`
 | Quiz / proctored | declarative / confusable | Extract claims that feed the checkpoint. Write learn items and schedule them across days until the exam. Do not emit a study checklist or a night-before cram as the learning action. The student still takes the quiz in the UI. Low-shame tone. |
 | Pre-reading | declarative | One pass for structure, then **close the source** and retrieve the claims. Do not note takeaways while the text is open. |
 | Lab / build | procedural | One attempt at a varied instance, then immediate correction. Not “recall the definition of the lab.” |
-| Discussion | workflow (voice) | Confirm instructor profile → tone/citation prefs → draft 3 voice bullets for the student to edit. |
+| Discussion | workflow (voice) | Pull instructor profile (below): tone/citation → draft 3 voice bullets to edit. |
 | Written HW | declarative or procedural | Open the prompt, then generate the method with the source closed. Elaborate once: why this method. |
 | Tiny native busywork | workflow | Agent drafts answer; the student paste/submit if calibrated. No learn item. |
 
-Never auto-drive LTI/proctored UIs. Native auto-submit only via `student-assignment-triage` when every `USER.md` criterion passes.
+Never auto-drive LTI/proctored UIs; `submit_assignment` is preview-only, never submits.
 
-Cramming the night before is the illusion of mastery, not the plan. If studying feels easy, say so in one clause: ease is a weak signal; the check is still scheduled.
+Cramming the night before is the illusion of mastery, not the plan. If studying feels easy, one clause: ease is a weak signal, the check is still scheduled.
 
 ### 4. Emit briefing cards
 
@@ -77,21 +77,22 @@ Obey the **Teach-hint** in this turn's slice. It already chose format, the cours
 
 How to fill the card from the hint:
 
-- `format` is **start order only**. Retrieval is required either way. `format: retrieval` → Check first; show a faded example only on a miss. `worked_example` (default; also every novice / missing prior) → short Walkthrough (define terms first), then the student generates the answer with the source closed.
-- Quiz / proctored: the learning action is the scheduled retrievals, not a checklist. Walkthrough first only when the hint says `worked_example` or the item says `start: worked_example`. The student still takes the quiz in the tool. Low-shame tone.
+- `format` is **start order only**; retrieval is required either way. `retrieval` → Check first, faded example only on a miss. `worked_example` (default; also novice / missing prior) → short Walkthrough (define terms first), then generate the answer closed-book.
+- Quiz / proctored: the learning action is the scheduled retrievals, not a checklist. Walkthrough first only on `worked_example` or `start: worked_example`. Student still takes the quiz in the tool. Low-shame tone.
 - Pre-reading: Check is “close it and recall,” not “note 3 takeaways.”
-- Elaborate once on a teachable card: why / how this connects to something they already have (career goals in `USER.md` are allowed; do not invent emotional stories).
-- `interleave: yes` → mix confusable problem types in one block (“one of each kind, not all of type A then all of type B”). Do not interleave unrelated readings.
-- `diagram:` other than `no` → the PNG is the encode step ([`student-concept-visual`](../student-concept-visual/SKILL.md)). Then the student labels or regenerates the relation from memory. Never because they are a “visual learner.”
-- If the slice has `## Due reviews` or `spacing` says to surface a due review, ask those checks before a new passive reading. Do not lecture the research. One clause if the Check is hard: missing it is the practice.
-- If the slice has `## Practice` and the line is the gap, say that one clause and stop. Do not invent a check to keep brief continuity. That line is not learning evidence. If it says claims are not extracted, that is not rest — extract claims; do not congratulate. If the Practice line names one overdue item, say that clause and start there; do not backfill the rest or mention a missed brief count.
-- If the slice has a review-budget line, say that one clause. The student may still study past the budget. It is not an energy limit and not a score.
-- If the slice has `You kept the chain of work alive this week.` or `## Trail`, say the chain sentence only when it is present. A path or a kept commitment is not a delayed hit. Do not invent a check to feed the trail. Do not celebrate a gap or name a missed count.
-- If a counterfactual pair is present (`If you do this check now` / `If you start`), say that pair once. Do not turn it into a lecture or an exam prediction.
-- If the slice has a commitment or `Check-in:` / `Still open:` line, offer that one action. Do not mark it kept. Do not treat it as a grade. Release is recovery, not failure.
-- If the slice has `## Coverage`, say the one line for the soonest checkpoint. `due_now` means the checks, then rest. `in_the_gap` means nothing is due. `unextracted` means a quiz is on the list and no claims exist yet. Do not turn the counts into a score or say they are behind.
-- After they answer a Check, say whether the method is right and what to fix. Do not fill the blank. Do not grade them. “I know this” without a successful delayed retrieval is not mastery.
-- `autonomy: directive` → one If-then. `choices` → two If-then options. `chunk_size: short` → time box ≤15–30m; `long` → a longer sit-down is fine. `check_depth: thorough` → keep a Check even on a worked example; `light` → do not stack an extra confirmation on retrieval-first. Neither skips the scheduled check.
+- Elaborate once on a teachable card: why/how it connects to something they already have (career goals in `USER.md` OK; no invented emotional stories).
+- `interleave: yes` → mix confusable types in one block, not all-A-then-all-B. Don't interleave unrelated readings.
+- `diagram:` other than `no` → the PNG is the encode step ([`student-concept-visual`](../student-concept-visual/SKILL.md)); then label/regenerate from memory. Never for being a "visual learner."
+- `## Due reviews` / spacing due → ask those checks before new passive reading; no lecture. One clause if hard: missing it is the practice.
+- `## Practice` gap line → say it and stop; not learning evidence, don't invent a check. Unextracted claims → extract, don't congratulate. Names one overdue item → start there; don't backfill or mention missed-brief count.
+- Review-budget line → say it once; studying past it is fine, not an energy limit or score.
+- `You kept the chain of work alive this week.` / `## Trail` → say only when present; a path/kept commitment isn't a delayed hit; don't invent a check or celebrate a gap.
+- Counterfactual pair (`If you do this check now` / `If you start`) → say once, no lecture or exam prediction.
+- Commitment / `Check-in:` / `Still open:` → offer that one action; don't mark kept or grade it; release is recovery, not failure.
+- `## Coverage` → one line for the soonest checkpoint: `due_now` = checks then rest, `in_the_gap` = nothing due, `unextracted` = quiz listed, no claims yet. Not a score.
+- After a Check answer, say right/wrong and the fix; don't fill the blank or grade. "I know this" without a successful delayed retrieval isn't mastery.
+- `autonomy: directive` → one If-then; `choices` → two. `chunk_size: short` → ≤15–30m; `long` → longer sit-down OK. `check_depth: thorough` → keep a Check even on worked example; `light` → no extra confirmation on retrieval-first. Neither skips the scheduled check.
+- Points ≥ 10 or Gen AI/essay/case/reflection → **pull `## Instructor profile`** from `inbox/courses/CODE.md` (weights, late policy, assignment notes, rubric language) into Why: one clause on worth (% or points) + the top rubric / grading concern. If the profile section is missing or stale, say so and continue — do not invent professor preferences.
 
 ### 5. Week mode (default when the student asks what’s next / optimize)
 
@@ -112,11 +113,11 @@ python -m canvas_mcp.core.teach_hint write-focus \
   --item "COURSE — Assignment — due <due> — Check: <same question>"
 ```
 
-Pass `--obstacle "<their words>"` only when the student names the cue that usually blocks the start. Omit it to keep a previous obstacle. Pass `--clear-obstacle` only if they ask to drop it. Do not invent an obstacle from a skipped brief.
+Pass `--obstacle "<their words>"` only when the student names the cue that blocks the start; omit to keep a previous one; `--clear-obstacle` only if asked. Don't invent an obstacle from a skipped brief.
 
 Repeat `--item` for each Top-3 card (at most three). Honor `DEV_USER_ROOT` if set.
 
-When you brief a quiz, exam, or concept that feeds a checkpoint, write one learn item per claim (not a fake card for a signup). First review is about a day later, sooner if the checkpoint is inside three days. Do not invent an ease factor.
+Quiz, exam, or checkpoint concept → one learn item per claim, not a fake card for a signup. First review about a day later, sooner if the checkpoint is inside three days. Don't invent an ease factor.
 
 ```bash
 python -m canvas_mcp.core.learn_loop add \
@@ -127,7 +128,7 @@ python -m canvas_mcp.core.learn_loop add \
   --checkpoint-due YYYY-MM-DD
 ```
 
-Refuse `kind=workflow` — those stay on the do-loop. If a retrieval just happened and it was this same sitting as the example, record `--same-session` so stability does not advance. After a scheduled check, omit that flag:
+Refuse `kind=workflow` — those stay on the do-loop. `add` also refuses a claim that reads as a study goal ("understand X", "review X") or is under four words — state the fact itself (e.g. "state the chain rule for f(g(x))"), not the topic. If `add` prints `skipped: claim is too vague to store`, rewrite the claim as a specific fact and retry; do not fall back to a checklist item. If a retrieval just happened and it was this same sitting as the example, record `--same-session` so stability does not advance. After a scheduled check, omit that flag:
 
 ```bash
 python -m canvas_mcp.core.learn_loop outcome \
@@ -157,12 +158,11 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 2. `{user_root}/inbox/week.md` — due-list rows for this turn (volatile slice, already supplied)
 3. Read `calibration/priority-rubric.md`
 4. Optional: read `{user_root}/inbox/focus.md` if present (dated Top 3 cache — not a competing due list)
+5. When the pull above applies, read that course's profile as-is (no rebuild).
 
 ## Tools available
 
-Read only. No submit tools from this skill.
-
-Native auto-submit only via `student-assignment-triage` when every `USER.md` criterion passes.
+Read only. No submit tools from this skill — see step 3 above.
 
 ## Triggers
 

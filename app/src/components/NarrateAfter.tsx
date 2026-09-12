@@ -1,4 +1,4 @@
-/** Narrate-after surface — own component, not buried in ledger. */
+/** Narrate-after surface — calm post-action feed, not buried in ledger. */
 type Narration = { id: string; text: string; why: string };
 
 export function NarrateAfter({
@@ -10,7 +10,11 @@ export function NarrateAfter({
 }) {
   if (!items.length) return null;
   return (
-    <section className="narrate" aria-label="Recent automations">
+    <section
+      className="narrate"
+      aria-label="Recent automations"
+      aria-live="polite"
+    >
       <h2>The agent did</h2>
       <ul>
         {items.slice(0, 3).map((item) => (
@@ -18,8 +22,12 @@ export function NarrateAfter({
             <p>
               {item.text} <span className="why">because {item.why}</span>
             </p>
-            <button type="button" onClick={() => onUndo(item.id)}>
-              Undo?
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => onUndo(item.id)}
+            >
+              Undo
             </button>
           </li>
         ))}

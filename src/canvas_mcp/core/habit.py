@@ -17,6 +17,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import yaml
 
+
 def habit_path(user_root: Path) -> Path:
     return Path(user_root) / "inbox" / "habit.yaml"
 

@@ -10,10 +10,12 @@ import yaml
 
 from canvas_mcp.core.habit import (
     habit_path,
-    main as habit_main,
     record_brief_day,
     render_streak_line,
     streak_payload,
+)
+from canvas_mcp.core.habit import (
+    main as habit_main,
 )
 from canvas_mcp.core.teach_hint import write_focus
 from canvas_mcp.core.user_root import ensure_user_root

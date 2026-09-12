@@ -34,10 +34,10 @@ Each plugin directory **must**:
 2. **Export a session module** — auth/helpers using the shared Playwright `browser/.auth` profile (IDE browser has no SSO).
 3. **Stay Bucket A** — refuse to automate assessment/proctored flows; never soft-promote a Bucket-B tool.
 4. **Register statically** — add one frozen entry to `CONNECTOR_REGISTRY` in `browser/scripts/lib/connector-registry.mjs` in the same PR.
-5. **Gate writes** — any MCP (or equivalent) tool that writes to / acts on the student account must use `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard(connector_id)` (same preview → fingerprint → issue → confirm → reserve flow as `submit_assignment`). No “safe because mostly read-only” exemption on the first write-capable action.
+5. **Gate writes** — any MCP (or equivalent) tool that writes to / acts on the student account in a way **visible only to the student** (e.g. local prefs, self-only Canvas toggles) must use `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard(connector_id)` (preview → fingerprint → issue → confirm → reserve). No “safe because mostly read-only” exemption on the first write-capable action. Tools whose Canvas/email/calendar effect would be visible to someone else (submit, comment, discussion post, send email, create calendar event) must stay **preview-only / hard-blocked** — do not build a ConfirmationGuard execute path for them (canvas-focus pivot).
 6. **Not fetch remote code** — no runtime `git clone`, raw GitHub installs, or eval of third-party scripts.
 
-Optional: Playwright-only actions (e.g. CampusGroups RSVP) may keep CLI confirm flags, but new MCP write surfaces must use `ConfirmationGuard`.
+Optional: Playwright-only actions (e.g. CampusGroups RSVP) may keep CLI confirm flags as an explicit student-operated escape hatch, but new MCP write surfaces that are student-private must use `ConfirmationGuard`. Externally-visible actions stay draft/preview only.
 
 ## Reference implementation
 

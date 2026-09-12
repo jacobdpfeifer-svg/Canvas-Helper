@@ -102,12 +102,21 @@ same category as `submit_assignment`, so it is now preview-only too — same
 treatment, no execution path, no confirmation flow. `mark_module_item_done`
 remains untouched (private, self-only, no external visibility).
 
+## Addendum — 2026-09-12: discussion post/reply closed
+
+`post_discussion_entry` and `reply_to_discussion_entry` are the same
+category: visible to classmates and the instructor. Both are now
+preview-only (GET topic for context, never POST). Browser
+`CONFIRM=1` photo submit is hard-blocked the same day. Student posts
+themselves in Canvas.
+
 ## What agents must not do
 
-- Do not re-add a send/create-event/submit/comment execution path "for
-  convenience" or "since the guard already exists" — the guard existing is
-  not authorization. This includes `comment_on_my_submission` (closed
-  2026-09-12, see addendum above).
+- Do not re-add a send/create-event/submit/comment/discussion-post
+  execution path "for convenience" or "since the guard already exists" —
+  the guard existing is not authorization. This includes
+  `comment_on_my_submission` and discussion post/reply (closed 2026-09-12,
+  see addenda above).
 - Do not build RateMyProfessors scraping in any form, including a "just reads
   the page the student is already looking at" framing — the ToS violation is
   on the automated-access side, not the content side.

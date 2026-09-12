@@ -28,6 +28,8 @@ fn main() {
             commands::sync_canvas,
             commands::read_top3,
             commands::open_canvas_sso,
+            commands::check_canvas_session,
+            commands::bootstrap_canvas_sync,
             commands::save_onboarding,
             commands::save_learning_profile,
             commands::read_due_reviews,
@@ -48,7 +50,7 @@ fn main() {
 
             let mut tray = TrayIconBuilder::new()
                 .menu(&menu)
-                .tooltip("ProductName")
+                .tooltip("ProductName (private beta)")
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "sync_now" => {
@@ -59,6 +61,7 @@ fn main() {
                             }
                             Err(e) => {
                                 eprintln!("[productname-daemon] Sync now failed: {e}");
+                                let _ = app.emit("sync-failed", e.to_string());
                             }
                         }
                     }

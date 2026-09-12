@@ -14,8 +14,8 @@ npm run validate-profiles  # check instructor profile quality after sync
 npm run refresh-profiles   # stamp profile Sources with syllabus hash from sync
 # npm run pull-todo        # alias for sync
 npm run audit              # 45d universe + actionable-miss metrics (does not overwrite week.md)
-npm run process-capture-queue -- --dry-run               # preview pending_mac photo uploads
-CONFIRM=1 npm run process-capture-queue                  # after AirDrop + open-canvas
+npm run process-capture-queue -- --dry-run               # preview pending_mac photo matches (never submits)
+# CONFIRM=1 is ignored — live photo submit is hard-blocked (canvas-focus pivot)
 ```
 
 Photo intake: skill `student-photo-intake` (queue under `{user_root}/inbox/captures/`).

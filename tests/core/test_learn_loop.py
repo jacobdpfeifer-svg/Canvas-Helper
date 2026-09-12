@@ -9,6 +9,7 @@ import pytest
 
 from canvas_mcp.core.habit import habit_path, local_today, record_brief_day
 from canvas_mcp.core.learn_loop import (
+    REST_LINE,
     add_item,
     compare_evaluation_snapshots,
     coverage_clock,
@@ -19,7 +20,6 @@ from canvas_mcp.core.learn_loop import (
     evidence_rung,
     knowledge_health,
     load_items,
-    main as learn_loop_main,
     missing_evidence,
     progress_payload,
     record_evaluation_snapshot,
@@ -27,7 +27,9 @@ from canvas_mcp.core.learn_loop import (
     render_due_reviews,
     render_progress,
     why_due,
-    REST_LINE,
+)
+from canvas_mcp.core.learn_loop import (
+    main as learn_loop_main,
 )
 from canvas_mcp.core.prompt_assembly import assemble_turn
 from canvas_mcp.core.skill_router import bundled_skills_dir, load_skill
@@ -52,6 +54,40 @@ def test_workflow_is_rejected(tmp_path: Path) -> None:
             now=NOW,
         )
     assert load_items(root) == []
+
+
+@pytest.mark.parametrize(
+    "claim",
+    [
+        "understand photosynthesis",
+        "know the chain rule",
+        "review chapter 3",
+        "state it",
+    ],
+)
+def test_vague_claim_is_rejected(tmp_path: Path, claim: str) -> None:
+    root = _root(tmp_path)
+    with pytest.raises(ValueError, match="too vague"):
+        add_item(
+            root,
+            course="MATH 1300",
+            claim=claim,
+            kind="declarative",
+            now=NOW,
+        )
+    assert load_items(root) == []
+
+
+def test_specific_claim_is_accepted(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    item = add_item(
+        root,
+        course="MATH 1300",
+        claim="state the chain rule for f(g(x))",
+        kind="declarative",
+        now=NOW,
+    )
+    assert item.claim == "state the chain rule for f(g(x))"
 
 
 def test_first_review_is_about_a_day_later(tmp_path: Path) -> None:
@@ -251,7 +287,7 @@ def test_due_reviews_cap_and_mix_confusable(tmp_path: Path) -> None:
     add_item(
         root,
         course="MATH",
-        claim="chain rule",
+        claim="state the chain rule for composite functions",
         kind="confusable",
         checkpoint_due="2026-09-09",
         now=NOW,
@@ -259,7 +295,7 @@ def test_due_reviews_cap_and_mix_confusable(tmp_path: Path) -> None:
     add_item(
         root,
         course="MATH",
-        claim="product rule",
+        claim="state the product rule for derivatives",
         kind="confusable",
         checkpoint_due="2026-09-09",
         now=NOW,
@@ -267,14 +303,14 @@ def test_due_reviews_cap_and_mix_confusable(tmp_path: Path) -> None:
     add_item(
         root,
         course="ENGL",
-        claim="thesis claim",
+        claim="state the essay's thesis in one sentence",
         kind="declarative",
         checkpoint_due="2026-09-09",
         now=NOW,
     )
     due = due_reviews(root, now=NOW + timedelta(days=2))
     assert len(due) == 2
-    assert {item.claim for item in due} == {"chain rule", "product rule"}
+    assert {item.claim for item in due} == {"state the chain rule for composite functions", "state the product rule for derivatives"}
     text = render_due_reviews(root, now=NOW + timedelta(days=2))
     assert "Mix the confusable claims" in text
     assert "I know this" in text
@@ -310,7 +346,7 @@ def test_prompt_surfaces_at_most_two_due_reviews(tmp_path: Path) -> None:
     add_item(
         root,
         course="MATH",
-        claim="chain rule",
+        claim="state the chain rule for composite functions",
         kind="declarative",
         checkpoint_due="2026-09-08",
         now=NOW - timedelta(days=2),
@@ -575,10 +611,10 @@ def test_progress_groups_stability_by_course(tmp_path: Path) -> None:
     }
     assert render_progress(root) == ""
 
-    add_item(root, course="MATH", claim="chain rule", kind="declarative", now=NOW)
-    holding = add_item(root, course="MATH", claim="product rule", kind="declarative", now=NOW)
+    add_item(root, course="MATH", claim="state the chain rule for composite functions", kind="declarative", now=NOW)
+    holding = add_item(root, course="MATH", claim="state the product rule for derivatives", kind="declarative", now=NOW)
     record_outcome(root, holding.id, "hit", now=NOW + timedelta(days=2))
-    add_item(root, course="PHYS", claim="free body", kind="declarative", now=NOW)
+    add_item(root, course="PHYS", claim="draw the free body diagram forces", kind="declarative", now=NOW)
 
     payload = progress_payload(root)
     by_course = {row["course"]: row for row in payload["courses"]}
@@ -601,7 +637,7 @@ def test_progress_cli_and_teaching_prompt(tmp_path: Path, capsys: pytest.Capture
     import json
 
     root = _root(tmp_path)
-    add_item(root, course="MATH", claim="chain rule", kind="declarative", now=NOW)
+    add_item(root, course="MATH", claim="state the chain rule for composite functions", kind="declarative", now=NOW)
     record_brief_day(root, on=local_today(root))
 
     rc = learn_loop_main(["--user-root", str(root), "--json", "progress"])
@@ -655,10 +691,10 @@ def test_evaluation_snapshot_outcomes_and_exposure(tmp_path: Path) -> None:
 
     past = NOW - timedelta(days=3)
     waiting = add_item(
-        root, course="MATH", claim="chain rule", kind="declarative", now=past
+        root, course="MATH", claim="state the chain rule for composite functions", kind="declarative", now=past
     )
     holding = add_item(
-        root, course="MATH", claim="product rule", kind="declarative", now=past
+        root, course="MATH", claim="state the product rule for derivatives", kind="declarative", now=past
     )
     record_outcome(root, holding.id, "hit", now=NOW)
 

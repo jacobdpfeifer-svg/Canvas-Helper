@@ -50,13 +50,13 @@ Use `formatLectureCaptureBullet()` from capture-classify when scripting; in chat
 
 ### `pending_mac` notes
 
-For `canvas_upload`, set queue `notes` to include: **Original on phone camera roll; AirDrop to `inbox/captures/inbox/{id}.jpg` when at Mac.** Mac step: `cd browser && npm run process-capture-queue` (after `open-canvas`; `CONFIRM=1` to submit).
+For `canvas_upload`, set queue `notes` to include: **Original on phone camera roll; AirDrop to `inbox/captures/inbox/{id}.jpg` when at Mac.** Mac step: `cd browser && npm run process-capture-queue` (after `open-canvas`) **previews** the course/assignment match only — it never uploads or submits. The student uploads the photo in Canvas themselves.
 
 ### Hard stops (never from photo intake alone)
 
 - Auto-submit quizzes, exams, proctored, WebAssign, ZyBooks, PlayPosit, LTI
 - Auto-submit essays, reflections, thought projects, presentations
-- Auto-upload without the student confirming on Mac (`CONFIRM=1`) — cloud intake only **queues**
+- Any live Canvas upload/submit from `process-capture-queue` (hard-blocked; `CONFIRM=1` ignored)
 - Commit photo binaries to git
 
 ### Ephemeral Cloud Agent
@@ -76,11 +76,11 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 
 ## Tools available
 
-Read only for Canvas MCP. No submit tools from this skill. Cloud intake only queues a Mac upload.
+Read only for Canvas MCP. No submit tools from this skill. Cloud intake only queues a Mac preview of which assignment the photo would attach to — student uploads in Canvas.
 
 - `classifyCapture` / `formatLectureCaptureBullet` — local classify helpers, not Canvas writes
 - Write `inbox/captures/queue.md` and course MD lecture-capture bullets as specified above
-- `npm run process-capture-queue` — Mac step only, after `open-canvas`, and `CONFIRM=1` only when the student confirms
+- `npm run process-capture-queue` — Mac preview only (after `open-canvas`); never uploads or submits
 
 ## Triggers
 

@@ -53,6 +53,25 @@ _CONFUSABLE_MARKERS = (
     "derivative",
 )
 
+# A closed-book claim asserts a fact to retrieve, not a study goal to pursue.
+# These prefixes name the goal, not the fact, so no retrieval attempt can ever
+# "hit" them — skip that instead of feeding it into the ladder.
+_VAGUE_CLAIM_PREFIXES = (
+    "understand",
+    "know",
+    "know about",
+    "learn",
+    "learn about",
+    "review",
+    "study",
+    "remember",
+    "be familiar with",
+    "get comfortable with",
+    "master",
+    "go over",
+)
+MIN_CLAIM_WORDS = 4
+
 
 @dataclass
 class LearnItem:
@@ -264,6 +283,23 @@ def _write_items(user_root: Path, items: list[LearnItem]) -> Path:
     return path
 
 
+def vague_claim_reason(claim: str) -> str | None:
+    """None when ``claim`` reads as a checkable fact; else why it does not.
+
+    Cheap and wrong on the margins by design — this rejects the shape of a
+    study goal ("understand photosynthesis"), not the truth of a fact. It is
+    a floor under the skill-prompt instruction to write closed-book claims,
+    not a substitute for actually checking the content.
+    """
+    lowered = " ".join(claim.lower().split())
+    for prefix in _VAGUE_CLAIM_PREFIXES:
+        if lowered == prefix or lowered.startswith(prefix + " "):
+            return f"reads as a study goal, not a fact to retrieve (starts with '{prefix}')"
+    if len(lowered.split()) < MIN_CLAIM_WORDS:
+        return f"too short to be a checkable fact (needs at least {MIN_CLAIM_WORDS} words)"
+    return None
+
+
 def add_item(
     user_root: Path,
     *,
@@ -282,6 +318,9 @@ def add_item(
         raise ValueError(f"kind must be one of {KIND_VALUES}")
     if kind == "workflow":
         raise ValueError("workflow items stay on the do-loop; do not store them")
+    vague = vague_claim_reason(cleaned)
+    if vague is not None:
+        raise ValueError(f"claim is too vague to store — {vague}: {cleaned!r}")
     if checkpoint_due and _parse_date(checkpoint_due) is None:
         raise ValueError("checkpoint_due must be YYYY-MM-DD")
 
