@@ -30,23 +30,21 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 | Actuators | Calendar / Gmail — read + draft only. `create_event`/`update_event`/`send_email` are hard-blocked, no API call (canvas-focus pivot, [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](handoff/canvas-focus-pivot-2026-09-11.md)) | `mcp-servers/{gcal,gmail,apple-cal}` + `common/actuator.py` |
 | Plugins | School Bucket-A connectors (static registry) | `plugins/` + `browser/scripts/lib/connector-registry.mjs` |
 
-## Explicitly stub / out of truth path
+## Explicitly out of truth path / archived
 
-- **`app/billing/`**, **`app/mobile/`** — Phase-2 placeholders; not wired into the truth path. Ship-or-delete is unsigned — see [`docs/handoff/pre-ship-decisions.md`](handoff/pre-ship-decisions.md).
-- **`src/canvas_mcp/`** — optional PAT MCP (truth-path step 4). Identity (track upstream vs ProductName-owned fork) is unsigned; `CHANGELOG.md` is still the upstream canvas-mcp history.
+- **`src/canvas_mcp/`** — optional PAT MCP (truth-path step 4). **Vendored** upstream canvas-mcp (signed 2026-09-12). Root [`CHANGELOG.md`](../CHANGELOG.md) is upstream’s; see [`vendor/README.md`](../vendor/README.md).
+- **`vendor/articles/`**, **`vendor/examples/`**, **`vendor/internal/`** — archived research / upstream notes; not the shipping product surface.
 - **`app/telemetry/`** — opt-in Sentry helper only.
+- **Billing / mobile** — **deleted** (signed 2026-09-12). Do not re-add Stripe/Twilio stubs.
 - **Educator grading / quiz-taking / hosted Azure** — permanently out of scope (see `CLAUDE.md`).
 - **`src/canvas_mcp/core/self_improve/{cluster,drafter,shadow,promoter,run}.py`** —
-  deleted 2026-09-11 (canvas-focus pivot). `logger.py` (request logging, feeds
-  `skill_router.route_intent`) and `distill.py` (episodic → semantic memory)
-  remain; the cluster-detect → draft → shadow-test → promote pipeline that
-  used to sit alongside them does not.
+  deleted 2026-09-11 (canvas-focus pivot). `logger.py` and `distill.py` remain.
 
 ## Design docs (status)
 
 | Doc | Status |
 |-----|--------|
-| [`docs/design/ambient-dock-ui.md`](design/ambient-dock-ui.md) | **Partially built** — peek/expanded/onboarding + tray; Hidden-as-default and narrate-auto-peek not yet |
+| [`docs/design/ambient-dock-ui.md`](design/ambient-dock-ui.md) | **Parked** (signed 2026-09-12) — peek/expanded/onboarding + tray as built; Hidden/auto-peek design-only. See [`handoff/ui-shell-alternatives.md`](handoff/ui-shell-alternatives.md) |
 | [`docs/design/learning-profile.md`](design/learning-profile.md) | **v1 built**; start bias only. Learn loop is the teaching model (`learn_loop.py`) |
 | [`docs/design/class-standings.md`](design/class-standings.md) | **Framed, not built** — optional hideable class leaderboard and class marks. Not peers, not XP |
 

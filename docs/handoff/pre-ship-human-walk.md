@@ -1,21 +1,21 @@
 # Pre-ship human walk — remaining checklist
 
-Agent work from the 2026-09-12 pre-ship audit is done for code/docs. This file is the human-only remainder (also tracked in [`pre-ship-decisions.md`](./pre-ship-decisions.md)).
+Signed product decisions (2026-09-12): vendored MCP, delete billing/mobile, park Tauri, packaging **not yet**. See [`pre-ship-decisions.md`](./pre-ship-decisions.md).
 
 ## Before public testers
 
-1. [ ] Sign product decision rows 1–4 in `pre-ship-decisions.md` (or park explicitly).
-2. [ ] History purge + force-push approval ([`history-purge.md`](./history-purge.md)). Confirm `git show 37f38b3:dev/JACOB.md` fails after rewrite.
-3. [ ] Counsel/review of [`docs/legal/privacy.md`](../legal/privacy.md) and [`docs/legal/terms.md`](../legal/terms.md).
-4. [ ] Live OAuth smoke — read/draft only ([`oauth-smoke.md`](./oauth-smoke.md)).
-5. [ ] Chrome Native Messaging round-trip on a real profile.
-6. [ ] Second-account / two-device SSO (cookie jar is still shared `browser/.auth/`).
-7. [ ] Packaging / notarization only after decision 4 signed.
-8. [ ] Decide CampusGroups RSVP: keep CLI escape hatch or remove from ship surface.
+1. [x] Sign product decision rows 1–4
+2. [ ] History purge + force-push (verify `git show 37f38b3:dev/JACOB.md` fails after rewrite) — [`history-purge.md`](./history-purge.md)
+3. [ ] Counsel/review of [`docs/legal/privacy.md`](../legal/privacy.md) and [`docs/legal/terms.md`](../legal/terms.md)
+4. [ ] Live OAuth smoke — read/draft only ([`oauth-smoke.md`](./oauth-smoke.md)) — **Jacob**
+5. [ ] Chrome Native Messaging round-trip — **Jacob**
+6. [ ] Second-account / two-device SSO — **Jacob**
+7. [ ] Packaging / notarization — blocked until decision 4 flips to worth installing
+8. [x] CampusGroups RSVP kept as documented CLI escape hatch for CU private beta
 
-## Private beta (trusted CU only) — already gated in code
+## Agent cannot run (confirmed)
 
-- Discussion post/reply and photo `CONFIRM=1` submit are preview-only / hard-blocked.
-- Demo STOP / narrate / fake ledger / approve-demo removed from the dock.
-- Waitlist path no longer runs CU SSO.
-- Brand surfaces say private beta / codename.
+- CU IdentiKey + MFA (`npm run open-canvas`)
+- Live Google OAuth consent in a browser
+- Chrome extension install on your real profile
+- Second physical device/account SSO

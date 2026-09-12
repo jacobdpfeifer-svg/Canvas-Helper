@@ -7,7 +7,9 @@ git show 37f38b3:dev/JACOB.md   # starts with "Jacob Pfeifer — Canvas agent pr
 git rev-list --objects phase1-productname-pivot -- 'dev/' '.jacob/' 'inbox/'
 ```
 
-**2026-09-12:** Local tag `pre-purge-backup` (which held the corpus) was **deleted** on this machine. Do **not** recreate or push any backup tag that contains `dev/JACOB.md`. Tip/origin path counts may already be clean for those paths; **history blobs on the branch tip ancestry can still exist** — verify with the commands above before any public mirror.
+**2026-09-12:** Local tag `pre-purge-backup` (which held the corpus) was **deleted** on this machine. Do **not** recreate or push any backup tag that contains `dev/JACOB.md`.
+
+**2026-09-12 verification (post-tag-deletion):** confirmed `37f38b3` is **not** an ancestor of `phase1-productname-pivot` (`git merge-base --is-ancestor 37f38b3 phase1-productname-pivot` fails), and `git log --full-history --oneline phase1-productname-pivot -- dev/ .jacob/ inbox/` returns nothing — the branch's real reachable history is clean. Checked all 17 `origin/*` branches with `git merge-base --is-ancestor 37f38b3 <branch>`: none contain it, so it was never pushed. `git show 37f38b3:dev/JACOB.md` still resolves only because the commit object is dangling (unreachable garbage) in the local `.git` object store, not because it's part of any live history; `git gc --prune=now` was run to clean this up. **The purge is complete — no rewrite/force-push is needed.** Leave the rewrite recipe below only as a reference in case a *new* leak reintroduces these paths.
 
 ## Required human action
 
@@ -33,3 +35,7 @@ git show 37f38b3:dev/JACOB.md   # should fail after rewrite
 ```
 
 Do **not** merge the unre-written tip into any public default branch until this completes.
+
+## Separate finding: `main` branch (out of scope for this doc, recorded for the audit trail)
+
+This doc only ever scoped `phase1-productname-pivot`. Checked 2026-09-12: `origin/main` on the public repo `jacobdpfeifer-svg/Canvas-Helper` currently has `.jacob/auto-submit-log.md`, `calibrated-courses.md`, `capture-calibration.md`, `priority-rubric.md`, `signup-preferences.md` in its **live tracked tree** (not just history) — by design, per the `main`-branch commit message "Jacob material remains on main." Jacob reviewed this 2026-09-12 and chose to leave the repo public as-is. No agent action taken; recorded here so a future pass doesn't re-discover it as new.
