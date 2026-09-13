@@ -102,7 +102,8 @@ class RouteResult:
 
 _FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n(.*)$", re.DOTALL)
 _TRIGGERS_RE = re.compile(
-    r"^##\s+Triggers?\s*\n(.*?)(?=\n##\s|\Z)", re.DOTALL | re.IGNORECASE
+    r"^##\s+Triggers?\s*\n(.*?)(?=\n##\s|\Z)",
+    re.DOTALL | re.IGNORECASE | re.MULTILINE,
 )
 
 
@@ -279,7 +280,8 @@ def embed_rank(
     return top or list(items)
 
 
-_QUOTE_RE = re.compile(r"""["“”']([^"“”']{2,})["“”']""")
+# Double / curly quotes only — apostrophes in "student's" must not start a quote.
+_QUOTE_RE = re.compile(r"""["“”]([^"“”]{2,})["“”]""")
 
 
 def _normalize_phrase(text: str) -> str:
@@ -312,9 +314,11 @@ def explicit_trigger_phrases(skill: SkillMeta) -> list[str]:
     if triggers:
         for line in triggers.group(1).splitlines():
             stripped = line.strip()
-            if not stripped or stripped.startswith("#"):
+            # Only real trigger bullets — skip handoff prose that may quote
+            # another skill's phrases (e.g. task-brief mentioning "brief me on [course]").
+            if not re.match(r"^[-*]\s+", stripped):
                 continue
-            bullet = re.sub(r"^[-*]\s*", "", stripped)
+            bullet = re.sub(r"^[-*]\s+", "", stripped)
             quoted = _QUOTE_RE.findall(bullet)
             if quoted:
                 phrases.extend(quoted)

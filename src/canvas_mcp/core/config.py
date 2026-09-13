@@ -25,6 +25,28 @@ STUDENT_WRITE_TOOL_NAMES = frozenset({
     "mark_module_item_done",
 })
 
+# Obvious .env placeholders (e.g. "your_canvas_api_token_here", E2E "your…") —
+# not real Canvas PATs. Unit tests use values like "test-token" which must pass.
+_PLACEHOLDER_TOKEN_RE = re.compile(
+    r"^(your([_-].*)?|changeme([_-].*)?|replace([_-]?me)?([_-].*)?|"
+    r"placeholder([_-].*)?|xxx+|insert([_-].*)?|dummy([_-].*)?|example([_-].*)?)$",
+    re.IGNORECASE,
+)
+
+
+def is_placeholder_canvas_token(token: str) -> bool:
+    """True when ``token`` is missing or an obvious .env template placeholder."""
+    t = (token or "").strip()
+    if not t:
+        return True
+    if _PLACEHOLDER_TOKEN_RE.match(t):
+        return True
+    # Prefix forms like "your…" / "your_canvas_api_token_here" (len ~26 in E2E).
+    lower = t.lower()
+    if lower.startswith("your") and len(t) <= 64:
+        return True
+    return False
+
 
 def _normalize_canvas_url(raw: str) -> str:
     """Normalize ``CANVAS_API_URL`` to the canonical ``…/api/v1`` form.
@@ -285,9 +307,15 @@ def validate_config() -> bool:
         "FIREWALL_HINT": "firewall hints are documentation-only",
     }
 
-    if not config.canvas_api_token:
+    if not config.canvas_api_token or is_placeholder_canvas_token(config.canvas_api_token):
         log_error("CANVAS_API_TOKEN environment variable is required")
-        log_error("Please set CANVAS_API_TOKEN in your .env file")
+        if config.canvas_api_token and is_placeholder_canvas_token(config.canvas_api_token):
+            log_error(
+                "CANVAS_API_TOKEN looks like a placeholder (e.g. your_…); "
+                "create a real Canvas PAT or remove the var so --test fails as unset"
+            )
+        else:
+            log_error("Please set CANVAS_API_TOKEN in your .env file")
         return False
 
     if not config.canvas_api_url:

@@ -270,3 +270,31 @@ def test_frontmatter_model_tier_loads(tmp_path):
     )
     skill = load_skill(skill_dir / "SKILL.md")
     assert skill.model_tier == "reliable"
+
+
+def test_bare_brief_me_routes_to_task_brief(tmp_path):
+    """## Triggers must parse mid-body so bare 'brief me' is not a 3-way keyword tie."""
+    ensure_user_root(tmp_path)
+    result = route_intent(
+        "brief me",
+        user_root=tmp_path,
+        embedder=lambda _: None,
+    )
+    assert result.skill is not None
+    assert result.skill.skill_id == "student-task-brief"
+    assert not result.ambiguous
+    assert result.method == "structured"
+
+
+def test_brief_me_on_course_routes_to_course_arc(tmp_path):
+    ensure_user_root(tmp_path)
+    for query in ("brief me on MATH 1300", "brief me on CSCI 1200"):
+        result = route_intent(
+            query,
+            user_root=tmp_path,
+            embedder=lambda _: None,
+        )
+        assert result.skill is not None, query
+        assert result.skill.skill_id == "student-course-arc", query
+        assert not result.ambiguous, query
+        assert result.method == "structured", query
