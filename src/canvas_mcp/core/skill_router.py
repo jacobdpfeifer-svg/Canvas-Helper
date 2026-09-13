@@ -4,7 +4,7 @@ Anthropic / Hermes / agentskills.io compatible. Every skill MUST declare
 ``schema_version`` in frontmatter; unsupported versions are refused.
 
 Intent match: explicit trigger metadata, then embedding cosine, then keyword overlap.
-Low confidence / ambiguous top-2 is logged for a later small-LLM escalate hedge
+Low confidence / ambiguous top-2 is noted for a later small-LLM escalate hedge
 (not implemented here).
 """
 
@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import math
 import re
-import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -21,11 +20,12 @@ from typing import Any
 SUPPORTED_SCHEMA_VERSIONS = frozenset({1})
 SKILL_SCHEMA_VERSION = 1
 
-# Cosine thresholds — tune from RequestLog meta once callers exist.
+# Cosine thresholds — tune once real routing data exists to tune them against.
 COSINE_MIN = 0.32
 COSINE_MARGIN = 0.04
 
-# Categories that self-improve may never shadow-test or auto-promote.
+# Write-shaped categories always forced to the "reliable" model tier (see
+# resolve_model_tier below), regardless of per-skill frontmatter.
 WRITE_SKILL_CATEGORIES = frozenset(
     {
         "canvas_submit",
@@ -468,10 +468,8 @@ def route_intent(
     user_root: Path | None = None,
     allow_cloud: bool = False,
     embedder: EmbedFn | None = None,
-    log: bool = True,
 ) -> RouteResult:
-    """First production entry: load skills, route, optionally write RequestLog."""
-    from .self_improve.logger import RequestLog, log_request
+    """First production entry: load skills, route."""
     from .user_root import resolve_user_root
 
     root = user_root
@@ -482,33 +480,9 @@ def route_intent(
             root = None
 
     skills = load_skills_for_routing(root)
-    started = time.perf_counter()
     result = route_skill(
         skills, trigger, embedder=embedder, allow_cloud=allow_cloud
     )
-    latency_ms = (time.perf_counter() - started) * 1000.0
-
-    if log and root is not None:
-        log_request(
-            root,
-            RequestLog(
-                timestamp=time.time(),
-                intent_tag=(result.skill.skill_id if result.skill else "unmatched"),
-                tools_used=["select_skill"],
-                artifacts_produced=[],
-                success_signal="accept" if result.skill else "veto",
-                latency_ms=latency_ms,
-                embedding=result.query_embedding,
-                transcript_excerpt=trigger[:500],
-                meta={
-                    "router_method": result.method,
-                    "router_scores": result.scores[:10],
-                    "router_ambiguous": result.ambiguous,
-                    "allow_cloud": allow_cloud,
-                    "model_tier": result.model_tier,
-                },
-            ),
-        )
     return result
 
 
@@ -518,7 +492,6 @@ def execute_intent(
     user_root: Path | None = None,
     allow_cloud: bool = False,
     embedder: EmbedFn | None = None,
-    log: bool = True,
     provider: Any | None = None,
 ) -> tuple[RouteResult, Any | None]:
     """Route, then run the matched skill through prompt_assembly.chat_assembled."""
@@ -527,7 +500,6 @@ def execute_intent(
         user_root=user_root,
         allow_cloud=allow_cloud,
         embedder=embedder,
-        log=log,
     )
     if result.skill is None or user_root is None:
         return result, None
@@ -576,11 +548,6 @@ def main(argv: list[str] | None = None) -> int:
         help="Include requires_cloud skills",
     )
     parser.add_argument(
-        "--no-log",
-        action="store_true",
-        help="Skip RequestLog write",
-    )
-    parser.add_argument(
         "--user-root",
         type=Path,
         default=None,
@@ -609,14 +576,12 @@ def main(argv: list[str] | None = None) -> int:
             trigger,
             user_root=root,
             allow_cloud=args.allow_cloud,
-            log=not args.no_log,
         )
     else:
         result = route_intent(
             trigger,
             user_root=root,
             allow_cloud=args.allow_cloud,
-            log=not args.no_log and root is not None,
         )
     payload = {
         "skill_id": result.skill.skill_id if result.skill else None,

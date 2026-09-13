@@ -1,7 +1,7 @@
 """Persist last-processed markers under ``{user_root}``.
 
-Used by ledger compact and episodic→semantic distill so overlapping windows
-do not double-apply the same source rows.
+Used by learning-profile ledger compact so overlapping windows do not
+double-apply the same source rows.
 """
 
 from __future__ import annotations
@@ -9,7 +9,6 @@ from __future__ import annotations
 from pathlib import Path
 
 # Marker basename stems → ``.{name}_watermark`` under user_root.
-EPISODIC_DISTILL = "episodic_distill"
 LEARNING_PROFILE_COMPACT = "learning_profile_compact"
 
 

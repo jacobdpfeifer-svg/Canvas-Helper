@@ -1,5 +1,10 @@
 # Cursor build prompts — closing the episodic → semantic → procedural memory loop
 
+> **SUPERSEDED (2026-09-12).** The canvas-focus pivot deleted the entire
+> `self_improve/` package (logger, distill, cluster, draft, shadow, promote).
+> Do **not** implement the prompts in this file. Kept as historical archive only.
+> See [`canvas-focus-pivot-2026-09-11.md`](canvas-focus-pivot-2026-09-11.md).
+
 Generated 2026-09-10 from a research pass mapping this app's existing memory shape
 (episodic.db / core/memory.py / self_improve/*) against CoALA, MemGPT/Letta, Mem0, and
 Voyager. Verdict from that pass: the shape is correct and already matches published

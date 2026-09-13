@@ -1,6 +1,10 @@
 # Class standings and class marks
 
-**Status:** framed, not built. Product call 2026-09-08 reopened two mechanics the engagement audit had rejected as generic gamification. This doc is the frame and the first buildout plan. It does not authorize implementation by itself until a pass is asked to start a phase.
+**Status:** framed, **not built**, and **not authorized** for implementation.
+Product call 2026-09-08 reopened two mechanics the engagement audit had rejected
+as generic gamification. This doc is the frame only. Do not ship a class
+leaderboard without an explicit product decision — `CLAUDE.md` bans learning
+streaks and leaderboards with losable state.
 
 Research constraint: [`docs/research/engagement-mechanics-fit-audit.md`](../research/engagement-mechanics-fit-audit.md).
 

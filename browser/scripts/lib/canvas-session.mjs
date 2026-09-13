@@ -13,6 +13,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getSchoolConfig, schoolDay } from "./school-config.mjs";
 import { hasConnector, listConnectorsForSchool } from "./connector-registry.mjs";
+import {
+  resolveInboxDir as resolveInboxDirFromUserRoot,
+  resolveUserRoot,
+} from "./user-root.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,18 +35,22 @@ export const ROOT = path.join(__dirname, "..", "..", "..");
 export const AUTH_DIR =
   process.env.AUTH_DIR || path.join(__dirname, "..", "..", ".auth");
 
+/** Same resolver as Python ``user_root`` / Tauri inbox — never ``{repo}/inbox``. */
 function resolveInboxDir() {
-  if (process.env.DEV_USER_ROOT) {
-    return path.join(process.env.DEV_USER_ROOT, "inbox");
-  }
-  return path.join(ROOT, "inbox");
+  return resolveInboxDirFromUserRoot({ create: false, announce: false });
 }
 
+export { resolveUserRoot };
 export const INBOX_DIR = resolveInboxDir();
 export const COURSES_DIR = path.join(INBOX_DIR, "courses");
 export const COURSES_RAW_DIR = path.join(COURSES_DIR, "_raw");
 export const WEEK_PATH = path.join(INBOX_DIR, "week.md");
 export const TOOL_GAPS_PATH = path.join(INBOX_DIR, "tool-gaps.md");
+
+/** Ensure inbox dirs exist and print the active user-root path (sync entrypoints). */
+export function ensureInboxReady() {
+  return resolveInboxDirFromUserRoot({ create: true, announce: true });
+}
 
 /** Assessment / proctored tooling — Bucket B; never automate. */
 export const ASSESSMENT_TOOL_RE =
@@ -671,6 +679,7 @@ export function formatAgentPolicyNotes(syllabusPlain, today) {
       "agent_writes: allow",
       "allow_tools: submit_assignment",
       "```",
+      "(Tool names are preview/triage grants — submit_assignment never writes.)",
     ].join("\n");
   }
 

@@ -7,9 +7,9 @@ import path from "node:path";
 import {
   AUTH_DIR,
   INBOX_DIR,
-  ROOT,
   schoolLocalDay,
   launchCanvasContext,
+  resolveUserRoot,
 } from "../../browser/scripts/lib/canvas-session.mjs";
 
 export const CG_SHIBBOLETH_LOGIN =
@@ -17,13 +17,6 @@ export const CG_SHIBBOLETH_LOGIN =
 export const CG_EC_BASE = "https://campusgroups.colorado.edu/engineeringconnections";
 /** @deprecated Use CG_EC_BASE — kept for host matching */
 export const CG_BASE = CG_EC_BASE;
-
-function resolveUserRoot() {
-  if (process.env.DEV_USER_ROOT) {
-    return process.env.DEV_USER_ROOT;
-  }
-  return ROOT;
-}
 
 export const COEN_MAJOR_DINNERS_PATH = path.join(INBOX_DIR, "coen-major-dinners.md");
 export const COEN_AI_LABS_PATH = path.join(INBOX_DIR, "coen-ai-labs.md");
@@ -301,8 +294,14 @@ export async function verifyRsvp(page, { eventId, studentName }) {
 /**
  * @param {import('playwright').Page} page
  * @param {string|number} eventId
+ * @param {{ confirmed?: boolean }} [opts]
  */
-export async function performRsvp(page, eventId) {
+export async function performRsvp(page, eventId, opts = {}) {
+  if (!opts.confirmed) {
+    throw new Error(
+      "performRsvp requires { confirmed: true } — pass only after an explicit student --confirm (or equivalent)."
+    );
+  }
   const url = buildRsvpUrl(eventId);
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForTimeout(1500);

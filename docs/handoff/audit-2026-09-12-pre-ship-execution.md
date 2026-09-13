@@ -123,10 +123,10 @@ it's all in `92ad6bd` / `3b61950`.
   stashing all of this session's changes and re-running against the untouched
   baseline, where they failed identically. Not caused by this pass; not fixed
   by it either. Worth a follow-up pass:
-  - `test_privacy_default_consistency`: `env.template` sets
-    `ENABLE_DATA_ANONYMIZATION=false` (comment nearby suggests it was meant to
-    default `true` for operators) while `core/config.py`, `server.json`, and
-    `Dockerfile` all say `false` — one file disagrees.
+  - `test_privacy_default_consistency`: previously `env.template` (and
+    `config/overlays/baseline.env`) set `ENABLE_DATA_ANONYMIZATION=true` while
+    `core/config.py`, `server.json`, and `Dockerfile` said `false`. Fixed
+    2026-09-12: operator template + baseline overlay now `false` to match.
   - `test_untrusted_content_registry`: `post_discussion_entry` and
     `reply_to_discussion_entry` aren't classified in the untrusted-content
     policy registry yet.

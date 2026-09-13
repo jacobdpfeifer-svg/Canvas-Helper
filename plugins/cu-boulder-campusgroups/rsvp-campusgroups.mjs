@@ -2,8 +2,13 @@
  * RSVP to a CampusGroups event via Playwright (shared .auth SSO).
  *
  * Usage:
- *   npm run rsvp-campusgroups -- --event 385793 --name "Student Name"
- *   HEADLESS=1 npm run rsvp-campusgroups -- --event 385793 --name "Student Name" --verify
+ *   npm run rsvp-campusgroups -- --event 385793 --name "Student Name" --confirm
+ *   HEADLESS=1 npm run rsvp-campusgroups -- --event 385793 --name "Student Name" --confirm --verify
+ *
+ * Student-operated escape hatch (plugins/README.md): RSVPing is visible to the
+ * event organizer, so --confirm must be passed explicitly by whoever runs this
+ * — it is not inferred from --event/--name alone, so an agent cannot fire it
+ * on the student's behalf without a deliberate, extra signal from the student.
  */
 import {
   appendRegistrationLog,
@@ -14,7 +19,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { event: null, verify: true, name: "", log: false };
+  const args = { event: null, verify: true, name: "", log: false, confirm: false };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--event" && argv[i + 1]) args.event = argv[++i];
@@ -22,6 +27,7 @@ function parseArgs(argv) {
     else if (a === "--verify") args.verify = true;
     else if (a === "--no-verify") args.verify = false;
     else if (a === "--log") args.log = true;
+    else if (a === "--confirm") args.confirm = true;
     else if (a === "--headed") process.env.HEADLESS = "0";
   }
   return args;
@@ -30,7 +36,14 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv);
 if (!args.event || !args.name.trim()) {
   console.error(
-    'Usage: npm run rsvp-campusgroups -- --event <id> --name "Student Name" [--verify] [--log]'
+    'Usage: npm run rsvp-campusgroups -- --event <id> --name "Student Name" --confirm [--verify] [--log]'
+  );
+  process.exit(1);
+}
+if (!args.confirm) {
+  console.error(
+    "Refusing to RSVP without --confirm: this registers you with the event organizer. " +
+      "Pass --confirm only after you've decided to attend."
   );
   process.exit(1);
 }
@@ -40,7 +53,7 @@ let result;
 
 try {
   await ensureCampusGroupsSession(page);
-  const rsvpResult = await performRsvp(page, args.event);
+  const rsvpResult = await performRsvp(page, args.event, { confirmed: true });
 
   if (args.verify) {
     const verification = await verifyRsvp(page, {

@@ -14,7 +14,8 @@ Every field starts as a cheap onboarding-game guess (``source:
 onboarding_game``) and is expected to be overridden by real format-specific
 feedback (``source: observed``) via :func:`record_signal` — the same
 self-correcting shape as ``permissions.py``'s k-success counters.
-Do **not** wire raw skill-route RequestLog accept/veto here.
+Do **not** wire deleted skill-route RequestLog accept/veto here
+(``self_improve`` package removed; canvas-focus pivot).
 """
 
 from __future__ import annotations

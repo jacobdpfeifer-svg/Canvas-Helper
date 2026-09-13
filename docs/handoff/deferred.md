@@ -4,7 +4,7 @@ Signed product calls live in [`pre-ship-decisions.md`](./pre-ship-decisions.md).
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Self-improve pipeline | **Deleted** (canvas-focus pivot) | Do not re-add cluster/draft/shadow/promote. `logger.py` + `distill.py` only. |
+| Self-improve pipeline | **Deleted** (canvas-focus pivot) | Full package gone (`logger.py`, `distill.py`, cluster/draft/shadow/promote). Do not re-add. |
 | Billing / Twilio / mobile | **Deleted** (signed 2026-09-12) | `app/billing/` and `app/mobile/` removed. Do not re-add monetization stubs. |
 | Tauri ambient-dock model | **Parked** (signed 2026-09-12) | Peek/expanded as-built; see [`ui-shell-alternatives.md`](./ui-shell-alternatives.md). |
 | `src/canvas_mcp/` identity | **Vendored** (signed 2026-09-12) | Upstream CHANGELOG + [`vendor/README.md`](../../vendor/README.md). |

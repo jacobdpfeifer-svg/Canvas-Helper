@@ -4,21 +4,24 @@ These cover the behaviour an operator and a student see. The security
 invariants that must hold regardless of behaviour live in
 ``tests/security/test_student_write_invariants.py``.
 
-``submit_assignment`` is read-only preview only (canvas-focus pivot, see
-``docs/handoff/canvas-focus-pivot-2026-09-11.md``) — it never POSTs to
-Canvas, so there is no confirm/upload/token machinery left to test here.
-``comment_on_my_submission`` and ``mark_module_item_done`` still execute for
-real and are unaffected by that pivot.
+``submit_assignment`` and ``comment_on_my_submission`` are read-only preview
+only (canvas-focus pivot, see
+``docs/handoff/canvas-focus-pivot-2026-09-11.md``) — they never POST to
+Canvas. ``mark_module_item_done`` is the remaining self-only write and uses
+``ConfirmationGuard`` (preview → token → confirm).
 """
 
 from unittest.mock import AsyncMock, patch
+import re
 
 import pytest
 from fastmcp import FastMCP
 
 from canvas_mcp.core.config import reset_config
 from canvas_mcp.core.course_policy import reset_policy_cache
-from canvas_mcp.tools.student_write import register_student_write_tools
+from canvas_mcp.tools.student_write import _MODULE_DONE_GUARD, register_student_write_tools
+
+_TOKEN_RE = re.compile(r"confirmation_token='([^']+)'")
 
 
 def get_tools(**env):
@@ -52,9 +55,11 @@ def get_tools(**env):
 def _clean_state():
     reset_config()
     reset_policy_cache()
+    _MODULE_DONE_GUARD.reset()
     yield
     reset_config()
     reset_policy_cache()
+    _MODULE_DONE_GUARD.reset()
 
 
 class TestOperatorCeiling:
@@ -390,13 +395,11 @@ class TestMarkModuleItemDone:
         assert not [c for c in responder.calls if c[0] == "put"]
 
     @pytest.mark.asyncio
-    async def test_confirmed_mark_done_reports_success(self):
+    async def test_preview_without_token_does_not_put(self):
         tools = self._tools()
         responder = self._responder([
             {"id": 2, "title": "Reading", "type": "Page",
              "completion_requirement": {"type": "must_mark_done", "completed": False}},
-            {"id": 2, "title": "Reading", "type": "Page",
-             "completion_requirement": {"type": "must_mark_done", "completed": True}},
         ])
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -408,6 +411,44 @@ class TestMarkModuleItemDone:
                 course_identifier="TEST", module_id=1, item_id=2
             )
 
+        assert "preview" in result.lower()
+        assert "confirmation_token=" in result
+        assert not [c for c in responder.calls if c[0] == "put"]
+
+    @pytest.mark.asyncio
+    async def test_confirmed_mark_done_reports_success(self):
+        tools = self._tools()
+        incomplete = {
+            "id": 2,
+            "title": "Reading",
+            "type": "Page",
+            "completion_requirement": {"type": "must_mark_done", "completed": False},
+        }
+        complete = {
+            "id": 2,
+            "title": "Reading",
+            "type": "Page",
+            "completion_requirement": {"type": "must_mark_done", "completed": True},
+        }
+        # preview GET + confirm GET + post-PUT GET
+        responder = self._responder([incomplete, incomplete, complete])
+        with patch(
+            "canvas_mcp.tools.student_write.get_course_id",
+            new=AsyncMock(return_value="123"),
+        ), patch(
+            "canvas_mcp.tools.student_write.make_canvas_request", new=responder
+        ):
+            preview = await tools["mark_module_item_done"](
+                course_identifier="TEST", module_id=1, item_id=2
+            )
+            token = _TOKEN_RE.search(preview).group(1)
+            result = await tools["mark_module_item_done"](
+                course_identifier="TEST",
+                module_id=1,
+                item_id=2,
+                confirmation_token=token,
+            )
+
         assert "✅" in result
         assert [c for c in responder.calls if c[0] == "put"]
 
@@ -415,20 +456,28 @@ class TestMarkModuleItemDone:
     async def test_unconfirmed_write_is_not_reported_as_success(self):
         """PUT accepted but the item still shows completed=False."""
         tools = self._tools()
-        responder = self._responder([
-            {"id": 2, "title": "Reading", "type": "Page",
-             "completion_requirement": {"type": "must_mark_done", "completed": False}},
-            {"id": 2, "title": "Reading", "type": "Page",
-             "completion_requirement": {"type": "must_mark_done", "completed": False}},
-        ])
+        incomplete = {
+            "id": 2,
+            "title": "Reading",
+            "type": "Page",
+            "completion_requirement": {"type": "must_mark_done", "completed": False},
+        }
+        responder = self._responder([incomplete, incomplete, incomplete])
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
             new=AsyncMock(return_value="123"),
         ), patch(
             "canvas_mcp.tools.student_write.make_canvas_request", new=responder
         ):
-            result = await tools["mark_module_item_done"](
+            preview = await tools["mark_module_item_done"](
                 course_identifier="TEST", module_id=1, item_id=2
+            )
+            token = _TOKEN_RE.search(preview).group(1)
+            result = await tools["mark_module_item_done"](
+                course_identifier="TEST",
+                module_id=1,
+                item_id=2,
+                confirmation_token=token,
             )
 
         assert "Could not confirm" in result

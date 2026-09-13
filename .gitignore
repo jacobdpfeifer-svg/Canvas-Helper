@@ -25,7 +25,20 @@ build/
 
 # Environment variables
 .env
+.env.*
+!.env.template
 .env.bak-*
+.env.bak
+
+# OAuth / credential dumps (never commit)
+client_secret.json
+credentials.json
+token.json
+**/client_secret.json
+**/credentials.json
+**/token.json
+secrets/
+*.pem
 
 # IDE specific files
 .vscode/
@@ -133,6 +146,7 @@ internal/hosted-spec-draft/
 # Playwright SSO session + deps (never commit auth)
 browser/.auth/
 browser/.auth-gcp/
+**/.auth/
 browser/node_modules/
 
 # Onboarding / OAuth secrets if DEV_USER_ROOT points inside the repo
@@ -141,4 +155,5 @@ browser/node_modules/
 
 # Per-user memory lives under {user_root}; never commit local forks of these
 /inbox/
+**/inbox/
 /.jacob/

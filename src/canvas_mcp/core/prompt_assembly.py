@@ -469,7 +469,7 @@ def chat_synthesis(
     provider: _ChatProvider | None = None,
     tier: str = "fast",
 ) -> Any:
-    """Read-only one-shot synthesis (distill / shadow critic). No tools.
+    """Read-only one-shot synthesis (no tools).
 
     Builds messages here so call sites never hand-assemble ``ChatMessage``.
     """

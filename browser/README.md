@@ -1,6 +1,6 @@
 # Canvas SSO sync (browser)
 
-**Role:** authenticate with school SSO (cookies), then call the **same Canvas REST API** a personal access token would use. Write results into `{user_root}/inbox/` for the agent (`DEV_USER_ROOT` or a gitignored local `inbox/`).
+**Role:** authenticate with school SSO (cookies), then call the **same Canvas REST API** a personal access token would use. Write results into `{user_root}/inbox/` for the agent — same path as Python (`canvas_mcp.core.user_root`) and the Tauri shell: `DEV_USER_ROOT` if set, else OS app-support `ProductName/{PRODUCT_USER_ID||dev}/inbox/`. Sync prints the active path on every run.
 
 This is **not** a second product and not primarily a DOM scraper.
 
@@ -24,6 +24,6 @@ Photo intake: skill `student-photo-intake` (queue under `{user_root}/inbox/captu
 
 - **sync** = source of truth for `inbox/week.md` (dated open work in the school-timezone window) and refreshes **Assignment catalog**, **Checkpoints**, and **Tools this semester** in `inbox/courses/*.md`. Also fetches syllabus, instructors, and policy page links; writes Bucket-A connector gaps to `inbox/tool-gaps.md` (flag only — never auto-build).
 - **audit** = deeper 45-day pull + recall check vs prior week.md.
-- **CampusGroups RSVP** = Playwright only (not Cursor IDE browser). See `plugins/cu-boulder-campusgroups/` (requires `--name`). Connector contract: [`../plugins/README.md`](../plugins/README.md).
+- **CampusGroups RSVP** = Playwright only (not Cursor IDE browser). See `plugins/cu-boulder-campusgroups/` (requires `--name` and `--confirm`). Connector contract: [`../plugins/README.md`](../plugins/README.md).
 
 Architecture: [`../docs/architecture.md`](../docs/architecture.md).

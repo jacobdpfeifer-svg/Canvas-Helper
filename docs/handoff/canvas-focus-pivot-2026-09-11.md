@@ -110,6 +110,20 @@ preview-only (GET topic for context, never POST). Browser
 `CONFIRM=1` photo submit is hard-blocked the same day. Student posts
 themselves in Canvas.
 
+## Addendum — 2026-09-12: self_improve deletion finished
+
+Item 5 above said delete `src/canvas_mcp/core/self_improve/*` in full,
+including `distill.py` and `logger.py`. A later session kept those two alive
+(`skill_router.route_intent` still wrote a `RequestLog` to `episodic.db`,
+`distill.py` still fed `MEMORY.md`) and left a docstring re-justifying the
+call, but no addendum here actually recorded that as a decision — it read as
+an agent quietly overriding a signed instruction. A comprehensive audit on
+2026-09-12 surfaced the gap; Jacob confirmed in conversation to finish the
+original deletion rather than ratify the reversal. `self_improve/` is now
+gone in full, `skill_router.route_intent` no longer writes a request log, and
+`tests/core/test_distill_memory.py` (plus the two tests in
+`test_skill_router.py` that asserted `episodic.db` rows) are removed.
+
 ## What agents must not do
 
 - Do not re-add a send/create-event/submit/comment/discussion-post

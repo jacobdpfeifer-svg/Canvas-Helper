@@ -21,6 +21,7 @@ import {
   INBOX_DIR,
   buildWeekNoteParts,
   collectTruncationWarnings,
+  ensureInboxReady,
   schoolLocalDay,
   escCell,
   fetchDueUniverse,
@@ -31,6 +32,8 @@ import {
   writeCourseCatalogFiles,
 } from "./lib/canvas-session.mjs";
 import { getSchoolConfig } from "./lib/school-config.mjs";
+
+ensureInboxReady();
 
 const daysAhead = Number(process.env.DAYS || 14);
 const today = schoolLocalDay();
