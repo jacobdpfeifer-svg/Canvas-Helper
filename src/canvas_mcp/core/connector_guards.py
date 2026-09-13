@@ -9,10 +9,18 @@ preview → fingerprint → issue-token → confirm → reserve flow as
 ``submit_assignment`` (``tools/student_write.py``) is NOT an example to follow
 here anymore — it is read-only preview only since the canvas-focus pivot
 (``docs/handoff/canvas-focus-pivot-2026-09-11.md``) and has no
-``ConfirmationGuard`` of its own left to reuse. A connector write that is
-visible to, or binding on, another person should not exist at all per that
-pivot; one that only affects the student's own local state may still use this
-module.
+``ConfirmationGuard`` of its own left to reuse. Canvas-visible actions
+(submit, comment, discussion post) stay banned outright per that pivot —
+they carry institutional/academic-integrity weight and this module must
+never grow an execute path for them.
+
+Personal-account actions that land in someone else's inbox or calendar
+(Gmail ``send_email``, Google Calendar ``create_event``/``update_event``)
+are different: per the 2026-09-13 addendum to the same doc, those are
+allowed to execute through this guard *only* when a human confirms that
+exact previewed content in the current conversation — never on a standing/
+automatic posture. See ``permissions.py``'s ``DEFAULT_K`` (no entry for
+``email_send``/``calendar`` — no escalation to automatic, ever).
 
 Rules
 -----
@@ -21,6 +29,8 @@ Rules
   first write-capable action.
 - Bucket-B (assessment / proctored) tools must never call this module — they
   stay on the LTI escape hatch (student operates, agent drafts).
+- Canvas-visible tools (submit/comment/discussion-post) never get an execute
+  path here, full stop — personal email/calendar sends may, gated per above.
 """
 
 from __future__ import annotations

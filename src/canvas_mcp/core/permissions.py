@@ -65,7 +65,7 @@ PROCTORING_REFUSE: frozenset[str] = frozenset(
 )
 
 DEFAULT_POSTURES: dict[str, Posture] = {
-    "calendar": "automatic",
+    "calendar": "gated",
     "email_triage": "automatic",
     "email_draft": "automatic",
     "email_send": "gated",
@@ -86,8 +86,10 @@ DEFAULT_POSTURES: dict[str, Posture] = {
 }
 
 # k required clean approvals before a gated category may escalate to automatic.
+# email_send and calendar are deliberately absent: per the 2026-09-13 addendum
+# to docs/handoff/canvas-focus-pivot-2026-09-11.md, every send/event-write
+# requires a fresh per-instance human confirmation, forever — no escalation.
 DEFAULT_K: dict[str, int] = {
-    "email_send": 5,
     "canvas_discussion_post": 3,
     "canvas_submit": 3,
     "canvas_quiz_submit": 5,

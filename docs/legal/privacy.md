@@ -6,7 +6,7 @@
 
 ## What this product is
 
-ProductName is a **local-first** Canvas companion. It helps you plan and study. It does **not** submit assignments, post discussions, send email, or create calendar events on your behalf.
+ProductName is a **local-first** Canvas companion. It helps you plan and study. It does **not** submit assignments, post discussions, or comment on your submissions on your behalf — those Canvas actions are visible to an instructor or classmate and stay preview-only, always. It can send an email or create/update a calendar event on your personal Gmail/Google Calendar, but only after it shows you the exact content and you say to proceed — there is no mode where it sends or schedules without you confirming that specific action first.
 
 ## What we store (on your device)
 
@@ -22,15 +22,15 @@ Unless you opt into crash telemetry (below), data stays under your local user pr
 
 - **Canvas / school IdP:** when you sign in via SSO, your school’s systems see the usual login traffic.
 - **Optional cloud LLM:** if you paste an API key, prompts you approve are sent to that provider under their terms.
-- **Optional Google OAuth:** if you connect Gmail/Calendar, Google receives OAuth consent traffic. Create-event and send-email remain hard-blocked in this product; draft/label/read paths may call Google APIs when live OAuth is configured.
+- **Optional Google OAuth:** if you connect Gmail/Calendar, Google receives OAuth consent traffic. Read/draft/label paths may call Google APIs when live OAuth is configured; a real send or calendar create/update also calls the Google API, but only immediately after you confirm that specific previewed action — there is no standing auto-send/auto-create mode.
 - **Optional Sentry:** only if you opt in during onboarding **and** `SENTRY_DSN` is configured — crash telemetry only.
 
 We do not operate a ProductName cloud backend that hosts your inbox in this phase.
 
 ## What we never do
 
-- Submit Canvas assignments or post discussion entries for you
-- Send email or write calendar events that others can see
+- Submit Canvas assignments, post discussion entries, or comment on your submissions for you — those stay preview-only, no exceptions
+- Send an email or write a calendar event without you confirming that exact action first — no standing auto-send/auto-create mode, ever
 - Scrape RateMyProfessors
 - Sell your student data
 

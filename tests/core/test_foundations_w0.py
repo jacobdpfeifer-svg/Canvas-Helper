@@ -33,6 +33,10 @@ def test_load_cu_boulder_school():
     assert school.timezone == "America/Denver"
     assert list(school.course_file_map) == []
     assert "local-first" in school.legal_notice.lower()
+    assert school.grade_scale["A-"] == 3.7
+    assert school.grade_scale["B+"] == 3.3
+    assert "degree_audit" in school.policy_links
+    assert "colorado.edu" in school.policy_links["degree_audit"]
     assert "cu-boulder" in list_schools()
 
 
@@ -127,7 +131,10 @@ def test_ledger_rejects_bad_outcome(tmp_path):
 def test_permissions_defaults_and_never_auto(tmp_path):
     ensure_user_root(tmp_path)
     state = load_permissions(tmp_path)
-    assert state.categories["calendar"].posture == "automatic"
+    # calendar (event writes) is gated by design (2026-09-13 addendum to
+    # docs/handoff/canvas-focus-pivot-2026-09-11.md) — every write requires a
+    # per-instance human confirm, no automatic posture.
+    assert state.categories["calendar"].posture == "gated"
     assert state.categories["canvas_submit"].posture == "gated"
     for cat in NEVER_AUTO:
         assert state.categories[cat].posture == "never"

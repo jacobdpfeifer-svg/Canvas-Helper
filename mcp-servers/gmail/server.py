@@ -244,14 +244,64 @@ def describe_mode() -> str:
 
 
 @mcp.tool()
-def send_email() -> str:
-    """Permanently unavailable in Phase 1 — hard-blocked, no API call."""
+def send_email(
+    to: str,
+    subject: str,
+    body: str,
+    why: str = "Email send",
+    confirmation_token: str | None = None,
+) -> str:
+    """Send a real email. Always previews first; only sends once the student
+    confirms this exact content in the current conversation — see
+    docs/handoff/canvas-focus-pivot-2026-09-11.md (2026-09-13 addendum).
+    Irreversible: no undo_ptr, `rewind` cannot unsend."""
+    root = user_root()
+    gate = gate_connector_write(
+        root,
+        "email_send",
+        connector_id="gmail",
+        tool="send_email",
+        fingerprint_parts=[to, subject, body, why],
+        preview_lines=[
+            f"To: {to}",
+            f"Subject: {subject}",
+            f"Body ({len(body)} chars):\n{body}",
+            f"Why: {why}",
+            "",
+            "This will actually send. It cannot be undone.",
+        ],
+        confirmation_token=confirmation_token,
+        actor="gmail",
+        target=to,
+        why=why,
+        log_block=False,
+    )
+    if gate.kind != "proceed":
+        return gate.message
+
+    service = google_oauth.gmail_service(root)
+    if service is not None:
+        remote = google_oauth.gmail_send_message(
+            service, to=to, subject=subject, body=body
+        )
+        message_id = str(remote.get("id") or f"sent_{uuid.uuid4().hex[:12]}")
+        mode = "live"
+    else:
+        message_id = f"sent_{uuid.uuid4().hex[:12]}"
+        mode = "dry-run"
+
+    append_ledger(
+        root,
+        actor="gmail",
+        tool="send_email",
+        target=message_id,
+        why=why,
+        outcome="success",
+        category="email_send",
+        undo_ptr=None,
+    )
     return json.dumps(
-        {
-            "ok": False,
-            "blocked": True,
-            "reason": "Gmail send is disabled in Phase 1. Use create_draft.",
-        }
+        {"status": "sent", "message_id": message_id, "mode": mode, "narrate": True}
     )
 
 
