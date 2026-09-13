@@ -9,6 +9,28 @@ Written during onboarding; the agent updates as it learns.
 - **School slug:** cu-boulder
 - **Goals:** (career priorities ranked during onboarding)
 
+## Program
+
+- **Declared major(s):** (fill during onboarding)
+- **Minor(s) / certificate(s):** (optional)
+- **Catalog year:** (student-stated — from Buff Portal; not inferred from Canvas)
+- **Target grad term:** (e.g. Spring 2028)
+- **Years at school (goal):** (e.g. 4)
+
+## Interests (ranked)
+
+1. (topics / career threads beyond the job title)
+2.
+3.
+
+## Academic floors
+
+Student-supplied targets only — not official eligibility rulings. Confirm scholarships/SAP with Scholarship Services / Financial Aid.
+
+- **Good-standing target GPA:** 2.0
+- **Scholarship min GPA:** (optional — from award terms)
+- **Grad-school / other floor:** (optional)
+
 ## Career priorities (ranked)
 
 1. (fill during onboarding)
@@ -18,6 +40,14 @@ Written during onboarding; the agent updates as it learns.
 ## Values about college
 
 - (multi-select from onboarding)
+
+## Transfer / credit notes
+
+- (AP / transfer / prior credit the student recorded — never invent mappings)
+
+## Advising notes
+
+- (open questions for the next advisor meeting)
 
 ## Throwaway / low-attention courses
 

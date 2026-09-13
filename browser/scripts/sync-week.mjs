@@ -30,6 +30,7 @@ import {
   requireLoggedIn,
   shouldIncludeInWeekTable,
   writeCourseCatalogFiles,
+  writeGradesYaml,
 } from "./lib/canvas-session.mjs";
 import { getSchoolConfig } from "./lib/school-config.mjs";
 
@@ -167,6 +168,9 @@ for (const cf of courseFiles) {
     `Wrote ${cf.file} (catalog=${cf.catalogCount}, checkpoints=${cf.checkpoints}, syllabus=${cf.syllabus}, policyPages=${cf.policyPages}, tools=${cf.tools ?? 0})`
   );
 }
+
+const gradesWrite = writeGradesYaml(courses, { today });
+console.log(`Wrote ${gradesWrite.path} (courses=${gradesWrite.count})`);
 
 const hasCoen = courses.some((c) => /coen\s*1500/i.test(c.name || c.course_code || ""));
 if (hasCoen) {

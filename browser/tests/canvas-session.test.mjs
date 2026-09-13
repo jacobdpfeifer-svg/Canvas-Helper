@@ -21,6 +21,9 @@ import {
   mergeCourseFileContent,
   parseAgentPolicyFromSyllabus,
   formatAgentPolicyNotes,
+  extractPrereqLanguage,
+  formatPrereqSection,
+  writeGradesYaml,
   resolveCourseFile,
   shouldIncludeInWeekTable,
   stripHtmlTags,
@@ -629,5 +632,52 @@ Syllabus hash:
     });
     assert.match(md, /## Weak topics/);
     assert.match(md, /`tangent_line` — Tangent Lines Quiz — 0\.55/);
+  });
+
+  it("writes Prerequisites from syllabus prereq language", () => {
+    const md = mergeCourseFileContent({
+      existingContent: "",
+      courseTitle: "CSCI 2270",
+      catalogRows: [],
+      today: "2026-09-13",
+      syncMeta: {
+        syllabusPlain:
+          "Prerequisites: CSCI 1300 with a C- or better.\nCorequisite: none.\nOther stuff.",
+        syllabusHash: "abc",
+      },
+    });
+    assert.match(md, /## Prerequisites \(from syllabus\)/);
+    assert.match(md, /Prerequisites: CSCI 1300/i);
+  });
+});
+
+describe("extractPrereqLanguage", () => {
+  it("returns null when no prereq wording", () => {
+    assert.equal(extractPrereqLanguage("Grading is fair."), null);
+  });
+
+  it("extracts prerequisite lines", () => {
+    const out = extractPrereqLanguage(
+      "Prerequisites: CSCI 1300 with a C- or better."
+    );
+    assert.match(out, /CSCI 1300/);
+  });
+});
+
+describe("formatPrereqSection", () => {
+  it("marks synced extraction", () => {
+    const body = formatPrereqSection(
+      "Prerequisite: MATH 1300",
+      "",
+      "2026-09-13"
+    );
+    assert.match(body, /synced 2026-09-13/);
+    assert.match(body, /MATH 1300/);
+  });
+});
+
+describe("writeGradesYaml", () => {
+  it("is exported for sync-week", () => {
+    assert.equal(typeof writeGradesYaml, "function");
   });
 });

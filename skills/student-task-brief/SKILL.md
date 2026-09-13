@@ -93,6 +93,7 @@ Fill the card from the hint:
 - After a Check answer, say right/wrong and the fix; don't fill the blank or grade. "I know this" without a successful delayed retrieval isn't mastery.
 - `autonomy: directive` → one If-then; `choices` → two. `chunk_size: short` → ≤15–30m; `long` → longer sit-down OK. `check_depth: thorough` → keep a Check even on worked example; `light` → no extra confirmation on retrieval-first.
 - Points ≥ 10 or Gen AI/essay/case/reflection → **pull `## Instructor profile`** from `inbox/courses/CODE.md` (weights, late policy, assignment notes, rubric language) into Why: one clause on worth (% or points) + the top rubric / grading concern. If the profile section is missing or stale, say so and continue — do not invent professor preferences.
+- `## GPA` only if near/below a `USER.md` floor; no eligibility claim → `student-gpa`.
 
 ### 5. Week mode (default when the student asks what’s next / optimize)
 
@@ -186,6 +187,8 @@ Read only. No submit tools from this skill — see step 3 above.
 …
 ### Do first
 One sentence: the single first action right now. If `## Due reviews` or `Open with:` is in the slice, that closed-book check comes before this sentence. If `## Practice` names one overdue item, that clause comes first — do not replay a stale Open with, and do not backfill. If the check felt easy, one clause: the next review is still on the schedule.
+## GPA
+(if at risk) local estimate — confirm in Buff Portal.
 ```
 
 ## Hand-offs

@@ -27,6 +27,8 @@ function parseSchoolYaml(text) {
     lti_catalog: [],
     engagement_platform: null,
     course_file_map: [],
+    grade_scale: {},
+    policy_links: {},
   };
   let section = null;
   let currentMap = null;
@@ -44,6 +46,8 @@ function parseSchoolYaml(text) {
       if (section === "course_file_map") out.course_file_map = [];
       if (section === "term_dates") out.term_dates = {};
       if (section === "lti_catalog") out.lti_catalog = [];
+      if (section === "grade_scale") out.grade_scale = {};
+      if (section === "policy_links") out.policy_links = {};
       continue;
     }
 
@@ -69,6 +73,21 @@ function parseSchoolYaml(text) {
     if (section === "term_dates" && line.includes(":")) {
       const [k, ...rest] = line.split(":");
       out.term_dates[k.trim()] = rest.join(":").trim().replace(/^["']|["']$/g, "");
+      continue;
+    }
+
+    if (section === "grade_scale" && line.includes(":")) {
+      const [k, ...rest] = line.split(":");
+      const raw = rest.join(":").trim().replace(/^["']|["']$/g, "");
+      const n = Number(raw);
+      if (Number.isFinite(n)) out.grade_scale[k.trim()] = n;
+      continue;
+    }
+
+    if (section === "policy_links" && line.includes(":")) {
+      const [k, ...rest] = line.split(":");
+      const v = rest.join(":").trim().replace(/^["']|["']$/g, "");
+      if (v) out.policy_links[k.trim()] = v;
       continue;
     }
 

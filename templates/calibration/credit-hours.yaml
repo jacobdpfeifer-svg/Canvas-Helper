@@ -1,0 +1,8 @@
+# Course code → credit hours.
+# Canvas does not carry credit hours; copy from Buff Portal / your transcript.
+# GPA math skips any enrolled course missing here (never invents hours).
+#
+# Example:
+#   CSCI1300: 4
+#   MATH2300: 5
+{}

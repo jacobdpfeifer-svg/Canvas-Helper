@@ -19,6 +19,30 @@ lti_catalog:
 engagement_platform: null
 # Optional: map Canvas course name patterns → inbox course file codes
 course_file_map: []
+# Letter → quality points for local GPA estimates. Omit to use US 4.0 default in gpa.py.
+grade_scale:
+  A+: 4.0
+  A: 4.0
+  A-: 3.7
+  B+: 3.3
+  B: 3.0
+  B-: 2.7
+  C+: 2.3
+  C: 2.0
+  C-: 1.7
+  D+: 1.3
+  D: 1.0
+  D-: 0.7
+  F: 0.0
+# Official policy URLs agents may cite (never scrape Buff Portal / SIS).
+policy_links:
+  degree_audit: ""
+  registration_holds: ""
+  preregistration: ""
+  credits_grading: ""
+  sap: ""
+  scholarships: ""
+  advising: ""
 # Shown in onboarding before SSO (multiline string)
 legal_notice: |
   ProductName is local-first. Data stays on this device. You are responsible for

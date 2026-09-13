@@ -21,6 +21,29 @@ engagement_platform:
   path: /engineeringconnections
 # Populated per enrollment / capture calibration — no personal term roster in shipping yaml
 course_file_map: []
+# Quality-point scale for local GPA estimates (not official transcript / SAP).
+grade_scale:
+  A+: 4.0
+  A: 4.0
+  A-: 3.7
+  B+: 3.3
+  B: 3.0
+  B-: 2.7
+  C+: 2.3
+  C: 2.0
+  C-: 1.7
+  D+: 1.3
+  D: 1.0
+  D-: 0.7
+  F: 0.0
+policy_links:
+  degree_audit: https://www.colorado.edu/registrar/students/degree-planning/audit/run
+  registration_holds: https://www.colorado.edu/registrar/students/registration/holds
+  preregistration: https://www.colorado.edu/registrar/students/registration/preregistration
+  credits_grading: https://catalog.colorado.edu/undergraduate/credits-grading/
+  sap: https://www.colorado.edu/financialaid/policies/satisfactory-academic-progress-sap-policy
+  scholarships: https://www.colorado.edu/scholarships/scholarship-essentials
+  advising: https://www.colorado.edu/buffportaladvising
 legal_notice: |
   ProductName is a local-first student tool. It stores your Canvas sync data,
   preferences, and automation ledger on this device under your user profile.
@@ -32,4 +55,3 @@ legal_notice: |
   does not replace university counsel or the Office of Information Security;
   (4) optional cloud API keys and Google OAuth tokens are stored only on this
   device unless you explicitly opt into crash telemetry.
-
