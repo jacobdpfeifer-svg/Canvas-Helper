@@ -129,3 +129,31 @@ jobs:
     - name: Run browser sync unit tests
       working-directory: browser
       run: npm test
+
+  # The Tauri app has macOS-only dependencies (window-vibrancy, tray/dock
+  # integration) and shipped with zero CI coverage: a regression in the Rust
+  # commands/daemon/dock code or the React frontend would only surface on
+  # someone's own machine. This runs the same local dev-loop checks
+  # (packaging-notes.md) on every push, without attempting a signed bundle.
+  app-check:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: cargo check (Tauri backend)
+      working-directory: app/src-tauri
+      run: cargo check --locked
+
+    - name: Set up Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version: "20"
+
+    - name: Install app dependencies
+      working-directory: app
+      run: npm ci
+
+    - name: Type-check and build the frontend
+      working-directory: app
+      run: npm run build
