@@ -117,8 +117,10 @@ Concretely, two tiers:
   canvas-focus pivot item 3) plus a standalone `gpa` skill_router intent for
   "what's my GPA" / "what if I get a B in X."
 - Tests: `tests/core/test_gpa.py` — grade-scale mapping, missing-credit-hours
-  handling (skip + flag in `inbox/tool-gaps.md` rather than guessing),
-  what-if math.
+  handling (skip + surface inline in the GPA output so the student adds the
+  code to `credit-hours.yaml` — `inbox/tool-gaps.md` stays reserved for
+  missing Bucket-A connectors per `student-canvas-browser`, not student data
+  gaps, so it doesn't apply here), what-if math.
 
 ### Phase 2 — course suggestions (Tier 1)
 
@@ -150,9 +152,12 @@ Concretely, two tiers:
 ### Sequencing
 
 Phase 1 first (self-contained, highest value, lowest risk — it's arithmetic
-over data already in the truth path). Phase 2 next. Phase 3 only on explicit
-future request, since it introduces a new per-term manual-import workflow
-the student has to actually keep up with.
+over data already in the truth path). Phase 1b (registration-prep / floors /
+advisor questions) ships with or immediately after Phase 1 — process help
+only, no SIS writes. Phase 2 next. Phase 3 only on explicit future request
+since it introduces a new per-term manual-import workflow the student has to
+actually keep up with — template + parser now exist so Tier-2 mode is available
+when the student pastes an audit.
 
 ## What agents must not do
 

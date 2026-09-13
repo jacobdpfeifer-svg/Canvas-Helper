@@ -1,0 +1,15 @@
+# Prior terms Canvas may not still hold — needed for cumulative GPA.
+# Letter grades only; use quality grades (not P/W/I/IP/NC).
+# credits may omit if the same code appears in credit-hours.yaml.
+#
+# Example:
+# terms:
+#   - term: Fall 2025
+#     courses:
+#       - code: CSCI1300
+#         letter: A-
+#         credits: 4
+#       - code: MATH1300
+#         letter: B+
+#         credits: 5
+terms: []

@@ -45,6 +45,7 @@ export const INBOX_DIR = resolveInboxDir();
 export const COURSES_DIR = path.join(INBOX_DIR, "courses");
 export const COURSES_RAW_DIR = path.join(COURSES_DIR, "_raw");
 export const WEEK_PATH = path.join(INBOX_DIR, "week.md");
+export const GRADES_PATH = path.join(INBOX_DIR, "grades.yaml");
 export const TOOL_GAPS_PATH = path.join(INBOX_DIR, "tool-gaps.md");
 
 /** Ensure inbox dirs exist and print the active user-root path (sync entrypoints). */
@@ -769,6 +770,127 @@ export function parseAgentPolicyFromSyllabus(body) {
   return { hasMarker: false, agentWrites: "", allowTools: null, note: "" };
 }
 
+/**
+ * Pull prerequisite / corequisite language from syllabus plain text.
+ * Returns null when nothing matched — never invents requirements.
+ * @param {string} syllabusPlain
+ * @returns {string | null}
+ */
+export function extractPrereqLanguage(syllabusPlain) {
+  const text = String(syllabusPlain || "");
+  if (!text.trim()) return null;
+  const lines = text.split(/\r?\n/);
+  const hits = [];
+  const re =
+    /\b(pre-?req(?:uisite)?s?|co-?req(?:uisite)?s?|prerequisite\(s\)|corequisite\(s\))\b/i;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || !re.test(line)) continue;
+    const chunk = [line];
+    for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+      const next = lines[j].trim();
+      if (!next || /^#{1,3}\s/.test(next)) break;
+      if (next.length > 200) break;
+      chunk.push(next);
+    }
+    hits.push(chunk.join(" ").replace(/\s+/g, " ").trim());
+  }
+  if (!hits.length) return null;
+  // Dedupe while preserving order
+  const seen = new Set();
+  const unique = [];
+  for (const h of hits) {
+    const key = h.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(h);
+  }
+  return unique.map((h) => `- ${h}`).join("\n");
+}
+
+/**
+ * Sync-owned ## Prerequisites (from syllabus) body, or preserve existing agent notes
+ * when syllabus has no prereq language.
+ */
+export function formatPrereqSection(syllabusPlain, existingBody, today) {
+  const synced = today || schoolLocalDay();
+  const extracted = extractPrereqLanguage(syllabusPlain);
+  if (extracted) {
+    return `(synced ${synced} — from syllabus text; confirm in catalog)\n\n${extracted}`;
+  }
+  const existing = String(existingBody || "").trim();
+  if (existing && !isPlaceholderSection(existing)) {
+    return existing;
+  }
+  return `(synced ${synced})\n\n- (no prerequisite language found in syllabus)`;
+}
+
+/**
+ * Build inbox/grades.yaml from Canvas course enrollments (total_scores).
+ * @param {object[]} courses — /api/v1/courses items with enrollments
+ * @param {{ today?: string }} [opts]
+ * @returns {{ path: string, count: number }}
+ */
+export function writeGradesYaml(courses, { today } = {}) {
+  const syncDay = today || schoolLocalDay();
+  const rows = [];
+  for (const c of courses || []) {
+    const enrollments = c.enrollments || [];
+    const enrollment = enrollments[0] || {};
+    const letter =
+      enrollment.computed_current_grade ||
+      enrollment.computed_final_grade ||
+      "";
+    const percent =
+      enrollment.computed_current_score ??
+      enrollment.computed_final_score ??
+      null;
+    const filePath = resolveCourseFile(c.name, c.course_code);
+    const code = filePath
+      ? path.basename(filePath, ".md")
+      : String(c.course_code || c.id || "").replace(/\s+/g, "").toUpperCase();
+    if (!code) continue;
+    rows.push({
+      code,
+      name: c.name || "",
+      canvas_course_id: c.id ?? null,
+      letter: letter || "",
+      percent: percent == null || percent === "" ? null : Number(percent),
+    });
+  }
+  rows.sort((a, b) => String(a.code).localeCompare(String(b.code)));
+  const lines = [
+    `# Synced from Canvas enrollments (computed_* scores). Local GPA estimate only.`,
+    `synced_at: "${syncDay}"`,
+    `courses:`,
+  ];
+  if (!rows.length) {
+    lines.push("  []");
+  } else {
+    for (const r of rows) {
+      lines.push(`  - code: ${yamlScalar(r.code)}`);
+      lines.push(`    name: ${yamlScalar(r.name)}`);
+      lines.push(`    canvas_course_id: ${r.canvas_course_id == null ? "null" : r.canvas_course_id}`);
+      lines.push(`    letter: ${yamlScalar(r.letter)}`);
+      lines.push(
+        `    percent: ${r.percent == null || Number.isNaN(r.percent) ? "null" : r.percent}`
+      );
+    }
+  }
+  fs.mkdirSync(INBOX_DIR, { recursive: true });
+  fs.writeFileSync(GRADES_PATH, `${lines.join("\n")}\n`, "utf8");
+  return { path: GRADES_PATH, count: rows.length };
+}
+
+function yamlScalar(value) {
+  const s = String(value ?? "");
+  if (s === "") return '""';
+  if (/^[{}\[\],&*!|>'"%@`]/.test(s) || /: |^\s|\s$|#/.test(s)) {
+    return JSON.stringify(s);
+  }
+  return s;
+}
+
 /** Sync-owned markdown for ## Syllabus / agent policy notes */
 export function formatAgentPolicyNotes(syllabusPlain, today) {
   const synced = today || schoolLocalDay();
@@ -872,7 +994,8 @@ function formatInstructorProfileBlock(agentBody, policyPages) {
  * Merge sync-owned catalog/checkpoints into inbox/courses/CODE.md.
  * Preserves Theme, Arc notes, Weak topics, Instructor profile (agent),
  * Syllabus, Modules, Worth, Lecture captures when present.
- * Sync-owned: Checkpoints, Assignment catalog, Tools this semester.
+ * Sync-owned: Checkpoints, Assignment catalog, Tools this semester,
+ * Prerequisites (from syllabus) when syllabus text is present.
  */
 export function mergeCourseFileContent({
   existingContent,
@@ -902,6 +1025,10 @@ export function mergeCourseFileContent({
   const syllabus = cleanSectionBody(
     extractSection(sections, "Syllabus / agent policy notes"),
     "Syllabus / agent policy notes"
+  );
+  const prereqsExisting = cleanSectionBody(
+    extractSection(sections, "Prerequisites (from syllabus)"),
+    "Prerequisites (from syllabus)"
   );
   const modules = cleanSectionBody(
     extractSection(sections, "Modules / what's next"),
@@ -954,6 +1081,12 @@ export function mergeCourseFileContent({
       today: today || schoolLocalDay(),
     });
   const toolsBlock = formatToolsSection(inventory);
+  const prereqBlock =
+    syncMeta.syllabusPlain != null
+      ? formatPrereqSection(syncMeta.syllabusPlain, prereqsExisting, today)
+      : isPlaceholderSection(prereqsExisting)
+        ? formatPrereqSection("", prereqsExisting, today)
+        : prereqsExisting;
 
   return `# ${header}
 
@@ -981,6 +1114,10 @@ ${formatCatalogTable(catalogRows)}
 ## Tools this semester
 
 ${toolsBlock}
+
+## Prerequisites (from syllabus)
+
+${prereqBlock}
 
 ## Arc notes
 
@@ -1744,6 +1881,7 @@ export async function fetchDueUniverse(page, { daysAhead = 14 } = {}) {
 
   const coursesRes = await apiAllPages(page, "/api/v1/courses", {
     enrollment_state: "active",
+    "include[]": ["total_scores", "current_grading_period_scores"],
   });
   health.courses = healthEntry(coursesRes);
   if (!coursesRes.ok) {

@@ -46,6 +46,8 @@ class SchoolConfig:
     engagement_platform: EngagementPlatform | None = None
     course_file_map: tuple[CourseFileEntry, ...] = ()
     legal_notice: str = ""
+    grade_scale: dict[str, float] = field(default_factory=dict)
+    policy_links: dict[str, str] = field(default_factory=dict)
 
     @property
     def api_base(self) -> str:
@@ -77,6 +79,19 @@ def _parse_school(raw: dict[str, Any], slug: str) -> SchoolConfig:
         patterns = tuple(str(p) for p in (entry.get("patterns") or []))
         course_map.append(CourseFileEntry(code=str(entry["code"]), patterns=patterns))
 
+    grade_scale: dict[str, float] = {}
+    for letter, points in (raw.get("grade_scale") or {}).items():
+        try:
+            grade_scale[str(letter).strip().upper()] = float(points)
+        except (TypeError, ValueError):
+            continue
+
+    policy_links = {
+        str(k): str(v).strip()
+        for k, v in (raw.get("policy_links") or {}).items()
+        if v is not None and str(v).strip()
+    }
+
     return SchoolConfig(
         slug=str(raw.get("slug") or slug),
         display_name=str(raw.get("display_name") or slug),
@@ -88,6 +103,8 @@ def _parse_school(raw: dict[str, Any], slug: str) -> SchoolConfig:
         engagement_platform=engagement,
         course_file_map=tuple(course_map),
         legal_notice=str(raw.get("legal_notice") or "").strip(),
+        grade_scale=grade_scale,
+        policy_links=policy_links,
     )
 
 

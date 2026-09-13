@@ -259,6 +259,20 @@ def test_degree_progress_loads_reliable():
     assert resolve_model_tier("student-degree-progress", "canvas_read", {}) == "reliable"
 
 
+def test_course_plan_loads_reliable():
+    skill = load_skill(bundled_skills_dir() / "student-course-plan" / "SKILL.md")
+    assert skill.model_tier == "reliable"
+    assert resolve_model_tier("student-course-plan", "canvas_read", {}) == "reliable"
+
+
+def test_gpa_and_registration_prep_load_fast():
+    gpa = load_skill(bundled_skills_dir() / "student-gpa" / "SKILL.md")
+    reg = load_skill(bundled_skills_dir() / "student-registration-prep" / "SKILL.md")
+    assert gpa.model_tier == "fast"
+    assert reg.model_tier == "fast"
+    assert resolve_model_tier("student-gpa", "canvas_read", {"model_tier": "fast"}) == "fast"
+
+
 def test_frontmatter_model_tier_loads(tmp_path):
     skill_dir = tmp_path / "student-course-arc"
     skill_dir.mkdir()

@@ -51,6 +51,7 @@ RELIABLE_SKILL_IDS = frozenset(
         "student-concept-visual",
         "student-photo-intake",
         "student-degree-progress",
+        "student-course-plan",
     }
 )
 

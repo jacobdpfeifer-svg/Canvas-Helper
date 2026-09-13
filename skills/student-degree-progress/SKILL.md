@@ -36,7 +36,15 @@ If a live course matches a credited code, flag: “possible duplicate — verify
 
 Rank deep-attention courses using career priorities and “Worth by default” / throwaway lists in `USER.md` + `calibration/priority-rubric.md`. Do not name courses here.
 
-### 4. Output
+### 4. On-track hand-off
+
+“Am I on track?” is Tier-1 by default: live enrollments + `USER.md` goals + optional local GPA estimate (`student-gpa`).
+
+- Remaining **degree requirements** → only if `{user_root}/inbox/degree-audit.md` exists (dated import); otherwise say to paste a Buff Portal audit or use `student-course-plan` Tier-1 suggestions
+- Registration / holds / advisor prep → `student-registration-prep`
+- Next-semester course list → `student-course-plan`
+
+### 5. Output
 
 ```
 ## Term snapshot
@@ -49,6 +57,9 @@ Rank deep-attention courses using career priorities and “Worth by default” /
 
 ### Advising flags
 …
+
+### GPA (local estimate, optional)
+…point to student-gpa / Buff Portal — never claim official SAP/major GPA…
 
 ### Where to spend the student’s time this term
 1. … (goal-fit from USER.md)
@@ -63,6 +74,7 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 2. Transfer / credit notes and career priorities in `USER.md` — learning profile is already in the stable prefix; do not re-paste it
 3. `{user_root}/inbox/week.md` + `inbox/courses/*` (from `npm run sync`) — course codes from the supplied slice and course filenames, not a second due-list
 4. `calibration/priority-rubric.md` for goal-fit ranking
+5. Optional: `inbox/degree-audit.md` (Tier 2 only)
 
 ## Tools available
 
@@ -72,6 +84,7 @@ Read only. No submit tools from this skill.
 - `get_course_details` / `get_syllabus` — policies
 - `get_my_course_grades` — standing
 - `get_course_structure` — module map when useful
+- `python -m canvas_mcp.core.gpa` / `python -m canvas_mcp.core.degree_audit` when useful
 
 ## Triggers
 
