@@ -1,7 +1,9 @@
 """Per-course instructor policy for student write tools (#170).
 
-Faculty need agency over whether AI agents may write in *their* course, separate
-from whatever the campus operator has enabled server-wide. Canvas has no native
+Faculty need agency over whether AI agents may *preview / triage* write-shaped
+tools in *their* course, separate from whatever the campus operator has enabled
+server-wide. ``submit_assignment`` / ``comment_on_my_submission`` remain
+preview-only regardless of policy (canvas-focus pivot). Canvas has no native
 concept of "agent access", so the policy is expressed as a Canvas-native
 artifact that the instructor controls.
 

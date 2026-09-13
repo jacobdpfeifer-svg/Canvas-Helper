@@ -11,7 +11,7 @@ requires_cloud: false
 
 Compute **priority**, a high-level **briefing**, and an outcome-shaped **first step**. Optimize the student’s time against [`USER.md`](../../USER.md) career goals — do not invent a second due-list.
 
-Architecture: [`docs/architecture.md`](../../docs/architecture.md). Rubric: [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md).
+Use [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md).
 
 ## Instructions
 
@@ -53,11 +53,11 @@ Classify each open item as `workflow` (do-loop only) or teachable (`declarative`
 
 Never auto-drive LTI/proctored UIs; `submit_assignment` is preview-only, never submits.
 
-Cramming the night before is the illusion of mastery, not the plan. If studying feels easy, one clause: ease is a weak signal, the check is still scheduled.
+If studying feels easy, the check is still scheduled.
 
 ### 4. Emit briefing cards
 
-This is the shared card contract. [`canvas-week-plan`](../canvas-week-plan/SKILL.md) and [`student-course-arc`](../student-course-arc/SKILL.md) use it; do not keep a second copy of the science.
+This is the shared card contract; do not keep a second copy of the science.
 
 Obey the **Teach-hint** in this turn's slice. It already chose format, the course `prior_knowledge` override, whether to surface a due check, whether to attach a diagram, and whether to interleave. Do not re-derive those.
 
@@ -75,7 +75,7 @@ Obey the **Teach-hint** in this turn's slice. It already chose format, the cours
 - Next: optional one-liner
 ```
 
-How to fill the card from the hint:
+Fill the card from the hint:
 
 - `format` is **start order only**; retrieval is required either way. `retrieval` → Check first, faded example only on a miss. `worked_example` (default; also novice / missing prior) → short Walkthrough (define terms first), then generate the answer closed-book.
 - Quiz / proctored: the learning action is the scheduled retrievals, not a checklist. Walkthrough first only on `worked_example` or `start: worked_example`. Student still takes the quiz in the tool. Low-shame tone.
@@ -91,7 +91,7 @@ How to fill the card from the hint:
 - Commitment / `Check-in:` / `Still open:` → offer that one action; don't mark kept or grade it; release is recovery, not failure.
 - `## Coverage` → one line for the soonest checkpoint: `due_now` = checks then rest, `in_the_gap` = nothing due, `unextracted` = quiz listed, no claims yet. Not a score.
 - After a Check answer, say right/wrong and the fix; don't fill the blank or grade. "I know this" without a successful delayed retrieval isn't mastery.
-- `autonomy: directive` → one If-then; `choices` → two. `chunk_size: short` → ≤15–30m; `long` → longer sit-down OK. `check_depth: thorough` → keep a Check even on worked example; `light` → no extra confirmation on retrieval-first. Neither skips the scheduled check.
+- `autonomy: directive` → one If-then; `choices` → two. `chunk_size: short` → ≤15–30m; `long` → longer sit-down OK. `check_depth: thorough` → keep a Check even on worked example; `light` → no extra confirmation on retrieval-first.
 - Points ≥ 10 or Gen AI/essay/case/reflection → **pull `## Instructor profile`** from `inbox/courses/CODE.md` (weights, late policy, assignment notes, rubric language) into Why: one clause on worth (% or points) + the top rubric / grading concern. If the profile section is missing or stale, say so and continue — do not invent professor preferences.
 
 ### 5. Week mode (default when the student asks what’s next / optimize)
@@ -138,7 +138,7 @@ python -m canvas_mcp.core.learn_loop outcome \
 
 If that command prints a delta (`fragile → holding` or `holding → durable`), say that one clause about this claim only. Do not praise a same-session hit, a miss, or a skip. Do not keep a running score.
 
-If the student asked to save or pin focus, this write already is that cache. Do not also copy the full due table.
+If asked to save or pin focus, this write is the cache; do not copy the full due table.
 
 ### 7. Format reply
 

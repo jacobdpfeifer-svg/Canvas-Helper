@@ -731,3 +731,45 @@ class TestLayering:
                 )
         assert allowed is False
         assert "Please submit in Canvas directly." in reason
+
+
+class TestModuleDoneConfirmationGuard:
+    """mark_module_item_done must not PUT without a redeemed confirmation token."""
+
+    @pytest.mark.asyncio
+    async def test_preview_never_puts(self):
+        from canvas_mcp.tools.student_write import _MODULE_DONE_GUARD
+
+        _MODULE_DONE_GUARD.reset()
+        tools = get_tools(
+            STUDENT_WRITE_TOOLS="mark_module_item_done",
+            COURSE_AGENT_POLICY_ENABLED="false",
+        )
+        calls = []
+
+        async def responder(method, endpoint, **kwargs):
+            calls.append(method)
+            return {
+                "id": 2,
+                "title": "Reading",
+                "completion_requirement": {
+                    "type": "must_mark_done",
+                    "completed": False,
+                },
+            }
+
+        with patch(
+            "canvas_mcp.tools.student_write.get_course_id",
+            new=AsyncMock(return_value="123"),
+        ), patch(
+            "canvas_mcp.tools.student_write.make_canvas_request", new=responder
+        ):
+            result = await tools["mark_module_item_done"](
+                course_identifier="TEST", module_id=1, item_id=2
+            )
+
+        assert "confirmation_token=" in result
+        assert "put" not in calls
+        assert "confirmation_token" in inspect.signature(
+            tools["mark_module_item_done"]
+        ).parameters

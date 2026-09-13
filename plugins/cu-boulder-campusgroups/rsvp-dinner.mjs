@@ -3,10 +3,12 @@
  * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-major-dinners.md.
  *
  * Usage:
- *   npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name"
- *   HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --log
+ *   npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --confirm
+ *   HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --confirm --log
  *
  * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
+ * --confirm is required: RSVP is visible to the event organizer (pivot exception
+ * for this CLI escape hatch only — not an MCP tool).
  */
 import fs from "node:fs";
 import {
@@ -23,7 +25,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { major: null, date: null, verify: true, name: "", log: true };
+  const args = { major: null, date: null, verify: true, name: "", log: true, confirm: false };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--major" && argv[i + 1]) args.major = argv[++i];
@@ -31,6 +33,7 @@ function parseArgs(argv) {
     else if (a === "--name" && argv[i + 1]) args.name = argv[++i];
     else if (a === "--no-verify") args.verify = false;
     else if (a === "--no-log") args.log = false;
+    else if (a === "--confirm") args.confirm = true;
     else if (a === "--headed") process.env.HEADLESS = "0";
   }
   return args;
@@ -67,7 +70,14 @@ function resolveDinnerRow({ major, date, prefs }) {
 const args = parseArgs(process.argv);
 if (!args.name.trim()) {
   console.error(
-    'Usage: npm run rsvp-dinner -- --name "Student Name" [--major ...] [--date ...]'
+    'Usage: npm run rsvp-dinner -- --name "Student Name" --confirm [--major ...] [--date ...]'
+  );
+  process.exit(1);
+}
+if (!args.confirm) {
+  console.error(
+    "Refusing to RSVP without --confirm: this registers you with the event organizer. " +
+      "Pass --confirm only after you've decided to attend."
   );
   process.exit(1);
 }
@@ -103,7 +113,7 @@ let result;
 
 try {
   await ensureCampusGroupsSession(page);
-  const rsvpResult = await performRsvp(page, row.rsvpId);
+  const rsvpResult = await performRsvp(page, row.rsvpId, { confirmed: true });
 
   let verification = { success: false, method: "none" };
   if (args.verify) {
@@ -124,8 +134,6 @@ try {
     alreadyRegistered: rsvpResult.alreadyRegistered || false,
     verification,
     url: page.url(),
-    calendarReminder:
-      "Optional: agent may create Google Calendar event from dinner date/time via calendar MCP",
   };
 
   if (result.ok && args.log) {

@@ -96,6 +96,14 @@ READ_TOOL_CONTENT_POLICIES: dict[str, ReadToolContentPolicy] = {
         "Preview echoes only the caller-supplied comment text; no "
         "instructor/Canvas-authored content is rendered."
     ),
+    "post_discussion_entry": _safe(
+        "Preview-only tool echoes the caller-supplied draft and does not "
+        "render Canvas-authored content."
+    ),
+    "reply_to_discussion_entry": _safe(
+        "Preview-only tool echoes the caller-supplied draft and does not "
+        "render Canvas-authored content."
+    ),
     "get_syllabus": _fenced("fence_untrusted"),
     "get_unread_count": _safe(
         "Returns only a numeric unread-conversation count."

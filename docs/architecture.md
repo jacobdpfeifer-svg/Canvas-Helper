@@ -24,21 +24,24 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 | Commitment | One opt-in appointment. Student marks started, kept, or released. No calendar write, no money, no shame. Does not change learn-loop stability | `canvas_mcp.core.commitment` → `{user_root}/inbox/commitments.yaml` |
 | Brief continuity | Consecutive local days a brief was written (`write_focus`). Quiet line only — not a learning streak, no shame interrupt. Stored count is exposure, not evidence | `canvas_mcp.core.habit` → `{user_root}/inbox/habit.yaml` |
 | Concept diagrams | Deterministic matplotlib PNGs | `canvas_mcp.core.diagram_gen` + skill `student-concept-visual` |
-| Browser sync | SSO cookies → REST → inbox | `browser/` (`npm run sync`) |
-| Desktop shell | Tray, dock geometry, IPC, cadence | `app/src-tauri` (`main` / `daemon` / `dock` / `commands` / `inbox`) + React `app/src/ipc.ts` |
-| Sensors | Canvas-tab focus events only | `app/extension-chrome` → `app/native-messaging` → `{user_root}/sensors/` |
+| Browser sync | SSO cookies → REST → `{user_root}/inbox` (same resolver as Python/Tauri) | `browser/` (`npm run sync`) |
+| Desktop shell | **Parked** (signed 2026-09-12) — tray/dock code remains; do not expand features | `app/src-tauri` + React `app/src/` — see [`handoff/ui-shell-alternatives.md`](handoff/ui-shell-alternatives.md) |
+| Sensors | Canvas-tab focus events only (parked with shell) | `app/extension-chrome` → `app/native-messaging` → `{user_root}/sensors/` |
 | Actuators | Calendar / Gmail — read + draft only. `create_event`/`update_event`/`send_email` are hard-blocked, no API call (canvas-focus pivot, [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](handoff/canvas-focus-pivot-2026-09-11.md)) | `mcp-servers/{gcal,gmail,apple-cal}` + `common/actuator.py` |
 | Plugins | School Bucket-A connectors (static registry) | `plugins/` + `browser/scripts/lib/connector-registry.mjs` |
 
+## Product core vs vendored MCP
+
+- **Product core (in tree under `src/canvas_mcp/core/`):** `user_root`, `skill_router`, `learn_loop`, `habit`, `permissions`, `ledger`, course policy, write confirmation — this is the local-first brain, not “archived.”
+- **Vendored optional PAT MCP tools** (`src/canvas_mcp/tools/`, `server.py`): truth-path step 4. Upstream canvas-mcp boundary — root [`CHANGELOG.md`](../CHANGELOG.md) is upstream’s; see [`vendor/README.md`](../vendor/README.md).
+
 ## Explicitly out of truth path / archived
 
-- **`src/canvas_mcp/`** — optional PAT MCP (truth-path step 4). **Vendored** upstream canvas-mcp (signed 2026-09-12). Root [`CHANGELOG.md`](../CHANGELOG.md) is upstream’s; see [`vendor/README.md`](../vendor/README.md).
-- **`vendor/articles/`**, **`vendor/examples/`**, **`vendor/internal/`** — archived research / upstream notes; not the shipping product surface.
+- **Upstream CHANGELOG / vendor archives** — [`vendor/articles/`](../vendor/articles/), [`vendor/examples/`](../vendor/examples/), [`vendor/internal/`](../vendor/internal/) — research / upstream notes; not the shipping product surface.
 - **`app/telemetry/`** — opt-in Sentry helper only.
 - **Billing / mobile** — **deleted** (signed 2026-09-12). Do not re-add Stripe/Twilio stubs.
 - **Educator grading / quiz-taking / hosted Azure** — permanently out of scope (see `CLAUDE.md`).
-- **`src/canvas_mcp/core/self_improve/{cluster,drafter,shadow,promoter,run}.py`** —
-  deleted 2026-09-11 (canvas-focus pivot). `logger.py` and `distill.py` remain.
+- **`src/canvas_mcp/core/self_improve/`** — rewrite pipeline (`cluster`/`drafter`/`shadow`/`promoter`/`run` plus residual logger/distill) **deleted**. Do not re-add. `skill_router.route_intent` does not write a request log.
 
 ## Design docs (status)
 
@@ -46,7 +49,7 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 |-----|--------|
 | [`docs/design/ambient-dock-ui.md`](design/ambient-dock-ui.md) | **Parked** (signed 2026-09-12) — peek/expanded/onboarding + tray as built; Hidden/auto-peek design-only. See [`handoff/ui-shell-alternatives.md`](handoff/ui-shell-alternatives.md) |
 | [`docs/design/learning-profile.md`](design/learning-profile.md) | **v1 built**; start bias only. Learn loop is the teaching model (`learn_loop.py`) |
-| [`docs/design/class-standings.md`](design/class-standings.md) | **Framed, not built** — optional hideable class leaderboard and class marks. Not peers, not XP |
+| [`docs/design/class-standings.md`](design/class-standings.md) | **Framed, not built, not authorized** — optional hideable class leaderboard frame only; do not ship without a product decision |
 
 ## CU Boulder specifics
 

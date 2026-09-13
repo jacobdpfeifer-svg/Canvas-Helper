@@ -12,7 +12,9 @@ only, with no execution path and no confirmation-token flow to redeem:
 
 ``mark_module_item_done`` still executes for real — it is a private,
 self-only completion toggle with no visibility to anyone else, so it was not
-in scope of that pivot. Two properties remain load-bearing across this file:
+in scope of that pivot — but it uses ``ConfirmationGuard`` (preview →
+token → confirm) like other student-private writes. Two properties remain
+load-bearing across this file:
 
 1. **Operator ceiling.** A tool absent from ``STUDENT_WRITE_TOOLS`` is never
    registered, so it never enters the MCP tool list. The default is empty.
@@ -60,7 +62,10 @@ from ..core.untrusted_content import (
     fence_untrusted_inline,
 )
 from ..core.validation import coerce_canvas_id, validate_params
-from ..core.write_confirmation import unconfirmed_write_warning
+from ..core.write_confirmation import ConfirmationGuard, unconfirmed_write_warning
+
+# Dedicated guard for the only remaining Canvas write in this module.
+_MODULE_DONE_GUARD = ConfirmationGuard()
 
 # Submission types this tool supports. Quiz and discussion types are absent by
 # design: quiz-taking is refused for this student fork (academic integrity),
@@ -588,13 +593,15 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             course_identifier: str | int,
             module_id: str | int,
             item_id: str | int,
+            confirmation_token: str | None = None,
         ) -> str:
-            """Mark a module item done for YOURSELF.
+            """Mark a module item done for YOURSELF (preview → confirm).
 
             Args:
                 course_identifier: Course code or Canvas ID
                 module_id: Canvas module ID
                 item_id: Canvas module item ID
+                confirmation_token: Token from the preview call; omit to preview
             """
             course_id = await get_course_id(course_identifier)
             if not course_id:
@@ -636,11 +643,43 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if requirement.get("completed"):
                 return "✅ Module item is already marked done."
 
-            response = await make_canvas_request(
-                "put",
-                f"{item_endpoint}/done",
+            title = str(item.get("title", item_id))
+            fingerprint = _MODULE_DONE_GUARD.fingerprint(
+                str(course_id), str(module_id), str(item_id), title
             )
+            token = (confirmation_token or "").strip() or None
+            if not token:
+                issued = _MODULE_DONE_GUARD.issue(fingerprint)
+                return (
+                    "📋 Mark-done preview — NOTHING has been written yet.\n\n"
+                    f"Item: {title}\n"
+                    f"Module: {module_id}\n"
+                    f"Course: {course_id}\n\n"
+                    "➡️  Always show this preview in chat. To proceed, call again "
+                    f"with confirmation_token='{issued}' and identical arguments."
+                )
+
+            token_error = _MODULE_DONE_GUARD.check(token, fingerprint)
+            if token_error:
+                return token_error
+
+            if not _MODULE_DONE_GUARD.reserve(token):
+                return (
+                    "❌ That confirmation was already used. Nothing was written. "
+                    "Run the preview again."
+                )
+
+            try:
+                response = await make_canvas_request(
+                    "put",
+                    f"{item_endpoint}/done",
+                )
+            except Exception:
+                _MODULE_DONE_GUARD.release(token)
+                raise
+
             if isinstance(response, dict) and "error" in response:
+                _MODULE_DONE_GUARD.release(token)
                 return f"❌ Could not mark item done: {response['error']}"
 
             # Confirm the write actually landed before claiming success.
@@ -654,7 +693,7 @@ def register_student_write_tools(mcp: FastMCP) -> None:
                 return unconfirmed_write_warning(
                     "the module item was marked done",
                     {
-                        "Item": item.get("title", item_id),
+                        "Item": title,
                         "Module": module_id,
                         "Course": course_id,
                     },

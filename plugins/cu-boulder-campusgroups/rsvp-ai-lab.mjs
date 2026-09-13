@@ -3,11 +3,13 @@
  * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-ai-labs.md.
  *
  * Usage:
- *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name"
- *   HEADLESS=1 npm run rsvp-ai-lab -- --event 123456 --name "Student Name" --log
+ *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name" --confirm
+ *   HEADLESS=1 npm run rsvp-ai-lab -- --event 123456 --name "Student Name" --confirm --log
  *
  * Requires AI Lab preference confirmed in calibration/signup-preferences.md unless --event given.
  * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
+ * --confirm is required: RSVP is visible to the event organizer (pivot exception
+ * for this CLI escape hatch only — not an MCP tool).
  */
 import fs from "node:fs";
 import {
@@ -21,7 +23,7 @@ import {
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { slot: null, event: null, verify: true, name: "", log: true };
+  const args = { slot: null, event: null, verify: true, name: "", log: true, confirm: false };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--slot" && argv[i + 1]) args.slot = argv[++i];
@@ -29,6 +31,7 @@ function parseArgs(argv) {
     else if (a === "--name" && argv[i + 1]) args.name = argv[++i];
     else if (a === "--no-verify") args.verify = false;
     else if (a === "--no-log") args.log = false;
+    else if (a === "--confirm") args.confirm = true;
     else if (a === "--headed") process.env.HEADLESS = "0";
   }
   return args;
@@ -100,7 +103,16 @@ function resolveAiLabRow({ slot, event, prefs }) {
 
 const args = parseArgs(process.argv);
 if (!args.name.trim()) {
-  console.error('Usage: npm run rsvp-ai-lab -- --name "Student Name" [--slot ...] [--event ...]');
+  console.error(
+    'Usage: npm run rsvp-ai-lab -- --name "Student Name" --confirm [--slot ...] [--event ...]'
+  );
+  process.exit(1);
+}
+if (!args.confirm) {
+  console.error(
+    "Refusing to RSVP without --confirm: this registers you with the event organizer. " +
+      "Pass --confirm only after you've decided to attend."
+  );
   process.exit(1);
 }
 
@@ -131,7 +143,7 @@ let result;
 
 try {
   await ensureCampusGroupsSession(page);
-  const rsvpResult = await performRsvp(page, row.rsvpId);
+  const rsvpResult = await performRsvp(page, row.rsvpId, { confirmed: true });
 
   let verification = { success: false, method: "none" };
   if (args.verify) {
@@ -149,8 +161,6 @@ try {
     alreadyRegistered: rsvpResult.alreadyRegistered || false,
     verification,
     url: page.url(),
-    calendarReminder:
-      "Optional: agent may create Google Calendar event via Google Calendar MCP after the student confirms the slot",
   };
 
   if (result.ok && args.log) {

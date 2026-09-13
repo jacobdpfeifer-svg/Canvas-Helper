@@ -212,7 +212,6 @@ def test_execute_intent_sends_cache_ordered_payload(user_root: Path) -> None:
         trigger,
         user_root=user_root,
         embedder=lambda _: None,
-        log=False,
         provider=provider,
     )
 

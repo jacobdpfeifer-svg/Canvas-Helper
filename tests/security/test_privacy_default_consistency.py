@@ -63,6 +63,13 @@ def _env_template_default() -> str:
     return matches[-1].strip().lower()
 
 
+def _baseline_overlay_default() -> str:
+    text = (REPO_ROOT / "config" / "overlays" / "baseline.env").read_text()
+    matches = re.findall(rf"^{SETTING}=(\S+)", text, re.MULTILINE)
+    assert matches, f"{SETTING} is not set in config/overlays/baseline.env"
+    return matches[-1].strip().lower()
+
+
 class TestPrivacyDefaultConsistency:
     def test_all_channels_declare_the_same_default(self):
         code = "true" if _code_default() else "false"
@@ -71,6 +78,7 @@ class TestPrivacyDefaultConsistency:
             "MCP Registry (server.json)": _registry_manifest_default(),
             "container (Dockerfile)": _dockerfile_default(),
             "operator template (env.template)": _env_template_default(),
+            "baseline overlay (config/overlays/baseline.env)": _baseline_overlay_default(),
         }
 
         distinct = set(channels.values())
@@ -86,8 +94,13 @@ class TestPrivacyDefaultConsistency:
 
     @pytest.mark.parametrize(
         "reader",
-        [_registry_manifest_default, _dockerfile_default, _env_template_default],
-        ids=["server.json", "Dockerfile", "env.template"],
+        [
+            _registry_manifest_default,
+            _dockerfile_default,
+            _env_template_default,
+            _baseline_overlay_default,
+        ],
+        ids=["server.json", "Dockerfile", "env.template", "baseline.env"],
     )
     def test_each_channel_declares_a_parseable_boolean(self, reader):
         assert reader() in {"true", "false"}

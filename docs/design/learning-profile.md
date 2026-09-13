@@ -336,10 +336,11 @@ student self-report, or explicit ask — never from silent click inference.
 **zero production callers**. That was deliberate: wiring raw router outcomes would
 fake a preference.
 
-[`skill_router.route_intent`](../../src/canvas_mcp/core/skill_router.py) writes
-`RequestLog.success_signal = accept | veto` meaning **skill matched vs unmatched**,
-not “this teaching format helped.” Tauri palette routing often uses `--no-log`
-anyway. **Do not** call `record_signal` from raw route accept/veto.
+[`skill_router.route_intent`](../../src/canvas_mcp/core/skill_router.py) no
+longer writes a request log at all (the `self_improve` logger was removed
+2026-09-12 to match the original canvas-focus pivot decision) — there is no
+accept/veto signal to accidentally wire up. **Do not** reintroduce request
+logging as a proxy for `record_signal`.
 
 #### Honest signal map
 

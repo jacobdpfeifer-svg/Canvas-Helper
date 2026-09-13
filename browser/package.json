@@ -19,6 +19,7 @@
     "process-capture-queue": "node scripts/process-capture-queue.mjs",
     "test": "node --test tests/*.test.mjs"
   },
+  "_comment_cu_plugin": "sync-dinners/sync-ai-labs/rsvp-* are CU Boulder CampusGroups plugin CLIs (plugins/cu-boulder-campusgroups/), not core product sync. RSVP requires --confirm.",
   "devDependencies": {
     "playwright": "^1.49.0"
   }

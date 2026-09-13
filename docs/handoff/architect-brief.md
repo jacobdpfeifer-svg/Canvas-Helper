@@ -1,6 +1,12 @@
 # Architect Handback Brief — Phase 1 Pivot (re-audit)
 
-> **Superseded for architecture shape:** see [`architecture-audit-2026-09-06.md`](architecture-audit-2026-09-06.md) (macro pass — CLI fold, actuator gate, educator cut). Keep this brief for must-fix / security receipts.
+> **Historical (2026-09-06).** Superseded for architecture shape and for
+> student-write security claims. After the canvas-focus pivot (2026-09-11),
+> `submit_assignment` / `comment_on_my_submission` are **preview-only** — there
+> is no `_SUBMIT_GUARD` execute path. See
+> [`canvas-focus-pivot-2026-09-11.md`](canvas-focus-pivot-2026-09-11.md) and
+> [`architecture.md`](../architecture.md). Keep this brief only for older
+> must-fix / security receipts that predate the pivot.
 
 **Date:** 2026-09-06 (post must-fix-close re-verification; superseded prior brief claims)  
 **Repo:** TheUltimateStudent:TeacherWorkflow  
@@ -15,7 +21,7 @@
 | Area | Status (this pass) | Receipt |
 |------|--------------------|---------|
 | W0 foundations (tenant, user_root, deny default, permissions, ledger) | **Shipped** | `COURSE_AGENT_POLICY_DEFAULT` → `deny` in code + `env.template` + `config/overlays/baseline.env` (added this pass) |
-| W0.4 ConfirmationGuard | **Shipped** | `student_write.py` uses `_SUBMIT_GUARD` only; no `_issue_token`/`_check_token`/`hmac.new` there |
+| W0.4 ConfirmationGuard | **Shipped (pre-pivot)** | Historical: submit used `_SUBMIT_GUARD`. Post-pivot: submit/comment are preview-only; `mark_module_item_done` uses `_MODULE_DONE_GUARD` |
 | W1 de-Jacobize (working tree) | **Shipped in tree** | Product-path grep clean; RSVP requires `--name` |
 | W1 de-Jacobize (git history) | **NOT resolved** | `git show 37f38b3:dev/JACOB.md` still returns Jacob profile — see Escalate |
 | W2 brain + self-improve | **Shipped (structural)** | Write-skill ban: `tests/core/test_brain_w2.py::test_ban_write_skill_shadow_and_promote` passed |
@@ -85,7 +91,7 @@ flowchart TB
 | Item | Verified status | Receipt |
 |------|-----------------|---------|
 | `COURSE_AGENT_POLICY_DEFAULT` | **deny** | `get_config().course_agent_policy_default` → `deny`; `env.template` + `baseline.env` |
-| Confirmation tokens | **ConfirmationGuard only** in write path | `grep _issue_token student_write.py` empty; `_SUBMIT_GUARD.issue/check/reserve` |
+| Confirmation tokens | **Post-pivot:** preview-only submit/comment; `_MODULE_DONE_GUARD` on mark-done | Historical `_SUBMIT_GUARD` claim obsolete; see canvas-focus pivot |
 | hmac | Only inside `write_confirmation.py` (guard impl) | expected |
 | Two-user root isolation | **Pass** | `tests/core/test_two_user_isolation.py` — separate roots, ledger non-cross, escape rejected |
 | `send_email` | **Hard-blocked** | Returns `{"blocked": true, ...}`; no API call |

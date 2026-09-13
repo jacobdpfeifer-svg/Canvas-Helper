@@ -1,10 +1,14 @@
-"""Google OAuth helpers for GCal / Gmail actuators.
+"""Google OAuth helpers for Gmail actuators (and read-only calendar creds).
 
 Tokens live under ``{user_root}/auth/google/token.json``.
 Client secrets path: env ``GOOGLE_OAUTH_CLIENT_SECRETS`` (installed-app JSON).
 
 Without secrets (or without optional google-auth packages) callers get
 ``None`` and should stay on the in-memory dry-run path.
+
+Calendar **write** helpers were removed (canvas-focus pivot). MCP
+``create_event`` / ``update_event`` are hard-blocked stubs; do not re-add
+live Calendar API insert/update/delete helpers here.
 """
 
 from __future__ import annotations
@@ -13,12 +17,18 @@ import os
 from pathlib import Path
 from typing import Any
 
+# Read-only calendar scope — writes are hard-blocked at the MCP tool layer.
 GCAL_SCOPES = (
-    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/calendar.readonly",
 )
 GMAIL_SCOPES = (
     "https://www.googleapis.com/auth/gmail.compose",
     "https://www.googleapis.com/auth/gmail.modify",
+)
+
+_GCAL_WRITE_BLOCKED = (
+    "Calendar writes are disabled (canvas-focus pivot). "
+    "Plan the event yourself — do not call Google Calendar insert/update/delete."
 )
 
 
@@ -97,65 +107,24 @@ def gmail_service(user_root: Path):
     return build("gmail", "v1", credentials=creds, cache_discovery=False)
 
 
-def gcal_create_event(
-    service: Any, *, summary: str, start_iso: str, end_iso: str
-) -> dict[str, Any]:
-    body = {
-        "summary": summary,
-        "start": {"dateTime": start_iso},
-        "end": {"dateTime": end_iso},
-    }
-    return service.events().insert(calendarId="primary", body=body).execute()
+def gcal_create_event(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
+    """Removed — raise so silent rewiring cannot write."""
+    raise RuntimeError(_GCAL_WRITE_BLOCKED)
 
 
-def gcal_update_event(
-    service: Any,
-    event_id: str,
-    *,
-    summary: str | None,
-    start_iso: str | None,
-    end_iso: str | None,
-) -> dict[str, Any]:
-    existing = service.events().get(calendarId="primary", eventId=event_id).execute()
-    if summary is not None:
-        existing["summary"] = summary
-    if start_iso is not None:
-        existing["start"] = {"dateTime": start_iso}
-    if end_iso is not None:
-        existing["end"] = {"dateTime": end_iso}
-    return (
-        service.events()
-        .update(calendarId="primary", eventId=event_id, body=existing)
-        .execute()
-    )
+def gcal_update_event(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
+    """Removed — raise so silent rewiring cannot write."""
+    raise RuntimeError(_GCAL_WRITE_BLOCKED)
 
 
-def gcal_delete_event(service: Any, event_id: str) -> None:
-    service.events().delete(calendarId="primary", eventId=event_id).execute()
+def gcal_delete_event(*_args: Any, **_kwargs: Any) -> None:
+    """Removed — raise so silent rewiring cannot write."""
+    raise RuntimeError(_GCAL_WRITE_BLOCKED)
 
 
-def gcal_restore_event(service: Any, prior: dict[str, Any]) -> dict[str, Any]:
-    """Restore a prior event snapshot (best-effort update or insert)."""
-    event_id = prior.get("id")
-    body = {
-        "summary": prior.get("summary"),
-        "start": prior.get("start")
-        if isinstance(prior.get("start"), dict)
-        else {"dateTime": prior.get("start")},
-        "end": prior.get("end")
-        if isinstance(prior.get("end"), dict)
-        else {"dateTime": prior.get("end")},
-    }
-    if event_id:
-        try:
-            return (
-                service.events()
-                .update(calendarId="primary", eventId=event_id, body={**body, "id": event_id})
-                .execute()
-            )
-        except Exception:
-            pass
-    return service.events().insert(calendarId="primary", body=body).execute()
+def gcal_restore_event(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
+    """Removed — raise so silent rewiring cannot write."""
+    raise RuntimeError(_GCAL_WRITE_BLOCKED)
 
 
 def gmail_create_draft(

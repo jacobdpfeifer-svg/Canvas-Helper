@@ -49,3 +49,33 @@ def test_gcal_gmail_describe_mode_tools_dry_run(monkeypatch, tmp_path):
 
     blocked = json.loads(gmail_server.send_email())
     assert blocked["blocked"] is True
+
+
+def test_gcal_write_helpers_raise_not_call_api():
+    """Pivot residue: helpers must not be callable write paths."""
+    import pytest
+
+    with pytest.raises(RuntimeError, match="Calendar writes are disabled"):
+        google_oauth.gcal_create_event(None, summary="x", start_iso="", end_iso="")
+    with pytest.raises(RuntimeError, match="Calendar writes are disabled"):
+        google_oauth.gcal_update_event(None, "id", summary="x", start_iso=None, end_iso=None)
+    with pytest.raises(RuntimeError, match="Calendar writes are disabled"):
+        google_oauth.gcal_delete_event(None, "id")
+    with pytest.raises(RuntimeError, match="Calendar writes are disabled"):
+        google_oauth.gcal_restore_event(None, {"id": "x"})
+
+
+def test_gcal_scopes_are_readonly():
+    assert all("readonly" in s or "calendar.events" not in s for s in google_oauth.GCAL_SCOPES)
+    assert "https://www.googleapis.com/auth/calendar.events" not in google_oauth.GCAL_SCOPES
+
+
+def test_gcal_mcp_never_imports_live_write_bodies():
+    """Hard-blocked MCP tools must not reference events().insert in server.py."""
+    server_src = (REPO / "mcp-servers" / "gcal" / "server.py").read_text(encoding="utf-8")
+    assert "events().insert" not in server_src
+    assert "gcal_create_event" not in server_src
+    oauth_src = (REPO / "mcp-servers" / "common" / "google_oauth.py").read_text(encoding="utf-8")
+    assert "events().insert" not in oauth_src
+    assert "events().update" not in oauth_src
+    assert "events().delete" not in oauth_src

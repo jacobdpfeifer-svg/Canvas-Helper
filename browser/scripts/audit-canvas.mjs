@@ -13,6 +13,7 @@ import {
   addSchoolDays,
   classifyOutcomeHint,
   collectTruncationWarnings,
+  ensureInboxReady,
   schoolLocalDay,
   escCell,
   fetchDueUniverse,
@@ -21,6 +22,8 @@ import {
   launchCanvasContext,
   requireLoggedIn,
 } from "./lib/canvas-session.mjs";
+
+ensureInboxReady();
 
 function normalizeTitle(t) {
   return String(t || "")

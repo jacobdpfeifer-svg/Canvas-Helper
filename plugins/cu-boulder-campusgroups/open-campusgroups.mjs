@@ -13,7 +13,7 @@ Opening CampusGroups in a headed browser (shared browser/.auth profile).
 3. Skip or complete onboarding if shown.
 4. Confirm you see CampusGroups home or events.
 5. Close the browser window when done.
-6. Then: HEADLESS=1 npm run rsvp-campusgroups -- --event <id>
+6. Then: HEADLESS=1 npm run rsvp-campusgroups -- --event <id> --name "Student Name" --confirm
 `);
 
 try {
