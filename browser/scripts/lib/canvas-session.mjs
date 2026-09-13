@@ -120,18 +120,119 @@ export function clearSingletonLocks(authDir = AUTH_DIR) {
   }
 }
 
+/** Advisory lock filename under AUTH_DIR — one Playwright owner at a time. */
+export const AUTH_LOCK_NAME = ".playwright.lock";
+
+export function authLockPath(authDir = AUTH_DIR) {
+  return path.join(authDir, AUTH_LOCK_NAME);
+}
+
+export function isProcessAlive(pid) {
+  if (!Number.isFinite(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Acquire an exclusive advisory lock on the shared Chromium user-data-dir.
+ * Call before clearSingletonLocks so a second script never yanks the profile
+ * out from under a live owner. Steals the lock only when the holder pid is dead.
+ *
+ * @returns {Promise<() => void>} release function (idempotent)
+ */
+export async function acquireAuthLock(
+  authDir = AUTH_DIR,
+  { timeoutMs = 60_000, pollMs = 200 } = {}
+) {
+  fs.mkdirSync(authDir, { recursive: true });
+  const lockPath = authLockPath(authDir);
+  const start = Date.now();
+  let fd = null;
+
+  while (fd === null) {
+    try {
+      fd = fs.openSync(lockPath, "wx");
+      fs.writeFileSync(fd, `${process.pid}\n`);
+    } catch (err) {
+      if (err.code !== "EEXIST") throw err;
+      let holderPid = NaN;
+      try {
+        holderPid = parseInt(fs.readFileSync(lockPath, "utf8").trim().split(/\s+/)[0], 10);
+      } catch {
+        /* unreadable — try steal below */
+      }
+      if (!isProcessAlive(holderPid)) {
+        try {
+          fs.unlinkSync(lockPath);
+        } catch {
+          /* race with another waiter */
+        }
+      } else if (Date.now() - start > timeoutMs) {
+        throw new Error(
+          `another Canvas browser script (pid ${holderPid}) owns ${authDir}; ` +
+            `wait for it to finish, or set AUTH_DIR to a separate profile path`
+        );
+      } else {
+        await new Promise((r) => setTimeout(r, pollMs));
+      }
+    }
+  }
+
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    try {
+      fs.closeSync(fd);
+    } catch {
+      /* already closed */
+    }
+    try {
+      fs.unlinkSync(lockPath);
+    } catch {
+      /* already gone */
+    }
+  };
+  return release;
+}
+
 export async function launchCanvasContext(options = {}) {
   BASE = getBase();
   fs.mkdirSync(AUTH_DIR, { recursive: true });
-  clearSingletonLocks();
-  const headless = process.env.HEADLESS === "1";
-  const context = await chromium.launchPersistentContext(AUTH_DIR, {
-    headless,
-    viewport: { width: 1280, height: 900 },
-    ...options,
-  });
-  const page = context.pages()[0] || (await context.newPage());
-  return { context, page };
+  const releaseLock = await acquireAuthLock(AUTH_DIR);
+  try {
+    clearSingletonLocks();
+    const headless = process.env.HEADLESS === "1";
+    const context = await chromium.launchPersistentContext(AUTH_DIR, {
+      headless,
+      viewport: { width: 1280, height: 900 },
+      ...options,
+    });
+    const origClose = context.close.bind(context);
+    let released = false;
+    const releaseOnce = () => {
+      if (released) return;
+      released = true;
+      releaseLock();
+    };
+    context.close = async (...args) => {
+      try {
+        return await origClose(...args);
+      } finally {
+        releaseOnce();
+      }
+    };
+    process.once("exit", releaseOnce);
+    const page = context.pages()[0] || (await context.newPage());
+    return { context, page };
+  } catch (err) {
+    releaseLock();
+    throw err;
+  }
 }
 
 export async function requireLoggedIn(page) {
@@ -369,10 +470,15 @@ export function resolveCourseFile(courseName, courseCode) {
       return path.join(COURSES_DIR, `${entry.code}.md`);
     }
   }
-  // Generic fallback when school yaml has no personal roster: Canvas course_code → CODE.md
-  const raw = String(courseCode || "").replace(/[\s_-]+/g, "");
-  if (/^[A-Za-z]{2,8}\d{3,5}[A-Za-z]?$/i.test(raw)) {
-    return path.join(COURSES_DIR, `${raw.toUpperCase()}.md`);
+  // Generic fallback when school yaml has no personal roster: pull the leading
+  // DEPT+NUMBER off Canvas course_code (or, failing that, course name) and
+  // ignore whatever term/section junk trails it — real course_code values
+  // look like "APPM 1235 Fall 2026", "ECON 2010-100", "BCOR 1030-018,019,024",
+  // not the clean "DEPT1234" shape a full-string match would require.
+  const leading = /^_?\s*([A-Za-z]{2,8})\s*[-_ ]?\s*(\d{3,5})/;
+  const match = String(courseCode || "").match(leading) || String(courseName || "").match(leading);
+  if (match) {
+    return path.join(COURSES_DIR, `${(match[1] + match[2]).toUpperCase()}.md`);
   }
   return null;
 }

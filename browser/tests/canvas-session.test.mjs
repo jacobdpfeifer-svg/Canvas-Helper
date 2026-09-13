@@ -411,6 +411,37 @@ describe("resolveCourseFile", () => {
   it("returns null when no map hit and no usable course_code", () => {
     assert.equal(resolveCourseFile("Mystery Seminar", ""), null);
   });
+
+  it("strips term suffixes from real CU course_code shapes", () => {
+    assert.match(
+      resolveCourseFile("Pre-Calculus for Engineers", "APPM 1235 Fall 2026"),
+      /APPM1235\.md$/
+    );
+    assert.match(
+      resolveCourseFile("Intro Computational Thinking Fall 26", "_CSCI 1200 Fall 26"),
+      /CSCI1200\.md$/
+    );
+  });
+
+  it("strips section suffixes glued onto the course number", () => {
+    assert.match(
+      resolveCourseFile("Prin of Microeconomics Fall 2026", "ECON 2010-100"),
+      /ECON2010\.md$/
+    );
+    assert.match(
+      resolveCourseFile("Communication Strategy", "BCOR 1030-018,019,024"),
+      /BCOR1030\.md$/
+    );
+    assert.match(
+      resolveCourseFile("COEN 1500 CEAS First Year Seminar", "COEN 1500-824,868 (2026-Fall)"),
+      /COEN1500\.md$/
+    );
+  });
+
+  it("still returns null for non-course roster entries", () => {
+    assert.equal(resolveCourseFile("Leeds First-Year Experience", "Leeds First-Year Experience Community"), null);
+    assert.equal(resolveCourseFile("ChatGPT Training - Students", "ChatGPT Training - Students"), null);
+  });
 });
 
 describe("stripHtmlTags and syllabusHash", () => {

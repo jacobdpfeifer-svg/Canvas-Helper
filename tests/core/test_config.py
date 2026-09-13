@@ -227,3 +227,41 @@ def test_scheme_check_ignores_defects_it_does_not_own(monkeypatch):
         monkeypatch.setenv("CANVAS_API_URL", url)
         config_module.reset_config()
         assert config_module.validate_canvas_url_scheme() is True, url
+
+
+@pytest.mark.parametrize(
+    "token",
+    [
+        "your_canvas_api_token_here",
+        "your-api-token",
+        "your…placeholder",
+        "changeme",
+        "placeholder",
+        "xxx",
+    ],
+)
+def test_is_placeholder_canvas_token_detects_templates(token):
+    assert config_module.is_placeholder_canvas_token(token) is True
+
+
+@pytest.mark.parametrize(
+    "token",
+    [
+        "test-token",
+        "test",
+        "a" * 40,
+        "17896~AbCdEfGhIjKlMnOpQrStUvWxYz0123456789",
+    ],
+)
+def test_is_placeholder_canvas_token_allows_non_templates(token):
+    assert config_module.is_placeholder_canvas_token(token) is False
+
+
+def test_validate_config_rejects_placeholder_token(monkeypatch):
+    monkeypatch.setenv("CANVAS_API_TOKEN", "your_canvas_api_token_here")
+    monkeypatch.setenv("CANVAS_API_URL", "https://canvas.school.edu/api/v1")
+    config_module.reset_config()
+    with patch.object(config_module, "log_error") as log_error:
+        assert config_module.validate_config() is False
+    messages = " ".join(str(c) for c in log_error.call_args_list)
+    assert "placeholder" in messages.lower() or "your_" in messages.lower() or "CANVAS_API_TOKEN" in messages

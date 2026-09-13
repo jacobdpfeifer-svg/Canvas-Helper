@@ -170,6 +170,12 @@ for (const cf of courseFiles) {
 
 const hasCoen = courses.some((c) => /coen\s*1500/i.test(c.name || c.course_code || ""));
 if (hasCoen) {
+  // Release our own persistent-profile lock before spawning children that
+  // launch against the same AUTH_DIR — otherwise their clearSingletonLocks()
+  // yanks the profile out from under whichever browser (ours or a sibling's)
+  // is still holding it, and one of the two fails with "Target page, context
+  // or browser has been closed".
+  await context.close();
   const browserDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
   for (const script of ["sync-coen-dinners.mjs", "sync-coen-ai-labs.mjs"]) {
     const proc = spawnSync("node", [`scripts/${script}`], {
@@ -181,6 +187,8 @@ if (hasCoen) {
       console.warn(`${script} exited non-zero — COEN signup cache may be stale`);
     }
   }
+} else {
+  await context.close();
 }
 
 console.log(
@@ -198,5 +206,3 @@ console.log(
   )
 );
 console.log("Review inbox/week.md, then ask for canvas-week-plan.");
-
-await context.close();
