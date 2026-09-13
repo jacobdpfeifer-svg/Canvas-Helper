@@ -156,4 +156,7 @@ browser/node_modules/
 # Per-user memory lives under {user_root}; never commit local forks of these
 /inbox/
 **/inbox/
+# Shipping blank templates under templates/inbox/ (not per-user data)
+!templates/inbox/
+!templates/inbox/**
 /.jacob/
