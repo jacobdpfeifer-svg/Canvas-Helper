@@ -1,10 +1,10 @@
-"""Apple Calendar MCP — read-only + blocked writes (canvas-focus pivot).
+"""Apple Calendar MCP — read-only + blocked writes.
 
-``create_event`` used to shell out to a Swift EventKit helper and actually
-write to the student's calendar. That's cut for the same reason as
-``mcp-servers/gcal/server.py``: this product does not act on a student's
-behalf, even on their own calendar. See
-``docs/handoff/canvas-focus-pivot-2026-09-11.md``.
+``create_event`` used to shell out to a Swift EventKit helper. That path stays
+hard-blocked: no working EventKit helper exists in this repo to wire up
+(engineering gap, not a policy choice). Personal Google Calendar writes are
+separate — gated + real via ``mcp-servers/gcal/server.py`` and the 2026-09-13
+addendum in ``docs/handoff/canvas-focus-pivot-2026-09-11.md``.
 """
 
 from __future__ import annotations

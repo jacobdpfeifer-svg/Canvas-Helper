@@ -74,17 +74,18 @@ def test_check_write_blocks_never_category(tmp_path, monkeypatch):
 
 def test_gate_automatic_proceeds_without_token(tmp_path):
     ensure_user_root(tmp_path)
-    _set_posture(tmp_path, "calendar", "automatic")
+    # Use a category that may be automatic (calendar/email_send are ALWAYS_GATED).
+    _set_posture(tmp_path, "email_triage", "automatic")
     gate = gate_connector_write(
         tmp_path,
-        "calendar",
-        connector_id="gcal",
-        tool="create_event",
-        fingerprint_parts=["Study", "2026-01-01T10:00:00", "2026-01-01T11:00:00", "why"],
-        preview_lines=["Summary: Study"],
+        "email_triage",
+        connector_id="gmail",
+        tool="apply_labels",
+        fingerprint_parts=["msg1", "INBOX", "why"],
+        preview_lines=["Apply labels"],
         confirmation_token=None,
-        actor="gcal",
-        target="Study",
+        actor="gmail",
+        target="msg1",
         why="why",
         log_block=False,
     )
@@ -321,6 +322,7 @@ def test_write_tools_no_longer_expose_confirmed_bool():
         gcal_server.update_event,
         gmail_server.create_draft,
         gmail_server.apply_labels,
+        gmail_server.send_email,
         apple_server.create_event,
     ):
         params = inspect.signature(fn).parameters

@@ -53,6 +53,16 @@ NEVER_AUTO: frozenset[str] = frozenset(
     }
 )
 
+# Always require per-instance human confirm — may be gated or never, never automatic.
+# Distinct from NEVER_AUTO (which forces posture "never"). Per the 2026-09-13
+# addendum to docs/handoff/canvas-focus-pivot-2026-09-11.md.
+ALWAYS_GATED: frozenset[str] = frozenset(
+    {
+        "calendar",
+        "email_send",
+    }
+)
+
 # Hard-refuse tool name fragments (router layer).
 PROCTORING_REFUSE: frozenset[str] = frozenset(
     {
@@ -193,6 +203,8 @@ def load_permissions(user_root: Path) -> PermissionsState:
         # Never-auto categories cannot be widened.
         if name in NEVER_AUTO:
             cats[name].posture = "never"
+        elif name in ALWAYS_GATED and cats[name].posture == "automatic":
+            cats[name].posture = "gated"
 
     courses: dict[str, dict[str, CategoryState]] = {}
     for cid, course_cats in (raw.get("courses") or {}).items():
@@ -206,6 +218,8 @@ def load_permissions(user_root: Path) -> PermissionsState:
             parsed = _parse_category(data, fallback)
             if name in NEVER_AUTO:
                 parsed.posture = "never"
+            elif name in ALWAYS_GATED and parsed.posture == "automatic":
+                parsed.posture = "gated"
             courses[str(cid)][name] = parsed
 
     return PermissionsState(
@@ -265,8 +279,12 @@ def resolve_posture(
     if is_global_stopped(state):
         return "never"
     if course_id and course_id in state.courses and category in state.courses[course_id]:
-        return state.courses[course_id][category].posture
-    return state.categories[category].posture
+        posture = state.courses[course_id][category].posture
+    else:
+        posture = state.categories[category].posture
+    if category in ALWAYS_GATED and posture == "automatic":
+        return "gated"
+    return posture
 
 
 def allow_write(
@@ -316,6 +334,7 @@ def bump_k_success(
             and cat.k_required > 0
             and cat.k_success >= cat.k_required
             and category not in NEVER_AUTO
+            and category not in ALWAYS_GATED
         ):
             cat.posture = "automatic"
         course_cats[category] = cat
@@ -327,6 +346,7 @@ def bump_k_success(
             and cat.k_required > 0
             and cat.k_success >= cat.k_required
             and category not in NEVER_AUTO
+            and category not in ALWAYS_GATED
         ):
             cat.posture = "automatic"
     return state
