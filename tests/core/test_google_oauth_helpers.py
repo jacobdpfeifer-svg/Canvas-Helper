@@ -147,11 +147,42 @@ def test_gmail_scopes_include_send():
     assert "https://www.googleapis.com/auth/gmail.send" in google_oauth.GMAIL_SCOPES
 
 
-def test_email_send_and_calendar_never_escalate_to_automatic():
+def test_email_send_and_calendar_never_escalate_to_automatic(tmp_path):
     """Per the 2026-09-13 addendum: no k-based auto-escalation, ever."""
-    from canvas_mcp.core.permissions import DEFAULT_K, DEFAULT_POSTURES
+    from canvas_mcp.core.permissions import (
+        ALWAYS_GATED,
+        DEFAULT_K,
+        DEFAULT_POSTURES,
+        load_permissions,
+        resolve_posture,
+    )
+    from canvas_mcp.core.user_root import ensure_user_root
 
     assert "email_send" not in DEFAULT_K
     assert "calendar" not in DEFAULT_K
     assert DEFAULT_POSTURES["email_send"] == "gated"
     assert DEFAULT_POSTURES["calendar"] == "gated"
+    assert "email_send" in ALWAYS_GATED
+    assert "calendar" in ALWAYS_GATED
+
+    ensure_user_root(tmp_path)
+    path = tmp_path / "calibration" / "permissions.yaml"
+    path.write_text(
+        "categories:\n"
+        "  email_send:\n"
+        "    posture: automatic\n"
+        "  calendar:\n"
+        "    posture: automatic\n"
+        "courses:\n"
+        "  c1:\n"
+        "    email_send:\n"
+        "      posture: automatic\n",
+        encoding="utf-8",
+    )
+    state = load_permissions(tmp_path)
+    assert state.categories["email_send"].posture == "gated"
+    assert state.categories["calendar"].posture == "gated"
+    assert state.courses["c1"]["email_send"].posture == "gated"
+    assert resolve_posture(state, "email_send") == "gated"
+    assert resolve_posture(state, "calendar") == "gated"
+    assert resolve_posture(state, "email_send", course_id="c1") == "gated"

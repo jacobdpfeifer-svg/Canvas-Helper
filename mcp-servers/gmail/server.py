@@ -1,4 +1,7 @@
-"""Gmail MCP — read + drafts + label/archive/star. No send in Phase 1.
+"""Gmail MCP — read + drafts + label/archive/star + gated send.
+
+``send_email`` executes for real only through ConfirmationGuard
+(preview → fingerprint-bound token → confirm). Never automatic.
 
 Live mode: ``GOOGLE_OAUTH_CLIENT_SECRETS`` + google-auth packages.
 Tokens under ``{user_root}/auth/google/token.json``. Dry-run otherwise.

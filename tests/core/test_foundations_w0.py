@@ -162,6 +162,20 @@ def test_bump_k_escalates(tmp_path):
     assert reloaded.courses["c1"]["canvas_submit"].k_success == 2
 
 
+def test_bump_k_cannot_escalate_always_gated():
+    state = default_permissions()
+    for cat in ("email_send", "calendar"):
+        state.categories[cat].k_required = 1
+        state.categories[cat].k_success = 0
+        state.categories[cat].posture = "gated"
+        state = bump_k_success(state, cat, course_id="c1")
+        assert state.courses["c1"][cat].posture == "gated"
+        assert state.courses["c1"][cat].k_success == 1
+        # Global path too
+        state = bump_k_success(state, cat)
+        assert state.categories[cat].posture == "gated"
+
+
 def test_refuse_proctoring():
     assert refuse_proctoring_tool("honorlock_launch")
     assert refuse_proctoring_tool("open_lockdown_browser")
