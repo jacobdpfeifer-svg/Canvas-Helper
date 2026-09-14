@@ -44,10 +44,10 @@ print(p)
 
 - If key is **not** in the registry → say: “I don’t have a precise diagram for this yet.” **Never** fall back to a generative image API for geometric correctness.
 
-### 3. Caption + optional analogy
+### 3. Caption + professional context
 
 - 1–2 sentence caption tied to the diagram (axes/labels that are actually on the PNG).
-- Optional **Why this matters** line: agent-authored plain-text analogy only. Label it as non-precision. Available to every student asking about the concept — not gated by learning style.
+- **Why this matters** — when the student asks, or on first exposure for this claim if they want professional context: follow [`../_claim_context.md`](../_claim_context.md) (live web search, ≥2 sourced applications across ≥2 fields, cite title + URL, refuse when thin). Do **not** invent unsourced analogies. Label applications as motivational framing, not geometric precision. Persist with `claim_context set` / `mark-shown`. If search is unavailable, skip context and still show the diagram + check.
 
 ### 4. Encode, then retrieve (never gates the diagram)
 
@@ -107,7 +107,10 @@ Read only. No submit tools from this skill.
 
 Caption: 1–2 sentences.
 
-Why this matters (analogy — not geometrically precise): …
+### Why this matters (sourced — motivational, not tested)
+- [field/role]: application summary — [source title](url)
+- [field/role]: application summary — [source title](url)
+(or: no strong professional application found for this claim)
 
 Check: label or regenerate the relation from memory (not a viewing question).
 ```
@@ -123,7 +126,8 @@ Check: label or regenerate the relation from memory (not a viewing question).
 - No third-party generative diagram/video (Higgsfield, DALL-E, etc.) on the correctness path
 - No VAK / learning-type classification
 - No live in-session struggle telemetry (Canvas SSO→REST does not expose it)
-- **Future (disabled by default):** a provider-agnostic `illustration_gen.generate_illustration(prompt) -> Path | None` hook that no-ops unless an API key env var is set — for motivational “why this matters” imagery only, always labeled illustrative, never for geometric/numeric correctness
+- Professional context uses live web search via [`../_claim_context.md`](../_claim_context.md) — text + citations only
+- **Future (disabled by default):** a provider-agnostic `illustration_gen.generate_illustration(prompt) -> Path | None` hook that no-ops unless an API key env var is set — for motivational imagery only, always labeled illustrative, never for geometric/numeric correctness
 
 ## Untrusted content
 

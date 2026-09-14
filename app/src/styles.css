@@ -441,6 +441,15 @@ button.icon-btn svg {
   border-top: 1px solid var(--divider);
 }
 
+.check-entry-lead {
+  order: -1;
+  padding-top: 0;
+  padding-bottom: 0.45rem;
+  border-top: none;
+  border-bottom: 1px solid var(--divider);
+}
+
+
 .check-intention,
 .check-chip {
   margin: 0;

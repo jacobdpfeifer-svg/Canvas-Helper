@@ -22,6 +22,8 @@ from canvas_mcp.core.learn_loop import (
     load_items,
     missing_evidence,
     progress_payload,
+    reconcile_checkpoints,
+    reconcile_from_inbox,
     record_evaluation_snapshot,
     record_outcome,
     render_due_reviews,
@@ -794,3 +796,177 @@ def test_stale_focus_recovers_one_overdue_item(tmp_path: Path) -> None:
     assert "## Practice" in block
     assert "Lab report" in block
     assert "missed brief" in block.lower() or "Do not mention a missed brief count." in block
+
+
+def test_add_item_checkpoint_date_change_reschedules(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    first = add_item(
+        root,
+        course="MATH",
+        claim="state the chain rule for composites",
+        kind="declarative",
+        assignment_id="9",
+        checkpoint_due="2026-09-28",
+        now=NOW,
+    )
+    # Advance schedule so gap is wider than a near-checkpoint window allows.
+    record_outcome(root, first.id, "hit", now=NOW + timedelta(days=2))
+    holding = load_items(root)[0]
+    assert holding.gap_days >= 3
+    prior_gap = holding.gap_days
+    again = add_item(
+        root,
+        course="MATH",
+        claim="state the chain rule for composites",
+        kind="declarative",
+        assignment_id="9",
+        checkpoint_due="2026-09-10",
+        now=NOW + timedelta(days=2),
+    )
+    assert again.id == first.id
+    assert again.checkpoint_due == "2026-09-10"
+    assert again.stability == "holding"
+    assert again.gap_days < prior_gap
+    assert again.gap_days <= 1
+
+
+def test_readd_same_checkpoint_does_not_reschedule(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    first = add_item(
+        root,
+        course="MATH",
+        claim="state the product rule for derivatives",
+        kind="declarative",
+        assignment_id="9",
+        checkpoint_due="2026-09-20",
+        now=NOW,
+    )
+    again = add_item(
+        root,
+        course="MATH",
+        claim="state the product rule for derivatives",
+        kind="declarative",
+        assignment_id="9",
+        checkpoint_due="2026-09-20",
+        now=NOW + timedelta(days=2),
+    )
+    assert again.next_review_at == first.next_review_at
+    assert again.gap_days == first.gap_days
+
+
+def test_reconcile_checkpoints_preserves_stability(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    item = add_item(
+        root,
+        course="MATH",
+        claim="state the quotient rule for derivatives",
+        kind="declarative",
+        checkpoint_due="2026-09-28",
+        now=NOW,
+    )
+    record_outcome(root, item.id, "hit", now=NOW + timedelta(days=2))
+    holding = load_items(root)[0]
+    assert holding.stability == "holding"
+    prior_gap = holding.gap_days
+    prior_next = holding.next_review_at
+    # Move checkpoint closer so gap / next_review must shrink vs the far date.
+    updated = reconcile_checkpoints(
+        root,
+        [{"course": "MATH", "from_due": "2026-09-28", "to_due": "2026-09-10"}],
+        now=NOW + timedelta(days=3),
+    )
+    assert updated == 1
+    again = load_items(root)[0]
+    assert again.checkpoint_due == "2026-09-10"
+    assert again.stability == "holding"
+    assert again.last_outcome == "hit"
+    assert again.gap_days < prior_gap
+    assert again.gap_days <= 1
+    assert again.next_review_at != prior_next
+    assert again.next_review_at is not None
+    # Near-checkpoint reschedule pulls the next review forward vs the far date.
+    assert again.next_review_at < prior_next
+
+
+def test_reconcile_from_inbox_unambiguous_remap(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    courses = root / "inbox" / "courses"
+    courses.mkdir(parents=True, exist_ok=True)
+    (courses / "MATH.md").write_text(
+        "# MATH\n\n## Checkpoints\n\n"
+        "- **Midterm** — due 2026-10-05 09:00; 100 pts (quiz)\n\n"
+        "## Assignment catalog\n\n-\n",
+        encoding="utf-8",
+    )
+    add_item(
+        root,
+        course="MATH",
+        claim="state the chain rule for composites",
+        kind="declarative",
+        checkpoint_due="2026-09-20",
+        now=NOW,
+    )
+    result = reconcile_from_inbox(root, now=NOW)
+    assert result["updated"] == 1
+    assert result["remaps"] == [
+        {"course": "MATH", "from_due": "2026-09-20", "to_due": "2026-10-05"}
+    ]
+    assert load_items(root)[0].checkpoint_due == "2026-10-05"
+
+
+def test_reconcile_from_inbox_ambiguous_noop(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    courses = root / "inbox" / "courses"
+    courses.mkdir(parents=True, exist_ok=True)
+    (courses / "MATH.md").write_text(
+        "# MATH\n\n## Checkpoints\n\n"
+        "- **Quiz 1** — due 2026-09-15 09:00; 50 pts (quiz)\n"
+        "- **Midterm** — due 2026-10-05 09:00; 100 pts (quiz)\n\n"
+        "## Assignment catalog\n\n-\n",
+        encoding="utf-8",
+    )
+    add_item(
+        root,
+        course="MATH",
+        claim="state the chain rule for composites",
+        kind="declarative",
+        checkpoint_due="2026-09-20",
+        now=NOW,
+    )
+    add_item(
+        root,
+        course="MATH",
+        claim="state the product rule for derivatives",
+        kind="declarative",
+        checkpoint_due="2026-09-22",
+        now=NOW,
+    )
+    result = reconcile_from_inbox(root, now=NOW)
+    assert result["updated"] == 0
+    assert result["skipped"]
+    dues = {item.checkpoint_due for item in load_items(root)}
+    assert dues == {"2026-09-20", "2026-09-22"}
+
+
+def test_reconcile_cli_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    root = _root(tmp_path)
+    courses = root / "inbox" / "courses"
+    courses.mkdir(parents=True, exist_ok=True)
+    (courses / "MATH.md").write_text(
+        "# MATH\n\n## Checkpoints\n\n"
+        "- **Midterm** — due 2026-10-01; 100 pts (quiz)\n\n"
+        "## Assignment catalog\n\n-\n",
+        encoding="utf-8",
+    )
+    add_item(
+        root,
+        course="MATH",
+        claim="state the chain rule for composites",
+        kind="declarative",
+        checkpoint_due="2026-09-18",
+        now=NOW,
+    )
+    assert learn_loop_main(["--user-root", str(root), "--json", "reconcile"]) == 0
+    out = capsys.readouterr().out
+    payload = __import__("json").loads(out)
+    assert payload["updated"] == 1

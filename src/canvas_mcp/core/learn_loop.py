@@ -89,11 +89,13 @@ class LearnItem:
     created_at: str = ""
     gap_days: int = 1
     start_with_example: bool = False
+    professional_context: list[dict[str, str]] | None = None
+    context_shown: bool = False
     # Set only on the returned object after a delayed hit. Not written to yaml.
     stability_delta: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "id": self.id,
             "course": self.course,
             "claim": self.claim,
@@ -108,7 +110,11 @@ class LearnItem:
             "created_at": self.created_at,
             "gap_days": self.gap_days,
             "start_with_example": self.start_with_example,
+            "context_shown": self.context_shown,
         }
+        if self.professional_context:
+            payload["professional_context"] = list(self.professional_context)
+        return payload
 
 
 def items_path(user_root: Path) -> Path:
@@ -246,7 +252,27 @@ def _parse_item(raw: dict[str, Any]) -> LearnItem | None:
         created_at=str(raw.get("created_at") or ""),
         gap_days=int(raw.get("gap_days") or 1),
         start_with_example=bool(raw.get("start_with_example")),
+        professional_context=_parse_professional_context(raw.get("professional_context")),
+        context_shown=bool(raw.get("context_shown")),
     )
+
+
+def _parse_professional_context(raw: Any) -> list[dict[str, str]]:
+    if not isinstance(raw, list):
+        return []
+    rows: list[dict[str, str]] = []
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        rows.append(
+            {
+                "application": str(entry.get("application") or "").strip(),
+                "field": str(entry.get("field") or "").strip(),
+                "source_title": str(entry.get("source_title") or "").strip(),
+                "source_url": str(entry.get("source_url") or "").strip(),
+            }
+        )
+    return rows
 
 
 def load_items(user_root: Path) -> list[LearnItem]:
@@ -334,7 +360,10 @@ def add_item(
             existing.kind = kind
             existing.assignment_id = assignment_id.strip()
             if checkpoint_due:
-                existing.checkpoint_due = _parse_date(checkpoint_due).isoformat()  # type: ignore[union-attr]
+                new_due = _parse_date(checkpoint_due)
+                new_iso = new_due.isoformat() if new_due else None
+                if new_iso and new_iso != existing.checkpoint_due:
+                    _reschedule_for_checkpoint(existing, new_iso, now=moment)
             _write_items(user_root, items)
             return existing
 
@@ -356,6 +385,149 @@ def add_item(
     items.append(created)
     _write_items(user_root, items)
     return created
+
+
+def _reschedule_for_checkpoint(
+    item: LearnItem,
+    new_due: str | None,
+    *,
+    now: datetime | None = None,
+) -> LearnItem:
+    """Move ``checkpoint_due`` and re-derive gap / next review. Preserve evidence."""
+    moment = now or _utcnow()
+    exam = _parse_date(new_due)
+    item.checkpoint_due = exam.isoformat() if exam else None
+    days_until = _days_until(item.checkpoint_due, moment)
+
+    if (
+        item.stability == "durable"
+        and days_until is not None
+        and days_until <= PRE_EXAM_DAYS
+    ):
+        item.gap_days = 0
+        item.next_review_at = _pre_exam_at(item.checkpoint_due, moment).isoformat()
+        return item
+
+    gap = _cap_gap(max(item.gap_days, _first_gap_days(days_until)), days_until)
+    item.gap_days = gap
+    anchor = (
+        _parse_iso(item.last_reviewed_at)
+        or _parse_iso(item.created_at)
+        or moment
+    )
+    nxt = _review_at(anchor, gap)
+    if nxt < moment:
+        nxt = moment
+    if exam is not None and nxt.date() >= exam:
+        nxt = _pre_exam_at(item.checkpoint_due, moment)
+    item.next_review_at = nxt.isoformat()
+    return item
+
+
+def reconcile_checkpoints(
+    user_root: Path,
+    remaps: list[dict[str, str]],
+    *,
+    now: datetime | None = None,
+) -> int:
+    """Apply ``{course, from_due, to_due}`` remaps. Return count of items updated."""
+    moment = now or _utcnow()
+    items = load_items(user_root)
+    updated = 0
+    for remap in remaps:
+        course = str(remap.get("course") or "").strip()
+        from_due = _parse_date(remap.get("from_due"))
+        to_due = _parse_date(remap.get("to_due"))
+        if not course or from_due is None or to_due is None:
+            continue
+        from_iso = from_due.isoformat()
+        to_iso = to_due.isoformat()
+        if from_iso == to_iso:
+            continue
+        for item in items:
+            if item.course.strip().lower() != course.lower():
+                continue
+            if item.checkpoint_due != from_iso:
+                continue
+            _reschedule_for_checkpoint(item, to_iso, now=moment)
+            updated += 1
+    if updated:
+        _write_items(user_root, items)
+    return updated
+
+
+_CHECKPOINT_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+
+
+def _parse_checkpoint_dates(course_md: str) -> set[str]:
+    """YYYY-MM-DD tokens under ``## Checkpoints`` only."""
+    text = course_md or ""
+    marker = "## Checkpoints"
+    idx = text.find(marker)
+    if idx < 0:
+        return set()
+    after = text[idx + len(marker) :]
+    next_heading = re.search(r"\n##\s+", after)
+    body = after[: next_heading.start()] if next_heading else after
+    return {m.group(1) for m in _CHECKPOINT_DATE_RE.finditer(body)}
+
+
+def reconcile_from_inbox(
+    user_root: Path,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Remap item dates when exactly one checkpoint date moved per course.
+
+    Unambiguous only: one item-date missing from live checkpoints and one live
+    checkpoint date unused by items → remap that pair. Otherwise skip.
+    """
+    moment = now or _utcnow()
+    courses_dir = Path(user_root) / "inbox" / "courses"
+    remaps: list[dict[str, str]] = []
+    skipped: list[dict[str, str]] = []
+    if not courses_dir.is_dir():
+        return {"updated": 0, "remaps": [], "skipped": []}
+
+    items = load_items(user_root)
+    for path in sorted(courses_dir.glob("*.md")):
+        if path.name.startswith("_"):
+            continue
+        code = path.stem
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        live = _parse_checkpoint_dates(text)
+        if not live:
+            continue
+        item_dues = {
+            item.checkpoint_due
+            for item in items
+            if item.course.strip().lower() == code.lower() and item.checkpoint_due
+        }
+        missing = item_dues - live
+        unused = live - item_dues
+        if len(missing) == 1 and len(unused) == 1:
+            remaps.append(
+                {
+                    "course": code,
+                    "from_due": next(iter(missing)),
+                    "to_due": next(iter(unused)),
+                }
+            )
+        elif missing:
+            skipped.append(
+                {
+                    "course": code,
+                    "reason": "ambiguous checkpoint move",
+                    "missing": ",".join(sorted(missing)),
+                    "unused": ",".join(sorted(unused)),
+                }
+            )
+
+    updated = reconcile_checkpoints(user_root, remaps, now=moment) if remaps else 0
+    return {"updated": updated, "remaps": remaps, "skipped": skipped}
 
 
 def _substantial_gap(gap_days: int, item: LearnItem, moment: datetime) -> bool:
@@ -1175,6 +1347,8 @@ def due_reviews_payload(
         row = item.to_dict()
         card = {key: row[key] for key in _DUE_JSON_FIELDS}
         card.update(_card_fields(item, moment))
+        # Professional context stays skill-path only (opt-in); do not inject
+        # into every due card — see skills/_claim_context.md.
         items.append(card)
     surface = practice_surface(user_root, week_md=week_md, now=moment)
     obstacle = ""
@@ -1542,6 +1716,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Diff the last two recorded snapshots; not a causal claim",
     )
 
+    sub.add_parser(
+        "reconcile",
+        help="Remap claim checkpoint dates from inbox/courses Checkpoints",
+    )
+
     args = parser.parse_args(argv)
     root = args.user_root or resolve_user_root("dev", create=True)
 
@@ -1605,6 +1784,17 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(compared))
             return 0 if compared.get("ok") else 1
         print(json.dumps(snap))
+        return 0
+    if args.cmd == "reconcile":
+        result = reconcile_from_inbox(root)
+        if args.json:
+            print(json.dumps(result))
+        else:
+            print(
+                f"updated={result['updated']} "
+                f"remaps={len(result['remaps'])} "
+                f"skipped={len(result['skipped'])}"
+            )
         return 0
     if args.json:
         print(json.dumps(due_reviews_payload(root)))

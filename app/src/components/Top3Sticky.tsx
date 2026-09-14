@@ -10,6 +10,13 @@ export function nearestCheckpoint(
   return [...dated].sort()[0];
 }
 
+/** Short session estimate from the due-review cap (1→~5 min, 2→~10 min). */
+export function checkSessionLabel(dueCount: number): string {
+  if (dueCount <= 0) return "";
+  if (dueCount === 1) return "Start 1 check · ~5 min";
+  return `Start ${dueCount} checks · ~10 min`;
+}
+
 export function Top3Sticky({
   items,
   onExpand,
@@ -41,16 +48,39 @@ export function Top3Sticky({
   loading?: boolean;
   updating?: boolean;
 }) {
-  const checks =
-    dueCount === 1
-      ? "Start 1 check · ~2 min"
-      : `Start ${dueCount} checks · ~2 min`;
-
-  const secondary = [trailLine, healthLine, budgetLine].filter(Boolean);
+  const checks = checkSessionLabel(dueCount);
+  const hasDue = dueCount > 0;
+  // When checks are due, continuity/health stay secondary so the session CTA leads.
+  const secondary = hasDue
+    ? [budgetLine, trailLine, healthLine, streakLine].filter(Boolean)
+    : [trailLine, healthLine, budgetLine].filter(Boolean);
   const visible = items.slice(0, 3);
+
+  const checkEntry =
+    !loading && hasDue && onStartCheck ? (
+      <div className="check-entry check-entry-lead">
+        {ifThen && <p className="check-intention">{ifThen}</p>}
+        {obstacle && <p className="check-intention">{obstacle}</p>}
+        {practiceLine && <p className="meta-secondary">{practiceLine}</p>}
+        {checkpointDue && (
+          <p className="meta-secondary">before {checkpointDue}</p>
+        )}
+        <button
+          type="button"
+          className="check-start"
+          onClick={(e) => {
+            e.stopPropagation();
+            onStartCheck();
+          }}
+        >
+          {checks}
+        </button>
+      </div>
+    ) : null;
 
   return (
     <div className="today-stack">
+      {checkEntry}
       <section
         className="top3"
         onClick={onExpand}
@@ -97,7 +127,12 @@ export function Top3Sticky({
         ) : (
           <>
             <div className="meta-stack">
-              {streakLine ? <p className="meta-primary">{streakLine}</p> : null}
+              {!hasDue && streakLine ? (
+                <p className="meta-primary">{streakLine}</p>
+              ) : null}
+              {hasDue && checks ? (
+                <p className="meta-primary">{dueCount === 1 ? "1 check due" : `${dueCount} checks due`}</p>
+              ) : null}
               {secondary.map((line) => (
                 <p key={line} className="meta-secondary">
                   {line}
@@ -122,26 +157,6 @@ export function Top3Sticky({
           </>
         )}
       </section>
-      {!loading && dueCount > 0 && onStartCheck && (
-        <div className="check-entry">
-          {ifThen && <p className="check-intention">{ifThen}</p>}
-          {obstacle && <p className="check-intention">{obstacle}</p>}
-          {practiceLine && <p className="meta-secondary">{practiceLine}</p>}
-          {checkpointDue && (
-            <p className="meta-secondary">before {checkpointDue}</p>
-          )}
-          <button
-            type="button"
-            className="check-start"
-            onClick={(e) => {
-              e.stopPropagation();
-              onStartCheck();
-            }}
-          >
-            {checks}
-          </button>
-        </div>
-      )}
     </div>
   );
 }
