@@ -114,6 +114,8 @@ If the student says “quiz me” / “walk me through”, record it with `pytho
 
 When you name a Do-first item, write the focus handoff the same way task-brief does (`teach_hint write-focus`). When a quiz, exam, or concept feeds a checkpoint, `learn_loop add` each claim (not `write-nudge`, not a checklist).
 
+When the student asks why a claim matters professionally (or asks for real-world context), follow [`../_claim_context.md`](../_claim_context.md) — live search, ≥2 sourced applications, cache on the claim. Do not research professional context on every `learn_loop add`.
+
 ### 7. Optional — persist arc notes
 
 After a full arc briefing, append or update **Arc notes** in `inbox/courses/CODE.md` with Learn/Builds-on edges for items analyzed (keep concise). Do **not** overwrite sync-owned **Assignment catalog** or **Checkpoints** sections. Keep the `prior_knowledge:` line when you rewrite arc notes.

@@ -172,6 +172,38 @@ for (const cf of courseFiles) {
 const gradesWrite = writeGradesYaml(courses, { today });
 console.log(`Wrote ${gradesWrite.path} (courses=${gradesWrite.count})`);
 
+// Best-effort: remap learn-loop checkpoint_due when a quiz/exam date moved.
+{
+  const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+  const proc = spawnSync(
+    "uv",
+    ["run", "python", "-m", "canvas_mcp.core.learn_loop", "reconcile", "--json"],
+    {
+      cwd: repoRoot,
+      encoding: "utf8",
+      env: process.env,
+    }
+  );
+  if (proc.status !== 0) {
+    console.warn(
+      `learn_loop reconcile exited non-zero — checkpoint drift may be stale${
+        proc.stderr ? `: ${String(proc.stderr).trim()}` : ""
+      }`
+    );
+  } else if (proc.stdout) {
+    try {
+      const result = JSON.parse(String(proc.stdout).trim().split("\n").pop());
+      if (result.updated) {
+        console.log(
+          `Reconciled ${result.updated} learn item(s) for moved checkpoints`
+        );
+      }
+    } catch {
+      /* ignore parse noise */
+    }
+  }
+}
+
 const hasCoen = courses.some((c) => /coen\s*1500/i.test(c.name || c.course_code || ""));
 if (hasCoen) {
   // Release our own persistent-profile lock before spawning children that
