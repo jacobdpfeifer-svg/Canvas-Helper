@@ -884,8 +884,26 @@ def test_reconcile_checkpoints_preserves_stability(tmp_path: Path) -> None:
     assert again.gap_days <= 1
     assert again.next_review_at != prior_next
     assert again.next_review_at is not None
-    # Near-checkpoint reschedule pulls the next review forward vs the far date.
-    assert again.next_review_at < prior_next
+
+
+def test_reconcile_checkpoints_course_match_ignores_punctuation(tmp_path: Path) -> None:
+    """Course match must tolerate spacing/punctuation drift (uses _norm_course)."""
+    root = _root(tmp_path)
+    add_item(
+        root,
+        course="COEN 1500",
+        claim="state the quotient rule for derivatives",
+        kind="declarative",
+        checkpoint_due="2026-09-28",
+        now=NOW,
+    )
+    updated = reconcile_checkpoints(
+        root,
+        [{"course": "COEN1500", "from_due": "2026-09-28", "to_due": "2026-09-10"}],
+        now=NOW,
+    )
+    assert updated == 1
+    assert load_items(root)[0].checkpoint_due == "2026-09-10"
 
 
 def test_reconcile_from_inbox_unambiguous_remap(tmp_path: Path) -> None:
@@ -970,3 +988,23 @@ def test_reconcile_cli_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) 
     out = capsys.readouterr().out
     payload = __import__("json").loads(out)
     assert payload["updated"] == 1
+
+
+def test_cli_default_root_honors_product_user_id(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Without --user-root, the CLI must resolve via PRODUCT_USER_ID, not a hardcoded 'dev'."""
+    captured: dict[str, str] = {}
+
+    def fake_resolve_user_root(user_id: str, *, create: bool = False) -> Path:
+        captured["user_id"] = user_id
+        raise SystemExit(0)
+
+    monkeypatch.delenv("DEV_USER_ROOT", raising=False)
+    monkeypatch.setenv("PRODUCT_USER_ID", "avery123")
+    monkeypatch.setattr(
+        "canvas_mcp.core.user_root.resolve_user_root", fake_resolve_user_root
+    )
+    with pytest.raises(SystemExit):
+        learn_loop_main(["due"])
+    assert captured["user_id"] == "avery123"

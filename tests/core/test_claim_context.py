@@ -13,12 +13,14 @@ from canvas_mcp.core.claim_context import (
     context_for_display,
     context_skill_rules,
     is_refusal_rows,
-    main as claim_context_main,
     mark_context_shown,
     needs_context,
     refusal_rows,
     set_professional_context,
     validate_professional_context,
+)
+from canvas_mcp.core.claim_context import (
+    main as claim_context_main,
 )
 from canvas_mcp.core.learn_loop import add_item, due_reviews_payload, load_items
 from canvas_mcp.core.user_root import ensure_user_root
@@ -85,6 +87,11 @@ def test_validate_rejects_incomplete_rows() -> None:
                 },
             ]
         )
+
+
+def test_validate_rejects_non_dict_rows() -> None:
+    with pytest.raises(ValueError, match="JSON object"):
+        validate_professional_context(["a", "b"])
 
 
 def test_refusal_sentinel(tmp_path: Path) -> None:
@@ -220,3 +227,25 @@ def test_cli_set_malformed_json_reports_error_not_traceback(
         == 1
     )
     assert capsys.readouterr().err.strip()
+
+
+def test_cli_set_non_dict_rows_reports_error_not_traceback(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """--rows '["a","b"]' is valid JSON but the wrong shape; must not crash."""
+    root = _root(tmp_path)
+    item = add_item(
+        root,
+        course="MATH",
+        claim="state the quotient rule for derivatives",
+        kind="declarative",
+        checkpoint_due="2026-09-20",
+        now=NOW,
+    )
+    assert (
+        claim_context_main(
+            ["--user-root", str(root), "set", "--id", item.id, "--rows", '["a","b"]']
+        )
+        == 1
+    )
+    assert "JSON object" in capsys.readouterr().err

@@ -6,8 +6,9 @@ import {
   openCanvasSso,
   saveLearningProfile,
   saveOnboarding,
+  saveUserProfile,
 } from "../ipc";
-import type { LearningProfileAnswers } from "../ipc";
+import type { LearningProfileAnswers, OnboardingIdentity } from "../ipc";
 import { AutonomyGame, type Autonomy } from "./learningProfile/AutonomyGame";
 import {
   ChunkSizeGame,
@@ -26,7 +27,6 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [school, setSchool] = useState("cu-boulder");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [cloudKey, setCloudKey] = useState("");
-  const [priorities, setPriorities] = useState("");
   const [sentryOptIn, setSentryOptIn] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState("");
   const [ssoBusy, setSsoBusy] = useState(false);
@@ -36,6 +36,25 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   >("pending");
   const [finishError, setFinishError] = useState<string | null>(null);
   const [finishing, setFinishing] = useState(false);
+
+  // Profile step — feeds USER.md's Identity/Program/Interests/Academic
+  // floors/Career priorities sections (see canvas_mcp.core.user_profile).
+  const [studentName, setStudentName] = useState("");
+  const [major, setMajor] = useState("");
+  const [catalogYear, setCatalogYear] = useState("");
+  const [targetGradTerm, setTargetGradTerm] = useState("");
+  const [interest1, setInterest1] = useState("");
+  const [interest2, setInterest2] = useState("");
+  const [interest3, setInterest3] = useState("");
+  const [careerPriority1, setCareerPriority1] = useState("");
+  const [careerPriority2, setCareerPriority2] = useState("");
+  const [careerPriority3, setCareerPriority3] = useState("");
+  const [goodStandingGpa, setGoodStandingGpa] = useState("");
+  const [otherNotes, setOtherNotes] = useState("");
+  const [profileSaveError, setProfileSaveError] = useState<string | null>(
+    null
+  );
+  const [profileSaveBusy, setProfileSaveBusy] = useState(false);
 
   // Learning profile games — functional levers, not VAK labels.
   const [practiceFormat, setPracticeFormat] = useState<PracticeFormat | null>(
@@ -49,6 +68,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [checkFirst, setCheckFirst] = useState(false);
 
   const isWaitlist = school === "waitlist";
+  const visibleStepCount = isWaitlist ? 2 : STEP_COUNT;
 
   // On reaching the Canvas step (CU only), silently check for an already-open
   // session (browser/.auth cookies) before asking the student to sign in.
@@ -105,15 +125,29 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       <p className="onboarding-step-label">Private beta · codename</p>
       <div
         className="onboarding-steps"
-        aria-label={`Step ${step + 1} of ${STEP_COUNT}`}
+        aria-label={`Step ${step + 1} of ${visibleStepCount}`}
       >
-        {Array.from({ length: STEP_COUNT }, (_, i) => (
+        {Array.from({ length: visibleStepCount }, (_, i) => (
           <span
             key={i}
             className={i === step ? "active" : i < step ? "done" : undefined}
           />
         ))}
       </div>
+
+      {step > 0 && (
+        <button
+          type="button"
+          className="onboarding-back"
+          onClick={() => {
+            setStep((current) => Math.max(0, current - 1));
+            setSsoError(null);
+            setFinishError(null);
+          }}
+        >
+          ← Back
+        </button>
+      )}
 
       <div className="onboarding-body">
         {step === 0 && (
@@ -210,7 +244,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           <>
             <p className="onboarding-step-label">Canvas</p>
             {sessionCheck === "checking" || sessionCheck === "pending" ? (
-              <p>Checking for an open Canvas session…</p>
+              <p role="status">Checking for an open Canvas session…</p>
             ) : (
               <>
                 <p>Sign into Canvas (SSO opens in the browser helper)</p>
@@ -240,24 +274,155 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                     {ssoError} — fix the session, then try again.
                   </p>
                 )}
+                {sessionCheck === "not-found" && !ssoError && (
+                  <p className="onboarding-help">
+                    No open session found yet. You can sign in above, then use
+                    the same button again if the browser helper did not return.
+                  </p>
+                )}
               </>
             )}
           </>
         )}
         {step === 3 && !isWaitlist && (
           <>
-            <p className="onboarding-step-label">Priorities</p>
-            <p>Rank career priorities · values · throwaway courses</p>
-            <textarea
-              placeholder="e.g. startup > software > ops"
-              rows={3}
-              value={priorities}
-              onChange={(e) => setPriorities(e.target.value)}
-              aria-label="Career and course priorities"
+            <p className="onboarding-step-label">Profile</p>
+            <p>
+              This fills in USER.md — the GPA and course-planning skills read
+              it, so a few real answers here beat leaving it blank. Everything
+              is optional and editable later.
+            </p>
+            <input
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="Your name"
+              aria-label="Name"
             />
-            <button type="button" className="primary" onClick={() => setStep(4)}>
-              Continue
+            <input
+              value={major}
+              onChange={(e) => setMajor(e.target.value)}
+              placeholder="Declared major(s)"
+              aria-label="Declared major(s)"
+            />
+            <div className="onboarding-row">
+              <input
+                value={catalogYear}
+                onChange={(e) => setCatalogYear(e.target.value)}
+                placeholder="Catalog year (e.g. 2025)"
+                aria-label="Catalog year"
+              />
+              <input
+                value={targetGradTerm}
+                onChange={(e) => setTargetGradTerm(e.target.value)}
+                placeholder="Target grad term (e.g. Spring 2028)"
+                aria-label="Target grad term"
+              />
+            </div>
+            <p className="onboarding-help">Interests, ranked (optional)</p>
+            <div className="onboarding-row">
+              <input
+                value={interest1}
+                onChange={(e) => setInterest1(e.target.value)}
+                placeholder="1. e.g. backend infra"
+                aria-label="Interest 1"
+              />
+              <input
+                value={interest2}
+                onChange={(e) => setInterest2(e.target.value)}
+                placeholder="2."
+                aria-label="Interest 2"
+              />
+              <input
+                value={interest3}
+                onChange={(e) => setInterest3(e.target.value)}
+                placeholder="3."
+                aria-label="Interest 3"
+              />
+            </div>
+            <p className="onboarding-help">Career priorities, ranked (optional)</p>
+            <div className="onboarding-row">
+              <input
+                value={careerPriority1}
+                onChange={(e) => setCareerPriority1(e.target.value)}
+                placeholder="1. e.g. startup"
+                aria-label="Career priority 1"
+              />
+              <input
+                value={careerPriority2}
+                onChange={(e) => setCareerPriority2(e.target.value)}
+                placeholder="2. e.g. software"
+                aria-label="Career priority 2"
+              />
+              <input
+                value={careerPriority3}
+                onChange={(e) => setCareerPriority3(e.target.value)}
+                placeholder="3. e.g. ops"
+                aria-label="Career priority 3"
+              />
+            </div>
+            <input
+              value={goodStandingGpa}
+              onChange={(e) => setGoodStandingGpa(e.target.value)}
+              placeholder="Good-standing target GPA (default 2.0)"
+              aria-label="Good-standing target GPA"
+            />
+            <textarea
+              placeholder="Transfer / AP / prior credit notes (optional)"
+              rows={3}
+              value={otherNotes}
+              onChange={(e) => setOtherNotes(e.target.value)}
+              aria-label="Transfer and prior credit notes"
+            />
+            <p className="onboarding-help">
+              Values and throwaway courses stay in USER.md for later editing —
+              this box only writes Transfer / credit notes. The same text is
+              also kept as priorities.txt when you finish onboarding.
+            </p>
+            <button
+              type="button"
+              className="primary"
+              disabled={profileSaveBusy}
+              onClick={() => {
+                const interests = [interest1, interest2, interest3].filter(
+                  (v) => v.trim()
+                );
+                const careerPriorities = [
+                  careerPriority1,
+                  careerPriority2,
+                  careerPriority3,
+                ].filter((v) => v.trim());
+                // Institution is resolved from schools/{slug}.yaml in
+                // user_profile when left blank — keep the TS payload empty
+                // so the Python writer owns the registry lookup.
+                const identity: OnboardingIdentity = {
+                  name: studentName,
+                  institution: "",
+                  schoolSlug: school,
+                  major,
+                  minor: "",
+                  catalogYear,
+                  targetGradTerm,
+                  interests,
+                  goodStandingGpa,
+                  scholarshipMinGpa: "",
+                  careerPriorities,
+                  values: [],
+                  transferNotes: otherNotes,
+                };
+                setProfileSaveBusy(true);
+                setProfileSaveError(null);
+                saveUserProfile(identity)
+                  .then(() => setStep(4))
+                  .catch((e) => {
+                    console.error(e);
+                    setProfileSaveError(String(e));
+                  })
+                  .finally(() => setProfileSaveBusy(false));
+              }}
+            >
+              {profileSaveBusy ? "Saving…" : "Continue"}
             </button>
+            {profileSaveError && <p className="error">{profileSaveError}</p>}
           </>
         )}
         {step === 4 && !isWaitlist && (
@@ -293,7 +458,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                 checked={checkFirst}
                 onChange={(e) => setCheckFirst(e.target.checked)}
               />{" "}
-              When I open the dock, I do the 2-minute check first.
+              When I open the dock, I do the 5-minute check first.
             </label>
 
             <button
@@ -308,7 +473,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                   chunkSize,
                   checkDepth,
                   ifThen: checkFirst
-                    ? "When I open the dock, I do the 2-minute check first."
+                    ? "When I open the dock, I do the 5-minute check first."
                     : "",
                 };
                 setProfileSaving(true);
@@ -363,7 +528,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                 setFinishing(true);
                 setFinishError(null);
                 saveOnboarding(school, cloudKey.trim(), {
-                  priorities,
+                  priorities: otherNotes,
                   sentryOptIn,
                 })
                   .then(() => onDone())

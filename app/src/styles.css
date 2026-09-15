@@ -449,7 +449,6 @@ button.icon-btn svg {
   border-bottom: 1px solid var(--divider);
 }
 
-
 .check-intention,
 .check-chip {
   margin: 0;
@@ -634,6 +633,35 @@ button.icon-btn svg {
   flex-direction: column;
   gap: 0.65rem;
   flex: 1;
+}
+
+.onboarding-back {
+  align-self: flex-start;
+  border-color: transparent;
+  color: var(--muted);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.onboarding-back:hover:not(:disabled) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--fg);
+}
+
+.onboarding-help {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.onboarding-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.onboarding-row input {
+  flex: 1;
+  min-width: 0;
 }
 
 .legal-sheet {

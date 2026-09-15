@@ -9,6 +9,7 @@ fn main() {
             "open_canvas_sso",
             "save_onboarding",
             "save_learning_profile",
+            "save_user_profile",
             "read_due_reviews",
             "read_brief_streak",
             "read_learn_progress",

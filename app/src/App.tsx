@@ -236,6 +236,17 @@ export function App() {
     };
   }, [onboarded]);
 
+  useEffect(() => {
+    const onShortcut = (event: KeyboardEvent) => {
+      if (event.altKey && event.code === "Space") {
+        event.preventDefault();
+        setPaletteOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, []);
+
   if (!onboarded) {
     return (
       <Onboarding

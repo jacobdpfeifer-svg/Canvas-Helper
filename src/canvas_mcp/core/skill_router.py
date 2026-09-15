@@ -353,13 +353,58 @@ def _provider_embed(text: str) -> list[float] | None:
     return get_provider("fast").embed(text)
 
 
+# Keyword-path only: tokens that appear in many ## Triggers phrases and
+# add noise when double-counted as a trigger-vocab bonus (e.g. "my").
+_KEYWORD_BONUS_STOPWORDS = frozenset(
+    {
+        "a",
+        "an",
+        "and",
+        "for",
+        "in",
+        "my",
+        "of",
+        "on",
+        "or",
+        "the",
+        "to",
+        "with",
+    }
+)
+
+# When second_place / best_score is at or above this ratio, keyword fallback
+# refuses to pick a winner (ambiguous). Keyword scores are small integers, so
+# this is a relative gap — not the same math as embedding COSINE_MARGIN
+# (absolute cosine delta). Tuned to refuse ≤2:1 leads (e.g. 2 vs 1).
+KEYWORD_AMBIGUOUS_RATIO = 0.5
+
+
 def _keyword_scores(skills: list[SkillMeta], trigger: str) -> list[tuple[float, SkillMeta]]:
-    needle = trigger.lower()
-    tokens = [tok for tok in needle.split() if tok]
+    """Whole-word overlap against each skill's doc, with a trigger-vocabulary bonus.
+
+    Word-boundary tokens (not substring containment) so e.g. "triage" in the
+    query never matches "triages" in unrelated prose. A query word that also
+    appears in the skill's *own* explicit trigger phrases (## Triggers
+    bullets, quoted description phrases, name/skill_id) counts again as a
+    bonus point — a skill that documents a word as an actual trigger should
+    outrank one that only mentions the topic in passing description prose.
+    Common stopwords are excluded from the bonus so "my" / "the" do not
+    inflate every skill that happens to use them in a trigger phrase.
+    """
+    tokens = _phrase_tokens(trigger)
     scored: list[tuple[float, SkillMeta]] = []
     for skill in skills:
-        hay = skill_doc(skill).lower()
-        score = float(sum(1 for tok in tokens if tok in hay))
+        doc_tokens = set(_phrase_tokens(skill_doc(skill)))
+        trigger_tokens: set[str] = set()
+        for phrase in explicit_trigger_phrases(skill):
+            trigger_tokens.update(_phrase_tokens(phrase))
+        base = sum(1 for tok in tokens if tok in doc_tokens)
+        bonus = sum(
+            1
+            for tok in tokens
+            if tok in trigger_tokens and tok not in _KEYWORD_BONUS_STOPWORDS
+        )
+        score = float(base + bonus)
         if score:
             scored.append((score, skill))
     scored.sort(key=lambda x: (-x[0], x[1].skill_id))
@@ -437,9 +482,13 @@ def route_skill(
     if not kw:
         return RouteResult(None, [], False, "none", query_emb)
     score_pairs = [(s.skill_id, float(sc)) for sc, s in kw]
-    # Keyword: treat exact top-1 ties as ambiguous only when scores equal.
+    # Keyword: a close second place is a guess, not a match — see
+    # KEYWORD_AMBIGUOUS_RATIO.
     best_score, best = kw[0]
-    ambiguous = len(kw) > 1 and kw[1][0] == best_score
+    second_score = kw[1][0] if len(kw) > 1 else None
+    ambiguous = second_score is not None and (
+        best_score <= 0 or second_score / best_score >= KEYWORD_AMBIGUOUS_RATIO
+    )
     if ambiguous:
         return _with_tier(
             RouteResult(None, score_pairs, True, "keyword", query_emb)

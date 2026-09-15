@@ -300,6 +300,35 @@ def test_bare_brief_me_routes_to_task_brief(tmp_path):
     assert result.method == "structured"
 
 
+def test_audit_paraphrases_route_to_intended_skills(tmp_path):
+    """Cursor audit 2026-09-13: paraphrases with no exact AGENTS-table match
+    used to silently misroute under keyword fallback. Skill ## Triggers now
+    document those paraphrases so structured routing picks the right skill.
+    """
+    ensure_user_root(tmp_path)
+    cases = (
+        ("triage my assignments", "student-assignment-triage"),
+        ("update my canvas sync", "student-canvas-browser"),
+    )
+    for query, skill_id in cases:
+        result = route_intent(query, user_root=tmp_path, embedder=lambda _: None)
+        assert result.skill is not None, query
+        assert result.skill.skill_id == skill_id, query
+        assert not result.ambiguous, query
+        assert result.method == "structured", query
+
+
+def test_phrase_tokens_are_word_boundary_not_substring():
+    """'triage' must not match 'triages' via substring containment."""
+    from canvas_mcp.core.skill_router import _phrase_tokens
+
+    query_tokens = set(_phrase_tokens("triage my assignments"))
+    week_plan_prose = set(_phrase_tokens("Ranks open work with USER.md. Triages with USER.md."))
+    assert "triage" in query_tokens
+    assert "triages" in week_plan_prose
+    assert "triage" not in week_plan_prose
+
+
 def test_brief_me_on_course_routes_to_course_arc(tmp_path):
     ensure_user_root(tmp_path)
     for query in ("brief me on MATH 1300", "brief me on CSCI 1200"):

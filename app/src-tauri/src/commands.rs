@@ -133,6 +133,43 @@ pub fn save_learning_profile(
     )
 }
 
+/// Save the onboarding "Profile" step's identity/program answers into
+/// USER.md (see canvas_mcp.core.user_profile). Every field is optional —
+/// blank fields keep the templates/USER.md placeholder text.
+#[allow(clippy::too_many_arguments)]
+#[tauri::command]
+pub fn save_user_profile(
+    name: String,
+    institution: String,
+    school_slug: String,
+    major: String,
+    minor: String,
+    catalog_year: String,
+    target_grad_term: String,
+    interests: Vec<String>,
+    good_standing_gpa: String,
+    scholarship_min_gpa: String,
+    career_priorities: Vec<String>,
+    values: Vec<String>,
+    transfer_notes: String,
+) -> Result<(), String> {
+    daemon::run_save_user_profile(
+        &name,
+        &institution,
+        &school_slug,
+        &major,
+        &minor,
+        &catalog_year,
+        &target_grad_term,
+        &interests,
+        &good_standing_gpa,
+        &scholarship_min_gpa,
+        &career_priorities,
+        &values,
+        &transfer_notes,
+    )
+}
+
 /// Due retrieval checks (at most two). Does not invent cards from the week list.
 #[tauri::command]
 pub fn read_due_reviews() -> Result<serde_json::Value, String> {

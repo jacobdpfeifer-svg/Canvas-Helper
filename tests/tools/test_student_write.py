@@ -11,15 +11,18 @@ Canvas. ``mark_module_item_done`` is the remaining self-only write and uses
 ``ConfirmationGuard`` (preview → token → confirm).
 """
 
-from unittest.mock import AsyncMock, patch
 import re
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from fastmcp import FastMCP
 
 from canvas_mcp.core.config import reset_config
 from canvas_mcp.core.course_policy import reset_policy_cache
-from canvas_mcp.tools.student_write import _MODULE_DONE_GUARD, register_student_write_tools
+from canvas_mcp.tools.student_write import (
+    _MODULE_DONE_GUARD,
+    register_student_write_tools,
+)
 
 _TOKEN_RE = re.compile(r"confirmation_token='([^']+)'")
 

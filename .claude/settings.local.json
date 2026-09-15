@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json; m=json.load\\(open\\('tools/TOOL_MANIFEST.json'\\)\\); print\\('tools in manifest:', len\\(m.get\\('tools', m\\)\\)\\) if isinstance\\(m, dict\\) else print\\(len\\(m\\)\\)\")",
+      "Bash(awk -F: '{s+=$2} END {print s}')"
+    ]
+  }
+}

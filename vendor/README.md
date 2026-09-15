@@ -10,7 +10,7 @@ This ProductName repo **vendors** (forks) [vishalsachdev/canvas-mcp](https://git
 | [`CHANGELOG.md`](../CHANGELOG.md) | **Upstream** release notes (FERPA / canvas-mcp issue links). Do not rewrite as ProductName’s product changelog. |
 | [`LICENSE`](../LICENSE) | MIT — upstream copyright retained |
 
-ProductName-specific behavior (SSO → inbox, skills, Tauri dock, school plugins, hard-blocked send/submit) lives mainly in `app/`, `browser/`, `skills/`, `plugins/`, `mcp-servers/`, and `docs/` — not in inventing a second CHANGELOG for canvas-mcp issue numbers.
+ProductName-specific behavior (SSO → inbox, skills, Tauri dock, school plugins, preview-only Canvas submit/comment/discussion, ConfirmationGuard-gated personal Gmail/GCal writes) lives mainly in `app/`, `browser/`, `skills/`, `plugins/`, `mcp-servers/`, and `docs/` — not in inventing a second CHANGELOG for canvas-mcp issue numbers.
 
 When bumping the vendored MCP, prefer merging/cherry-picking from upstream and keeping this tree’s student-only constraints (canvas-focus pivot).
 

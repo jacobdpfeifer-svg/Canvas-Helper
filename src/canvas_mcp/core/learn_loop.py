@@ -336,7 +336,12 @@ def add_item(
     checkpoint_due: str | None = None,
     now: datetime | None = None,
 ) -> LearnItem:
-    """Upsert a teachable claim. Re-adding does not reset an existing schedule."""
+    """Upsert a teachable claim.
+
+    Re-adding with the same ``checkpoint_due`` does not reset an existing
+    schedule. Re-adding with a *changed* ``checkpoint_due`` reschedules via
+    ``_reschedule_for_checkpoint`` (same path as ``reconcile_checkpoints``).
+    """
     cleaned = claim.strip()
     if not cleaned:
         raise ValueError("claim is required")
@@ -445,7 +450,7 @@ def reconcile_checkpoints(
         if from_iso == to_iso:
             continue
         for item in items:
-            if item.course.strip().lower() != course.lower():
+            if _norm_course(item.course) != _norm_course(course):
                 continue
             if item.checkpoint_due != from_iso:
                 continue
@@ -504,7 +509,7 @@ def reconcile_from_inbox(
         item_dues = {
             item.checkpoint_due
             for item in items
-            if item.course.strip().lower() == code.lower() and item.checkpoint_due
+            if _norm_course(item.course) == _norm_course(code) and item.checkpoint_due
         }
         missing = item_dues - live
         unused = live - item_dues
@@ -1677,6 +1682,7 @@ def main(argv: list[str] | None = None) -> int:
     """CLI for skills: add a claim, record an outcome, list due reviews."""
     import argparse
     import json
+    import os
     import sys
 
     from .user_root import resolve_user_root
@@ -1722,7 +1728,9 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
-    root = args.user_root or resolve_user_root("dev", create=True)
+    root = args.user_root or resolve_user_root(
+        os.environ.get("PRODUCT_USER_ID", "dev"), create=True
+    )
 
     if args.cmd == "add":
         if args.kind == "workflow":

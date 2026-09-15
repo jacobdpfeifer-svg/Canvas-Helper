@@ -12,7 +12,6 @@ from canvas_mcp.core.degree_audit import (
     split_sections,
 )
 
-
 SAMPLE = """---
 imported_on: 2026-06-01
 catalog_year: "2024-2025"

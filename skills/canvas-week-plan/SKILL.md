@@ -1,6 +1,6 @@
 ---
 name: canvas-week-plan
-description: Build a weekly plan and schedule from inbox/week.md (after sync). Triages with USER.md. Use for "what's due this week", "plan my week", "weekly check", "schedule my assignments" — not raw inbox file maintenance.
+description: Build a weekly plan and schedule from inbox/week.md (after sync). Ranks open work with USER.md. Use for "what's due this week", "plan my week", "weekly check", "schedule this week" — not assignment triage or raw inbox file maintenance.
 schema_version: 1
 category: canvas_read
 model_tier: fast
@@ -90,4 +90,4 @@ Read only. No submit tools from this skill.
 - what's due this week
 - plan my week
 - weekly check
-- schedule my assignments
+- schedule this week
