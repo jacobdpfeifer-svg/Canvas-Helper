@@ -106,6 +106,7 @@ Read:
 ## Triggers
 
 - triage this assignment
+- triage my assignments
 - should I submit
 - who does this
 - worth my time

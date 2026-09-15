@@ -32,6 +32,7 @@ fn main() {
             commands::bootstrap_canvas_sync,
             commands::save_onboarding,
             commands::save_learning_profile,
+            commands::save_user_profile,
             commands::read_due_reviews,
             commands::read_brief_streak,
             commands::read_learn_progress,

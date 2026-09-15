@@ -1,6 +1,6 @@
 ---
 name: student-canvas-browser
-description: Run SSO Canvas browser sync into inbox/ without a PAT; open LTI/external tool UIs with the student. Use for "sync Canvas", "pull todo", "open Canvas", "open ZyBooks", "WebAssign", "PlayPosit" — the sync/open action itself, not week planning.
+description: Run SSO Canvas browser sync into inbox/ without a PAT; open LTI/external tool UIs with the student. Use for "sync Canvas", "canvas sync", "update my canvas sync", "pull todo", "open Canvas", "open ZyBooks", "WebAssign", "PlayPosit" — the sync/open action itself, not week planning or inbox file repair.
 schema_version: 1
 category: canvas_read
 model_tier: fast
@@ -79,6 +79,9 @@ Read only for Canvas MCP. No `submit_assignment` from this skill. No auto-click 
 ## Triggers
 
 - sync Canvas
+- canvas sync
+- update my canvas sync
+- sync my canvas
 - pull todo
 - open Canvas
 - open ZyBooks

@@ -417,6 +417,76 @@ pub fn run_save_learning_profile(
     }
 }
 
+/// Write the onboarding "Profile" step's identity/program answers via the
+/// Python CLI (see canvas_mcp.core.user_profile). Ranked lists (interests,
+/// career priorities, values) are passed as repeated `--flag value` pairs.
+pub fn run_save_user_profile(
+    name: &str,
+    institution: &str,
+    school_slug: &str,
+    major: &str,
+    minor: &str,
+    catalog_year: &str,
+    target_grad_term: &str,
+    interests: &[String],
+    good_standing_gpa: &str,
+    scholarship_min_gpa: &str,
+    career_priorities: &[String],
+    values: &[String],
+    transfer_notes: &str,
+) -> Result<(), String> {
+    tick_log("save-user-profile");
+    let mut args: Vec<&str> = vec![
+        "--json",
+        "save",
+        "--name",
+        name,
+        "--institution",
+        institution,
+        "--school-slug",
+        school_slug,
+        "--major",
+        major,
+        "--minor",
+        minor,
+        "--catalog-year",
+        catalog_year,
+        "--target-grad-term",
+        target_grad_term,
+        "--good-standing-gpa",
+        good_standing_gpa,
+        "--scholarship-min-gpa",
+        scholarship_min_gpa,
+        "--transfer-notes",
+        transfer_notes,
+    ];
+    for interest in interests {
+        args.push("--interest");
+        args.push(interest);
+    }
+    for priority in career_priorities {
+        args.push("--career-priority");
+        args.push(priority);
+    }
+    for value in values {
+        args.push("--values");
+        args.push(value);
+    }
+    let output = python_module("canvas_mcp.core.user_profile", &args)
+        .output()
+        .map_err(|e| format!("failed to spawn user_profile: {e}"))?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        let err = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        Err(if err.is_empty() {
+            format!("user_profile exited {}", output.status)
+        } else {
+            err
+        })
+    }
+}
+
 /// Background cadence loop — logs ticks and optionally runs sync on each interval.
 pub fn spawn_cadence_loop() {
     thread::spawn(|| {

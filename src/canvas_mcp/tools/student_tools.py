@@ -409,6 +409,7 @@ def register_student_tools(mcp: FastMCP) -> None:
         return "\n".join(output_lines)
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    @validate_params
     async def get_my_course_grades() -> str:
         """Get your current grades across all enrolled courses."""
         courses = await fetch_all_paginated_results(
@@ -463,6 +464,7 @@ def register_student_tools(mcp: FastMCP) -> None:
         return "\n".join(output_lines)
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    @validate_params
     async def get_my_todo_items() -> str:
         """Get your Canvas TODO list."""
         todos = await fetch_all_paginated_results(

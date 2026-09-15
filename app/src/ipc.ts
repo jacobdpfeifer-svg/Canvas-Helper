@@ -102,6 +102,49 @@ export async function saveOnboarding(
   });
 }
 
+export type OnboardingIdentity = {
+  name: string;
+  institution: string;
+  schoolSlug: string;
+  major: string;
+  minor: string;
+  catalogYear: string;
+  targetGradTerm: string;
+  interests: string[];
+  goodStandingGpa: string;
+  scholarshipMinGpa: string;
+  careerPriorities: string[];
+  values: string[];
+  transferNotes: string;
+};
+
+/** Write the onboarding "Profile" step's answers into USER.md (see
+ * canvas_mcp.core.user_profile). Web preview has no USER.md to write to, so
+ * it stashes the answers in localStorage for the record only. */
+export async function saveUserProfile(
+  identity: OnboardingIdentity
+): Promise<void> {
+  if (!isTauri()) {
+    localStorage.setItem("pn_user_profile", JSON.stringify(identity));
+    return;
+  }
+  await invoke("save_user_profile", {
+    name: identity.name,
+    institution: identity.institution,
+    schoolSlug: identity.schoolSlug,
+    major: identity.major,
+    minor: identity.minor,
+    catalogYear: identity.catalogYear,
+    targetGradTerm: identity.targetGradTerm,
+    interests: identity.interests,
+    goodStandingGpa: identity.goodStandingGpa,
+    scholarshipMinGpa: identity.scholarshipMinGpa,
+    careerPriorities: identity.careerPriorities,
+    values: identity.values,
+    transferNotes: identity.transferNotes,
+  });
+}
+
 export type LearningProfileAnswers = {
   practiceFormat: "worked_example" | "retrieval";
   autonomy: "directive" | "choices";

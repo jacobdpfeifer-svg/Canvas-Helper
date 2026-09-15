@@ -9,10 +9,12 @@ to plain discussions for tokens without permission (#220), and module-item
 see in Canvas. Centralising the wording keeps that failure legible and
 identical across tools instead of drifting per call site.
 
-``ConfirmationGuard`` generalises the preview→token→confirm pattern that
-``tools/student_write.py`` established for assignment submission, so
-educator-side destructive tools can require the same explicit two-step. The
-threat it addresses (issue 239) is a prompt-injected model chaining a read of
+``ConfirmationGuard`` generalises the preview→token→confirm pattern used for
+student-visible side effects that still execute (e.g. ``mark_module_item_done``,
+and personal Gmail/GCal writes via ``gate_connector_write``). Canvas
+submit/comment/discussion-post tools stay preview-only and never take a
+confirmation_token execute branch (canvas-focus pivot). The threat it
+addresses (issue 239) is a prompt-injected model chaining a read of
 student-authored content straight into a write: a required, single-use,
 content-bound token forces a human-visible preview between "decided to send"
 and "sent".

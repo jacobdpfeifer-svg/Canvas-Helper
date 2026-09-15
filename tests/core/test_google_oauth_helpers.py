@@ -96,6 +96,13 @@ def test_send_email_executes_after_confirm_dry_run(monkeypatch, tmp_path):
     assert result["status"] == "sent"
     assert result["mode"] == "dry-run"
 
+    from canvas_mcp.core.ledger import Ledger
+
+    ledger_rows = Ledger(tmp_path).read_all()
+    assert any(
+        r.get("tool") == "send_email" and r.get("outcome") == "success" for r in ledger_rows
+    ), "confirmed send_email must append a ledger.jsonl success row"
+
     preview2 = gcal_server.create_event(
         summary="Study block", start_iso="2026-09-14T10:00:00", end_iso="2026-09-14T11:00:00"
     )
@@ -110,6 +117,10 @@ def test_send_email_executes_after_confirm_dry_run(monkeypatch, tmp_path):
     )
     assert result2["status"] == "created"
     assert result2["mode"] == "dry-run"
+    ledger_rows = Ledger(tmp_path).read_all()
+    assert any(
+        r.get("tool") == "create_event" and r.get("outcome") == "success" for r in ledger_rows
+    ), "confirmed create_event must append a ledger.jsonl success row"
 
 
 def test_gcal_create_update_delete_call_real_calendar_api():

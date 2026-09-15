@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .learn_loop import LearnItem, load_items, _write_items
+from .learn_loop import LearnItem, _write_items, load_items
 
 REFUSAL_APPLICATION = "no strong professional application found for this claim"
 MIN_SOURCED_APPLICATIONS = 2
@@ -87,6 +87,8 @@ def validate_professional_context(
     """Accept ≥2 sourced rows across ≥2 fields, or a single refusal sentinel."""
     if not rows:
         raise ValueError("professional_context requires rows or an explicit refusal")
+    if not all(isinstance(row, dict) for row in rows):
+        raise ValueError("each row must be a JSON object, not a bare string/number")
     normalized = [_normalize_row(row) for row in rows]
     if is_refusal_rows(normalized):
         return [
@@ -169,6 +171,7 @@ def context_for_display(item: LearnItem) -> list[dict[str, str]] | None:
 
 def main(argv: list[str] | None = None) -> int:
     import argparse
+    import os
     import sys
 
     from .user_root import resolve_user_root
@@ -198,7 +201,9 @@ def main(argv: list[str] | None = None) -> int:
     mark.add_argument("--id", required=True)
 
     args = parser.parse_args(argv)
-    root = args.user_root or resolve_user_root("dev", create=True)
+    root = args.user_root or resolve_user_root(
+        os.environ.get("PRODUCT_USER_ID", "dev"), create=True
+    )
 
     if args.cmd == "rules":
         print(context_skill_rules(), end="")
@@ -222,7 +227,7 @@ def main(argv: list[str] | None = None) -> int:
             elif args.rows_json:
                 parsed = json.loads(args.rows_json)
                 if not isinstance(parsed, list):
-                    print("--json must be a list of application objects", file=sys.stderr)
+                    print("--rows must be a list of application objects", file=sys.stderr)
                     return 1
                 rows = parsed
             else:

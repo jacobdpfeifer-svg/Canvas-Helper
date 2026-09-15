@@ -18,6 +18,7 @@
     "allow-open-canvas-sso",
     "allow-save-onboarding",
     "allow-save-learning-profile",
+    "allow-save-user-profile",
     "allow-read-due-reviews",
     "allow-read-brief-streak",
     "allow-read-learn-progress",

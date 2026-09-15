@@ -159,6 +159,7 @@ def register_shared_messaging_tools(mcp: FastMCP) -> None:
             return {"error": f"Failed to get conversation details: {str(e)}"}
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+    @validate_params
     async def get_unread_count() -> dict[str, Any]:
         """Get number of unread conversations."""
 
