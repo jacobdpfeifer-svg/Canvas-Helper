@@ -3,6 +3,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   MANIFEST_PATH,
   POLICY_PATH,
@@ -17,6 +18,31 @@ export const STATE_PATH = path.join(
   "_raw",
   "google-calendar-sync-state.json"
 );
+
+const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+
+/** Load repo-root `.env` into process.env (does not override existing vars). */
+export function loadRepoEnv() {
+  const envPath = path.join(REPO_ROOT, ".env");
+  if (!fs.existsSync(envPath)) return;
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const t = line.trim();
+    if (!t || t.startsWith("#")) continue;
+    const eq = t.indexOf("=");
+    if (eq <= 0) continue;
+    const key = t.slice(0, eq).trim();
+    let val = t.slice(eq + 1).trim();
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    if (process.env[key] === undefined) process.env[key] = val;
+  }
+}
+
+loadRepoEnv();
 
 const COMPOSIO_BASE = process.env.COMPOSIO_BASE || "https://backend.composio.dev/api/v3";
 const KIND_COLORS = { class: "9", exam: "11", presentation: "5", club: "10", manual: "7" };

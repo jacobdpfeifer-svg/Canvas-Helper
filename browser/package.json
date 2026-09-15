@@ -19,6 +19,7 @@
     "process-capture-queue": "node scripts/process-capture-queue.mjs",
     "open-google-calendar": "node scripts/open-google-calendar.mjs",
     "sync-calendar": "node scripts/sync-calendar.mjs",
+    "wevideo": "node scripts/wevideo-complete.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {

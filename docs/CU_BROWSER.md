@@ -85,6 +85,30 @@ Macmillan Achieve and similar LTI tools are **Jacob-operated** — never auto-dr
 4. Canvas passback (AGS) can lag: if Achieve shows complete but Canvas is still `unsubmitted`, note `Achieve complete — Canvas passback pending` in week/course Notes. Do **not** force Grade Refresh or native `submit_assignment` for `external_tool`.
 5. LearningCurve / Norton EOC: same rule — process help only; Jacob operates the UI.
 
+## WeVideo / PlayPosit (full-auto when Jacob asks)
+
+CU branded **WeVideo Interactivity** (formerly PlayPosit). Canvas still launches via `playposit.com` LTI → `wevideo.com/interactive/player_v2`. Courses: **BCOR 1030** (PlayPosit bulbs), **ONLINEEXP** (Welcome + Sections 1–5), **LEEDSFYE** (e.g. Marketing with Meg).
+
+```bash
+cd browser
+npm run open-canvas          # if SSO expired
+npm run wevideo -- --list --course LEEDSFYE
+npm run wevideo -- --assignment https://canvas.colorado.edu/courses/21463/assignments/2864476
+npm run wevideo -- --course ONLINEEXP --limit 1
+npm run wevideo -- --course BCOR1030 --all-open
+```
+
+**Behavior:** Playwright uses `browser/.auth`, opens the Canvas assignment LTI, plays the interactive video, answers interactions (transcript-first heuristic; optional `OPENAI_API_KEY`), clicks Submit/Continue, waits for Interactive Video Complete, logs `inbox/courses/_raw/wevideo-*.json`, and notes the matching course MD (`WeVideo complete — Canvas passback pending` if grade lags).
+
+**Env:**
+- `OPENAI_API_KEY` — stronger MC/free-response answers
+- `WEVIDEO_NO_WEB=1` — skip DuckDuckGo fallback
+- `HEADLESS=1` — only after headed runs are stable
+
+**Not covered:** ONLINEEXP advising-challenge Canvas quizzes; remoted-proctored BCOR reading quizzes; non-WeVideo LTI (skipped with a log).
+
+Recon dump: `inbox/courses/_raw/wevideo-recon.json`.
+
 ## WebAssign (process help)
 
 Open via Canvas LTI or [CU WebAssign login](https://www.webassign.net/colorado/login.html). Agent drafts steps/answers; **Jacob** enters and submits. Never auto-fill or auto-submit.

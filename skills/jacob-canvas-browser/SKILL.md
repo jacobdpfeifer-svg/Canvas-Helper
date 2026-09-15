@@ -1,6 +1,6 @@
 ---
 name: jacob-canvas-browser
-description: SSO sync Canvas REST into inbox/ without a PAT; LTI/external UI escape hatch with Jacob. Use for "sync Canvas", "pull todo", "open Canvas", "ZyBooks", "WebAssign", "PlayPosit".
+description: SSO sync Canvas REST into inbox/ without a PAT; LTI/external UI escape hatch with Jacob; WeVideo/PlayPosit full-auto when Jacob asks. Use for "sync Canvas", "pull todo", "open Canvas", "ZyBooks", "WebAssign", "PlayPosit", "WeVideo", "ONLINEEXP", "FYE".
 ---
 
 # Jacob Canvas browser (SSO)
@@ -32,9 +32,21 @@ HEADLESS=1 npm run rsvp-campusgroups -- --event 385793
 
 Before major dinner RSVP: read [`.jacob/signup-preferences.md`](../../.jacob/signup-preferences.md). Verify RSVP via confirmation URL / attendee list — never infer from page text alone. RSVP does not complete the Canvas assignment (selfie upload is later).
 
-## C — Cursor browser LTI escape hatch (Jacob driving)
+## C — WeVideo / PlayPosit full-auto (when Jacob asks)
 
-For WebAssign, ZyBooks, PlayPosit, Achieve/LearningCurve, proctored quizzes, other LTI:
+Jacob explicitly authorized full-auto for WeVideo/PlayPosit (BCOR, ONLINEEXP, LEEDSFYE).
+
+```bash
+cd browser && npm run wevideo -- --list --course LEEDSFYE
+cd browser && npm run wevideo -- --course ONLINEEXP --limit 1
+cd browser && npm run wevideo -- --assignment <canvas-assignment-url>
+```
+
+Uses `browser/.auth` only (not IDE browser). Logs under `inbox/courses/_raw/wevideo-*.json`. Details: [`docs/CU_BROWSER.md`](../../docs/CU_BROWSER.md) § WeVideo.
+
+## D — Cursor browser LTI escape hatch (Jacob driving)
+
+For WebAssign, ZyBooks, Achieve/LearningCurve, proctored quizzes, other non-WeVideo LTI:
 
 1. Open the tool via Canvas (Jacob completes MFA if needed).
 2. Draft steps/answers in chat.
@@ -48,6 +60,7 @@ Process-help tips (MathType, extensions, Achieve passback lag): [`docs/CU_BROWSE
 ## Hard stops
 
 - Quizzes / exams / proctored → Jacob only  
-- WebAssign / ZyBooks / PlayPosit / Achieve → Jacob in tool UI (never auto)  
+- WebAssign / ZyBooks / Achieve → Jacob in tool UI (never auto)  
+- WeVideo / PlayPosit → full-auto **only when Jacob asks** (`npm run wevideo`)  
 - CampusGroups RSVP → Playwright scripts only (not IDE browser)  
 - No password storage; never commit `browser/.auth/`

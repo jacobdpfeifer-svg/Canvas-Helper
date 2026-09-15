@@ -145,3 +145,8 @@ inbox/captures/**/*.jpeg
 inbox/captures/**/*.heic
 inbox/captures/**/*.png
 inbox/captures/**/*.webp
+
+# Session cookie dumps (never commit)
+**/wa5-cookies.*
+*_cookies.json
+*_cookies.txt

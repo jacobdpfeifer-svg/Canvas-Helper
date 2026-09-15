@@ -16,6 +16,7 @@ export const COURSE_CODES = [
   "ECON2010",
   "CALCREADY",
   "ONLINEEXP",
+  "LEEDSFYE",
 ];
 
 /** Short aliases Jacob might say in voice/text. */
@@ -30,6 +31,10 @@ const USER_ALIASES = [
     patterns: [/calculus readiness/i, /calc ready/i, /readiness prep/i],
   },
   { code: "ONLINEEXP", patterns: [/online experience/i, /leeds orientation/i] },
+  {
+    code: "LEEDSFYE",
+    patterns: [/leeds first[- ]?year/i, /\bfye\b/i, /first[- ]year experience/i],
+  },
 ];
 
 const OCR_CODE_PATTERNS = [
@@ -40,6 +45,7 @@ const OCR_CODE_PATTERNS = [
   { code: "ECON2010", re: /\bECON\s*2010\b/i },
   { code: "CALCREADY", re: /calculus\s*1\s*readiness/i },
   { code: "ONLINEEXP", re: /online\s*experience/i },
+  { code: "LEEDSFYE", re: /leeds\s*first[- ]?year|first[- ]year\s*experience/i },
 ];
 
 /** Keyword → course hints from catalog themes (placeholder). */
@@ -49,6 +55,7 @@ const KEYWORD_HINTS = [
   { code: "CSCI1200", patterns: [/pre lab/i, /challenge activities/i, /python introduction/i] },
   { code: "COEN1500", patterns: [/thought project/i, /major dinner/i, /ai lab workshop/i] },
   { code: "ECON2010", patterns: [/eoc problems/i, /microeconomics/i] },
+  { code: "LEEDSFYE", patterns: [/wevideo/i, /emphasis showcase/i, /marketing with meg/i] },
 ];
 
 const SELFIE_RE =

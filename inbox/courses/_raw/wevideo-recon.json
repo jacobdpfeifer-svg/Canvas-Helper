@@ -1,0 +1,1407 @@
+{
+  "targets": {
+    "BCOR1030": {
+      "label": "VII PlayPosit Structure",
+      "api": {
+        "id": 2793023,
+        "name": "VII - PlayPosit Structure",
+        "submission_types": [
+          "external_tool"
+        ],
+        "external_tool_tag_attributes": {
+          "url": "https://www.playposit.com/LTI/launch/868417/play2",
+          "new_tab": true,
+          "external_data": "",
+          "resource_link_id": "eb40a976a21b9638422daa518c64e3817f2b01a7",
+          "resource_link_title": null,
+          "content_type": "ContextExternalTool",
+          "content_id": 60935,
+          "custom_params": {}
+        }
+      },
+      "deep": {
+        "assignmentUrl": "https://canvas.colorado.edu/courses/141523/assignments/2793023",
+        "pageUrl": "https://canvas.colorado.edu/courses/141523/assignments/2793023",
+        "frames": [
+          {
+            "url": "https://canvas.colorado.edu/courses/141523/assignments/2793023",
+            "name": ""
+          },
+          {
+            "url": "about:blank",
+            "name": "instructure_ajax_error_result"
+          },
+          {
+            "url": "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]",
+            "name": "post_message_forwarding"
+          }
+        ],
+        "wevideoFrames": [],
+        "popupUrls": [
+          "https://canvas.colorado.edu/courses/141523/assignments/2793023"
+        ],
+        "iframeSrcs": [
+          "about:blank",
+          "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]"
+        ],
+        "playerUrl": null,
+        "playerDom": null,
+        "network": [
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/javascripts/lti_post_message_forwarding-e6aca5e55d.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/webpack-production/i18next-en-a2LatePolicyToolTipContent-json-chunk-24d7637570d8f96b.js",
+            "contentType": "text/javascript"
+          }
+        ],
+        "canvasTextPreview": "Skip To Content\nDashboard\nAccount\nDashboard\nCourses\nCalendar\n4 unread messages.\n4\nInbox\nHistory\nStudio\nCU Book Access\n10 unread release notes.\n10\nHelp\nBCOR 1030-018,019,024AssignmentsVII - PlayPosit Structure\n2026 Fall Term\nHome\nIgniteAI Search\nAnnouncements\nAssignments\nPeople\nMcGraw-Hill Connect\nGrades\n13\nPages\nSyllabus\nQuizzes\nDiscussions\nSecure Exam Proctor\nNamecoach\nCU Boulder Libraries\nCU Book Access\nNotebook",
+        "detectedWeVideo": false
+      }
+    },
+    "ONLINEEXP": {
+      "label": "Welcome and Introduction",
+      "assignmentCount": 30,
+      "externalCount": 12,
+      "external": [
+        {
+          "id": 2690067,
+          "name": "Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2690067",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "eb388fb76595e3733945c237c6d5ee21d97651af",
+            "resource_link_title": "Section 3 - Understanding Transfer Credit",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123081",
+              "renderPath": "play2",
+              "contentTitle": "Section 3 - Understanding Transfer Credit"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2690794,
+          "name": "Copy of Career Development Office",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 3,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2690794",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a37f4dd0bc7a9f6fad3c43cbbdde88be58ad7d91",
+            "resource_link_title": "Copy of Career Development Office",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123226",
+              "renderPath": "play2",
+              "contentTitle": "Copy of Career Development Office"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2667967,
+          "name": "Section 1 - Introduction",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 0,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667967",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1476913/play2",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a2269c9c93897f20601d624046722a57cb3fa984",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1476913/play2",
+          "isExternal": true
+        },
+        {
+          "id": 2674521,
+          "name": "Welcome and Introduction",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674521",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2048057/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "e4157768037fd9cb7a9c1e108955e1c79459b88e",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2048057/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2667976,
+          "name": "Section 2 - Leeds Degree Requirements & Curriculum",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667976",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1508556/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "4541387f83694a3e90774cab7a0b5c19dd98d4a0",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1508556/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674522,
+          "name": "Leeds Degree Requirements & Curriculum",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674522",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2045424/play2?lti_enable_grading=1",
+            "new_tab": true,
+            "external_data": "",
+            "resource_link_id": "7676ea3edacb58bbe688fc60b105483e91170e67",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2045424/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2667989,
+          "name": "Section 3 - Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667989",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1509686/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "2c91b950c826c5fde0d8973d7d6a82fe9fddcd1e",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1509686/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674523,
+          "name": "Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674523",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "1f9e84326c461bce2d0f22913145cf68c0ffcd3c",
+            "resource_link_title": "Section 3 - Understanding Transfer Credit",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123081",
+              "renderPath": "play2",
+              "contentTitle": "Section 3 - Understanding Transfer Credit"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2668000,
+          "name": "Section 4 - Class Registration",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 12,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2668000",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1519487/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "b7afce97851755b33c66e10acae51750c6d64a9f",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1519487/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674524,
+          "name": "Class Registration",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 12,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674524",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2047462/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "ef7882d15ed57baf7ce642c28fdc0e644d7e86f7",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2047462/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2668015,
+          "name": "Section 5 - Key Takeaways and Next Steps",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 6,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2668015",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1519245/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "0c6a602b52e751d7234fa9bb2f3ba0bf6fac633a",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1519245/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674525,
+          "name": "Key Takeaways & Next Steps",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 6,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674525",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2048029/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "88b5a2312eba8cfeb68da1b2734c81e3796e1e09",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2048029/play2?lti_enable_grading=1",
+          "isExternal": true
+        }
+      ],
+      "wevideoish": [
+        {
+          "id": 2690067,
+          "name": "Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2690067",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "eb388fb76595e3733945c237c6d5ee21d97651af",
+            "resource_link_title": "Section 3 - Understanding Transfer Credit",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123081",
+              "renderPath": "play2",
+              "contentTitle": "Section 3 - Understanding Transfer Credit"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2690794,
+          "name": "Copy of Career Development Office",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 3,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2690794",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a37f4dd0bc7a9f6fad3c43cbbdde88be58ad7d91",
+            "resource_link_title": "Copy of Career Development Office",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123226",
+              "renderPath": "play2",
+              "contentTitle": "Copy of Career Development Office"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2667967,
+          "name": "Section 1 - Introduction",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 0,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667967",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1476913/play2",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a2269c9c93897f20601d624046722a57cb3fa984",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1476913/play2",
+          "isExternal": true
+        },
+        {
+          "id": 2674521,
+          "name": "Welcome and Introduction",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674521",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2048057/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "e4157768037fd9cb7a9c1e108955e1c79459b88e",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2048057/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2667976,
+          "name": "Section 2 - Leeds Degree Requirements & Curriculum",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667976",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1508556/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "4541387f83694a3e90774cab7a0b5c19dd98d4a0",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1508556/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674522,
+          "name": "Leeds Degree Requirements & Curriculum",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674522",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2045424/play2?lti_enable_grading=1",
+            "new_tab": true,
+            "external_data": "",
+            "resource_link_id": "7676ea3edacb58bbe688fc60b105483e91170e67",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2045424/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2667989,
+          "name": "Section 3 - Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2667989",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1509686/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "2c91b950c826c5fde0d8973d7d6a82fe9fddcd1e",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1509686/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674523,
+          "name": "Understanding Transfer Credit",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 7,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674523",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "1f9e84326c461bce2d0f22913145cf68c0ffcd3c",
+            "resource_link_title": "Section 3 - Understanding Transfer Credit",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2123081",
+              "renderPath": "play2",
+              "contentTitle": "Section 3 - Understanding Transfer Credit"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        },
+        {
+          "id": 2668000,
+          "name": "Section 4 - Class Registration",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 12,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2668000",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1519487/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "b7afce97851755b33c66e10acae51750c6d64a9f",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1519487/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674524,
+          "name": "Class Registration",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 12,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674524",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2047462/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "ef7882d15ed57baf7ce642c28fdc0e644d7e86f7",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2047462/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2668015,
+          "name": "Section 5 - Key Takeaways and Next Steps",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 6,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2668015",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/1519245/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "0c6a602b52e751d7234fa9bb2f3ba0bf6fac633a",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/1519245/play2?lti_enable_grading=1",
+          "isExternal": true
+        },
+        {
+          "id": 2674525,
+          "name": "Key Takeaways & Next Steps",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 6,
+          "url": "https://canvas.colorado.edu/courses/135245/assignments/2674525",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI/launch/2048029/play2?lti_enable_grading=1",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "88b5a2312eba8cfeb68da1b2734c81e3796e1e09",
+            "resource_link_title": null,
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI/launch/2048029/play2?lti_enable_grading=1",
+          "isExternal": true
+        }
+      ],
+      "deep": {
+        "assignmentUrl": "https://canvas.colorado.edu/courses/135245/assignments/2690067",
+        "pageUrl": "https://canvas.colorado.edu/courses/135245/assignments/2690067",
+        "frames": [
+          {
+            "url": "https://canvas.colorado.edu/courses/135245/assignments/2690067",
+            "name": ""
+          },
+          {
+            "url": "about:blank",
+            "name": "instructure_ajax_error_result"
+          },
+          {
+            "url": "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]",
+            "name": "post_message_forwarding"
+          },
+          {
+            "url": "https://12320119.fls.doubleclick.net/activityi;dc_pre=CJL1m_bx75YDFVSGNgcddygt4w;src=12320119;type=allvi0;cat=bould0;rcb=11;ord=1853956091322;npa=0;auiddc=1965309716.1789451395;u1=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067;uaa=arm;uab=64;uafvl=Chromium%3B152.0.7977.83%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.83;uamb=0;uam=;uap=macOS;uapv=26.6.2;uaw=0;pscdl=noapi;frm=0;_ng=1;_tu=KFA;gtm=45fe69b1v9189090205z877892056za20gzb77892056zd77892056xea;gcd=13l3l3l3l1l1;dma=0;dc_fmt=2;tag_exp=115938466~115938468~118897920~118897930~120213116~120385422~120469145~120469153;epver=2;dc_random=1789451395_T_CahCE91Bti9I4nHJ1gMBahGCH5gnpQTw;_dc_test=1;~oref=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067?",
+            "name": ""
+          },
+          {
+            "url": "https://12399946.fls.doubleclick.net/activityi;dc_pre=CMLnnvbx75YDFczphwkdt8AnwA;src=12399946;type=allvi0;cat=menv-0;rcb=3;ord=826530835604;npa=0;auiddc=1965309716.1789451395;u1=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067;uaa=arm;uab=64;uafvl=Chromium%3B152.0.7977.83%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.83;uamb=0;uam=;uap=macOS;uapv=26.6.2;uaw=0;pscdl=noapi;frm=0;_ng=1;user_data_mode=a;_tu=KFA;gtm=45fe69b1v9189014382z877892056za20gzb77892056zd77892056xea;gcd=13l3l3l3l1l1;dma=0;dc_fmt=2;tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153;epver=2;em=tv.1;dc_random=1789451395_ZgLMxFv99qhigy8UHXJ_e5R4dnjgMOORvg;_dc_test=1;~oref=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067?",
+            "name": ""
+          },
+          {
+            "url": "https://canvas.colorado.edu/courses/135245/assignments/2690067/tool_launch",
+            "name": ""
+          },
+          {
+            "url": "about:blank",
+            "name": "tool_content_422"
+          },
+          {
+            "url": "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]",
+            "name": "post_message_forwarding"
+          },
+          {
+            "url": "",
+            "name": ""
+          },
+          {
+            "url": "",
+            "name": ""
+          }
+        ],
+        "wevideoFrames": [],
+        "popupUrls": [
+          "https://canvas.colorado.edu/courses/135245/assignments/2690067"
+        ],
+        "iframeSrcs": [
+          "about:blank",
+          "https://canvas.colorado.edu/courses/135245/assignments/2690067/tool_launch",
+          "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]",
+          "https://12320119.fls.doubleclick.net/activityi;src=12320119;type=allvi0;cat=bould0;rcb=11;ord=1853956091322;npa=0;auiddc=1965309716.1789451395;u1=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067;uaa=arm;uab=64;uafvl=Chromium%3B152.0.7977.83%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.83;uamb=0;uam=;uap=macOS;uapv=26.6.2;uaw=0;pscdl=noapi;frm=0;_ng=1;_tu=KFA;gtm=45fe69b1v9189090205z877892056za20gzb77892056zd77892056xea;gcd=13l3l3l3l1l1;dma=0;dc_fmt=2;tag_exp=115938466~115938468~118897920~118897930~120213116~120385422~120469145~120469153;epver=2;dc_random=1789451395_T_CahCE91Bti9I4nHJ1gMBahGCH5gnpQTw;_dc_test=1;~oref=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067?",
+          "https://12399946.fls.doubleclick.net/activityi;src=12399946;type=allvi0;cat=menv-0;rcb=3;ord=826530835604;npa=0;auiddc=1965309716.1789451395;u1=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067;uaa=arm;uab=64;uafvl=Chromium%3B152.0.7977.83%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.83;uamb=0;uam=;uap=macOS;uapv=26.6.2;uaw=0;pscdl=noapi;frm=0;_ng=1;user_data_mode=a;_tu=KFA;gtm=45fe69b1v9189014382z877892056za20gzb77892056zd77892056xea;gcd=13l3l3l3l1l1;dma=0;dc_fmt=2;tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153;epver=2;em=tv.1;dc_random=1789451395_ZgLMxFv99qhigy8UHXJ_e5R4dnjgMOORvg;_dc_test=1;~oref=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F135245%2Fassignments%2F2690067?"
+        ],
+        "playerUrl": null,
+        "playerDom": null,
+        "network": [
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/javascripts/lti_post_message_forwarding-e6aca5e55d.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/webpack-production/i18next-en-a2LatePolicyToolTipContent-json-chunk-24d7637570d8f96b.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://canvas.colorado.edu/api/v1/courses/135245/lti_apps/launch_definitions?placements%5B%5D=assignment_view",
+            "contentType": "application/json; charset=utf-8"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/javascripts/lti_post_message_forwarding-e6aca5e55d.js",
+            "contentType": "text/javascript"
+          }
+        ],
+        "canvasTextPreview": "Now viewing Attempt 1\nSkip To Content\nDashboard\nAccount\nDashboard\nCourses\nCalendar\n4 unread messages.\n4\nInbox\nHistory\nStudio\nCU Book Access\n10 unread release notes.\n10\nHelp\nLeeds School of BusinessAssignmentsUnderstanding Transfer Credit\n2026 Fall Term\nHome\nModules\nGrades\nDiscussions\nAnnouncements\nZoom\nMicrosoft Education\nNamecoach\nCU Boulder Libraries\nCU Book Access\nNotebook\nUnderstanding Transfer Credit\nUnderstanding Transfer Credit\n7/7\n7/7 Points\nAttempt\nReview Feedback\nSUBMITTED: Jun 25, 2026 8:47pm\nSUBMITTED: Jun 25, 2026 8:47pm\nAttempt 1 Score:\n7/7\nAdd Comment\nAnonymous Grading:\nno\nDetails\n\nUnderstanding Transfer Credit\n\nView Submission\nPrevious Module\nPrevious\nNext Module\nNext",
+        "detectedWeVideo": false
+      }
+    },
+    "LEEDSFYE": {
+      "label": "FYE course scan",
+      "assignmentCount": 65,
+      "externalCount": 4,
+      "external": [
+        {
+          "id": 2864476,
+          "name": "Week 1: Marketing with Meg (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2864476",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F192e1c85-5c83-4730-827b-bbeff056964f%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "b7386e493cfff3e6a56ea45ab1fff0b3eba06d2f",
+            "resource_link_title": "Week 1: Marketing with Meg (WeVideo)",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F192e1c85-5c83-4730-827b-bbeff056964f%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2868443,
+          "name": "Week 2: Management with Dr. Gates (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2868443",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2Faabec577-e68b-4967-bb55-30a110e1e40a%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "984628928b2bdaa3860198fc412554f0ba6b1d56",
+            "resource_link_title": "Week 2: Management with Dr. Gates",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2Faabec577-e68b-4967-bb55-30a110e1e40a%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2872689,
+          "name": "AI in Business Professional Showcase (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2872689",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F3707095b-a0fe-4649-a900-8820eebdffe4%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a879d8a1bd10672c51be6500477d424998b963f5",
+            "resource_link_title": "AI in Business Professional Showcase",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F3707095b-a0fe-4649-a900-8820eebdffe4%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2515705,
+          "name": "Leeds Launch Day 2025: Welcome ",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2515705",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "3bd93f235197574794338917a4a0a33d7487e3b5",
+            "resource_link_title": "Leeds Launch Welcome 2025",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2091657",
+              "renderPath": "play2",
+              "contentTitle": "Leeds Launch Welcome 2025"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        }
+      ],
+      "wevideoish": [
+        {
+          "id": 2864476,
+          "name": "Week 1: Marketing with Meg (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2864476",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F192e1c85-5c83-4730-827b-bbeff056964f%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "b7386e493cfff3e6a56ea45ab1fff0b3eba06d2f",
+            "resource_link_title": "Week 1: Marketing with Meg (WeVideo)",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F192e1c85-5c83-4730-827b-bbeff056964f%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2868443,
+          "name": "Week 2: Management with Dr. Gates (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2868443",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2Faabec577-e68b-4967-bb55-30a110e1e40a%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "984628928b2bdaa3860198fc412554f0ba6b1d56",
+            "resource_link_title": "Week 2: Management with Dr. Gates",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2Faabec577-e68b-4967-bb55-30a110e1e40a%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2872689,
+          "name": "AI in Business Professional Showcase (WeVideo)",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2872689",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F3707095b-a0fe-4649-a900-8820eebdffe4%3FcompletionType%3DREGULAR",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "a879d8a1bd10672c51be6500477d424998b963f5",
+            "resource_link_title": "AI in Business Professional Showcase",
+            "content_type": "ContextExternalTool",
+            "content_id": 60935,
+            "custom_params": {}
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F3707095b-a0fe-4649-a900-8820eebdffe4%3FcompletionType%3DREGULAR",
+          "isExternal": true
+        },
+        {
+          "id": 2515705,
+          "name": "Leeds Launch Day 2025: Welcome ",
+          "submission_types": [
+            "external_tool"
+          ],
+          "points": 10,
+          "url": "https://canvas.colorado.edu/courses/21463/assignments/2515705",
+          "external_tool_tag_attributes": {
+            "url": "https://www.playposit.com/LTI13/launch",
+            "new_tab": false,
+            "external_data": "",
+            "resource_link_id": "3bd93f235197574794338917a4a0a33d7487e3b5",
+            "resource_link_title": "Leeds Launch Welcome 2025",
+            "content_type": "ContextExternalTool",
+            "content_id": 54819,
+            "custom_params": {
+              "contentId": "2091657",
+              "renderPath": "play2",
+              "contentTitle": "Leeds Launch Welcome 2025"
+            }
+          },
+          "external_tool_url": "https://www.playposit.com/LTI13/launch",
+          "isExternal": true
+        }
+      ],
+      "deep": {
+        "assignmentUrl": "https://canvas.colorado.edu/courses/21463/assignments/2864476",
+        "pageUrl": "https://canvas.colorado.edu/courses/21463/assignments/2864476",
+        "frames": [
+          {
+            "url": "https://canvas.colorado.edu/courses/21463/assignments/2864476",
+            "name": ""
+          },
+          {
+            "url": "about:blank",
+            "name": "instructure_ajax_error_result"
+          },
+          {
+            "url": "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]",
+            "name": "post_message_forwarding"
+          },
+          {
+            "url": "https://www.wevideo.com/interactive/player_v2?assignmentId=1485327",
+            "name": ""
+          }
+        ],
+        "wevideoFrames": [
+          {
+            "url": "https://www.wevideo.com/interactive/player_v2?assignmentId=1485327",
+            "name": ""
+          }
+        ],
+        "popupUrls": [
+          "https://canvas.colorado.edu/courses/21463/assignments/2864476"
+        ],
+        "iframeSrcs": [
+          "about:blank",
+          "https://canvas.colorado.edu/courses/21463/assignments/2864476/tool_launch",
+          "https://sso.canvaslms.com/post_message_forwarding?rev=e6aca5e55d-9c856c93fa625037&token=[REDACTED]"
+        ],
+        "playerUrl": "https://www.wevideo.com/interactive/player_v2?assignmentId=1485327",
+        "playerDom": {
+          "title": "Player",
+          "text": "",
+          "buttons": [
+            {
+              "tag": "BUTTON",
+              "text": "Start video playback",
+              "cls": "v-btn v-btn--elevated v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "OpenSidebar",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:08:10.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:09:26.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:10:53.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Check All interaction. Click on this button to jump to 00:15:19.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:18:58.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:20:19.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:21:11.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:25:23.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:27:38.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "DIV",
+              "text": "Multiple Choice interaction. Click on this button to jump to 00:36:27.",
+              "cls": "marker text-center py-4"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Expand Sidebar",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-small "
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Collapse Sidebar",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-small "
+            },
+            {
+              "tag": "DIV",
+              "text": "Review",
+              "cls": "sidebar-tab d-flex flex-column align-center justify-center active"
+            },
+            {
+              "tag": "DIV",
+              "text": "Notes",
+              "cls": "sidebar-tab d-flex flex-column align-center justify-center"
+            },
+            {
+              "tag": "DIV",
+              "text": "Transcript",
+              "cls": "sidebar-tab d-flex flex-column align-center justify-center"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Jump to Week 1 Marketing with Meg at 00:00 - 59:00",
+              "cls": "v-btn v-btn--elevated v-btn--icon v-theme--customTheme v-btn--density-default el"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Download Notes as Text File",
+              "cls": "v-btn v-btn--icon v-theme--customTheme text-grey-darken-1 v-btn--density-default"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "OpenNotes Search Field",
+              "cls": "v-btn v-btn--icon v-theme--customTheme text-grey-darken-1 v-btn--density-default"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "create new note",
+              "cls": "v-btn v-btn--disabled v-btn--icon v-theme--customTheme text-primary v-btn--densi"
+            },
+            {
+              "tag": "I",
+              "text": "Clear Search",
+              "cls": "mdi-close-circle mdi v-icon notranslate v-theme--customTheme v-icon--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "BUTTON",
+              "text": " Submit ",
+              "cls": "v-btn v-btn--disabled v-theme--customTheme bg-primary v-btn--density-default v-b"
+            },
+            {
+              "tag": "DIV",
+              "text": "toggle video play",
+              "cls": "overlay-play-toggle"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Play Video",
+              "cls": "vjs-big-play-button"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Play Interactive Video",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Close Sidebar",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Seek back 10 seconds",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "Fast forward 10 seconds",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "toggle captions",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            },
+            {
+              "tag": "BUTTON",
+              "text": "toggle fullscreen",
+              "cls": "v-btn v-btn--icon v-theme--customTheme v-btn--density-default v-btn--size-defaul"
+            }
+          ],
+          "inputs": [
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "placeholder": "Search Notes",
+              "cls": "v-field__input"
+            },
+            {
+              "tag": "DIV",
+              "type": null,
+              "placeholder": null,
+              "cls": "inline-textarea show-border mce-content-body"
+            },
+            {
+              "tag": "INPUT",
+              "type": "text",
+              "placeholder": null,
+              "cls": "v-field__input"
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "checkbox",
+              "placeholder": null,
+              "cls": ""
+            },
+            {
+              "tag": "INPUT",
+              "type": "radio",
+              "placeholder": null,
+              "cls": ""
+            }
+          ]
+        },
+        "network": [
+          {
+            "status": 302,
+            "url": "https://www.playposit.com/LTI13/auth",
+            "contentType": "text/html; charset=UTF-8"
+          },
+          {
+            "status": 302,
+            "url": "https://sso.canvaslms.com/api/lti/authorize_redirect?scope=openid&response_type=id_token&response_mode=form_post&prompt=none&client_id=107720000000000369&redirect_uri=https%3A%2F%2Fwww.playposit.com%2FLTI13%2Flaunch&state=state-615688c705728b063cfc75e84ad04cef464bdb581389c64358fbaa61c2593e87&nonce=n",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "status": 200,
+            "url": "https://canvas.colorado.edu/api/lti/authorize?client_id=107720000000000369&login_hint=32393fa04ed6273ad4e9dd16d6fed5575d521e94&lti_message_hint=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXJpZmllciI6ImMwOGZmZTg1YTljM2ZmOWYyNmYwNDVlMDIwMTBmNjU4YzkwY2RmNzlmOTNiMzdhMTE0NzY3YjI4OGI1OGVjNDBlZDhmODFjZDdiMmE",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/javascripts/lti_post_message_forwarding-e6aca5e55d.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/webpack-production/i18next-en-a2LatePolicyToolTipContent-json-chunk-24d7637570d8f96b.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://canvas.colorado.edu/api/v1/courses/21463/lti_apps/launch_definitions?placements%5B%5D=assignment_view",
+            "contentType": "application/json; charset=utf-8"
+          },
+          {
+            "status": 200,
+            "url": "https://du11hjcvx0uqb.cloudfront.net/dist/javascripts/lti_post_message_forwarding-e6aca5e55d.js",
+            "contentType": "text/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://www.google-analytics.com/j/collect?v=1&_v=j102&a=1370668717&t=pageview&_s=1&dl=https%3A%2F%2Fcanvas.colorado.edu%2Fcourses%2F21463%2Fassignments%2F2864476%2Ftool_launch&ul=en-us&dt=Week%201%3A%20Marketing%20with%20Meg%20(WeVideo)&sr=1280x900&vp=908x450&_u=QACAAEABAAAAACAAI~&jid=&gjid=&cid=15",
+            "contentType": "text/plain"
+          },
+          {
+            "status": 302,
+            "url": "https://www.playposit.com/LTI13/auth",
+            "contentType": "text/html; charset=UTF-8"
+          },
+          {
+            "status": 302,
+            "url": "https://sso.canvaslms.com/api/lti/authorize_redirect?scope=openid&response_type=id_token&response_mode=form_post&prompt=none&client_id=107720000000000369&redirect_uri=https%3A%2F%2Fwww.playposit.com%2FLTI13%2Flaunch%2Fdeeplink%3FinteractivityRedirect%3D%252Fapi%252F5%252Flti%252Fdeep-link%252Fopen%2",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "status": 200,
+            "url": "https://canvas.colorado.edu/api/lti/authorize?client_id=107720000000000369&login_hint=32393fa04ed6273ad4e9dd16d6fed5575d521e94&lti_message_hint=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXJpZmllciI6IjI4MjQ3ZGFjZDI3ODBhZGI2MGQ0ODk2YjVlYWY3YTE5NGJmZWI1MWI5OWQ2MzhmMGIwZmY1NGM5N2IxYTY0YTA4ZjUzNzg3YjY5MmQ",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "status": 302,
+            "url": "https://www.playposit.com/LTI13/launch/deeplink?interactivityRedirect=%2Fapi%2F5%2Flti%2Fdeep-link%2Fopen%2Fbulb%2F192e1c85-5c83-4730-827b-bbeff056964f%3FcompletionType%3DREGULAR",
+            "contentType": "text/html;charset=UTF-8"
+          },
+          {
+            "status": 303,
+            "url": "https://www.wevideo.com/api/5/lti/migration/login/token/bb17a792-8497-4ec6-afe1-a59fafb6cd6d",
+            "contentType": ""
+          },
+          {
+            "status": 303,
+            "url": "https://www.wevideo.com/api/5/lti/deep-link/open/bulb/192e1c85-5c83-4730-827b-bbeff056964f?completionType=REGULAR",
+            "contentType": ""
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/interactive/player_v2?assignmentId=1485327",
+            "contentType": "text/html;charset=UTF-8"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/2/wevideouser/info",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/playposit/instance-settings/1609717",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/bulbs/assignment/1485327",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/user/preferences",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/3/me",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/2/wevideouser/products",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/playposit/instance-settings/bulb-assignment/1485327",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/3/instances/1609717",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/bulbs/assignment/1485327/attempt",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/bulb-videos/bulb/792768/video/783978/streams",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/video-hosts/bulbs/792768/captions",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/4/analytics/instrumentation",
+            "contentType": ""
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/bulb-attempt/41758937/note-attempts?size=1000",
+            "contentType": "application/json"
+          },
+          {
+            "status": 200,
+            "url": "https://bunny.playposit.com/latex/css/equation-embed.css",
+            "contentType": "text/css; charset=utf-8"
+          },
+          {
+            "status": 302,
+            "url": "https://www.wevideo.com/api/5/bulbs/792768/thumbnail",
+            "contentType": ""
+          },
+          {
+            "status": 200,
+            "url": "https://d20n0wiqx35i3l.cloudfront.net/playposit/assets/hosted/offline/styles.css",
+            "contentType": "text/css"
+          },
+          {
+            "status": 200,
+            "url": "https://d20n0wiqx35i3l.cloudfront.net/playposit/assets/hosted/offline/offline.min.js",
+            "contentType": "application/javascript"
+          },
+          {
+            "status": 200,
+            "url": "https://www.wevideo.com/api/5/logs/log",
+            "contentType": ""
+          }
+        ],
+        "canvasTextPreview": "Skip To Content\nDashboard\nAccount\nDashboard\nCourses\nCalendar\n4 unread messages.\n4\nInbox\nHistory\nStudio\nCU Book Access\n10 unread release notes.\n10\nHelp\nLeeds First-Year Experience CommunityAssignmentsWeek 1: Marketing with Meg (WeVideo)\nHome\nAnnouncements\nAssignments\nDiscussions\nGrades\nPeople\nPages\nFiles\nSyllabus\nQuizzes\nModules\nCollaborations\nChat\nZoom\nMicrosoft Education\nNamecoach\nCU Boulder Libraries\nCU Book Access\nNotebook\nWeek 1: Marketing with Meg (WeVideo)\nWeek 1: Marketing with Meg (WeVideo)\nDue: Mon Sep 7, 2026 12:00pm\nDue: Mon Sep 7, 2026 12:00pm\nUngraded, 10 Possible Points\n10 Points Possible\nAttempt\nIn Progress\nNEXT UP: Submit Assignment\nAdd Comment\nAvailable after Aug 31, 2026 12:00pm\nAvailable after Aug 31, 2026 12:00pm\nDetails\nNo additional details were added for this assignment.",
+        "detectedWeVideo": true
+      }
+    }
+  },
+  "savedAt": "2026-09-15T05:50:18.930Z",
+  "step": "recon-done"
+}

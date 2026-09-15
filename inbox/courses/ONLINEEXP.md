@@ -63,6 +63,7 @@ Synced from Canvas `/api/v1` (open items, term window). Not the 14d due-list —
 
 - Orientation only — Engineering Advising Challenge + Pre-Business most relevant for IBE; complete Degree Requirements quiz.
 - LTI Sections 1–5 are the curriculum narrative; advising challenges are checkpoints.
+- **WeVideo/PlayPosit:** Welcome + Sections 1–5 launch `playposit.com` LTI → complete with `cd browser && npm run wevideo -- --course ONLINEEXP` when Jacob authorizes full-auto.
 ## Instructor profile
 
 Profile updated: 2026-08-24

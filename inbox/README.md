@@ -18,6 +18,7 @@ inbox/
   courses/ECON2010.md
   courses/COEN1500.md
   courses/ONLINEEXP.md    # Leeds Online Experience
+  courses/LEEDSFYE.md     # Leeds First-Year Experience (WeVideo)
   captures/               # photo intake queue + gitignored inbox/
   audit-*.md              # accuracy audits (npm run audit)
   archive/                # old snapshots

@@ -140,7 +140,7 @@ in Buff Portal and with the IBE advisor before acting.
 
 ## Automation posture
 
-**Primary job:** help Jacob with academic *processes* (planning, drafts, checklists, peer-review tracking, module progress, grade risk, completetion of selected assignments, developing replys to canvas posts, keeping Jacob up to date with assinments and requirements).
+ Help Jacob with anything academic that he asks for.
 
 ## Data path (no PAT required)
 
@@ -155,13 +155,10 @@ JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO cookies (default) or PAT (opt
 3. **Browser UI escape hatch only** for WebAssign, ZyBooks, PlayPosit, proctored quizzes, other LTI — process help; Jacob operates the tool. Never auto.
 4. **CampusGroups signups** (COEN major dinner, AI lab workshop): Playwright scripts in `browser/`; read [`.jacob/signup-preferences.md`](.jacob/signup-preferences.md) before picking slots. RSVP ≠ Canvas assignment done.
 
-### Require Jacob (unless given approval)
+### needs prompting from Jacob to begin (unless given approval)
 
 - In-person quizzes / exams / timed **or remotely proctored** assessments
-- WebAssign / ZyBooks / PlayPosit / LockDown / other LTI tool workflows
-- Presentations
 - Originality / voice / judgment work (essays, cases, pitches, reflections)
-- Group work that binds others
 - First submission in a course until that course is listed in [`.jacob/calibrated-courses.md`](.jacob/calibrated-courses.md)
 - Anything unclear → **ask Jacob**
 

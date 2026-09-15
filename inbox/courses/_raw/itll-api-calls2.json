@@ -1,0 +1,184 @@
+[
+  {
+    "url": "/api/UserCookieData",
+    "status": 204,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/Workshops/Categories?offset=0&limit=15",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"total\":8,\"limit\":15,\"offset\":0,\"items\":[{\"id\":1,\"name\":\"Arduino\",\"description\":\"Learn how to use Arduino Hardware and Software. Our workshops focus on learning the flagship Arduino product, Arduino UNO, and then using that hardware to work with motors, servos, Bluetooth and radio communications, and then how to move on from the UNO to smaller or more specific microcontrollers.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-arduino-34403-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\Arduino.jpg\",\"icon\":\"conductor:arduino\"},{\"id\":2,\"name\":\"CAD\",\"description\":\"Learn about CAD!\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-cad-6079556-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\CAD.jpg\",\"icon\":\"mdi-cube-outline\"},{\"id\":3,\"name\":\"ECAD\",\"description\":\"Learn about electronic design automation, or Electronic CAD. Our program teaches the principles of ECAD using industry software, Altium Designer. In these workshops you will learn how to navigate the software to capture electrical schematics and convert those to printed circuit board layouts.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-architecture-blueprint-2298394-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\ECAD.jpg\",\"icon\":\"conductor:ecad\"},{\"id\":4,\"name\":\"Electronics\",\"description\":\"These workshops are set up to teach you fundamental electronics skills such as soldering and basic circuit design.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-electronics-6765104-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCate"
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Prototyping.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Electronics.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/MaterialTesting.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Arduino.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Manufacturing.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/ECAD.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/CAD.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/SsoLogin?returnUrl=%2Fworkshops%3FeventId%3D17",
+    "status": 302,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/signin-oidc",
+    "status": 302,
+    "method": "POST",
+    "reqBody": "id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlQ1aDQwcTdHMHg0OXFuNDFsTTkta0tqcEQ5OCJ9.eyJhdWQiOiIwNWMwODEwYy0yZTAwLTQ5OWUtOWRlMS1iMjc3MzIwYjZmOGQiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vM2RlZDhiMWItMDcwZC00NjI5LTgyZTQtYzBiMDE5ZjQ2MDU3L3YyLjAiLCJpYXQiOjE3ODg5ODg5NDcsIm5iZiI6MTc4ODk4ODk0NywiZXhwIjoxNzg4OTkyODQ3LCJhZ2VHcm91cCI6IjMiLCJhaW8iOiJBWFFBaS84ZUFBQUFacXRCTW4zVzBCaHljdFhHemhkeUhlWjNFRGhZeng1Z3A2ZDliM1dHN255ZFoveCtNUXJKUmU0RmZoWkF5NDAzZkNMYWUxL2dpcUttalVvL0tNR0xpbHJUck",
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/UserCookieData",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"roles\":[],\"username\":\"japf8945\",\"expirationTime\":\"9/10/2026 3:27:27 PM\",\"isKiosk\":false,\"wasNotAbleToFullyLoad\":false}"
+  },
+  {
+    "url": "/api/Workshops/Categories?offset=0&limit=15",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"total\":8,\"limit\":15,\"offset\":0,\"items\":[{\"id\":1,\"name\":\"Arduino\",\"description\":\"Learn how to use Arduino Hardware and Software. Our workshops focus on learning the flagship Arduino product, Arduino UNO, and then using that hardware to work with motors, servos, Bluetooth and radio communications, and then how to move on from the UNO to smaller or more specific microcontrollers.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-arduino-34403-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\Arduino.jpg\",\"icon\":\"conductor:arduino\"},{\"id\":2,\"name\":\"CAD\",\"description\":\"Learn about CAD!\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-cad-6079556-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\CAD.jpg\",\"icon\":\"mdi-cube-outline\"},{\"id\":3,\"name\":\"ECAD\",\"description\":\"Learn about electronic design automation, or Electronic CAD. Our program teaches the principles of ECAD using industry software, Altium Designer. In these workshops you will learn how to navigate the software to capture electrical schematics and convert those to printed circuit board layouts.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-architecture-blueprint-2298394-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCategory\\\\ECAD.jpg\",\"icon\":\"conductor:ecad\"},{\"id\":4,\"name\":\"Electronics\",\"description\":\"These workshops are set up to teach you fundamental electronics skills such as soldering and basic circuit design.\",\"imageUri\":\"Images\\\\eventCategory\\\\noun-electronics-6765104-363636.svg\",\"backgroundImageUri\":\"Images\\\\eventCate"
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Manufacturing.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/MaterialTesting.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Arduino.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/CAD.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/ECAD.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Prototyping.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/Electronics.jpg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/content/Images/eventCategory/cropped-Tour%20Background.svg",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/Workshops?offset=0&limit=15&categoryId=5",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"total\":1,\"limit\":15,\"offset\":0,\"items\":[{\"id\":5,\"name\":\"ITLL Tour\",\"level\":1,\"description\":\"<p>Tours will start at LaunchPoint (ITLL 110, next to the 3D Printers on the south end of the building). Tours are free and will last roughly 30 minutes.&nbsp;<strong>Please bring your Buff OneCard, as it is required for the tour.&nbsp;</strong></p>\\n<p>After completing the ITLL Orientation Tour you will have access to the following:</p>\\n<ul>\\n<li>Buff OneCard access to the ITL Laboratory during ITLL extended card access hours,</li>\\n<li>Use of on-site ITLL computers,</li>\\n<li>ITLP cloud-based virtual computers,</li>\\n<li>Sign up for and participate in ITLP Skill Building Workshops, and</li>\\n<li>Check out an extensive list of equipment, tools, and supplies for coursework</li>\\n</ul>\",\"bannerImageUri\":\"Images\\\\EventBanners\\\\cu_2012_eng-4006-1.png\",\"categoryId\":5,\"categoryName\":\"Tour\",\"categoryIcon\":\"conductor:tour\",\"categoryImageUri\":\"Images\\\\eventCategory\\\\noun-shape-2901857-363636.svg\",\"categoryBackgroundImageUri\":\"Images\\\\eventCategory\\\\cropped-Tour Background.svg\",\"surveyOnSignup\":true,\"hasPrerequisites\":false,\"attachments\":[],\"upcomingSessionCount\":56,\"nextSessionStart\":\"2026-09-09T17:15:00\",\"minCost\":0,\"maxCost\":0}]}"
+  },
+  {
+    "url": "/api/content/Images/EventBanners/cu_2012_eng-4006-1.png",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": null
+  },
+  {
+    "url": "/api/UserSelfInfo/courses",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "[]"
+  },
+  {
+    "url": "/api/Workshops/5/MyContext",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"blocksOtherSessions\":false}"
+  },
+  {
+    "url": "/api/Workshops/Sessions?offset=0&limit=9&eventId=5",
+    "status": 200,
+    "method": "GET",
+    "reqBody": null,
+    "bodyPreview": "{\"total\":56,\"limit\":9,\"offset\":0,\"items\":[{\"id\":19099,\"eventId\":5,\"eventName\":\"ITLL Tour\",\"startTime\":\"2026-09-09T17:15:00\",\"endTime\":\"2026-09-09T18:00:00\",\"locationName\":\"Launch Point\",\"cost\":0,\"capacity\":25,\"ticketsAvailable\":21,\"waitlistCount\":0,\"attendeesStillNeeded\":0,\"registrationCutoff\":\"2026-09-09T16:15:00\",\"isRegistrationClosed\":false,\"blockedByExistingSignup\":false},{\"id\":19100,\"eventId\":5,\"eventName\":\"ITLL Tour\",\"startTime\":\"2026-09-10T17:15:00\",\"endTime\":\"2026-09-10T18:00:00\",\"locationName\":\"Launch Point\",\"cost\":0,\"capacity\":25,\"ticketsAvailable\":14,\"waitlistCount\":0,\"attendeesStillNeeded\":0,\"registrationCutoff\":\"2026-09-10T16:15:00\",\"isRegistrationClosed\":false,\"blockedByExistingSignup\":false},{\"id\":19101,\"eventId\":5,\"eventName\":\"ITLL Tour\",\"startTime\":\"2026-09-11T17:15:00\",\"endTime\":\"2026-09-11T18:00:00\",\"locationName\":\"Launch Point\",\"cost\":0,\"capacity\":25,\"ticketsAvailable\":21,\"waitlistCount\":0,\"attendeesStillNeeded\":0,\"registrationCutoff\":\"2026-09-11T16:15:00\",\"isRegistrationClosed\":false,\"blockedByExistingSignup\":false},{\"id\":19161,\"eventId\":5,\"eventName\":\"ITLL Tour\",\"startTime\":\"2026-09-13T14:15:00\",\"endTime\":\"2026-09-13T15:00:00\",\"locationName\":\"Launch Point\",\"cost\":0,\"capacity\":25,\"ticketsAvailable\":22,\"waitlistCount\":0,\"attendeesStillNeeded\":0,\"registrationCutoff\":\"2026-09-13T13:15:00\",\"isRegistrationClosed\":false,\"blockedByExistingSignup\":false},{\"id\":19102,\"eventId\":5,\"eventName\":\"ITLL Tour\",\"startTime\":\"2026-09-14T17:15:00\",\"endTime\":\"2026-09-14T18:00:"
+  }
+]

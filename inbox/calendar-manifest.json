@@ -1,11 +1,11 @@
 {
-  "updated": "2026-09-01",
+  "updated": "2026-09-11",
   "timezone": "America/Denver",
   "term": {
     "start": "2026-08-25",
     "end": "2026-12-15"
   },
-  "hash": "0f49fbde503d02a1",
+  "hash": "9cd2d71f95562dfd",
   "gaps": [],
   "events": [
     {
@@ -149,36 +149,6 @@
       "course": "APPM 1235"
     },
     {
-      "id": "club:cu-tri-mon-swim",
-      "kind": "club",
-      "summary": "CU Tri — Mon Swim",
-      "start": "2026-08-31T18:25:00",
-      "end": "2026-08-31T19:25:00",
-      "timezone": "America/Denver",
-      "location": "Rec Center Lap Pool",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261210T235959"
-      ]
-    },
-    {
-      "id": "club:cu-tri-am-swim",
-      "kind": "club",
-      "summary": "CU Tri — AM Swim",
-      "start": "2026-09-01T06:15:00",
-      "end": "2026-09-01T07:15:00",
-      "timezone": "America/Denver",
-      "location": "Rec Center",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261210T235959"
-      ]
-    },
-    {
       "id": "course:BCOR1030:checkpoint:advocate-version-1-in-class-presentation",
       "kind": "presentation",
       "summary": "BCOR1030 — Advocate Version 1 (in-class presentation)",
@@ -190,81 +160,6 @@
       "confidence": "confirmed",
       "url": "https://canvas.colorado.edu/courses/141523",
       "course": "BCOR1030"
-    },
-    {
-      "id": "club:cu-tri-run",
-      "kind": "club",
-      "summary": "CU Tri — Run",
-      "start": "2026-09-01T15:45:00",
-      "end": "2026-09-01T16:30:00",
-      "timezone": "America/Denver",
-      "location": "Outside Rec Center",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261210T235959"
-      ]
-    },
-    {
-      "id": "club:cu-tri-strength",
-      "kind": "club",
-      "summary": "CU Tri — Strength",
-      "start": "2026-09-02T07:00:00",
-      "end": "2026-09-02T08:00:00",
-      "timezone": "America/Denver",
-      "location": "Rec Center",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20261210T235959"
-      ]
-    },
-    {
-      "id": "club:cu-tri-long-bike",
-      "kind": "club",
-      "summary": "CU Tri — Long Bike",
-      "start": "2026-09-05T10:00:00",
-      "end": "2026-09-05T12:00:00",
-      "timezone": "America/Denver",
-      "location": "Trek",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959"
-      ]
-    },
-    {
-      "id": "club:cu-tri-bric-run",
-      "kind": "club",
-      "summary": "CU Tri — BRIC Run",
-      "start": "2026-09-05T12:00:00",
-      "end": "2026-09-05T12:45:00",
-      "timezone": "America/Denver",
-      "location": "BRIC",
-      "description": "ASAP post Long Bike (approx)",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959"
-      ]
-    },
-    {
-      "id": "club:cu-tri-long-run",
-      "kind": "club",
-      "summary": "CU Tri — Long Run",
-      "start": "2026-09-06T09:00:00",
-      "end": "2026-09-06T10:30:00",
-      "timezone": "America/Denver",
-      "location": "Fun Loco",
-      "description": "Colorado Triathlon weekly",
-      "source": "manual",
-      "confidence": "confirmed",
-      "recurrence": [
-        "RRULE:FREQ=WEEKLY;BYDAY=SU;UNTIL=20261210T235959"
-      ]
     },
     {
       "id": "course:BCOR1030:checkpoint:advocate-presentation-version-2-revised-version",
@@ -293,6 +188,18 @@
       "course": "APPM1235"
     },
     {
+      "id": "club:coen-itll-orientation-tour",
+      "kind": "club",
+      "summary": "COEN — ITLL Orientation Tour",
+      "start": "2026-09-10T17:15:00",
+      "end": "2026-09-10T18:00:00",
+      "timezone": "America/Denver",
+      "location": "Launch Point (ITLL 110)",
+      "description": "ticket 19462185 session 19100; Buff OneCard required; Canvas upload after",
+      "source": "manual",
+      "confidence": "confirmed"
+    },
+    {
       "id": "course:CSCI1200:checkpoint:quiz-1-800",
       "kind": "exam",
       "summary": "CSCI1200 — Quiz 1 800",
@@ -304,6 +211,66 @@
       "confidence": "confirmed",
       "url": "https://canvas.colorado.edu/courses/138109",
       "course": "CSCI1200"
+    },
+    {
+      "id": "club:cu-rugby-games",
+      "kind": "club",
+      "summary": "CU Rugby — Games",
+      "start": "2026-09-12T08:00:00",
+      "end": "2026-09-12T18:00:00",
+      "timezone": "America/Denver",
+      "location": "Away/home TBD",
+      "description": "CU Rugby Saturdays booked with games",
+      "source": "manual",
+      "confidence": "confirmed",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959"
+      ]
+    },
+    {
+      "id": "club:cu-rugby-practice-mon",
+      "kind": "club",
+      "summary": "CU Rugby — Practice (Mon)",
+      "start": "2026-09-14T20:00:00",
+      "end": "2026-09-14T22:00:00",
+      "timezone": "America/Denver",
+      "location": "CU Rugby",
+      "description": "CU Rugby weekly practice",
+      "source": "manual",
+      "confidence": "confirmed",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261210T235959"
+      ]
+    },
+    {
+      "id": "club:cu-rugby-practice-wed",
+      "kind": "club",
+      "summary": "CU Rugby — Practice (Wed)",
+      "start": "2026-09-16T18:00:00",
+      "end": "2026-09-16T20:00:00",
+      "timezone": "America/Denver",
+      "location": "CU Rugby",
+      "description": "CU Rugby weekly practice",
+      "source": "manual",
+      "confidence": "confirmed",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20261210T235959"
+      ]
+    },
+    {
+      "id": "club:cu-rugby-practice-thu",
+      "kind": "club",
+      "summary": "CU Rugby — Practice (Thu)",
+      "start": "2026-09-17T20:00:00",
+      "end": "2026-09-17T22:00:00",
+      "timezone": "America/Denver",
+      "location": "CU Rugby",
+      "description": "CU Rugby weekly practice",
+      "source": "manual",
+      "confidence": "confirmed",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=TH;UNTIL=20261210T235959"
+      ]
     },
     {
       "id": "club:386299",

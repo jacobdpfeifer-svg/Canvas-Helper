@@ -7,10 +7,8 @@ Notes may include `kind:club` and/or `RRULE:FREQ=WEEKLY;BYDAY=…;UNTIL=…` (pa
 
 | Added | Summary | Start (MT) | End (MT) | Location | Notes |
 |-------|---------|------------|----------|----------|-------|
-| 2026-08-31 | CU Tri — Mon Swim | 2026-08-31T18:25:00 | 2026-08-31T19:25:00 | Rec Center Lap Pool | kind:club RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261210T235959 Colorado Triathlon weekly |
-| 2026-08-31 | CU Tri — AM Swim | 2026-09-01T06:15:00 | 2026-09-01T07:15:00 | Rec Center | kind:club RRULE:FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261210T235959 Colorado Triathlon weekly |
-| 2026-08-31 | CU Tri — Run | 2026-09-01T15:45:00 | 2026-09-01T16:30:00 | Outside Rec Center | kind:club RRULE:FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261210T235959 Colorado Triathlon weekly |
-| 2026-08-31 | CU Tri — Strength | 2026-09-02T07:00:00 | 2026-09-02T08:00:00 | Rec Center | kind:club RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20261210T235959 Colorado Triathlon weekly |
-| 2026-08-31 | CU Tri — Long Bike | 2026-09-05T10:00:00 | 2026-09-05T12:00:00 | Trek | kind:club RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959 Colorado Triathlon weekly |
-| 2026-08-31 | CU Tri — BRIC Run | 2026-09-05T12:00:00 | 2026-09-05T12:45:00 | BRIC | kind:club RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959 ASAP post Long Bike (approx) |
-| 2026-08-31 | CU Tri — Long Run | 2026-09-06T09:00:00 | 2026-09-06T10:30:00 | Fun Loco | kind:club RRULE:FREQ=WEEKLY;BYDAY=SU;UNTIL=20261210T235959 Colorado Triathlon weekly |
+| 2026-09-09 | COEN — ITLL Orientation Tour | 2026-09-10T17:15:00 | 2026-09-10T18:00:00 | Launch Point (ITLL 110) | kind:club ticket 19462185 session 19100; Buff OneCard required; Canvas upload after |
+| 2026-09-11 | CU Rugby — Practice (Mon) | 2026-09-14T20:00:00 | 2026-09-14T22:00:00 | CU Rugby | kind:club RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20261210T235959 CU Rugby weekly practice |
+| 2026-09-11 | CU Rugby — Practice (Wed) | 2026-09-16T18:00:00 | 2026-09-16T20:00:00 | CU Rugby | kind:club RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20261210T235959 CU Rugby weekly practice |
+| 2026-09-11 | CU Rugby — Practice (Thu) | 2026-09-17T20:00:00 | 2026-09-17T22:00:00 | CU Rugby | kind:club RRULE:FREQ=WEEKLY;BYDAY=TH;UNTIL=20261210T235959 CU Rugby weekly practice |
+| 2026-09-11 | CU Rugby — Games | 2026-09-12T08:00:00 | 2026-09-12T18:00:00 | Away/home TBD | kind:club RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20261210T235959 CU Rugby Saturdays booked with games |

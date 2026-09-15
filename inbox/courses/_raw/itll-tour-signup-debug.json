@@ -1,0 +1,19 @@
+{
+  "url": "https://itll.colorado.edu/workshops?eventId=17",
+  "title": "Workshops · ITL Program",
+  "bodyText": "Integrated Teaching & Learning Program\nRequests\nWorkshops\nResources\nStore\nWiki\nLog In\nWorkshops Catalog\nChoose a Category\nArduino\nCAD\nECAD\nElectronics\nManufacturing\nMaterial Testing\nPrototyping\nTour\nChoose a Workshop\nChoose a category to see its workshops.\nDescription\nChoose a workshop to read about it.\nPick a Time\nChoose a workshop to see its upcoming sessions.\nReview & Register\nPick a time to review and register.\nContact Us\nitlp@colorado.edu\n303-492-7222\n1045 Regent Drive\n522 UCB\nBoulder, CO 80309\nUniversity Links\nCU Boulder\nCollege of Engineering\nStudent Resources\nUniversity of Colorado Boulder\n\n© Regents of the University of Colorado\n\nPrivacy • Legal & Trademarks • Campus Map",
+  "candidates": [
+    {
+      "tag": "BUTTON",
+      "text": "Workshops",
+      "href": null,
+      "className": "v-btn v-theme--user v-btn--density-default v-btn--size-default v-btn--variant-text nav-btn"
+    },
+    {
+      "tag": "DIV",
+      "text": "Tour",
+      "href": null,
+      "className": "ssg__cell ssg__cell--enter"
+    }
+  ]
+}

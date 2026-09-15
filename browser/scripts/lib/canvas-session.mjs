@@ -49,6 +49,15 @@ export const COURSE_FILE_MAP = [
     code: "ONLINEEXP",
     patterns: [/online\s*experience/i, /leeds.*orientation/i],
   },
+  {
+    code: "LEEDSFYE",
+    patterns: [
+      /leeds\s*first[- ]?year/i,
+      /first[- ]year\s*experience/i,
+      /\bfye\b/i,
+      /leeds first-year experience community/i,
+    ],
+  },
 ];
 
 const TZ = "America/Denver";
