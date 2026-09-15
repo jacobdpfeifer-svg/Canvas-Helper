@@ -166,6 +166,8 @@ def context_for_display(item: LearnItem) -> list[dict[str, str]] | None:
         return None
     if is_refusal_rows(item.professional_context):
         return None
+    if item.professional_context is None:
+        return None
     return list(item.professional_context)
 
 

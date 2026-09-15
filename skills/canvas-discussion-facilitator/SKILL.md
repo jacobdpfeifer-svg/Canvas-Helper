@@ -66,3 +66,4 @@ Preview only (never posts):
 - forum participation
 - reply drafts
 - draft a discussion post
+- discussion draft
