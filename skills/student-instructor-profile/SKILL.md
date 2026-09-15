@@ -167,6 +167,9 @@ Read only. No submit tools from this skill. Writes are limited to `## Instructor
 ## Triggers
 
 - "how does [prof/course] grade" / "professor preferences" / "what does [instructor] care about"
+- how does this prof grade
+- how does the professor grade
+- what does the instructor care about
 - Before a full draft on written, discussion, reflection, presentation script, or case work
 - After sync when `Syllabus hash` in course MD changed vs last profile `Profile updated:` date
 - The student asks for a full instructor breakdown

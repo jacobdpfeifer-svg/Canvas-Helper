@@ -675,7 +675,7 @@ def main(argv: list[str] | None = None) -> int:
         print(value)
         return 0
     if args.cmd == "set-prior":
-        path = write_prior_knowledge(root, args.course, args.value)
+        path: Path | None = write_prior_knowledge(root, args.course, args.value)
         print(path)
         return 0
     if args.cmd == "write-focus":
@@ -689,17 +689,17 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(path)
         return 0
-    path = write_nudge(
+    nudge_path: Path | None = write_nudge(
         root,
         assignment_id=args.assignment_id,
         course_code=args.course_code,
         prompt=args.prompt,
         exam_due=args.exam_due,
     )
-    if path is None:
+    if nudge_path is None:
         print("skipped")
         return 0
-    print(path)
+    print(nudge_path)
     return 0
 
 

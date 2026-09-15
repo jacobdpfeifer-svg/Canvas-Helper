@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, tzinfo
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -48,7 +48,7 @@ def _school_timezone_name(user_root: Path | None) -> str | None:
     return name or None
 
 
-def brief_timezone(user_root: Path | None = None):
+def brief_timezone(user_root: Path | None = None) -> tzinfo:
     """School-local day boundary. TIMEZONE wins when set; else tenant yaml."""
     from .dates import _output_tz
 
