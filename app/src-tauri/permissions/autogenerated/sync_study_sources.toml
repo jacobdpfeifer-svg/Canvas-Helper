@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-sync-study-sources"
+description = "Enables the sync_study_sources command without any pre-configured scope."
+commands.allow = ["sync_study_sources"]
+
+[[permission]]
+identifier = "deny-sync-study-sources"
+description = "Denies the sync_study_sources command without any pre-configured scope."
+commands.deny = ["sync_study_sources"]

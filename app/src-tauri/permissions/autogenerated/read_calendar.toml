@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-calendar"
+description = "Enables the read_calendar command without any pre-configured scope."
+commands.allow = ["read_calendar"]
+
+[[permission]]
+identifier = "deny-read-calendar"
+description = "Denies the read_calendar command without any pre-configured scope."
+commands.deny = ["read_calendar"]

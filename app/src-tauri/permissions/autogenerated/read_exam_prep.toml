@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-exam-prep"
+description = "Enables the read_exam_prep command without any pre-configured scope."
+commands.allow = ["read_exam_prep"]
+
+[[permission]]
+identifier = "deny-read-exam-prep"
+description = "Denies the read_exam_prep command without any pre-configured scope."
+commands.deny = ["read_exam_prep"]

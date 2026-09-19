@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-check-canvas-session"
+description = "Enables the check_canvas_session command without any pre-configured scope."
+commands.allow = ["check_canvas_session"]
+
+[[permission]]
+identifier = "deny-check-canvas-session"
+description = "Denies the check_canvas_session command without any pre-configured scope."
+commands.deny = ["check_canvas_session"]

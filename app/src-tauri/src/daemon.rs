@@ -8,7 +8,7 @@
 use serde::Serialize;
 use serde_json::Value;
 use std::env;
-use std::io::Write;
+use std::io::{BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 use std::sync::Arc;
 use std::thread;
@@ -96,13 +96,46 @@ pub fn run_bootstrap_sync(rt: &Runtime) -> Result<(), String> {
     run_status(cmd, "canvas bootstrap sync")
 }
 
-/// Instructor-published material → `{user_root}/inbox/study-sources/` (Phase 3).
-/// Headless; exits non-zero when the SSO session is missing, and the script
-/// itself writes an honest status.json either way.
-pub fn run_sync_study_sources(rt: &Runtime) -> Result<(), String> {
+/// Instructor-published material → `{user_root}/inbox/study-sources/`.
+/// Streams progress for onboarding Screen 3: the script prints one JSON
+/// event per line (`courses` / `course` / `done`); each is handed to
+/// `on_event` as it arrives so the UI can show courses landing one by one.
+/// Returns Ok(()) when the process exits 0, Err(reason) otherwise — the
+/// `done` event (when present) carries the honest per-course detail.
+pub fn run_sync_study_sources_streaming(rt: &Runtime, mut on_event: impl FnMut(Value)) -> Result<(), String> {
     tick_log("sync-study-sources");
-    let cmd = rt.browser_script("sync-study-sources")?;
-    run_status(cmd, "study source sync")
+    let mut cmd = rt.browser_script("sync-study-sources")?;
+    let mut child = cmd
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("failed to spawn study source sync: {e}"))?;
+    let stdout = child.stdout.take().ok_or("study source sync stdout unavailable")?;
+    for line in BufReader::new(stdout).lines().map_while(Result::ok) {
+        let trimmed = line.trim();
+        if !trimmed.starts_with('{') {
+            continue;
+        }
+        if let Ok(value) = serde_json::from_str::<Value>(trimmed) {
+            if value.get("event").and_then(Value::as_str).is_some() {
+                on_event(value);
+            }
+        }
+    }
+    let output = child.wait_with_output().map_err(|e| format!("study source sync failed: {e}"))?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        let err = String::from_utf8_lossy(&output.stderr);
+        let last = err.lines().rev().find(|l| !l.trim().is_empty()).unwrap_or("").trim().to_string();
+        Err(if last.is_empty() { format!("study source sync exited with {}", output.status) } else { last })
+    }
+}
+
+/// Every Calendar-tab read in one Python process (see canvas_mcp.core.plan_surface).
+pub fn run_plan_surface(rt: &Runtime) -> Result<Value, String> {
+    tick_log("plan-surface");
+    python_json(rt, "canvas_mcp.core.plan_surface", &["--json"])
 }
 
 /// Shell `npm run open-canvas` for SSO login (onboarding "I signed in").

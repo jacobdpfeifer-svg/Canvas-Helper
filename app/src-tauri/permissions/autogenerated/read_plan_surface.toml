@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-plan-surface"
+description = "Enables the read_plan_surface command without any pre-configured scope."
+commands.allow = ["read_plan_surface"]
+
+[[permission]]
+identifier = "deny-read-plan-surface"
+description = "Denies the read_plan_surface command without any pre-configured scope."
+commands.deny = ["read_plan_surface"]

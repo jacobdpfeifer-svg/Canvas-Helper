@@ -1,11 +1,15 @@
 // Prevents additional console window on Windows in release
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod calendar;
+mod civil;
 mod commands;
 mod daemon;
 mod dock;
+mod exam_plan;
 mod inbox;
 mod runtime;
+mod semester;
 
 use std::sync::Arc;
 
@@ -48,6 +52,14 @@ fn main() {
             commands::route_intent,
             commands::study,
             commands::sync_study_sources,
+            commands::read_plan_surface,
+            commands::read_semester,
+            commands::read_exam_prep,
+            commands::read_calendar,
+            commands::add_calendar_event,
+            commands::delete_calendar_event,
+            commands::decide_calendar_suggestion,
+            commands::open_external,
             commands::runtime_info,
             commands::set_profile,
             commands::list_profiles,

@@ -1,8 +1,12 @@
 //! Tauri commands bridging the React shell to daemon sync + inbox + onboarding.
 
+use crate::calendar;
+use crate::civil::{self, Date};
 use crate::daemon;
+use crate::exam_plan;
 use crate::inbox;
 use crate::runtime::{self, Runtime};
+use crate::semester;
 use serde::Serialize;
 use std::sync::Arc;
 use std::thread;
@@ -21,7 +25,7 @@ fn emit_inbox_updated(app: &AppHandle) {
 }
 
 /// Run Canvas sync (same helper as the tray menu) and notify the UI.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn sync_canvas(app: AppHandle, rt: Rt<'_>) -> Result<SyncResult, String> {
     // Run off the main thread so the webview stays responsive; still block
     // this command until done so invoke() callers get a real result.
@@ -50,14 +54,14 @@ pub fn read_top3(rt: Rt<'_>) -> Result<Vec<inbox::Top3Item>, String> {
     inbox::read_top3(&rt.user_root, 3)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn open_canvas_sso(rt: Rt<'_>) -> Result<(), String> {
     daemon::run_open_canvas(&rt)
 }
 
 /// Headless probe: is there already a valid Canvas session in browser/.auth?
 /// Onboarding calls this before showing the sign-in step.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn check_canvas_session(rt: Rt<'_>) -> Result<bool, String> {
     daemon::run_check_canvas_session(&rt)
 }
@@ -123,7 +127,7 @@ pub fn save_onboarding(
 }
 
 /// Save the onboarding learning-profile games' answers (see docs/design/learning-profile.md).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn save_learning_profile(
     rt: Rt<'_>,
     practice_format: String,
@@ -146,7 +150,7 @@ pub fn save_learning_profile(
 /// USER.md (see canvas_mcp.core.user_profile). Every field is optional —
 /// blank fields keep the templates/USER.md placeholder text.
 #[allow(clippy::too_many_arguments)]
-#[tauri::command]
+#[tauri::command(async)]
 pub fn save_user_profile(
     rt: Rt<'_>,
     name: String,
@@ -182,37 +186,37 @@ pub fn save_user_profile(
 }
 
 /// Due retrieval checks (at most two). Does not invent cards from the week list.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_due_reviews(rt: Rt<'_>) -> Result<serde_json::Value, String> {
     daemon::run_due_reviews(&rt)
 }
 
 /// Brief-day streak line. Empty `line` when there is nothing to show.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_brief_streak(rt: Rt<'_>) -> Result<serde_json::Value, String> {
     daemon::run_brief_streak(&rt)
 }
 
 /// Per-course retention counts from stored claims. Not a skill tree.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_learn_progress(rt: Rt<'_>) -> Result<serde_json::Value, String> {
     daemon::run_learn_progress(&rt)
 }
 
 /// Last two evaluation snapshots. Does not record one.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_evaluation_compare(rt: Rt<'_>) -> Result<serde_json::Value, String> {
     daemon::run_evaluation_compare(&rt)
 }
 
 /// Open commitment and one-time check-in. Does not create or resolve.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_commitment(rt: Rt<'_>) -> Result<serde_json::Value, String> {
     daemon::run_read_commitment(&rt)
 }
 
 /// Store one student-authored commitment. Refuses if one is already open.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn set_commitment(
     rt: Rt<'_>,
     text: String,
@@ -230,13 +234,13 @@ pub fn set_commitment(
 }
 
 /// Student-scored close: met, not_met, or dropped.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn resolve_commitment(rt: Rt<'_>, status: String) -> Result<serde_json::Value, String> {
     daemon::run_resolve_commitment(&rt, &status)
 }
 
 /// Student-scored retrieval. Dock checks of scheduled items pass same_session=false.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn record_review_outcome(
     rt: Rt<'_>,
     item_id: String,
@@ -247,36 +251,135 @@ pub fn record_review_outcome(
 }
 
 /// Optional implementation intention written at onboarding. Empty if skipped.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_check_intention(rt: Rt<'_>) -> Result<String, String> {
     daemon::run_read_check_intention(&rt)
 }
 
 /// Route a natural-language trigger via the Python skill router CLI.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn route_intent(rt: Rt<'_>, trigger: String) -> Result<daemon::RouteResultDto, String> {
     daemon::run_route_intent(&rt, &trigger)
 }
 
 /// Study workspace bridge. `request` = {"cmd": .., "params": {..}}; the reply is
 /// the Python study CLI's envelope ({"ok": true, ..} or {"ok": false, "error": ..}).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn study(rt: Rt<'_>, request: serde_json::Value) -> Result<serde_json::Value, String> {
     daemon::validate_study_request(&request)?;
     daemon::run_study(&rt, &request)
 }
 
-/// Sync Canvas study sources (blocking; the UI shows progress copy meanwhile).
-#[tauri::command]
-pub fn sync_study_sources(rt: Rt<'_>) -> Result<SyncResult, String> {
-    let rt = Arc::clone(&rt);
-    let result = thread::spawn(move || daemon::run_sync_study_sources(&rt))
-        .join()
-        .map_err(|_| "sync thread panicked".to_string())?;
+/// Sync Canvas study sources. Streams `study-sync-progress` window events
+/// (`{"event":"courses"|"course"|"done", ...}`) while it runs so onboarding
+/// Screen 3 can show courses landing one at a time; resolves when the script
+/// exits. Then kicks the deep week sync in the background (fire-and-forget,
+/// emits `inbox-updated` when done) so Home has the term picture too.
+#[tauri::command(async)]
+pub fn sync_study_sources(app: AppHandle, rt: Rt<'_>) -> Result<SyncResult, String> {
+    let handle = app.clone();
+    let result = daemon::run_sync_study_sources_streaming(&rt, |event| {
+        let _ = handle.emit("study-sync-progress", event);
+    });
+    let rt_bg = Arc::clone(&rt);
+    thread::spawn(move || {
+        if daemon::run_bootstrap_sync(&rt_bg).is_ok() {
+            emit_inbox_updated(&app);
+        }
+    });
     Ok(match result {
         Ok(()) => SyncResult { ok: true, error: None },
         Err(e) => SyncResult { ok: false, error: Some(e) },
     })
+}
+
+/// Calendar-tab surface in ONE IPC and one Python process (was six).
+#[tauri::command(async)]
+pub fn read_plan_surface(rt: Rt<'_>) -> Result<serde_json::Value, String> {
+    daemon::run_plan_surface(&rt)
+}
+
+/// Home semester line: all courses + ticks for the range, computed natively
+/// from the synced schema-2 JSON. `today` is the renderer's local date
+/// (YYYY-MM-DD) so the window matches what the student sees; read-only.
+#[tauri::command(async)]
+pub fn read_semester(rt: Rt<'_>, range: String, today: Option<String>) -> Result<semester::Semester, String> {
+    let range = match range.as_str() {
+        "1m" | "2m" | "3m" | "semester" => range,
+        _ => return Err(format!("unknown range {range:?}")),
+    };
+    if let Some(t) = today.as_deref() {
+        if Date::parse(t).is_none() {
+            return Err("today must be YYYY-MM-DD".into());
+        }
+    }
+    Ok(semester::read_semester(&rt.user_root, &range, today.as_deref()))
+}
+
+/// Exam Prep page: exam info, covered material, deterministic draft plan.
+/// `seed` ≠ 0 reshuffles ("Redo this plan"); it never invents material.
+#[tauri::command(async)]
+pub fn read_exam_prep(rt: Rt<'_>, course_id: String, item_id: String, today: Option<String>, seed: Option<u64>) -> Result<exam_plan::ExamPrep, String> {
+    let (record, item) = semester::find_item(&rt.user_root, &course_id, &item_id).ok_or("item not found in synced Canvas data")?;
+    let today = today.as_deref().and_then(Date::parse).unwrap_or_else(civil::utc_today);
+    Ok(exam_plan::exam_prep(&record, &item, today, seed.unwrap_or(0)))
+}
+
+/// Local calendar: events + pending email suggestions + decisions.
+#[tauri::command(async)]
+pub fn read_calendar(rt: Rt<'_>) -> calendar::CalendarPayload {
+    calendar::read_calendar(&rt.user_root)
+}
+
+#[tauri::command(async)]
+pub fn add_calendar_event(rt: Rt<'_>, event: calendar::NewEvent) -> Result<calendar::Event, String> {
+    calendar::add_event(&rt.user_root, event)
+}
+
+#[tauri::command(async)]
+pub fn delete_calendar_event(rt: Rt<'_>, id: String) -> Result<(), String> {
+    calendar::delete_event(&rt.user_root, &id)
+}
+
+/// Add a suggested event to the LOCAL calendar or dismiss it. Never Google.
+#[tauri::command(async)]
+pub fn decide_calendar_suggestion(rt: Rt<'_>, message_id: String, decision: String) -> Result<calendar::CalendarPayload, String> {
+    calendar::decide_suggestion(&rt.user_root, &message_id, &decision)
+}
+
+/// Open an https link (a Canvas `html_url`) in the system browser. No plugin
+/// dependency: macOS `open`, Linux `xdg-open`, Windows `cmd /c start`. Only
+/// https is allowed; anything else is refused before any process spawns.
+#[tauri::command(async)]
+pub fn open_external(url: String) -> Result<(), String> {
+    let trimmed = url.trim();
+    if !trimmed.starts_with("https://") || trimmed.len() > 2048 || trimmed.chars().any(|c| c.is_control() || c.is_whitespace()) {
+        return Err("only https links can be opened".into());
+    }
+    #[cfg(target_os = "macos")]
+    let mut cmd = {
+        let mut c = std::process::Command::new("/usr/bin/open");
+        c.arg(trimmed);
+        c
+    };
+    #[cfg(target_os = "windows")]
+    let mut cmd = {
+        let mut c = std::process::Command::new("cmd");
+        c.args(["/C", "start", "", trimmed]);
+        c
+    };
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let mut cmd = {
+        let mut c = std::process::Command::new("xdg-open");
+        c.arg(trimmed);
+        c
+    };
+    let status = cmd.status().map_err(|e| format!("could not open browser: {e}"))?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("browser launcher exited with {status}"))
+    }
 }
 
 /// Runtime summary for Settings / first-run diagnostics (no secrets).
