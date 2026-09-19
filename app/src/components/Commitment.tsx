@@ -29,13 +29,13 @@ export function CommitmentPanel({
         <h2>Commitment</h2>
         <p className="check-chip">{state.line || checkIn.text}</p>
         <div className="commitment-actions">
-          <button type="button" onClick={() => onResolve("met").catch(() => undefined)}>
+          <button type="button" className="primary" onClick={() => onResolve("met").catch(() => undefined)}>
             Met
           </button>
           <button type="button" onClick={() => onResolve("not_met").catch(() => undefined)}>
             Not met
           </button>
-          <button type="button" onClick={() => onResolve("dropped").catch(() => undefined)}>
+          <button type="button" className="ghost stop" onClick={() => onResolve("dropped").catch(() => undefined)}>
             Drop
           </button>
         </div>

@@ -1,164 +1,97 @@
-# ProductName — Paper Instrument design system
+# ProductName — Spatial Instrument design system
 
-**Source of truth for visual craft.** Geometry and dock states live in
+**Source of truth for visual craft.** Geometry and Peek states live in
 [`docs/design/ambient-dock-ui.md`](../../docs/design/ambient-dock-ui.md).
-This file overrides the ui-ux-pro-max auto-generator defaults (which suggested
-flat teal SaaS or cream/terracotta — wrong for an ambient instrument dock).
+The signed look-alike spec is
+[`docs/design/spatial-instrument-brief.md`](../../docs/design/spatial-instrument-brief.md).
+Style tile: [`docs/design/style-tile.html`](../../docs/design/style-tile.html).
 
 ## Direction
 
-**Selective Instrument Glass** (Paper Instrument) — physical sticky-note
-metaphor + Raycast-grade chrome precision. Frosted **outer shell** only;
-lists, approvals, and ledger text sit on **opaque-enough content planes**.
-Never a SaaS dashboard, marketing page, cream/terracotta editorial, full
-Apple Liquid Glass, or purple glassmorphism pack.
+**Spatial Instrument** for the student-beta **workspace** (a real Mac window):
+visionOS glass chrome, iOS control weight, Linear/Raktor density on lists,
+Solare warmth on Paper, Gleb sequencing on the command palette, Brik/Solare
+type motion **only inside Study**. The parked Peek dock keeps sticky-note
+geometry (18/14 radii, 6/14/22 spacing). Do not force Home into a sticky note.
 
-## Pattern
+Glass is allowed on chrome (sidebar, sheets, bubbles, palette, now-playing).
+It is forbidden on 17px study prose, list rows, and timeline ticks.
 
-- Ambient overlay / sticky note (Peek → Expanded drawer from bottom-right)
-- Peek: Top3 + one primary action
-- Expanded: sheets inside the dock bounds (palette, approval, ledger)
-- Onboarding: the only app-like centered surface
+## Dual density
 
-## Colors
+| Zone | Density | Padding | Type |
+|------|---------|---------|------|
+| Plan due-list, ledger | Linear — tight | 8px row, 4px gaps | 13px UI, 12px mono |
+| Buttons, bubbles, study card, onboarding, Settings | iOS roomy | 12–14 × 16–18 | 15–17px, 34px Large Title |
+| Study prompt / feedback | Reading | column, 45–70ch | 17px / 1.45 |
 
-| Role | Hex / value | CSS variable |
-|------|-------------|--------------|
-| Foreground | `#EEF3F8` | `--fg` |
-| Muted | `#9AABC0` | `--muted` |
-| Accent (ink cobalt) | `#6B8CFF` | `--accent` |
-| Accent deep (fills) | `#4A6AE8` | `--accent-deep` |
-| On accent | `#0A1020` | `--on-accent` |
-| Danger | `#E08585` | `--danger` |
-| Success (rare) | `#7BCFA6` | `--success` |
-| Paper highlight | `rgba(255, 228, 196, 0.55)` | `--paper-edge` |
-| Surface peek (shell) | `rgba(18, 24, 32, 0.72)` | `--surface-0` |
-| Surface expanded (shell) | `rgba(14, 19, 26, 0.82)` | `--surface-1` |
-| Surface content / overlay | `rgba(10, 14, 22, 0.94)` | `--surface-2` |
-| Surface solid fallback | `rgb(12, 16, 24)` | `--surface-solid` |
-| Border | `rgba(255, 255, 255, 0.14)` | `--border` |
-| Border strong | `rgba(255, 255, 255, 0.22)` | `--border-strong` |
-| Divider | `rgba(255, 255, 255, 0.08)` | `--divider` |
-| Focus ring | `#6B8CFF` | `--ring` |
+Do not average these into 11px radius and 10.5px type.
 
-Depth comes from the **surface ladder** (luminance), not stacked glows.
-Body text must hold ~WCAG 4.5:1 against the effective composite (tint +
-typical wallpaper), not against pure black alone.
+## Colors (workspace tokens)
 
-Accent is surgical: focus ring + primary Approve / check CTA fills only.
-Danger/success only for STOP / undo outcomes — never decoration.
+Night default. Required names in `app/src/styles.css`.
+
+| Token | Night | Role |
+|------|-------|------|
+| `--bg` | `#1C1C1E` | Window, always painted on `html, body, #root, .workspace` |
+| `--surface-0/1` | white-alpha glass | Sidebar / raised chrome |
+| `--surface-2` / `--surface-grouped` | opaque-enough | Lists, study prose |
+| `--accent` | `#6B8CFF` | One cobalt chrome accent |
+| `--success` | `#34C759` | Toggle-on / connected **state only** |
+| `--danger` | `#FF453A` | Destructive |
+
+| Theme | `--bg` | Accent |
+|-------|--------|--------|
+| Paper | `#ECE4D5` / `--fg #563E3B` | `#2F5BD8` |
+| Night | `#1C1C1E` | `#6B8CFF` |
+| Forest | `#121A16` pine glass | cream `#E8D9C4` (not mint) |
+| High contrast | `#0E0E10`, 2px borders, no blur | `#FFD60A` |
+
+Accent is surgical: focus ring, selected 5/10 segment, the single primary CTA.
+Forest mint `#7fd1a0` / `#5fd6ae` is an anti-example. Lime `#C6FF00` is banned.
 
 ## Typography
 
-| Role | Family | Use |
-|------|--------|-----|
-| Display | Source Serif 4 | “Today”, ProductName wordmark, sheet titles |
-| UI | IBM Plex Sans | Body, buttons, labels (~13–14px) |
-| Mono | IBM Plex Mono | Due times, ledger IDs, technical captions |
+| Role | Face | Size |
+|------|------|------|
+| Large Title | Source Serif 4 | 34px / 600 / −0.6px |
+| Chrome body | IBM Plex Sans | 15px |
+| Study prose | IBM Plex Sans | 17px / 1.45 |
+| Footnote / timeline | IBM Plex Sans | 13px |
+| Mono meta | IBM Plex Mono | 12px |
 
-Rules:
+No Inter, Geist, Roboto, SF Pro webfont, or pirate Solare. Bold in chrome is 600.
 
-- Sentence-case section titles (never all-caps HUD labels)
-- Display serif for sticky identity only — not every heading
-- Load fonts for real; never declare without `@import` / `@font-face`
-- No Inter, Geist, Roboto, Arial as primary
-- Density closer to Linear: tight row rhythm, Top3 scannable in &lt;1s
+## Radius
 
-```css
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap");
-```
+`--radius-window` 20, `--radius-panel` 24, `--radius-card` 16, `--radius-control` 12,
+`--radius-row` 10, `--radius-pill` 999 (search / segmented / tags only).
+**Forbidden:** 8px as the default control radius (dock Peek may still use 8).
+**Forbidden:** 24px on every button.
 
-## Radius & spacing
+## Motion
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--radius-outer` | `18px` | Dock shell |
-| `--radius-inner` | `8px` | Buttons, inputs |
-| `--radius-sheet` | `14px` | Overlays |
-| `--space-tight` | `6px` | Chip gaps |
-| `--space-row` | `14px` | List row padding rhythm |
-| `--space-section` | `22px` | Section breaks |
+Chrome hover/tab 160–180ms `ease-out`. Panel enter 220ms. Segmented thumb 200ms.
+Onboarding object 600–900ms `cubic-bezier(0.22, 1, 0.36, 1)`. Study letter-flip
+1600–2400ms loop max, one motion at a time. Honor `data-motion="reduced"` and
+`prefers-reduced-motion`. Never `transition-all`. Never bounce on chrome. Never shimmer.
 
-Intentional irregular spacing (14 / 22) breaks machine 8px-grid sameness.
+## Navigation
 
-## Effects & motion
+≥900px: 240px glass sidebar, squircle mark 32–36, rows 40px, active = lighter
+glass + accent glyph. <900px: iOS tab bar 50px only. Not both.
 
-- **Blur once:** native vibrancy (`NSVisualEffectView`) + light CSS
-  `backdrop-filter` on `.dock` / onboarding shell only
-- Content planes (`.sheet`, `.palette`, Top3 rows, ledger, narrate) use
-  opaque-enough `--surface-2` + hairline borders — **no stacked blur**
-- Optional faint glass on floating control chips only — never on paragraph text
-- 1px paper-edge highlight on dock top only
-- Soft single shadow on dock: `0 10px 28px rgba(0,0,0,0.32)`
-- Transitions: `opacity` / `transform` / `background` at 160–220ms `ease-out`
-- Sheet/palette enter: short opacity + 4–8px rise — no shimmer, refraction,
-  or breathing glass
-- Never `transition-all`
-- Peek↔Expanded: eased window resize (~180ms) + CSS enter for list rows
-- Honor `prefers-reduced-motion: reduce` (instant size, no stagger)
-- Opaque shell fallback when Reduce Transparency / forced-colors prefer solid
+## Parked dock
 
-## Icons
-
-- Thin stroke SVG (inline Phosphor/Lucide-style), 16–18px
-- Never emoji as icons; never unicode alone as brand chrome (`⌥`/`×` replaced)
-
-## Component notes
-
-### Peek / Top3
-
-- Serif “Today”
-- Primary status line (streak) vs secondary captions (health/budget/trail)
-- Numbered instrument rows on content plane; mono due line
-- One primary CTA (start check)
-- No glass cards per row
-
-### Approval sheet
-
-- Supervisor gate: title = action, body = why, primary Approve (accent fill),
-  secondary Skip
-- Opaque dialog inside dock — never translucent over desktop wallpaper
-
-### Command palette
-
-- Raycast contract: instant focus, Esc, arrow/Enter, shortcut hints, empty state
-- Dense rows on opaque panel; glass stays on the window shell, not result text
-
-### Ledger / NarrateAfter
-
-- Audit density first — mono lines, hairline dividers, no frosted row backgrounds
-- NarrateAfter: calm post-action feed + Undo; no celebratory motion
-
-### Onboarding
-
-- Display ProductName lockup
-- Step dots / progress
-- Custom-styled select/inputs matching instrument chrome (opaque-enough fields)
+Peek keeps `--radius-outer: 18px`, `--radius-sheet: 14px`, spaces 6/14/22, heavier
+shadow. Overrides live under `.dock`. Do not port 24px visionOS panels into Peek.
 
 ## Anti-patterns (locked)
 
-- Full Liquid Glass / refractive materials on content planes
-- Low-opacity text or icons over live wallpaper
-- Purple / pink / indigo gradients
-- Mint/teal AI-HUD accent (old `#5fd6ae`)
-- Inter / Geist / system-only type
-- 3-up feature card grids
-- `rounded-2xl` monoculture / multi-layer glow
-- Emoji icons
-- Uppercase + tracking HUD section labels
-- `transition-all duration-300`
-- Cream/terracotta editorial sticky
-- Restless / morphing chrome animation
-- Approval as soft translucent toast
-- Opaque solid fills on the **dock shell** that kill the sticky metaphor
-  (content planes may and should be opaque-enough)
+See brief §12. Instant-death combo, four 12.A ticks, or a 12.C cluster fail a screen.
 
-## Pre-delivery checklist
-
-- [ ] Fonts visibly load (Source Serif 4 + IBM Plex)
-- [ ] SVG icons; cursor-pointer on clickables
-- [ ] Focus ring visible (`--ring`)
-- [ ] `prefers-reduced-motion` respected
-- [ ] Peek hierarchy readable in &lt;1s
-- [ ] Content planes opaque-enough; blur only on shell
-- [ ] No purple gradients / Inter / emoji / 3-column cards / Liquid Glass content
+- Purple / indigo / cyan glow; Inter/Geist-only; glass-on-radial; 3-up feature cards
+- Emoji / sparkle-as-AI; gradient text; nested cards; `transition-all duration-300`
+- Forest mint as accent; “PN” lettermark; OLED true-black High Contrast
+- Duolingo streaks/celebration; ChatGPT transcript as Home; microphone this round
+- Liquid Glass on 17px study prose

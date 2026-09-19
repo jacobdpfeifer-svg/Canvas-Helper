@@ -22,9 +22,7 @@ export function CommandPalette({
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return ACTIONS;
-    return ACTIONS.filter(
-      (a) => a.label.toLowerCase().includes(q) || a.id.includes(q)
-    );
+    return ACTIONS.filter((a) => a.label.toLowerCase().includes(q) || a.id.includes(q));
   }, [query]);
 
   useEffect(() => {
@@ -47,9 +45,7 @@ export function CommandPalette({
       }
       if (e.key === "ArrowUp") {
         e.preventDefault();
-        setActive((i) =>
-          filtered.length ? (i - 1 + filtered.length) % filtered.length : 0
-        );
+        setActive((i) => (filtered.length ? (i - 1 + filtered.length) % filtered.length : 0));
         return;
       }
       if (e.key === "Enter" && filtered[active]) {
@@ -64,51 +60,43 @@ export function CommandPalette({
   return (
     <div className="palette-backdrop" onClick={onClose}>
       <div
-        className="palette"
+        className="palette glass"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
         aria-busy={loading || undefined}
       >
-        <p className="palette-label">Jump to</p>
         <input
+          className="palette-query"
           ref={ref}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Filter actions…"
+          placeholder="Type to jump. Esc to close."
           aria-label="Filter actions"
           aria-controls="palette-results"
-          aria-activedescendant={
-            !loading && filtered[active]
-              ? `palette-opt-${filtered[active].id}`
-              : undefined
-          }
+          aria-activedescendant={!loading && filtered[active] ? `palette-opt-${filtered[active].id}` : undefined}
           role="combobox"
           aria-expanded="true"
           aria-autocomplete="list"
           disabled={loading}
         />
-        <div
-          id="palette-results"
-          className="palette-actions"
-          role="listbox"
-          aria-label="Actions"
-        >
+        <button type="button" className="field-mic-seam" tabIndex={-1} aria-hidden="true" />
+        <div id="palette-results" className="palette-actions" role="listbox" aria-label="Actions">
           {loading ? (
             <div aria-hidden="true">
               {[0, 1, 2].map((i) => (
                 <div key={i} className="palette-skeleton-row">
-                  <Skeleton
-                    className="skeleton-line"
-                    width={i === 0 ? "68%" : i === 1 ? "54%" : "62%"}
-                  />
+                  <Skeleton className="skeleton-line" width={i === 0 ? "68%" : i === 1 ? "54%" : "62%"} />
                   <Skeleton className="skeleton-line-sm" />
                 </div>
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <p className="palette-empty">No matching actions.</p>
+            <div className="empty-state">
+              <span className="mark" aria-hidden="true" />
+              <p className="palette-empty">Type to jump. Esc to close.</p>
+            </div>
           ) : (
             filtered.map((action, i) => (
               <button
@@ -127,6 +115,12 @@ export function CommandPalette({
             ))
           )}
         </div>
+        {loading && (
+          <div className="thinking-capsule" role="status">
+            <span className="mark" aria-hidden="true" />
+            <p>Thinking …</p>
+          </div>
+        )}
         <p className="palette-footer">↑↓ select · ↵ run · esc close</p>
       </div>
     </div>

@@ -13,7 +13,7 @@ export type RouteResult = {
   raw: string;
 };
 
-export type DockMode = "onboarding" | "peek" | "expanded";
+export type DockMode = "onboarding" | "peek" | "expanded" | "workspace";
 
 /** Native dock commands share this adapter with all other frontend IPC. */
 export async function setDockMode(mode: DockMode): Promise<void> {

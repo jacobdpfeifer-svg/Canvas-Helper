@@ -1,28 +1,32 @@
 ---
-description: Paper Instrument UI craft for the ambient dock — follow MASTER + anti-patterns
+description: Spatial Instrument UI craft — workspace glass + parked dock
 globs: app/src/**/*.{tsx,ts,css},app/index.html,docs/design/ambient-dock-ui.md,design-system/**/*
 alwaysApply: false
 ---
 
-# UI craft — ProductName ambient dock
+# UI craft — ProductName Spatial Instrument
 
-When changing dock UI, read and obey:
+When changing workspace or dock UI, read and obey:
 
-1. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — tokens, type, anti-patterns
-2. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — geometry, states, glass rules
+1. [`docs/design/spatial-instrument-brief.md`](docs/design/spatial-instrument-brief.md) — numbers, anatomy, anti-examples
+2. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — tokens in the running app
+3. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — Peek geometry only
 
 ## Must
 
-- Keep the frosted corner sticky note (never a normal app window / SaaS dashboard)
-- Load Source Serif 4 + IBM Plex Sans/Mono for real (no Inter / Geist / system-only primary)
-- Ink cobalt accent (`--accent` / `#6B8CFF`); surface ladder `--surface-0/1/2`
-- Sentence-case titles; serif for “Today” / ProductName; mono for due times / ledger
-- Thin SVG icons only (`app/src/components/Icons.tsx` pattern)
-- Honor `prefers-reduced-motion`; prefer opacity/transform transitions — never `transition-all`
+- Student-beta is a **real workspace window** (D-11). Peek is still not a dashboard.
+- Glass on chrome (sidebar, sheets, palette, now-playing). Opaque `--surface-2` for study prose and lists.
+- Tokens from brief §6: `--bg`, `--surface-0/1/2`, `--surface-grouped`, `--accent` cobalt, radii 20/24/16/12/pill.
+- Dual density: tight lists vs 44px iOS controls vs 17px study reading. Do not average.
+- Four themes: Paper Solare cream, Night `#1C1C1E`, Forest pine + cream (not mint), High contrast `#0E0E10` no blur.
+- Source Serif 4 + IBM Plex Sans/Mono. Squircle mark; no “PN”.
+- Hit 44×44. Focus `2px --ring` offset 2. No `outline: none` on controls.
+- Honor `prefers-reduced-motion` and `data-motion="reduced"`. Never `transition-all`.
 
 ## Must not
 
-- Purple / pink / indigo gradients; mint/teal AI-HUD accent (`#5fd6ae`)
-- 3-up feature card grids; `rounded-2xl` monoculture; glow orbs; emoji icons
-- Uppercase + tracking HUD section labels
-- Opaque solid fills on `.dock` / overlays (translucent tint + blur only)
+- 8px default control radius in the workspace; 13.5px root type; 168px bordered tab rail
+- Forest mint `#7fd1a0`; Paper cool-white `#FAF8F3`; Night navy-black `rgb(12,16,24)`
+- Purple/indigo/cyan glow; Inter/Geist/Roboto; emoji icons; 3-up feature cards
+- Full Liquid Glass on paragraph text; Brik motion on tabs/settings/calendar
+- Microphone / ASR; restyling Peek as visionOS panels unless tokens leaked
