@@ -21,6 +21,7 @@ let nextId = 1;
 let session = q.get("session") === "1";
 const events: unknown[] = [];
 const decisions: string[] = [];
+let commitment: unknown = null;
 let suggestions = [
   { source_message_id: "m1", title: "PHYS 1110 review session", start: "2026-10-19T23:00:00Z", end: "2026-10-20T00:30:00Z", confidence: 0.82, why: "Instructor email: review session Monday 5pm, Duane G1B30" },
   { source_message_id: "m2", title: "Career fair", start: "2026-09-30T16:00:00Z", end: "2026-09-30T20:00:00Z", confidence: 0.55, why: "Campus newsletter mentions the fall career fair" },
@@ -33,7 +34,11 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
 const courses = (semesterAll as { courses: { id: string; label: string; color_index: number; color: unknown; ticks: { kind: string }[] }[] }).courses;
 
+const callLog: { cmd: string; at: number }[] = [];
+(window as unknown as { __shimCalls: unknown }).__shimCalls = callLog;
+
 async function invoke(cmd: string, args: Record<string, unknown> = {}): Promise<unknown> {
+  if (!cmd.startsWith("plugin:")) callLog.push({ cmd, at: performance.now() });
   await sleep(cmd.startsWith("read_") ? 40 : 10);
   switch (cmd) {
     case "plugin:event|listen": {
@@ -92,7 +97,7 @@ async function invoke(cmd: string, args: Record<string, unknown> = {}): Promise<
         streak: { streak: 0, last_brief_date: null, briefed_today: false, line: "" },
         progress: { courses: [], totals: { fragile: 0, holding: 0, durable: 0, total: 0 } },
         evaluation: { ok: false },
-        commitment: { commitment: null, check_in: null, line: "" },
+        commitment: { commitment, check_in: null, line: "" },
         errors: [],
       };
     case "read_calendar":
@@ -119,8 +124,10 @@ async function invoke(cmd: string, args: Record<string, unknown> = {}): Promise<
       console.info("[shim] open_external", args.url);
       return null;
     case "set_commitment":
-      return { commitment: { id: "c1", text: (args.text as string) || "", course: (args.course as string) || "", deadline: args.deadline, linked_item_id: "", created_at: "", status: "open", resolved_at: null }, check_in: null, line: "" };
+      commitment = { id: "c1", text: (args.text as string) || "", course: (args.course as string) || "", deadline: args.deadline, linked_item_id: "", created_at: "", status: "open", resolved_at: null };
+      return { commitment, check_in: null, line: "" };
     case "resolve_commitment":
+      commitment = null;
       return { commitment: null, check_in: null, line: "" };
     case "runtime_info":
       return { mode: "dev", core_dir: "/fixture", python: "/fixture/python", node: "/fixture/node", profile_id: "fixture", user_root: "/tmp/fixture", diagnostics: [] };

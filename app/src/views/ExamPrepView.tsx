@@ -48,15 +48,18 @@ export function ExamPrepView({
     heading.current?.focus();
   }, [prep?.exam.id]);
 
+  // One study-status read per course, not per "Redo" (the plan seed does not
+  // change which course we are asking about).
+  const courseLabel = prep?.course.label ?? null;
+  const courseCode = prep?.course.code ?? null;
   useEffect(() => {
-    if (!prep) return;
+    if (courseLabel == null) return;
     let cancelled = false;
     study
       .status()
       .then((s) => {
         if (cancelled) return;
-        const label = prep.course.label;
-        setPractice(s.courses.some((c) => c === label || c === prep.course.code) ? "yes" : "no");
+        setPractice(s.courses.some((c) => c === courseLabel || c === courseCode) ? "yes" : "no");
       })
       .catch(() => {
         if (!cancelled) setPractice("no");
@@ -64,7 +67,7 @@ export function ExamPrepView({
     return () => {
       cancelled = true;
     };
-  }, [prep]);
+  }, [courseLabel, courseCode]);
 
   if (error) {
     return (

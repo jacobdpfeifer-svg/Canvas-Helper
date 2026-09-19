@@ -6,6 +6,7 @@ import { checkCanvasSession, openCanvasSso, setDockMode, syncCanvas } from "../i
 import { Onboarding } from "../components/Onboarding";
 import { ConnectorsPanel } from "./ConnectorsPanel";
 import { CanvasDataPanel } from "./CanvasDataPanel";
+import { PlanEvent } from "./PlanEvent";
 import { legalVersion } from "../legal";
 import { TermsSheet } from "../components/TermsSheet";
 
@@ -165,6 +166,8 @@ export function SettingsView() {
 
       <h2>Calendar and email</h2>
       <ConnectorsPanel />
+      <p className="muted">Events you add in the Calendar tab stay on this computer. To put a study block on Google Calendar, preview it here and confirm that one event.</p>
+      <PlanEvent />
 
       <h2>AI help (beta, funded by the owner)</h2>
       {ai?.connected ? (
