@@ -626,3 +626,125 @@ mod tests {
         assert_eq!(next_sync_interval(true), SYNC_WEEKEND);
     }
 }
+
+#[cfg(test)]
+mod round1_tests {
+    use super::*;
+    use std::path::PathBuf;
+    use std::time::Instant;
+
+    /// The stubbed core (scripts/stub-core.sh) built for this checkout, or None.
+    fn stub_core() -> Option<PathBuf> {
+        let repo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("..");
+        let script = repo.join("scripts").join("stub-core.sh");
+        let out = Command::new("bash").arg(&script).output().ok()?;
+        if !out.status.success() {
+            return None;
+        }
+        let dir = PathBuf::from(String::from_utf8_lossy(&out.stdout).trim());
+        dir.join("browser").join("scripts").join("sync-study-sources.mjs").is_file().then_some(dir)
+    }
+
+    fn runtime_with(core: &std::path::Path, root: &std::path::Path) -> Runtime {
+        std::env::set_var("PRODUCTNAME_CORE_DIR", core);
+        std::env::set_var("DEV_USER_ROOT", root);
+        let python = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("..").join(".venv").join("bin").join("python");
+        if python.is_file() {
+            std::env::set_var("PRODUCTNAME_PYTHON", &python);
+        }
+        for node in ["/opt/homebrew/bin/node", "/usr/local/bin/node"] {
+            if std::path::Path::new(node).is_file() {
+                std::env::set_var("PRODUCTNAME_NODE", node);
+                break;
+            }
+        }
+        let rt = crate::runtime::resolve(None);
+        for key in ["PRODUCTNAME_CORE_DIR", "DEV_USER_ROOT", "PRODUCTNAME_PYTHON", "PRODUCTNAME_NODE"] {
+            std::env::remove_var(key);
+        }
+        rt
+    }
+
+    /// Daemon-side end-to-end: stub session → streamed source sync → profile
+    /// on disk → read_semester → canvas-import → study status knows the
+    /// course. Everything the onboarding Screen 3 + Home depend on, minus the
+    /// webview. Skips when node or the stub core is unavailable.
+    #[test]
+    fn stubbed_sync_streams_events_and_feeds_home() {
+        let Some(core) = stub_core() else {
+            eprintln!("skipping: stub core unavailable");
+            return;
+        };
+        let root = std::env::temp_dir().join(format!("pn-e2e-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        let rt = runtime_with(&core, &root);
+        if rt.node.is_none() || !rt.python.is_file() {
+            eprintln!("skipping: no node/python");
+            return;
+        }
+        assert!(!run_check_canvas_session(&rt).unwrap(), "fresh profile has no session");
+        std::env::set_var("STUB_SSO_DELAY_MS", "10");
+        run_open_canvas(&rt).unwrap();
+        assert!(run_check_canvas_session(&rt).unwrap(), "stub SSO leaves a session");
+        std::env::set_var("STUB_COURSE_DELAY_MS", "5");
+        let mut events: Vec<Value> = Vec::new();
+        run_sync_study_sources_streaming(&rt, |e| events.push(e)).unwrap();
+        let kinds: Vec<&str> = events.iter().filter_map(|e| e["event"].as_str()).collect();
+        assert_eq!(kinds, ["courses", "course", "course", "course", "course", "done"]);
+        assert_eq!(events[0]["courses"].as_array().unwrap().len(), 4);
+        assert_eq!(events[1]["course"]["counts"]["exams"], 3);
+        let sem = crate::semester::read_semester(&root, "semester", Some("2026-09-18"));
+        assert_eq!(sem.courses.len(), 4);
+        assert_eq!(sem.status["state"], "ok");
+        // What the command does after the stream: each synced course WITH
+        // sources becomes a Study packet (PHYS 1110 has none and is skipped).
+        let with_sources: Vec<String> = events
+            .iter()
+            .filter(|e| e["event"] == "course" && e["course"]["sources"].as_u64().unwrap_or(0) > 0)
+            .map(|e| e["course"]["id"].as_str().unwrap().to_string())
+            .collect();
+        assert_eq!(with_sources.len(), 3);
+        for id in &with_sources {
+            let req = serde_json::json!({"cmd": "canvas-import", "params": {"course_id": id, "source_ids": Value::Null}});
+            let reply = run_study(&rt, &req).unwrap();
+            assert_eq!(reply["ok"], true, "{reply}");
+        }
+        let status = run_study(&rt, &serde_json::json!({"cmd": "status"})).unwrap();
+        let courses = status["courses"].as_array().unwrap();
+        assert!(courses.iter().any(|c| c.as_str() == Some("CSCI 2270 — Data Structures")), "{status}");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    /// Before/after for the Calendar (Plan) tab load on a fresh profile:
+    /// six Python processes (old) vs one (read_plan_surface). Prints the
+    /// numbers; asserts only that the batched read is not slower.
+    #[test]
+    fn plan_surface_is_one_process_not_six() {
+        let root = std::env::temp_dir().join(format!("pn-perf-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::env::set_var("DEV_USER_ROOT", &root);
+        let rt = crate::runtime::resolve(None);
+        std::env::remove_var("DEV_USER_ROOT");
+        if !rt.python.is_file() || rt.mode != crate::runtime::RuntimeMode::Dev {
+            eprintln!("skipping: no dev python");
+            return;
+        }
+        let _ = run_plan_surface(&rt); // warm caches
+        let t0 = Instant::now();
+        let _ = run_due_reviews(&rt);
+        let _ = run_read_check_intention(&rt);
+        let _ = run_brief_streak(&rt);
+        let _ = run_learn_progress(&rt);
+        let _ = run_evaluation_compare(&rt);
+        let _ = run_read_commitment(&rt);
+        let six = t0.elapsed();
+        let t1 = Instant::now();
+        let surface = run_plan_surface(&rt).unwrap();
+        let one = t1.elapsed();
+        eprintln!("[perf] plan tab reads on a fresh profile: six processes = {six:?}, read_plan_surface = {one:?}");
+        assert_eq!(surface["ok"], true);
+        assert!(surface["errors"].as_array().unwrap().is_empty(), "{surface}");
+        assert!(one <= six, "batched read must not be slower: {one:?} vs {six:?}");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+}

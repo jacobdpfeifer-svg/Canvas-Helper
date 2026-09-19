@@ -258,9 +258,10 @@ impl Runtime {
     /// Environment every child process receives so all resolvers agree.
     pub fn apply_env(&self, cmd: &mut Command) {
         cmd.env("PRODUCT_USER_ID", &self.profile_id);
-        if let Ok(root) = env::var("DEV_USER_ROOT") {
-            cmd.env("DEV_USER_ROOT", root);
-        }
+        // Always hand children the resolved root (not just when the parent had
+        // DEV_USER_ROOT): the JS and Python resolvers then agree with this
+        // process even when the root was chosen at boot from a profile id.
+        cmd.env("DEV_USER_ROOT", &self.user_root);
         if let Ok(slug) = env::var("SCHOOL_SLUG") {
             cmd.env("SCHOOL_SLUG", slug);
         }
