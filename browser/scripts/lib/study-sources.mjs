@@ -4,6 +4,7 @@
  * Python study core imports. Kept separate so `node --test` can cover them.
  */
 import { stripHtmlTags } from "./canvas-session.mjs";
+import { COURSE_PALETTE, buildItems, courseColorIndex, inferTerm } from "./semester.mjs";
 
 export const MAX_TEXT_CHARS = 60_000;
 export const MAX_PAGES = 40;
@@ -106,7 +107,16 @@ export function examCandidates(courseId, assignments = [], quizzes = []) {
   return rows;
 }
 
-export function courseRecord({ course, syllabus, pages, assignments, quizzes, fetchedAt, errors = [], truncated = false }) {
+/**
+ * Schema 2 (2026-09-18): adds `items` (every graded item with kind, points,
+ * group weight and computed `weight_share`), `grading`, `term` (Canvas or
+ * inferred, labeled) and `course.color` for the Home semester line. Schema 1
+ * readers (the Python study core) keep working: `course`, `sources`, `exams`
+ * are unchanged.
+ */
+export const STUDY_SOURCES_SCHEMA = 2;
+
+export function courseRecord({ course, syllabus, pages, assignments, quizzes, groups = [], fetchedAt, errors = [], truncated = false, colorIndex = null }) {
   const sources = [];
   const syl = syllabusSource({ ...course, syllabus_body: syllabus ?? course.syllabus_body });
   if (syl) sources.push(syl);
@@ -118,12 +128,25 @@ export function courseRecord({ course, syllabus, pages, assignments, quizzes, fe
     const s = assignmentSource(course.id, a);
     if (s) sources.push(s);
   }
+  const { items, grading } = buildItems(course.id, assignments, quizzes, groups);
+  const idx = colorIndex ?? courseColorIndex(course.id);
+  const swatch = COURSE_PALETTE[idx];
   return {
-    schema: 1,
-    course: { id: String(course.id), name: String(course.name || ""), code: String(course.course_code || ""), label: courseLabel(course) },
+    schema: STUDY_SOURCES_SCHEMA,
+    course: {
+      id: String(course.id),
+      name: String(course.name || ""),
+      code: String(course.course_code || ""),
+      label: courseLabel(course),
+      color_index: idx,
+      color: { name: swatch.name, light: swatch.light, dark: swatch.dark },
+    },
+    term: inferTerm(course, items),
     fetched_at: fetchedAt,
     sources,
     exams: examCandidates(course.id, assignments, quizzes),
+    items,
+    grading,
     truncated,
     errors,
   };

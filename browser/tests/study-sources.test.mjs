@@ -7,7 +7,7 @@ test("course record strips html, clips long text, and infers exam candidates", (
   const pages = [{ page_id: 7, url: "chain-rule", title: "Chain rule", body: "<h2>Rule</h2><p>y' = f'(g(x))g'(x)</p>", updated_at: "2026-09-01T00:00:00Z" }];
   const assignments = [
     { id: 1, name: "Midterm 1", due_at: "2026-09-28T15:00:00Z", description: "<p>Covers chain rule</p>", points_possible: 100 },
-    { id: 2, name: "Homework 3", due_at: "2026-09-20T05:59:00Z", description: "" },
+    { id: 2, name: "Homework 3", due_at: "2026-09-20T05:59:00Z", description: "", points_possible: 20, submission_types: ["online_upload"] },
   ];
   const quizzes = [{ id: 9, title: "Quiz 2", due_at: "2026-09-22T05:59:00Z", quiz_type: "assignment" }];
   const record = courseRecord({ course, pages, assignments, quizzes, fetchedAt: "2026-09-18T00:00:00Z" });
@@ -18,6 +18,13 @@ test("course record strips html, clips long text, and infers exam candidates", (
   assert.equal(record.sources[2].id, "assignment-1");
   assert.deepEqual(record.exams.map((e) => e.label), ["Midterm 1", "Quiz 2"]);
   assert.ok(record.exams.every((e) => e.inferred));
+  // Schema 2: graded items with kinds + shares, a labeled term window, a course color.
+  assert.equal(record.schema, 2);
+  assert.deepEqual(record.items.map((i) => [i.kind, i.title]), [["assignment", "Homework 3"], ["quiz", "Quiz 2"], ["exam", "Midterm 1"]]);
+  assert.ok(Math.abs(record.items.find((i) => i.title === "Midterm 1").weight_share - 100 / 120) < 1e-6);
+  assert.equal(record.term.source, "inferred");
+  assert.equal(typeof record.course.color.light, "string");
+  assert.equal(record.grading.uses_group_weights, false);
 });
 
 test("empty bodies produce no source and long bodies are clipped", () => {
