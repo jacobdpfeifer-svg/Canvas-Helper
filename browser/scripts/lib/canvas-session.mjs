@@ -32,8 +32,15 @@ export function getBase() {
 export let BASE = getBase();
 
 export const ROOT = path.join(__dirname, "..", "..", "..");
+/**
+ * Browser profile (SSO cookies) lives INSIDE the per-user root so two student
+ * profiles on one machine never share a Canvas session. The historical
+ * ``browser/.auth`` default leaked cookies across profiles; ``AUTH_DIR`` still
+ * overrides for tests and manual runs.
+ */
 export const AUTH_DIR =
-  process.env.AUTH_DIR || path.join(__dirname, "..", "..", ".auth");
+  process.env.AUTH_DIR ||
+  path.join(resolveUserRoot({ create: false, announce: false }), "auth", "browser");
 
 /** Same resolver as Python ``user_root`` / Tauri inbox — never ``{repo}/inbox``. */
 function resolveInboxDir() {
@@ -208,9 +215,13 @@ export async function launchCanvasContext(options = {}) {
   try {
     clearSingletonLocks();
     const headless = process.env.HEADLESS === "1";
+    // PLAYWRIGHT_CHANNEL=chrome lets a packaged app drive the student's installed
+    // Chrome instead of requiring Playwright's downloaded Chromium.
+    const channel = process.env.PLAYWRIGHT_CHANNEL?.trim();
     const context = await chromium.launchPersistentContext(AUTH_DIR, {
       headless,
       viewport: { width: 1280, height: 900 },
+      ...(channel ? { channel } : {}),
       ...options,
     });
     const origClose = context.close.bind(context);

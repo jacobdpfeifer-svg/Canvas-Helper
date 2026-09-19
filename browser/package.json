@@ -1,7 +1,7 @@
 {
   "name": "productname-canvas-browser",
   "private": true,
-  "description": "SSO session → Canvas /api/v1 → inbox/ (no developer PAT required)",
+  "description": "SSO session \u2192 Canvas /api/v1 \u2192 inbox/ (no developer PAT required)",
   "scripts": {
     "open-canvas": "node scripts/open-canvas.mjs",
     "check-session": "node scripts/check-canvas-session.mjs",
@@ -17,7 +17,8 @@
     "rsvp-dinner": "node scripts/rsvp-dinner.mjs",
     "rsvp-ai-lab": "node scripts/rsvp-ai-lab.mjs",
     "process-capture-queue": "node scripts/process-capture-queue.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "sync-sources": "node scripts/sync-study-sources.mjs"
   },
   "_comment_cu_plugin": "sync-dinners/sync-ai-labs/rsvp-* are CU Boulder CampusGroups plugin CLIs (plugins/cu-boulder-campusgroups/), not core product sync. RSVP requires --confirm.",
   "devDependencies": {

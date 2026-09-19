@@ -28,6 +28,11 @@
     "allow-set-commitment",
     "allow-resolve-commitment",
     "allow-read-check-intention",
-    "allow-route-intent"
+    "allow-route-intent",
+    "allow-study",
+    "allow-sync-study-sources",
+    "allow-runtime-info",
+    "allow-set-profile",
+    "allow-list-profiles"
   ]
 }

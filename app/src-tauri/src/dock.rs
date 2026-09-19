@@ -1,10 +1,10 @@
-//! Window geometry + glass material for the ambient "sticky note" shell.
+//! Window geometry + glass material.
 //!
-//! The app is one borderless, always-on-top, transparent window that never
-//! becomes a normal full desktop app: `Peek` is the resting sticky-note size
-//! docked in a screen corner, `Expanded` grows it (without moving its corner
-//! anchor) to show the palette/approval/ledger overlays, and `Onboarding` is
-//! the one-time centered size used before a school + legal acceptance exist.
+//! Since the 2026-09-17 beta pivot the main window is a normal, resizable
+//! study **workspace** (`Workspace`). The ambient sticky-note shell is an
+//! opt-in compact mode: `Peek` is the resting size docked in a screen corner,
+//! `Expanded` grows it (without moving its corner anchor), and `Onboarding` is
+//! the one-time centered size used before a profile exists.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::thread;
@@ -20,8 +20,10 @@ const PEEK_W: f64 = 320.0;
 const PEEK_H: f64 = 300.0;
 const EXPANDED_W: f64 = 400.0;
 const EXPANDED_HEIGHT_FRACTION: f64 = 0.34;
-const ONBOARDING_W: f64 = 460.0;
-const ONBOARDING_H: f64 = 640.0;
+const ONBOARDING_W: f64 = 560.0;
+const ONBOARDING_H: f64 = 680.0;
+const WORKSPACE_W: f64 = 1080.0;
+const WORKSPACE_H: f64 = 740.0;
 
 /// Frames for Peek↔Expanded eased resize (~180ms).
 const ANIM_STEPS: u32 = 6;
@@ -34,6 +36,7 @@ pub enum DockMode {
     Onboarding,
     Peek,
     Expanded,
+    Workspace,
 }
 
 impl DockMode {
@@ -42,8 +45,13 @@ impl DockMode {
             "onboarding" => Some(Self::Onboarding),
             "peek" => Some(Self::Peek),
             "expanded" => Some(Self::Expanded),
+            "workspace" => Some(Self::Workspace),
             _ => None,
         }
+    }
+
+    fn compact(self) -> bool {
+        matches!(self, Self::Peek | Self::Expanded)
     }
 }
 
@@ -55,6 +63,7 @@ fn main_window(app: &AppHandle) -> Result<WebviewWindow, String> {
 fn target_logical(mode: DockMode, work_h_logical: f64) -> (f64, f64) {
     match mode {
         DockMode::Onboarding => (ONBOARDING_W, ONBOARDING_H),
+        DockMode::Workspace => (WORKSPACE_W, WORKSPACE_H.min(work_h_logical - 2.0 * MARGIN_LOGICAL)),
         DockMode::Peek => (PEEK_W, PEEK_H),
         DockMode::Expanded => {
             let h = (work_h_logical * EXPANDED_HEIGHT_FRACTION).clamp(420.0, 680.0);
@@ -71,7 +80,7 @@ fn corner_or_center(
     phys_h: u32,
     margin: i32,
 ) -> (i32, i32) {
-    if mode == DockMode::Onboarding {
+    if matches!(mode, DockMode::Onboarding | DockMode::Workspace) {
         let cx = work_pos.x + (work_size.width as i32 - phys_w as i32) / 2;
         let cy = work_pos.y + (work_size.height as i32 - phys_h as i32) / 2;
         (cx, cy)
@@ -108,7 +117,19 @@ pub fn place(window: &WebviewWindow, mode: DockMode) -> tauri::Result<()> {
     let end_h = (logical_h * scale).round() as u32;
     let (end_x, end_y) = corner_or_center(mode, work.position, work.size, end_w, end_h, margin);
 
-    let animate = matches!(mode, DockMode::Peek | DockMode::Expanded);
+    // Chrome first, then geometry: a decorated window measures differently.
+    let compact = mode.compact();
+    let _ = window.set_always_on_top(compact);
+    let _ = window.set_decorations(!compact);
+    let _ = window.set_resizable(mode == DockMode::Workspace);
+    let _ = window.set_skip_taskbar(compact);
+    if compact {
+        apply_glass(window);
+    } else {
+        clear_glass(window);
+    }
+
+    let animate = compact;
     if !animate {
         window.set_size(PhysicalSize::new(end_w, end_h))?;
         window.set_position(PhysicalPosition::new(end_x, end_y))?;
@@ -203,5 +224,13 @@ pub fn apply_glass(window: &WebviewWindow) {
     );
 }
 
+#[cfg(target_os = "macos")]
+pub fn clear_glass(window: &WebviewWindow) {
+    let _ = window_vibrancy::clear_vibrancy(window);
+}
+
 #[cfg(not(target_os = "macos"))]
 pub fn apply_glass(_window: &WebviewWindow) {}
+
+#[cfg(not(target_os = "macos"))]
+pub fn clear_glass(_window: &WebviewWindow) {}

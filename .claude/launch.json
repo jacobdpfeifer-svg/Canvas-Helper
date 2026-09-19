@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "productname-app",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "app"],
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["app/node_modules/vite/bin/vite.js", "--config", "app/vite.config.ts", "--port", "1420", "--strictPort", "app"],
       "port": 1420
     }
   ]

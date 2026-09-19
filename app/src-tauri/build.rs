@@ -20,6 +20,11 @@ fn main() {
             "resolve_commitment",
             "read_check_intention",
             "route_intent",
+            "study",
+            "sync_study_sources",
+            "runtime_info",
+            "set_profile",
+            "list_profiles",
         ]),
     );
     tauri_build::try_build(attrs).expect("failed to run tauri-build");

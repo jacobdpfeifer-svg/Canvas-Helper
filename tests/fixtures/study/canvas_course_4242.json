@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "course": {"id": "4242", "name": "Calculus 1 (synthetic)", "code": "MATH 1300", "label": "MATH 1300 — Calculus 1 (synthetic)"},
+  "fetched_at": "2026-09-18T15:00:00Z",
+  "sources": [
+    {"id": "syllabus-4242", "kind": "syllabus", "title": "Syllabus", "canvas_id": "4242", "updated_at": "2026-08-20T00:00:00Z", "url": null, "text": "Course policy: two midterms and a final. Office hours Tuesdays.", "truncated": false},
+    {"id": "page-701", "kind": "page", "title": "Chain rule notes", "canvas_id": "701", "updated_at": "2026-09-10T00:00:00Z", "url": "https://canvas.example/courses/4242/pages/chain-rule", "text": "For y = f(g(x)), y' = f'(g(x)) g'(x). The derivative of sin x is cos x. Example: (3x^2+1)^5 has derivative 5(3x^2+1)^4 * 6x.", "truncated": false},
+    {"id": "assignment-9001", "kind": "assignment", "title": "Midterm 1", "canvas_id": "9001", "updated_at": "2026-09-12T00:00:00Z", "url": "https://canvas.example/courses/4242/assignments/9001", "text": "Midterm 1 covers chain rule, product rule and related rates.", "truncated": false}
+  ],
+  "exams": [
+    {"id": "canvas-exam-4242-a9001", "label": "Midterm 1", "due_at": "2026-09-28T15:00:00Z", "kind": "assignment", "points": 100, "inferred": true},
+    {"id": "canvas-exam-4242-q55", "label": "Quiz 2", "due_at": null, "kind": "quiz", "points": 10, "inferred": true}
+  ],
+  "truncated": false,
+  "errors": []
+}

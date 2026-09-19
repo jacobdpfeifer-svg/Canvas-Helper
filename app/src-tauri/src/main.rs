@@ -5,6 +5,9 @@ mod commands;
 mod daemon;
 mod dock;
 mod inbox;
+mod runtime;
+
+use std::sync::Arc;
 
 use tauri::{
     menu::{Menu, MenuItem},
@@ -43,8 +46,27 @@ fn main() {
             commands::resolve_commitment,
             commands::read_check_intention,
             commands::route_intent,
+            commands::study,
+            commands::sync_study_sources,
+            commands::runtime_info,
+            commands::set_profile,
+            commands::list_profiles,
         ])
         .setup(|app| {
+            // Resolve bundled resources vs dev checkout once; share with every command.
+            let resource_dir = app.path().resource_dir().ok();
+            let rt = Arc::new(runtime::resolve(resource_dir.as_deref()));
+            for note in &rt.diagnostics {
+                eprintln!("[productname-daemon] runtime: {note}");
+            }
+            eprintln!(
+                "[productname-daemon] runtime {:?} profile={} root={}",
+                rt.mode,
+                rt.profile_id,
+                rt.user_root.display()
+            );
+            app.manage(Arc::clone(&rt));
+
             let sync_now = MenuItem::with_id(app, "sync_now", "Sync now", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&sync_now, &quit])?;
@@ -56,7 +78,8 @@ fn main() {
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "sync_now" => {
                         // Same helper the sync_canvas command uses — not a separate path.
-                        match daemon::run_canvas_sync() {
+                        let rt: tauri::State<'_, Arc<runtime::Runtime>> = app.state();
+                        match daemon::run_canvas_sync(&rt) {
                             Ok(()) => {
                                 let _ = app.emit("inbox-updated", ());
                             }
@@ -91,29 +114,11 @@ fn main() {
 
             let _tray = tray.build(app)?;
 
-            if let Some(window) = app.get_webview_window(dock::MAIN_WINDOW) {
-                dock::apply_glass(&window);
-                let mode = if onboarding_pending() {
-                    dock::DockMode::Onboarding
-                } else {
-                    dock::DockMode::Peek
-                };
-                if let Err(e) = dock::place(&window, mode) {
-                    eprintln!("[productname-daemon] initial dock placement failed: {e}");
-                }
-            }
-
-            daemon::spawn_cadence_loop();
+            // The main window is the study workspace (normal, resizable). The
+            // compact dock geometry is opt-in from the frontend (set_dock_mode).
+            daemon::spawn_cadence_loop(Arc::clone(&rt));
             Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running ProductName");
-}
-
-/// Onboarding state lives in the webview's localStorage, which Rust can't
-/// read at boot — so the window opens at onboarding size on every fresh
-/// profile and the frontend switches it to peek geometry once mounted and
-/// onboarded is confirmed true (see `app/src/ipc.ts` `setDockMode`).
-fn onboarding_pending() -> bool {
-    true
 }

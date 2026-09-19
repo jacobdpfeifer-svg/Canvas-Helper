@@ -1,0 +1,93 @@
+{
+  "packet_id": "P",
+  "version": 1,
+  "title": "Energy with friction (synthetic packet P)",
+  "course": "PHYS 1110 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "P",
+      "locator": "P1–P7",
+      "text": "P1: Mechanical energy is K + gravitational potential + spring potential: K = mv²/2, Ug = mgh, Us = kx²/2.\nP2: Mechanical energy is conserved if only conservative forces do work.\nP3: Kinetic friction is non-conservative; its work depends on path length and cannot generally be represented by a potential energy of position.\nP4: For constant kinetic friction on this straight incline, Wf = −μk N d, with N = mg cosθ. The coefficient and angle remain constant throughout the total path, including spring compression.\nP5: The block begins and ends at rest. The final height is the zero reference; the release point is h = d sinθ above it. Down-slope displacement is positive; the spring lies along the incline.\nP6: Therefore m g d sinθ − μk m g cosθ d = k x²/2. Here d includes compression; it is not just the distance before contact with the spring.\nP7: m = 2 kg, g = 9.8 m/s², θ = 30°, μk = 0.20, k = 800 N/m, total d = 1.50 m. Accept x within 2% of the reference if units and work sign are correct."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "energy-friction",
+      "label": "Apply the work–energy method when kinetic friction acts"
+    }
+  ],
+  "items": [
+    {
+      "id": "P-1",
+      "objective_id": "energy-friction",
+      "source_refs": [
+        "P"
+      ],
+      "kind": "procedural",
+      "stem": "A 2 kg block is released from rest on a 30° incline (μk = 0.20) and slides a total of 1.50 m, compressing a spring (k = 800 N/m) that lies along the incline. Find the maximum compression x and state whether mechanical energy is conserved.",
+      "neutral_locator": "P1–P7",
+      "fields": [
+        {
+          "id": "compression",
+          "label": "Maximum compression x (m)",
+          "checker": {
+            "type": "numeric",
+            "value": 0.154982,
+            "tolerance_pct": 2,
+            "unit": "m"
+          }
+        },
+        {
+          "id": "conserved",
+          "label": "Is mechanical energy conserved? (true/false)",
+          "kind": "choice",
+          "options": [
+            "true",
+            "false"
+          ],
+          "checker": {
+            "type": "true_false",
+            "accept": "false"
+          }
+        },
+        {
+          "id": "reasoning",
+          "label": "Reasoning",
+          "checker": {
+            "type": "none"
+          }
+        }
+      ],
+      "hint": "Which forces do work along the full 1.50 m path, and is each conservative (P2–P4)?",
+      "key": {
+        "compression": "0.155 m",
+        "conserved": "false",
+        "explanation": "Released gravitational energy 14.70 J; friction loss 5.091 J along the full path (P4, P6); spring energy 9.609 J; x = √(2·9.609/800) = 0.155 m. Rest at both ends does not eliminate work by friction (P3).",
+        "support_refs": [
+          "P3",
+          "P4",
+          "P6"
+        ]
+      },
+      "feedback": {
+        "correct": "Both the compression and the non-conservation match P3/P4/P6.",
+        "partial": "Check the friction term: subtract μk m g cosθ d over the full path d (P4, P6). Rest at both ends does not make mechanical energy conserved (P3).",
+        "incorrect": "Rest at both ends does not eliminate work by friction. Subtract 5.091 J along the full path; x = 0.155 m (P3, P4, P6)."
+      },
+      "predicted_seconds": 240
+    }
+  ],
+  "exams": [
+    {
+      "id": "P-exam",
+      "label": "Exam 1 (synthetic)",
+      "value": "date_only",
+      "date": "2026-10-06",
+      "objective_scope": [
+        "energy-friction"
+      ]
+    }
+  ]
+}
