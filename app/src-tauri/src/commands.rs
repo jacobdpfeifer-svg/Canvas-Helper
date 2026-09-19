@@ -278,9 +278,25 @@ pub fn study(rt: Rt<'_>, request: serde_json::Value) -> Result<serde_json::Value
 #[tauri::command(async)]
 pub fn sync_study_sources(app: AppHandle, rt: Rt<'_>) -> Result<SyncResult, String> {
     let handle = app.clone();
+    let mut synced: Vec<String> = Vec::new();
     let result = daemon::run_sync_study_sources_streaming(&rt, |event| {
+        if event.get("event").and_then(|v| v.as_str()) == Some("course") {
+            let has_sources = event["course"]["sources"].as_u64().unwrap_or(0) > 0;
+            if let (true, Some(id)) = (has_sources, event["course"]["id"].as_str()) {
+                synced.push(id.to_string());
+            }
+        }
         let _ = handle.emit("study-sync-progress", event);
     });
+    // Canvas sync is the only ingestion path: each synced course becomes (or
+    // refreshes) its Study packet here, so nobody has to "import a source".
+    // Student-authored items survive as long as their sources still exist.
+    for course_id in &synced {
+        let request = serde_json::json!({"cmd": "canvas-import", "params": {"course_id": course_id, "source_ids": serde_json::Value::Null}});
+        if let Err(e) = daemon::run_study(&rt, &request) {
+            eprintln!("[productname-daemon] canvas-import {course_id}: {e}");
+        }
+    }
     let rt_bg = Arc::clone(&rt);
     thread::spawn(move || {
         if daemon::run_bootstrap_sync(&rt_bg).is_ok() {

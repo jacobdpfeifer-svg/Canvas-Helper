@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { aiStudy, listProfiles, runtimeInfo, setProfile, study, type AiStatus } from "../study/api";
 import type { RuntimeInfo, Status } from "../study/types";
 import { THEMES, useTheme } from "../theme";
-import { checkCanvasSession, isTauri, openCanvasSso, setDockMode, syncCanvas } from "../ipc";
+import { checkCanvasSession, openCanvasSso, setDockMode, syncCanvas } from "../ipc";
 import { Onboarding } from "../components/Onboarding";
 import { ConnectorsPanel } from "./ConnectorsPanel";
+import { CanvasDataPanel } from "./CanvasDataPanel";
+import { legalVersion } from "../legal";
+import { TermsSheet } from "../components/TermsSheet";
 
 export function SettingsView() {
   const { theme, setTheme, motion, setMotion } = useTheme();
@@ -20,6 +23,7 @@ export function SettingsView() {
   const [relayUrl, setRelayUrl] = useState("");
   const [invite, setInvite] = useState("");
   const [aiNote, setAiNote] = useState("");
+  const [termsOpen, setTermsOpen] = useState(false);
   const refreshAi = () => void aiStudy.status().then(setAi).catch(() => setAi(null));
 
   useEffect(() => {
@@ -35,7 +39,7 @@ export function SettingsView() {
 
   const switchProfile = async (id: string) => {
     const res = await setProfile(id);
-    if (res?.restart_required) setNote(`Profile set to “${id}”. Quit and reopen the app to use it.`);
+    if (res.restart_required) setNote(`Profile set to “${id}”. Quit and reopen the app to use it.`);
   };
 
   const probeCanvas = async () => {
@@ -88,18 +92,20 @@ export function SettingsView() {
       <h2>Canvas</h2>
       <p className="muted">Sign in happens in a separate browser window with your school's SSO. Cookies stay in this profile's folder; no password is stored.</p>
       <div className="row">
-        <button type="button" onClick={() => void openCanvasSso()} disabled={!isTauri()}>
+        <button type="button" onClick={() => void openCanvasSso().then(probeCanvas).catch((e) => setCanvas(String(e)))}>
           Sign in to Canvas
         </button>
-        <button type="button" onClick={() => void probeCanvas()} disabled={!isTauri()}>
+        <button type="button" onClick={() => void probeCanvas()}>
           Check session
         </button>
-        <button type="button" onClick={() => void runSync()} disabled={!isTauri()}>
-          Sync now
+        <button type="button" onClick={() => void runSync()}>
+          Sync week
         </button>
       </div>
       {canvas && <p role="status">{canvas}</p>}
-      {!isTauri() && <p className="muted">Canvas actions need the desktop app.</p>}
+
+      <h2>Canvas data</h2>
+      <CanvasDataPanel />
 
       <h2>Profiles</h2>
       {profiles ? (
@@ -132,7 +138,7 @@ export function SettingsView() {
           {note && <p role="status">{note}</p>}
         </>
       ) : (
-        <p className="muted">Profiles are managed by the desktop app.</p>
+        <p className="muted">Loading profiles…</p>
       )}
 
       <h2>Optional preferences</h2>
@@ -215,6 +221,13 @@ export function SettingsView() {
       <p>
         Your study history is stored locally. When you ask for AI help, selected material and your answer pass through our service to the model provider. Our service is designed not to retain that content; provider retention policies still apply. Optional usage counts are off until you enable them.
       </p>
+      <div className="row">
+        <button type="button" onClick={() => setTermsOpen(true)}>
+          View terms &amp; privacy
+        </button>
+        <span className="muted small">beta draft {legalVersion()}</span>
+      </div>
+      {termsOpen && <TermsSheet school="cu-boulder" onClose={() => setTermsOpen(false)} />}
 
       <h2>Diagnostics</h2>
       {runtime ? (
@@ -245,7 +258,7 @@ export function SettingsView() {
           )}
         </dl>
       ) : (
-        <p className="muted">Runtime details are available in the desktop app.</p>
+        <p className="muted">Loading runtime details…</p>
       )}
       {status && (
         <dl className="diag">

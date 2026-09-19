@@ -48,7 +48,7 @@ body,
 #root {
   margin: 0;
   height: 100%;
-  background: transparent;
+  background: var(--surface-solid);
   color: var(--fg);
 }
 

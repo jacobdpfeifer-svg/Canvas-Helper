@@ -1,0 +1,275 @@
+{
+  "course": {
+    "code": "CSCI 2270",
+    "color": {
+      "dark": "#9085e9",
+      "light": "#4a3aa7",
+      "name": "violet"
+    },
+    "color_index": 6,
+    "id": "3101",
+    "label": "CSCI 2270 — Data Structures",
+    "name": "Data Structures"
+  },
+  "exam": {
+    "id": "a1018",
+    "title": "Midterm 1",
+    "kind": "exam",
+    "due_at": "2026-10-02T15:00:00.000Z",
+    "points_possible": 100.0,
+    "weight_share": 0.15,
+    "html_url": "https://canvas.example.edu/courses/3101/assignments/1018",
+    "description": "Covers arrays, linked lists, stacks, queues and recursion (Weeks 1–5).",
+    "syllabus_mentions": []
+  },
+  "covers": [
+    {
+      "id": "page-501",
+      "kind": "page",
+      "title": "Week 3 — Linked lists",
+      "excerpt": "Singly vs doubly linked lists; sentinel nodes; O(1) insert at head.",
+      "updated_at": "2026-09-10T00:00:00Z"
+    },
+    {
+      "id": "page-502",
+      "kind": "page",
+      "title": "Week 5 — Recursion",
+      "excerpt": "Base case, recursive case, call stack depth.",
+      "updated_at": "2026-09-16T00:00:00Z"
+    },
+    {
+      "id": "page-503",
+      "kind": "page",
+      "title": "Week 7 — Trees",
+      "excerpt": "Binary trees, traversal orders, BST invariants.",
+      "updated_at": "2026-09-17T00:00:00Z"
+    },
+    {
+      "id": "assignment-1002",
+      "kind": "assignment",
+      "title": "Homework 3",
+      "excerpt": "Implement a linked list with insert, delete and reverse.",
+      "updated_at": null
+    }
+  ],
+  "plan": {
+    "seed": 0,
+    "draft": true,
+    "method": "deterministic-split-v1",
+    "note": "Draft plan: an even split of the synced material across the days you have, last day for review. \"Redo this plan\" reshuffles the split; it does not yet consult a model.",
+    "days_until": 14,
+    "days": [
+      {
+        "date": "2026-09-18",
+        "weekday": "Fri",
+        "label": "Start",
+        "is_today": true,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-501",
+            "title": "Week 3 — Linked lists",
+            "how": "Read once, then close it and write down the three ideas you remember."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-19",
+        "weekday": "Sat",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-501",
+            "title": "Week 3 — Linked lists",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-20",
+        "weekday": "Sun",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-501",
+            "title": "Week 3 — Linked lists",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-21",
+        "weekday": "Mon",
+        "label": "Day 4",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-502",
+            "title": "Week 5 — Recursion",
+            "how": "Read once, then close it and write down the three ideas you remember."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-22",
+        "weekday": "Tue",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-502",
+            "title": "Week 5 — Recursion",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-23",
+        "weekday": "Wed",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-502",
+            "title": "Week 5 — Recursion",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-24",
+        "weekday": "Thu",
+        "label": "Day 7",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-503",
+            "title": "Week 7 — Trees",
+            "how": "Read once, then close it and write down the three ideas you remember."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-25",
+        "weekday": "Fri",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-503",
+            "title": "Week 7 — Trees",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-26",
+        "weekday": "Sat",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "page-503",
+            "title": "Week 7 — Trees",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-27",
+        "weekday": "Sun",
+        "label": "Day 10",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "assignment-1002",
+            "title": "Homework 3",
+            "how": "Redo it from a blank page without looking at your old work."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-28",
+        "weekday": "Mon",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "assignment-1002",
+            "title": "Homework 3",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-29",
+        "weekday": "Tue",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "assignment-1002",
+            "title": "Homework 3",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-09-30",
+        "weekday": "Wed",
+        "label": "Revisit",
+        "is_today": false,
+        "is_review": false,
+        "focus": [
+          {
+            "source_id": "assignment-1002",
+            "title": "Homework 3",
+            "how": "Ten minutes: recall it from memory, then check one thing you were unsure of."
+          }
+        ]
+      },
+      {
+        "date": "2026-10-01",
+        "weekday": "Thu",
+        "label": "Review",
+        "is_today": false,
+        "is_review": true,
+        "focus": [
+          {
+            "source_id": "assignment-1002",
+            "title": "Homework 3",
+            "how": "Answer your own questions from memory; reopen only what you missed."
+          },
+          {
+            "source_id": "page-503",
+            "title": "Week 7 — Trees",
+            "how": "Quick pass: recall each topic in one sentence, no notes."
+          },
+          {
+            "source_id": "page-502",
+            "title": "Week 5 — Recursion",
+            "how": "Answer your own questions from memory; reopen only what you missed."
+          },
+          {
+            "source_id": "page-501",
+            "title": "Week 3 — Linked lists",
+            "how": "Quick pass: recall each topic in one sentence, no notes."
+          }
+        ]
+      }
+    ]
+  }
+}

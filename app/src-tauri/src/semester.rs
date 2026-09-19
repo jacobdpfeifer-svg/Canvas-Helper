@@ -390,6 +390,24 @@ mod tests {
         assert_eq!(sem.window.start, "2026-09-11");
     }
 
+    /// Refresh the frontend contract fixtures from real daemon output:
+    /// `cargo test --locked dump_frontend_fixtures -- --ignored`
+    #[test]
+    #[ignore]
+    fn dump_frontend_fixtures() {
+        let root = fixture::synthetic_root("dump");
+        let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join("src").join("test").join("fixtures");
+        std::fs::create_dir_all(&dir).unwrap();
+        for range in ["1m", "3m", "semester"] {
+            let s = read_semester(&root, range, Some("2026-09-18"));
+            std::fs::write(dir.join(format!("semester-{range}.json")), serde_json::to_string_pretty(&s).unwrap()).unwrap();
+        }
+        let (record, item) = find_item(&root, "3101", "a1018").unwrap();
+        let prep = crate::exam_plan::exam_prep(&record, &item, Date::parse("2026-09-18").unwrap(), 0);
+        std::fs::write(dir.join("exam-prep-midterm1.json"), serde_json::to_string_pretty(&prep).unwrap()).unwrap();
+        let _ = fs::remove_dir_all(&root);
+    }
+
     #[test]
     fn find_item_returns_the_record_and_the_item() {
         let root = fixture::synthetic_root("find");

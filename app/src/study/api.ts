@@ -139,22 +139,14 @@ export const connectors = {
   context: (terms: string[], days = 7) => call<{ events: { id: string; summary: string; start: string | null }[]; emails: { id: string; subject: string; from: string; received: string | null; web_link: string | null }[] }>("context", { terms, days }),
 };
 
-export async function syncStudySources(): Promise<{ ok: boolean; error?: string | null }> {
-  if (!isTauri()) return { ok: false, error: "Canvas sync needs the desktop app" };
-  return invoke("sync_study_sources");
-}
-
-export async function runtimeInfo(): Promise<RuntimeInfo | null> {
-  if (!isTauri()) return null;
+export async function runtimeInfo(): Promise<RuntimeInfo> {
   return invoke<RuntimeInfo>("runtime_info");
 }
 
-export async function listProfiles(): Promise<{ current: string; profiles: string[]; root: string } | null> {
-  if (!isTauri()) return null;
+export async function listProfiles(): Promise<{ current: string; profiles: string[]; root: string }> {
   return invoke("list_profiles");
 }
 
-export async function setProfile(profileId: string): Promise<{ ok: boolean; restart_required: boolean } | null> {
-  if (!isTauri()) return null;
+export async function setProfile(profileId: string): Promise<{ ok: boolean; restart_required: boolean }> {
   return invoke("set_profile", { profileId });
 }

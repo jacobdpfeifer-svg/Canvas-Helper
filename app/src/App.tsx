@@ -1,38 +1,45 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FirstRun } from "./components/FirstRun";
-import { PlanView } from "./views/PlanView";
+import { CalendarView } from "./views/CalendarView";
+import { ExamPrepView } from "./views/ExamPrepView";
+import { HomeView } from "./views/HomeView";
 import { SettingsView } from "./views/SettingsView";
-import { SourcesView } from "./views/SourcesView";
 import { StudyView } from "./views/StudyView";
 import { useTheme } from "./theme";
 import { setDockMode } from "./ipc";
 
-export type Tab = "study" | "plan" | "sources" | "settings";
+export type Tab = "home" | "study" | "calendar" | "settings";
 
 const TABS: { id: Tab; label: string }[] = [
+  { id: "home", label: "Home" },
   { id: "study", label: "Study" },
-  { id: "plan", label: "Plan" },
-  { id: "sources", label: "Sources" },
+  { id: "calendar", label: "Calendar" },
   { id: "settings", label: "Settings" },
 ];
 
-const TAB_KEY = "pn_tab";
+type Route = { kind: "tab" } | { kind: "exam-prep"; courseId: string; itemId: string };
 
+/**
+ * Shell. Home is the landing tab after onboarding and on every launch; the
+ * exam-prep page is a route inside the Home tab (back returns to the line).
+ * "Import a source" no longer exists: Canvas sync is the only ingestion path,
+ * and the read-only inspection of synced data lives under Settings.
+ */
 export function App() {
   const [onboarded, setOnboarded] = useState(() => localStorage.getItem("pn_onboarded") === "1");
-  const [tab, setTab] = useState<Tab>(() => {
-    const raw = localStorage.getItem(TAB_KEY);
-    return TABS.some((t) => t.id === raw) ? (raw as Tab) : "study";
-  });
-  useTheme();
+  const [tab, setTab] = useState<Tab>("home");
+  const [route, setRoute] = useState<Route>({ kind: "tab" });
+  const [studyCourse, setStudyCourse] = useState<string | null>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
-    localStorage.setItem(TAB_KEY, tab);
-  }, [tab]);
-
-  useEffect(() => {
-    void setDockMode(onboarded ? "workspace" : "onboarding");
+    void setDockMode(onboarded ? "workspace" : "onboarding").catch(() => undefined);
   }, [onboarded]);
+
+  const goTab = useCallback((t: Tab) => {
+    setRoute({ kind: "tab" });
+    setTab(t);
+  }, []);
 
   if (!onboarded) {
     return (
@@ -40,6 +47,7 @@ export function App() {
         onDone={() => {
           localStorage.setItem("pn_onboarded", "1");
           setOnboarded(true);
+          setTab("home");
         }}
       />
     );
@@ -64,18 +72,18 @@ export function App() {
                 aria-selected={tab === t.id}
                 aria-controls="main"
                 className={tab === t.id ? "active" : undefined}
-                onClick={() => setTab(t.id)}
+                onClick={() => goTab(t.id)}
                 onKeyDown={(e) => {
                   const idx = TABS.findIndex((x) => x.id === t.id);
                   if (e.key === "ArrowDown" || e.key === "ArrowRight") {
                     e.preventDefault();
                     const next = TABS[(idx + 1) % TABS.length].id;
-                    setTab(next);
+                    goTab(next);
                     document.getElementById(`tab-${next}`)?.focus();
                   } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
                     e.preventDefault();
                     const prev = TABS[(idx - 1 + TABS.length) % TABS.length].id;
-                    setTab(prev);
+                    goTab(prev);
                     document.getElementById(`tab-${prev}`)?.focus();
                   }
                 }}
@@ -87,9 +95,21 @@ export function App() {
         </ul>
       </nav>
       <main id="main" className="workspace-main" role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={-1}>
-        {tab === "study" && <StudyView onGoToSources={() => setTab("sources")} />}
-        {tab === "plan" && <PlanView />}
-        {tab === "sources" && <SourcesView />}
+        {tab === "home" && route.kind === "tab" && <HomeView theme={theme} onViewPlan={(t) => setRoute({ kind: "exam-prep", ...t })} />}
+        {tab === "home" && route.kind === "exam-prep" && (
+          <ExamPrepView
+            courseId={route.courseId}
+            itemId={route.itemId}
+            theme={theme}
+            onBack={() => setRoute({ kind: "tab" })}
+            onStudy={(course) => {
+              setStudyCourse(course);
+              goTab("study");
+            }}
+          />
+        )}
+        {tab === "study" && <StudyView initialCourse={studyCourse} onGoToSources={() => goTab("settings")} />}
+        {tab === "calendar" && <CalendarView theme={theme} />}
         {tab === "settings" && <SettingsView />}
       </main>
     </div>

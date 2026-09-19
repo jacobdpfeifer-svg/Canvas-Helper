@@ -20,12 +20,17 @@ function useFocusOnChange<T extends HTMLElement>(dep: unknown) {
   return ref;
 }
 
-export function StudyView({ onGoToSources }: { onGoToSources: () => void }) {
+/**
+ * `initialCourse` preselects a course when the page is entered from Exam
+ * Prep ("Let's test your knowledge"); the session itself is unchanged.
+ * `onGoToSources` now lands on Settings → Canvas data (read-only).
+ */
+export function StudyView({ onGoToSources, initialCourse = null }: { onGoToSources: () => void; initialCourse?: string | null }) {
   const [minutes, setMinutes] = useState<number>(() => {
     const raw = localStorage.getItem(MINUTES_KEY);
     return raw === "10" ? 10 : 5;
   });
-  const [course, setCourse] = useState<string | null>(null);
+  const [course, setCourse] = useState<string | null>(initialCourse);
   const [courses, setCourses] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [live, setLive] = useState("");
@@ -147,7 +152,7 @@ function ErrorPanel({ error, retry, onGoToSources }: { error: StudyRequestError;
           Retry
         </button>
         <button type="button" onClick={onGoToSources}>
-          Sources
+          Settings
         </button>
       </div>
     </div>
@@ -174,9 +179,9 @@ function OfferPanel({
         <h2 ref={heading} tabIndex={-1}>
           No practice item is ready
         </h2>
-        <p>{offer.reason} Import a source packet to use a local template, or read your notes.</p>
+        <p>{offer.reason} Practice items come from your synced Canvas material.</p>
         <button type="button" className="primary" onClick={onGoToSources}>
-          Import a source
+          Canvas data
         </button>
       </div>
     );
@@ -195,7 +200,7 @@ function OfferPanel({
             </button>
           ) : (
             <button type="button" className="primary" onClick={onGoToSources}>
-              Sources
+              Canvas data
             </button>
           )}
         </div>
@@ -210,7 +215,7 @@ function OfferPanel({
         </h2>
         <p>{offer.reason}</p>
         <button type="button" onClick={onGoToSources}>
-          Sources &amp; exams
+          Canvas data
         </button>
       </div>
     );

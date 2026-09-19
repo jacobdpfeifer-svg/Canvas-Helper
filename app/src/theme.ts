@@ -48,3 +48,22 @@ export function useTheme() {
   const setMotion = useCallback((m: Motion) => setMotionState(m), []);
   return { theme, setTheme, motion, setMotion };
 }
+
+/** Themes whose surfaces are dark take the palette's dark step. */
+export const DARK_THEMES: ReadonlySet<string> = new Set(["night", "forest", "contrast"]);
+
+export function isDarkTheme(theme: string): boolean {
+  return DARK_THEMES.has(theme);
+}
+
+/** The course hex for the current theme (see browser/scripts/lib/semester.mjs COURSE_PALETTE). */
+export function courseHex(color: { light: string; dark: string } | null | undefined, theme: string): string {
+  if (!color) return "var(--accent)";
+  return isDarkTheme(theme) ? color.dark : color.light;
+}
+
+/** Current theme id without subscribing (for components outside useTheme). */
+export function currentTheme(): ThemeId {
+  const raw = typeof document !== "undefined" ? document.documentElement.dataset.theme : undefined;
+  return (THEMES.some((t) => t.id === raw) ? raw : "night") as ThemeId;
+}

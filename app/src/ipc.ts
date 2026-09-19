@@ -15,56 +15,55 @@ export type RouteResult = {
 
 export type DockMode = "onboarding" | "peek" | "expanded" | "workspace";
 
+/**
+ * Desktop-only (2026-09-18 UI round 1): every call here goes to the Tauri
+ * daemon. There is no browser-mode product path any more — tests mock this
+ * module (vi.mock("../ipc")) instead of relying on empty fallbacks.
+ */
+
 /** Native dock commands share this adapter with all other frontend IPC. */
 export async function setDockMode(mode: DockMode): Promise<void> {
-  if (!isTauri()) return;
   await invoke("set_dock_mode", { mode });
 }
 
 export async function showDock(): Promise<void> {
-  if (!isTauri()) return;
   await invoke("show_dock");
 }
 
 export async function hideDock(): Promise<void> {
-  if (!isTauri()) return;
   await invoke("hide_dock");
 }
 
-/** True when running inside the Tauri webview (not plain Vite browser). */
+/** True inside the Tauri webview. Only the study dev bridge (a developer
+ * tool for `vite` alone) still branches on it. */
 export function isTauri(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 }
 
 export async function syncCanvas(): Promise<SyncResult> {
-  if (!isTauri()) return { ok: false, error: "not in tauri" };
   return invoke<SyncResult>("sync_canvas");
 }
 
 export async function readTop3(): Promise<Top3Item[]> {
-  if (!isTauri()) return [];
   return invoke<Top3Item[]>("read_top3");
 }
 
+/** Opens the school SSO in a separate Playwright window; resolves when it closes. */
 export async function openCanvasSso(): Promise<void> {
-  if (!isTauri()) return;
   await invoke("open_canvas_sso");
 }
 
-/** Headless probe: is there already a valid Canvas session in browser/.auth? */
+/** Headless probe: is there already a valid Canvas session in the profile's auth dir? */
 export async function checkCanvasSession(): Promise<boolean> {
-  if (!isTauri()) return false;
   return invoke<boolean>("check_canvas_session");
 }
 
 /**
- * Fire-and-forget: kick off the deep, full-term first sync as soon as
- * onboarding confirms a Canvas session. Runs in the background while the
- * student finishes the rest of the wizard — never awaited, never blocks
- * onboarding progress.
+ * Fire-and-forget deep, full-term week sync. Onboarding no longer calls this
+ * directly (sync_study_sources kicks it after the sources sync); Settings'
+ * preferences flow still may.
  */
 export function bootstrapCanvasSync(): void {
-  if (!isTauri()) return;
   void invoke("bootstrap_canvas_sync").catch((e) => {
     console.error("bootstrap sync failed to launch", e);
   });
@@ -79,20 +78,6 @@ export async function saveOnboarding(
     waitlistEmail?: string;
   }
 ): Promise<void> {
-  if (!isTauri()) {
-    localStorage.setItem("pn_school", schoolSlug);
-    localStorage.setItem("pn_cloud_key", cloudKey);
-    if (options?.priorities) {
-      localStorage.setItem("pn_priorities", options.priorities);
-    }
-    if (options?.sentryOptIn !== undefined) {
-      localStorage.setItem("pn_sentry_opt_in", options.sentryOptIn ? "1" : "0");
-    }
-    if (options?.waitlistEmail) {
-      localStorage.setItem("pn_waitlist_email", options.waitlistEmail);
-    }
-    return;
-  }
   await invoke("save_onboarding", {
     schoolSlug,
     cloudKey,
@@ -119,15 +104,10 @@ export type OnboardingIdentity = {
 };
 
 /** Write the onboarding "Profile" step's answers into USER.md (see
- * canvas_mcp.core.user_profile). Web preview has no USER.md to write to, so
- * it stashes the answers in localStorage for the record only. */
+ * canvas_mcp.core.user_profile). */
 export async function saveUserProfile(
   identity: OnboardingIdentity
 ): Promise<void> {
-  if (!isTauri()) {
-    localStorage.setItem("pn_user_profile", JSON.stringify(identity));
-    return;
-  }
   await invoke("save_user_profile", {
     name: identity.name,
     institution: identity.institution,
@@ -282,10 +262,6 @@ export type ScoredReview = DueReview & {
 export async function saveLearningProfile(
   answers: LearningProfileAnswers
 ): Promise<void> {
-  if (!isTauri()) {
-    localStorage.setItem("pn_learning_profile", JSON.stringify(answers));
-    return;
-  }
   await invoke("save_learning_profile", {
     practiceFormat: answers.practiceFormat,
     autonomy: answers.autonomy,
@@ -323,95 +299,6 @@ export type LearnProgress = {
   };
 };
 
-export async function readBriefStreak(): Promise<BriefStreak> {
-  if (!isTauri()) {
-    return { streak: 0, last_brief_date: null, briefed_today: false, line: "" };
-  }
-  const payload = await invoke<BriefStreak>("read_brief_streak");
-  return {
-    streak: payload?.streak ?? 0,
-    last_brief_date: payload?.last_brief_date ?? null,
-    briefed_today: Boolean(payload?.briefed_today),
-    line: payload?.line ?? "",
-  };
-}
-
-export async function readLearnProgress(): Promise<LearnProgress> {
-  if (!isTauri()) {
-    return {
-      courses: [],
-      totals: { fragile: 0, holding: 0, durable: 0, total: 0 },
-    };
-  }
-  const payload = await invoke<LearnProgress>("read_learn_progress");
-  return {
-    courses: Array.isArray(payload?.courses) ? payload.courses : [],
-    totals: payload?.totals ?? { fragile: 0, holding: 0, durable: 0, total: 0 },
-  };
-}
-
-const EMPTY_BUDGET: ReviewBudget = {
-  now: 0,
-  later: 0,
-  later_checkpoint: null,
-  line: "",
-};
-
-const EMPTY_TRAIL: Trail = { line: "", learning: [], workflow: [] };
-
-const EMPTY_GARDEN: Garden = { note: "", courses: [] };
-
-const EMPTY_COMMITMENT: CommitmentState = {
-  commitment: null,
-  check_in: null,
-  line: "",
-};
-
-const EMPTY_HEALTH: KnowledgeHealth = {
-  fragile: 0,
-  holding: 0,
-  durable: 0,
-  attempt_only: 0,
-  delayed_hit_signal: 0,
-  next_review_at: null,
-  next_checkpoint_due: null,
-  line: "",
-};
-
-export async function readDueReviews(): Promise<DueReviewsPayload> {
-  const empty: DueReviewsPayload = {
-    items: [],
-    practice: { state: "idle", line: "", obstacle: "", open_with: "" },
-    coverage: [],
-    health: EMPTY_HEALTH,
-    budget: EMPTY_BUDGET,
-    trail: EMPTY_TRAIL,
-    garden: EMPTY_GARDEN,
-    commitment: EMPTY_COMMITMENT,
-  };
-  if (!isTauri()) return empty;
-  const payload = await invoke<{
-    items?: DueReview[];
-    practice?: PracticeSurface;
-    coverage?: CoverageRow[];
-    health?: KnowledgeHealth;
-    budget?: ReviewBudget;
-    trail?: Trail;
-    garden?: Garden;
-    commitment?: CommitmentState;
-  }>("read_due_reviews");
-  return {
-    items: Array.isArray(payload?.items) ? payload.items : [],
-    practice: payload?.practice ?? empty.practice,
-    coverage: Array.isArray(payload?.coverage) ? payload.coverage : [],
-    health: payload?.health ?? empty.health,
-    budget: payload?.budget ?? empty.budget,
-    trail: payload?.trail ?? empty.trail,
-    garden: payload?.garden ?? empty.garden,
-    commitment: payload?.commitment ?? empty.commitment,
-  };
-}
-
 export type EvalCounts = {
   delayed_reviews_open: number;
   delayed_hit_signal: number;
@@ -428,31 +315,80 @@ export type EvaluationCompare = {
   reason?: string;
 };
 
-const EMPTY_COMPARE: EvaluationCompare = { ok: false };
+export type PlanSurface = {
+  due: DueReviewsPayload;
+  if_then: string;
+  streak: BriefStreak;
+  progress: LearnProgress;
+  evaluation: EvaluationCompare;
+  commitment: CommitmentState;
+  /** Sections that fell back to their empty shape, with the reason. */
+  errors: string[];
+};
 
-export async function readEvaluationCompare(): Promise<EvaluationCompare> {
-  if (!isTauri()) return EMPTY_COMPARE;
-  try {
-    const payload = await invoke<EvaluationCompare>("read_evaluation_compare");
-    if (!payload || payload.ok !== true) return { ok: false, note: payload?.note };
-    return payload;
-  } catch {
-    return EMPTY_COMPARE;
-  }
-}
+export const EMPTY_DUE: DueReviewsPayload = {
+  items: [],
+  practice: { state: "idle", line: "", obstacle: "", open_with: "" },
+  coverage: [],
+  health: {
+    fragile: 0,
+    holding: 0,
+    durable: 0,
+    attempt_only: 0,
+    delayed_hit_signal: 0,
+    next_review_at: null,
+    next_checkpoint_due: null,
+    line: "",
+  },
+  budget: { now: 0, later: 0, later_checkpoint: null, line: "" },
+  trail: { line: "", learning: [], workflow: [] },
+  garden: { note: "", courses: [] },
+  commitment: { commitment: null, check_in: null, line: "" },
+};
 
-export async function readCommitment(): Promise<CommitmentState> {
-  if (!isTauri()) return EMPTY_COMMITMENT;
-  try {
-    const payload = await invoke<CommitmentState>("read_commitment");
-    return {
-      commitment: payload?.commitment ?? null,
-      check_in: payload?.check_in ?? null,
-      line: payload?.line ?? "",
-    };
-  } catch {
-    return EMPTY_COMMITMENT;
-  }
+export const EMPTY_PLAN_SURFACE: PlanSurface = {
+  due: EMPTY_DUE,
+  if_then: "",
+  streak: { streak: 0, last_brief_date: null, briefed_today: false, line: "" },
+  progress: { courses: [], totals: { fragile: 0, holding: 0, durable: 0, total: 0 } },
+  evaluation: { ok: false },
+  commitment: { commitment: null, check_in: null, line: "" },
+  errors: [],
+};
+
+/**
+ * The whole Calendar-tab surface in ONE round trip (was six, each a Python
+ * process spawned on the main thread). Shapes are normalised here so a
+ * partial payload never throws in a view.
+ */
+export async function readPlanSurface(): Promise<PlanSurface> {
+  const p = await invoke<Partial<PlanSurface>>("read_plan_surface");
+  const due = p?.due ?? EMPTY_DUE;
+  return {
+    due: {
+      items: Array.isArray(due.items) ? due.items : [],
+      practice: due.practice ?? EMPTY_DUE.practice,
+      coverage: Array.isArray(due.coverage) ? due.coverage : [],
+      health: due.health ?? EMPTY_DUE.health,
+      budget: due.budget ?? EMPTY_DUE.budget,
+      trail: due.trail ?? EMPTY_DUE.trail,
+      garden: due.garden ?? EMPTY_DUE.garden,
+      commitment: due.commitment ?? EMPTY_DUE.commitment,
+    },
+    if_then: p?.if_then ?? "",
+    streak: p?.streak ?? EMPTY_PLAN_SURFACE.streak,
+    progress: {
+      courses: Array.isArray(p?.progress?.courses) ? p.progress.courses : [],
+      totals: p?.progress?.totals ?? EMPTY_PLAN_SURFACE.progress.totals,
+    },
+    evaluation: p?.evaluation && p.evaluation.ok === true ? p.evaluation : { ok: false, note: p?.evaluation?.note },
+    commitment: {
+      commitment: p?.commitment?.commitment ?? null,
+      check_in: p?.commitment?.check_in ?? null,
+      line: p?.commitment?.line ?? "",
+    },
+    errors: Array.isArray(p?.errors) ? p.errors : [],
+  };
 }
 
 export async function setCommitment(input: {
@@ -461,9 +397,6 @@ export async function setCommitment(input: {
   course?: string;
   linkedItemId?: string;
 }): Promise<CommitmentState> {
-  if (!isTauri()) {
-    throw new Error("not in tauri");
-  }
   return invoke<CommitmentState>("set_commitment", {
     text: input.text,
     deadline: input.deadline,
@@ -475,9 +408,6 @@ export async function setCommitment(input: {
 export async function resolveCommitment(
   status: "met" | "not_met" | "dropped"
 ): Promise<CommitmentState> {
-  if (!isTauri()) {
-    throw new Error("not in tauri");
-  }
   return invoke<CommitmentState>("resolve_commitment", { status });
 }
 
@@ -486,9 +416,6 @@ export async function recordReviewOutcome(
   outcome: ReviewOutcome,
   sameSession = false
 ): Promise<ScoredReview> {
-  if (!isTauri()) {
-    throw new Error("not in tauri");
-  }
   return invoke<ScoredReview>("record_review_outcome", {
     itemId,
     outcome,
@@ -496,35 +423,192 @@ export async function recordReviewOutcome(
   });
 }
 
-export async function readCheckIntention(): Promise<string> {
-  if (!isTauri()) {
-    try {
-      const raw = localStorage.getItem("pn_learning_profile");
-      if (!raw) return "";
-      const parsed = JSON.parse(raw) as { ifThen?: string };
-      return parsed.ifThen ?? "";
-    } catch {
-      return "";
-    }
-  }
-  return invoke<string>("read_check_intention");
-}
-
 export async function routeIntent(trigger: string): Promise<RouteResult | null> {
-  if (!isTauri()) return null;
   return invoke<RouteResult>("route_intent", { trigger });
 }
 
 export async function onInboxUpdated(
   handler: () => void
-): Promise<UnlistenFn | (() => void)> {
-  if (!isTauri()) return () => undefined;
+): Promise<UnlistenFn> {
   return listen("inbox-updated", () => handler());
 }
 
 export async function onSyncFailed(
   handler: (message: string) => void
-): Promise<UnlistenFn | (() => void)> {
-  if (!isTauri()) return () => undefined;
+): Promise<UnlistenFn> {
   return listen<string>("sync-failed", (event) => handler(event.payload));
+}
+
+/* ------------------------------------------------------------------ */
+/* Canvas study-source sync with streamed progress (onboarding Screen 3) */
+
+export type CourseColor = { name: string; light: string; dark: string };
+
+export type SyncCourseSummary = {
+  id: string;
+  label: string;
+  color_index: number;
+  color: CourseColor;
+  sources?: number;
+  exams?: number;
+  items?: number;
+  counts?: { assignments: number; quizzes: number; exams: number; discussions: number; other: number };
+  term_source?: string;
+  errors?: number;
+};
+
+export type StudySyncEvent =
+  | { event: "courses"; courses: SyncCourseSummary[] }
+  | { event: "course"; ok: boolean; course: SyncCourseSummary; errors: string[] }
+  | { event: "done"; ok: boolean; partial?: boolean; session: string; error?: string; errors?: string[]; courses: SyncCourseSummary[] };
+
+/** Runs the study-source sync; resolves when it exits. Progress arrives via onStudySyncProgress. */
+export async function syncStudySources(): Promise<SyncResult> {
+  return invoke<SyncResult>("sync_study_sources");
+}
+
+export async function onStudySyncProgress(
+  handler: (event: StudySyncEvent) => void
+): Promise<UnlistenFn> {
+  return listen<StudySyncEvent>("study-sync-progress", (e) => handler(e.payload));
+}
+
+/* ------------------------------------------------------------------ */
+/* Home semester line (computed natively from synced schema-2 JSON)     */
+
+export type SemesterRange = "1m" | "2m" | "3m" | "semester";
+
+export type TickKind = "assignment" | "quiz" | "exam" | "discussion" | "other";
+
+export type Tick = {
+  id: string;
+  course_id: string;
+  kind: TickKind;
+  title: string;
+  due_at: string;
+  points_possible: number | null;
+  weight_share: number;
+  group_name: string | null;
+  html_url: string | null;
+  submitted: boolean | null;
+  graded: boolean | null;
+  score: number | null;
+  past: boolean;
+  has_description: boolean;
+};
+
+export type CourseTerm = { start_at: string | null; end_at: string | null; source: "canvas" | "inferred" | "mixed" | "none" };
+
+export type CourseRow = {
+  id: string;
+  label: string;
+  code: string;
+  color_index: number;
+  color: CourseColor;
+  term: CourseTerm;
+  fetched_at: string | null;
+  ticks: Tick[];
+  undated: number;
+  total_items: number;
+  errors: string[];
+};
+
+export type Semester = {
+  today: string;
+  range: SemesterRange;
+  window: { start: string; end: string };
+  courses: CourseRow[];
+  status: { state: "never" | "ok" | "partial" | "failed" | "session_expired"; finished_at: string | null; errors: string[] };
+};
+
+/** Local calendar date (YYYY-MM-DD) of the renderer — the window is drawn in the student's day. */
+export function localToday(now: Date = new Date()): string {
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export async function readSemester(range: SemesterRange, today: string = localToday()): Promise<Semester> {
+  return invoke<Semester>("read_semester", { range, today });
+}
+
+/* ------------------------------------------------------------------ */
+/* Exam Prep                                                            */
+
+export type ExamPrepSource = { id: string; kind: string; title: string; excerpt: string; updated_at: string | null };
+export type ExamPrepFocus = { source_id: string; title: string; how: string };
+export type ExamPrepDay = { date: string; weekday: string; label: string; is_today: boolean; is_review: boolean; focus: ExamPrepFocus[] };
+export type ExamPrep = {
+  course: { id: string; label: string; code: string; color_index: number; color: CourseColor };
+  exam: {
+    id: string;
+    title: string;
+    kind: string;
+    due_at: string;
+    points_possible: number | null;
+    weight_share: number;
+    html_url: string | null;
+    description: string | null;
+    syllabus_mentions: string[];
+  };
+  covers: ExamPrepSource[];
+  plan: { seed: number; draft: boolean; method: string; note: string; days_until: number; days: ExamPrepDay[] };
+};
+
+export async function readExamPrep(courseId: string, itemId: string, seed = 0, today: string = localToday()): Promise<ExamPrep> {
+  return invoke<ExamPrep>("read_exam_prep", { courseId, itemId, today, seed });
+}
+
+/* ------------------------------------------------------------------ */
+/* Local calendar + email suggestions (contract; producer pending)      */
+
+export type CalendarEventKind = "study" | "class" | "exam" | "personal";
+
+export type CalendarEvent = {
+  id: string;
+  kind: CalendarEventKind;
+  title: string;
+  course_id: string | null;
+  color_index: number | null;
+  start: string;
+  end: string;
+  note: string;
+  created_at: string;
+  source: string;
+};
+
+export type CalendarSuggestion = { source_message_id: string; title: string; start: string; end: string; confidence: number; why: string };
+export type CalendarDecision = { source_message_id: string; decision: "added" | "dismissed"; at: string; event_id: string | null };
+export type CalendarPayload = { events: CalendarEvent[]; suggestions: CalendarSuggestion[]; decisions: CalendarDecision[] };
+
+export type NewCalendarEvent = {
+  kind: CalendarEventKind;
+  title: string;
+  course_id?: string | null;
+  color_index?: number | null;
+  start: string;
+  end: string;
+  note?: string;
+};
+
+export async function readCalendar(): Promise<CalendarPayload> {
+  return invoke<CalendarPayload>("read_calendar");
+}
+
+export async function addCalendarEvent(event: NewCalendarEvent): Promise<CalendarEvent> {
+  return invoke<CalendarEvent>("add_calendar_event", { event });
+}
+
+export async function deleteCalendarEvent(id: string): Promise<void> {
+  await invoke("delete_calendar_event", { id });
+}
+
+export async function decideCalendarSuggestion(messageId: string, decision: "added" | "dismissed"): Promise<CalendarPayload> {
+  return invoke<CalendarPayload>("decide_calendar_suggestion", { messageId, decision });
+}
+
+/** Open an https link (Canvas html_url) in the system browser. */
+export async function openExternal(url: string): Promise<void> {
+  await invoke("open_external", { url });
 }
