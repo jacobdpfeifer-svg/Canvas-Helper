@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spatial Instrument — style tile</title>
+    <style>
+      :root {
+        --bg: #1c1c1e;
+        --surface-0: rgba(44, 44, 46, 0.52);
+        --surface-1: rgba(58, 58, 60, 0.58);
+        --surface-2: rgba(28, 28, 30, 0.92);
+        --surface-grouped: #2c2c2e;
+        --fg: #f5f5f7;
+        --muted: rgba(235, 235, 245, 0.6);
+        --hairline: rgba(255, 255, 255, 0.18);
+        --specular: rgba(255, 255, 255, 0.28);
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+        --blur: 24px;
+        --accent: #6b8cff;
+        --on-accent: #0a1020;
+        --accent-deep: #4a6ae8;
+        --ring: #6b8cff;
+        --danger: #ff453a;
+        --success: #34c759;
+        --radius-window: 20px;
+        --radius-panel: 24px;
+        --radius-card: 16px;
+        --radius-control: 12px;
+        --radius-row: 10px;
+        --radius-pill: 999px;
+        --radius-thumb: 999px;
+        --radius-icon: 999px;
+        --font-display: "Source Serif 4", "Iowan Old Style", Palatino, serif;
+        --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+        --course: #5b8def;
+        font-family: var(--font-ui);
+        font-size: 15px;
+        line-height: 1.4;
+        color: var(--fg);
+        background: var(--bg);
+      }
+      :root[data-theme="paper"] {
+        --bg: #ece4d5;
+        --surface-0: rgba(255, 252, 246, 0.62);
+        --surface-1: rgba(255, 252, 246, 0.78);
+        --surface-2: #fffcf6;
+        --surface-grouped: #f4ede2;
+        --fg: #563e3b;
+        --muted: #7a6560;
+        --hairline: rgba(86, 62, 59, 0.16);
+        --specular: rgba(255, 255, 255, 0.55);
+        --shadow: 0 12px 40px rgba(86, 62, 59, 0.12);
+        --accent: #2f5bd8;
+        --on-accent: #ffffff;
+        --accent-deep: #1f43ad;
+        --ring: #2f5bd8;
+        --danger: #b3261e;
+        --success: #1f7a4d;
+      }
+      :root[data-theme="forest"] {
+        --bg: #121a16;
+        --surface-0: rgba(232, 217, 196, 0.08);
+        --surface-1: rgba(232, 217, 196, 0.14);
+        --surface-2: rgba(18, 28, 22, 0.94);
+        --surface-grouped: #1a2420;
+        --fg: #f4ede4;
+        --muted: rgba(232, 217, 196, 0.72);
+        --hairline: rgba(232, 217, 196, 0.18);
+        --specular: rgba(255, 255, 255, 0.22);
+        --accent: #e8d9c4;
+        --on-accent: #121a16;
+        --accent-deep: #c4a574;
+        --ring: #e8d9c4;
+        --danger: #ff453a;
+        --success: #34c759;
+      }
+      :root[data-theme="contrast"] {
+        --bg: #0e0e10;
+        --surface-0: #0e0e10;
+        --surface-1: #0e0e10;
+        --surface-2: #0e0e10;
+        --surface-grouped: #161618;
+        --fg: #ffffff;
+        --muted: #d0d0d4;
+        --hairline: #ffffff;
+        --specular: transparent;
+        --shadow: none;
+        --blur: 0px;
+        --accent: #ffd60a;
+        --on-accent: #000000;
+        --accent-deep: #ffc300;
+        --ring: #ffd60a;
+        --danger: #ff453a;
+        --success: #30d158;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--fg); min-height: 100vh; }
+      .tile { max-width: 960px; margin: 0 auto; padding: 24px; }
+      .switcher { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+      .switcher button { min-height: 36px; padding: 8px 14px; border-radius: var(--radius-pill); border: 0.5px solid var(--hairline); background: var(--surface-1); color: var(--fg); font: inherit; }
+      .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+      h1.large-title { font-family: var(--font-display); font-size: 34px; font-weight: 600; letter-spacing: -0.6px; line-height: 1.15; margin: 0 0 8px; }
+      .body { font-size: 15px; line-height: 1.4; margin: 0 0 8px; }
+      .mono-caption { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--muted); margin: 0 0 24px; }
+      h2 { font-size: 13px; font-weight: 500; color: var(--muted); margin: 32px 0 12px; }
+      .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .glass {
+        background: var(--surface-1);
+        backdrop-filter: blur(var(--blur)) saturate(140%);
+        -webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
+        box-shadow: inset 0 1px 0 var(--specular), var(--shadow);
+        border: 0.5px solid var(--hairline);
+        border-radius: var(--radius-panel);
+      }
+      :root[data-theme="contrast"] .glass { backdrop-filter: none; -webkit-backdrop-filter: none; border-width: 2px; box-shadow: none; }
+      .btn {
+        height: 44px; padding: 12px 18px; border-radius: var(--radius-control);
+        border: 0.5px solid transparent; font: inherit; font-size: 15px; font-weight: 600;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 120px;
+        transition: background 160ms ease-out, transform 160ms ease-out, opacity 160ms ease-out;
+      }
+      .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+      .btn-primary { background: var(--accent); color: var(--on-accent); }
+      .btn-primary:hover { filter: brightness(1.06); }
+      .btn-primary:active { background: var(--accent-deep); transform: translateY(1px); filter: none; }
+      .btn-primary:disabled { opacity: 0.4; }
+      .btn-secondary { background: var(--surface-1); color: var(--fg); border-color: var(--hairline); font-weight: 500; }
+      .btn-secondary:hover { background: color-mix(in srgb, var(--surface-1) 94%, white); }
+      .btn-destructive { background: var(--danger); color: #fff; }
+      .btn-ghost { background: transparent; border: 0; height: auto; padding: 8px 12px; font-weight: 500; color: var(--fg); min-width: 0; }
+      .btn-icon { width: 44px; height: 44px; min-width: 44px; padding: 0; border-radius: var(--radius-icon); background: var(--surface-1); border-color: var(--hairline); }
+      .btn-loading { position: relative; color: transparent; pointer-events: none; }
+      .btn-loading::after {
+        content: ""; width: 16px; height: 16px; border: 2px solid var(--on-accent); border-right-color: transparent;
+        border-radius: 50%; position: absolute; animation: spin 700ms linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .segmented { display: inline-flex; height: 36px; padding: 2px; border-radius: var(--radius-pill); background: var(--surface-0); border: 0.5px solid var(--hairline); }
+      .segmented button { border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 13px; font-weight: 500; padding: 0 14px; border-radius: var(--radius-pill); height: 32px; }
+      .segmented button[aria-selected="true"] { background: var(--surface-2); }
+      .search-pill { height: 44px; border-radius: var(--radius-pill); border: 0; background: var(--surface-1); color: var(--fg); padding: 0 16px 0 40px; width: min(420px, 100%); font: inherit; font-size: 17px; }
+      .search-wrap { position: relative; }
+      .search-wrap svg { position: absolute; left: 14px; top: 14px; opacity: 0.6; }
+      .field { height: 44px; border-radius: var(--radius-control); border: 0.5px solid var(--hairline); background: var(--surface-grouped); color: var(--fg); padding: 12px 14px; font: inherit; }
+      .field:focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+      .field.error { box-shadow: 0 0 0 0.5px var(--danger); }
+      .field-caption { font-size: 12px; color: var(--danger); margin: 4px 0 0; }
+      .switch { width: 51px; height: 31px; border-radius: var(--radius-thumb); border: 0; background: rgba(120,120,128,0.32); position: relative; padding: 0; }
+      .switch[aria-checked="true"] { background: var(--success); }
+      .switch::after { content: ""; width: 27px; height: 27px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: transform 200ms ease-out; }
+      .switch[aria-checked="true"]::after { transform: translateX(20px); }
+      .tag { display: inline-flex; height: 28px; padding: 0 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 500; background: color-mix(in srgb, var(--course) 18%, transparent); color: var(--fg); align-items: center; }
+      .grouped { background: var(--surface-grouped); border-radius: var(--radius-card); overflow: hidden; }
+      .grouped li { list-style: none; height: 44px; display: flex; align-items: center; padding: 0 16px; box-shadow: inset 0 -0.5px 0 var(--hairline); }
+      .grouped ul { margin: 0; padding: 0; }
+      .bubble { background: var(--surface-1); border-radius: 20px; padding: 10px 14px; border: 0.5px solid var(--hairline); max-width: 280px; }
+      .bubble .name { font-size: 13px; font-weight: 600; margin: 0; }
+      .bubble .meta { font-size: 12px; color: var(--muted); margin: 0; }
+      .bubble p { font-size: 15px; margin: 4px 0 0; }
+      .card { background: var(--surface-2); border: 0.5px solid var(--hairline); border-radius: var(--radius-card); padding: 16px; }
+      .now-playing { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-radius: var(--radius-panel); background: var(--surface-1); border: 0.5px solid var(--hairline); box-shadow: inset 0 1px 0 var(--specular); max-width: 420px; }
+      .now-playing .bar { width: 3px; align-self: stretch; background: var(--course); border-radius: 2px; }
+      .now-playing .title { font-size: 15px; font-weight: 600; margin: 0; }
+      .now-playing .elapsed { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin: 0; }
+      .ticks { display: flex; gap: 4px; align-items: flex-end; height: 48px; position: relative; }
+      .tick { width: 4px; background: var(--course); border-radius: 2px; }
+      .tick-hit { width: 12px; height: 44px; display: flex; align-items: flex-end; justify-content: center; }
+      .letter-flip { font-family: var(--font-display); font-size: 34px; display: inline-flex; perspective: 400px; }
+      .letter-flip span { display: inline-block; animation: flip 800ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .letter-flip span:nth-child(2) { animation-delay: 40ms; }
+      .letter-flip span:nth-child(3) { animation-delay: 80ms; }
+      .letter-flip span:nth-child(4) { animation-delay: 120ms; }
+      .letter-flip span:nth-child(5) { animation-delay: 160ms; }
+      .letter-flip.static span { animation: none; }
+      @keyframes flip { from { transform: rotateX(180deg); opacity: 0.2; } to { transform: rotateX(0); opacity: 1; } }
+      .capsule { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 12px; border-radius: var(--radius-pill); background: var(--surface-1); border: 0.5px solid var(--hairline); }
+      .mark { width: 32px; height: 32px; border-radius: 10px; background: var(--accent); }
+      .dismiss { width: 36px; height: 36px; border-radius: 50%; border: 0.5px solid var(--hairline); background: var(--surface-2); color: var(--fg); margin-left: auto; }
+      .peek-card { margin: 0 16px 8px; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 0.5px solid var(--hairline); }
+      .specimen { margin-bottom: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="tile">
+      <div class="switcher" role="toolbar" aria-label="Theme">
+        <button type="button" data-theme="night" aria-pressed="true">Night</button>
+        <button type="button" data-theme="paper" aria-pressed="false">Paper</button>
+        <button type="button" data-theme="forest" aria-pressed="false">Forest</button>
+        <button type="button" data-theme="contrast" aria-pressed="false">High contrast</button>
+      </div>
+      <h1 class="large-title">ProductName</h1>
+      <p class="body">Spatial Instrument chrome: glass on the frame, opaque prose on the work.</p>
+      <p class="mono-caption">12px mono · due 21:00 · 3.2% weight</p>
+
+      <h2>Buttons</h2>
+      <div class="row specimen">
+        <button class="btn btn-primary" type="button">Continue</button>
+        <button class="btn btn-secondary" type="button">Skip</button>
+        <button class="btn btn-destructive" type="button">Delete</button>
+        <button class="btn btn-ghost" type="button">View terms</button>
+        <button class="btn btn-icon" type="button" aria-label="Pause">❚❚</button>
+        <button class="btn btn-primary" type="button" disabled>Disabled</button>
+        <button class="btn btn-primary btn-loading" type="button" style="min-width: 120px">Continue</button>
+      </div>
+
+      <h2>Segmented</h2>
+      <div class="segmented" role="tablist">
+        <button type="button" aria-selected="true">1 month</button>
+        <button type="button" aria-selected="false">2 months</button>
+        <button type="button" aria-selected="false">3 months</button>
+        <button type="button" aria-selected="false">Semester</button>
+      </div>
+
+      <h2>Search pill</h2>
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+        <input class="search-pill" placeholder="Search courses" aria-label="Search" />
+      </div>
+
+      <h2>Inputs</h2>
+      <div class="row">
+        <input class="field" value="PHYS 1110" aria-label="Default" />
+        <input class="field" value="Focused" aria-label="Focus demo" />
+        <div>
+          <input class="field error" value="" aria-invalid="true" aria-label="Exam date" />
+          <p class="field-caption">Add the exam date first</p>
+        </div>
+      </div>
+
+      <h2>Toggle</h2>
+      <div class="row">
+        <button class="switch" type="button" role="switch" aria-checked="false" aria-label="Off"></button>
+        <button class="switch" type="button" role="switch" aria-checked="true" aria-label="On"></button>
+      </div>
+
+      <h2>Tags</h2>
+      <div class="row">
+        <span class="tag">PHYS</span>
+        <span class="tag" style="--course:#c47c5a">CSCI</span>
+        <span class="tag" style="--course:#6aa84f">MATH</span>
+      </div>
+
+      <h2>Grouped list</h2>
+      <div class="grouped">
+        <ul>
+          <li>Paper</li>
+          <li>Night</li>
+          <li>Forest</li>
+        </ul>
+      </div>
+
+      <h2>Message bubble</h2>
+      <div class="bubble">
+        <p class="name">PHYS 1110</p>
+        <p>Midterm 1 — 18% of the course</p>
+        <p class="meta">Tue 21:00</p>
+      </div>
+
+      <h2>Card</h2>
+      <div class="card">Course card · radius 16 · hairline, no drop shadow</div>
+
+      <h2>Now-playing</h2>
+      <div class="now-playing">
+        <span class="bar"></span>
+        <div>
+          <p class="title">Differentiate y = (sin x)⁴</p>
+          <p class="elapsed">02:14 / 05:00</p>
+        </div>
+        <button class="btn btn-icon" type="button" aria-label="Pause">❚❚</button>
+        <button class="btn btn-icon" type="button" aria-label="Stop" style="color:var(--danger)">■</button>
+      </div>
+
+      <h2>Timeline ticks</h2>
+      <div class="ticks">
+        <span class="tick-hit"><span class="tick" style="height:10px"></span></span>
+        <span class="tick-hit" style="position:relative">
+          <span class="tick" style="height:28px"></span>
+          <span class="bubble" style="position:absolute;left:16px;bottom:8px;white-space:nowrap">Quiz 3 · 4%</span>
+        </span>
+        <span class="tick-hit"><span class="tick" style="height:18px"></span></span>
+      </div>
+
+      <h2>Letter-flip</h2>
+      <p class="letter-flip" aria-label="Animate"><span>S</span><span>t</span><span>u</span><span>d</span><span>y</span></p>
+      <p class="letter-flip static" aria-label="Reduced motion static frame"><span>S</span><span>t</span><span>u</span><span>d</span><span>y</span></p>
+
+      <h2>Thinking capsule</h2>
+      <div class="glass" style="padding:16px;max-width:560px">
+        <div class="peek-card">PHYS 1110 · Midterm plan</div>
+        <div class="capsule">
+          <span class="mark" aria-hidden="true"></span>
+          <span style="font-size:13px;color:var(--muted)">Thinking …</span>
+          <button class="dismiss" type="button" aria-label="Dismiss">×</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.querySelectorAll(".switcher button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.documentElement.dataset.theme = btn.dataset.theme;
+          document.querySelectorAll(".switcher button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        });
+      });
+    </script>
+  </body>
+</html>

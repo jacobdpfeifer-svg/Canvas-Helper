@@ -160,3 +160,11 @@ browser/node_modules/
 !templates/inbox/
 !templates/inbox/**
 /.jacob/
+
+# Student beta build evidence is source documentation, not generated build output.
+!docs/build/
+!docs/build/student-beta/
+!docs/build/student-beta/**
+!docs/build/spatial-instrument/
+!docs/build/spatial-instrument/**
+/_candidate-b-integration/
