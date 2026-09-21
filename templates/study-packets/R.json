@@ -1,0 +1,79 @@
+{
+  "packet_id": "R",
+  "version": 1,
+  "title": "p-values (synthetic packet R)",
+  "course": "STAT 2600 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "R",
+      "locator": "R §pvalue",
+      "text": "A p-value is the probability, under the null hypothesis and model assumptions, of data at least as incompatible with that null as the observed data. It is not the probability that the null is true. A Type I error rejects a true null; a Type II error fails to reject a false null."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "pvalue-meaning",
+      "label": "Distinguish a p-value from the probability that the null is true"
+    }
+  ],
+  "items": [
+    {
+      "id": "R-1",
+      "objective_id": "pvalue-meaning",
+      "source_refs": [
+        "R"
+      ],
+      "kind": "concept",
+      "stem": "True or false: p = 0.03 gives a 3% chance that the null hypothesis is true. Explain.",
+      "neutral_locator": "R §pvalue",
+      "fields": [
+        {
+          "id": "truth",
+          "label": "True or false",
+          "kind": "choice",
+          "options": [
+            "true",
+            "false"
+          ],
+          "checker": {
+            "type": "true_false",
+            "accept": "false"
+          }
+        },
+        {
+          "id": "explanation",
+          "label": "Explanation",
+          "checker": {
+            "type": "none"
+          }
+        }
+      ],
+      "hint": "What is assumed, and what is the probability about — the data or the hypothesis?",
+      "key": {
+        "truth": "false",
+        "explanation": "That reverses the conditioning. R §pvalue describes a probability of data under an assumed null, not a probability of the null.",
+        "support_refs": [
+          "R §pvalue"
+        ]
+      },
+      "feedback": {
+        "correct": "The statement reverses the conditioning, as R §pvalue explains.",
+        "incorrect": "That reverses the conditioning. R §pvalue describes a probability of data under an assumed null, not a probability of the null."
+      },
+      "predicted_seconds": 240
+    }
+  ],
+  "exams": [
+    {
+      "id": "R-exam",
+      "label": "Midterm (synthetic)",
+      "value": "date_only",
+      "date": "2026-09-25",
+      "objective_scope": [
+        "pvalue-meaning"
+      ]
+    }
+  ]
+}

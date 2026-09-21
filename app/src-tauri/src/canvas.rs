@@ -1,0 +1,211 @@
+//! Read-only Canvas reliability projections. Never parse Canvas JSON in React.
+
+use serde_json::{json, Value};
+use std::fs;
+use std::path::Path;
+
+fn reliability_enabled() -> bool {
+    match std::env::var("PRODUCTNAME_CANVAS_RELIABILITY").ok().as_deref() {
+        Some("0") | Some("false") => false,
+        _ => true,
+    }
+}
+
+fn canvas_root(user_root: &Path) -> std::path::PathBuf {
+    user_root.join("inbox").join("canvas")
+}
+
+fn read_json(path: &Path) -> Option<Value> {
+    fs::read_to_string(path)
+        .ok()
+        .and_then(|t| serde_json::from_str(&t).ok())
+}
+
+fn pointer(user_root: &Path) -> Option<Value> {
+    read_json(&canvas_root(user_root).join("projections").join("current.json"))
+}
+
+fn proj_dir(user_root: &Path) -> Option<std::path::PathBuf> {
+    let ptr = pointer(user_root)?;
+    let path = ptr.get("path")?.as_str()?;
+    let p = Path::new(path);
+    if p.exists() {
+        Some(p.to_path_buf())
+    } else {
+        None
+    }
+}
+
+fn http_url(v: &Value) -> Value {
+    match v.as_str() {
+        Some(u) if u.starts_with("https://") || u.starts_with("http://") => json!(u),
+        _ => Value::Null,
+    }
+}
+
+fn empty_health() -> Value {
+    json!({
+        "state": "empty_unverified",
+        "surfaces_enabled": false,
+        "sync_id": null,
+        "as_of": null,
+        "inspect_in_canvas": true,
+        "empty_means": "no_successful_generation",
+        "failed_endpoints": [],
+        "named_courses_failed": [],
+        "truncated": []
+    })
+}
+
+pub fn read_sync_health(user_root: &Path) -> Value {
+    if !reliability_enabled() {
+        let mut h = empty_health();
+        if let Some(obj) = h.as_object_mut() {
+            obj.insert("surfaces_enabled".into(), json!(false));
+            obj.insert("state".into(), json!("blocked"));
+            obj.insert("blocked_reason".into(), json!("feature_flag"));
+        }
+        return h;
+    }
+    match proj_dir(user_root) {
+        Some(dir) => read_json(&dir.join("sync-health.json")).unwrap_or_else(empty_health),
+        None => empty_health(),
+    }
+}
+
+pub fn read_work_surface(user_root: &Path, filters: &Value) -> Value {
+    let health = read_sync_health(user_root);
+    let Some(dir) = proj_dir(user_root) else {
+        return json!({
+            "sync_id": health.get("sync_id"),
+            "health_state": health.get("state"),
+            "as_of": health.get("as_of"),
+            "inspect_in_canvas": true,
+            "buckets": {},
+            "items": [],
+            "empty_means": health.get("empty_means")
+        });
+    };
+    let mut surface = read_json(&dir.join("work-surface.json")).unwrap_or(json!({}));
+    if let Some(obj) = surface.as_object_mut() {
+        obj.insert("health_state".into(), health.get("state").cloned().unwrap_or(json!(null)));
+        obj.insert("sync_id".into(), health.get("sync_id").cloned().unwrap_or(json!(null)));
+    }
+    let course_id = filters.get("course_id").and_then(|v| v.as_str());
+    if let Some(cid) = course_id {
+        if let Some(items) = surface.get_mut("items").and_then(|v| v.as_array_mut()) {
+            items.retain(|it| it.get("course_id").and_then(|c| c.as_str()) == Some(cid));
+        }
+    }
+    surface
+}
+
+pub fn read_course_map(user_root: &Path, course_id: &str) -> Value {
+    let health = read_sync_health(user_root);
+    let Some(dir) = proj_dir(user_root) else {
+        return json!({ "health_state": health.get("state"), "sync_id": health.get("sync_id"), "course": { "id": course_id } });
+    };
+    let mut map = read_json(&dir.join("course-map").join(format!("{course_id}.json")))
+        .unwrap_or(json!({ "course": { "id": course_id } }));
+    if let Some(url) = map.pointer_mut("/course/html_url") {
+        *url = http_url(url);
+    }
+    map
+}
+
+pub fn read_grade_truth(user_root: &Path, course_id: &str) -> Value {
+    let Some(dir) = proj_dir(user_root) else {
+        return json!({ "course_id": course_id, "canvas_reported": { "status": "cannot_calculate" } });
+    };
+    read_json(&dir.join("grade-truth").join(format!("{course_id}.json"))).unwrap_or(json!({
+        "course_id": course_id
+    }))
+}
+
+pub fn canvas_calendar_items(user_root: &Path) -> Vec<Value> {
+    let surface = read_work_surface(user_root, &json!({}));
+    let items = surface.get("items").and_then(|v| v.as_array()).cloned().unwrap_or_default();
+    items
+        .into_iter()
+        .filter(|it| it.get("effective_due_at").and_then(|d| d.as_str()).is_some())
+        .map(|it| {
+            let start = it.get("effective_due_at").and_then(|d| d.as_str()).unwrap_or("").to_string();
+            json!({
+                "id": it.get("id"),
+                "kind": "canvas-due",
+                "title": it.get("title"),
+                "start": start,
+                "end": start,
+                "course_id": it.get("course_id"),
+                "html_url": http_url(it.get("html_url").unwrap_or(&Value::Null)),
+                "family": "canvas",
+                "submission_state": it.get("submission_state"),
+                "disagreements": it.get("disagreements")
+            })
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+
+    #[test]
+    fn empty_unverified_without_pointer() {
+        let dir = env::temp_dir().join(format!("pn-cv-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(dir.join("inbox")).unwrap();
+        let h = read_sync_health(&dir);
+        assert_eq!(h["state"], "empty_unverified");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn reads_projection_pointer() {
+        let dir = env::temp_dir().join(format!("pn-cv2-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        let proj = dir.join("inbox/canvas/projections/sync-a");
+        fs::create_dir_all(&proj).unwrap();
+        fs::write(
+            proj.join("sync-health.json"),
+            r#"{"state":"fresh_complete","sync_id":"sync-a","surfaces_enabled":true,"as_of":"2026-09-21T18:00:00Z"}"#,
+        )
+        .unwrap();
+        fs::write(
+            proj.join("work-surface.json"),
+            r#"{"sync_id":"sync-a","items":[{"id":"t|1|assignment|9","course_id":"1","effective_due_at":"2026-09-22T16:00:00Z","title":"HW","html_url":"https://canvas.example/x"}]}"#,
+        )
+        .unwrap();
+        fs::create_dir_all(proj.join("grade-truth")).unwrap();
+        fs::write(
+            dir.join("inbox/canvas/projections/current.json"),
+            format!(r#"{{"sync_id":"sync-a","path":"{}"}}"#, proj.display()),
+        )
+        .unwrap();
+        let h = read_sync_health(&dir);
+        assert_eq!(h["sync_id"], "sync-a");
+        let items = canvas_calendar_items(&dir);
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0]["family"], "canvas");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn failed_projection_keeps_previous_pointer() {
+        let dir = env::temp_dir().join(format!("pn-cv3-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        let a = dir.join("inbox/canvas/projections/sync-a");
+        fs::create_dir_all(&a).unwrap();
+        fs::write(a.join("sync-health.json"), r#"{"state":"fresh_complete","sync_id":"sync-a"}"#).unwrap();
+        fs::write(
+            dir.join("inbox/canvas/projections/current.json"),
+            format!(r#"{{"sync_id":"sync-a","path":"{}"}}"#, a.display()),
+        )
+        .unwrap();
+        fs::create_dir_all(dir.join("inbox/canvas/projections/sync-b")).unwrap();
+        let h = read_sync_health(&dir);
+        assert_eq!(h["sync_id"], "sync-a");
+        let _ = fs::remove_dir_all(&dir);
+    }
+}

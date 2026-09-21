@@ -20,7 +20,7 @@ npm run process-capture-queue -- --dry-run               # preview pending_mac p
 
 Photo intake: skill `student-photo-intake` (queue under `{user_root}/inbox/captures/`).
 
-`browser/.auth/` is gitignored — never commit it.
+The SSO browser profile lives in `{user_root}/auth/browser/` (per student profile; `AUTH_DIR` overrides). The legacy `browser/.auth/` is gitignored — never commit it.
 
 - **sync** = source of truth for `inbox/week.md` (dated open work in the school-timezone window) and refreshes **Assignment catalog**, **Checkpoints**, and **Tools this semester** in `inbox/courses/*.md`. Also fetches syllabus, instructors, and policy page links; writes Bucket-A connector gaps to `inbox/tool-gaps.md` (flag only — never auto-build).
 - **audit** = deeper 45-day pull + recall check vs prior week.md.

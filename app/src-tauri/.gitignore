@@ -3,3 +3,11 @@
 
 # Tauri-generated schemas (regenerated on build)
 /gen/
+
+# Staged runtime (python-build-standalone + node) — never commit binaries
+/runtime/*
+!/runtime/README.md
+
+/resources/runtime/
+/resources/study_core/
+/resources/manifest.json

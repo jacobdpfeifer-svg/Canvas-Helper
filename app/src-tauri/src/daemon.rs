@@ -8,10 +8,13 @@
 use serde::Serialize;
 use serde_json::Value;
 use std::env;
-use std::path::PathBuf;
-use std::process::Command;
+use std::io::Write;
+use std::process::{Command, Stdio};
+use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
+
+use crate::runtime::Runtime;
 
 #[derive(Debug, Serialize)]
 pub struct RouteResultDto {
@@ -64,134 +67,111 @@ pub fn tick_log(reason: &str) {
     eprintln!("[productname-daemon] tick: {reason}");
 }
 
-/// Resolve `browser/` relative to the repo (CARGO_MANIFEST_DIR = app/src-tauri).
-pub fn browser_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join("browser")
-}
-
-/// Resolve repo root (parent of `browser/` / `app/`).
-pub fn repo_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-}
-
-fn forward_user_env(cmd: &mut Command) {
-    if let Ok(root) = env::var("DEV_USER_ROOT") {
-        cmd.env("DEV_USER_ROOT", root);
-    }
-    if let Ok(slug) = env::var("SCHOOL_SLUG") {
-        cmd.env("SCHOOL_SLUG", slug);
-    }
-}
-
-/// Spawn ``python3 -m <module> …`` with repo ``PYTHONPATH`` + user env.
-fn python_module(module: &str, args: &[&str]) -> Command {
-    let root = repo_root();
-    let mut cmd = Command::new("python3");
-    let mut full = vec!["-m", module];
-    full.extend_from_slice(args);
-    cmd.args(&full).current_dir(&root);
-    let src = root.join("src");
-    if src.is_dir() {
-        let existing = env::var("PYTHONPATH").unwrap_or_default();
-        let joined = if existing.is_empty() {
-            src.display().to_string()
-        } else {
-            format!("{}:{}", src.display(), existing)
-        };
-        cmd.env("PYTHONPATH", joined);
-    }
-    forward_user_env(&mut cmd);
-    cmd
-}
-
-/// Shell `npm run sync` in browser/ with DEV_USER_ROOT / SCHOOL_SLUG when set.
-pub fn run_canvas_sync() -> Result<(), String> {
-    tick_log("sync");
-    let browser = browser_dir();
-    if !browser.is_dir() {
-        return Err(format!("browser dir missing: {}", browser.display()));
-    }
-    let mut cmd = Command::new("npm");
-    cmd.arg("run").arg("sync").current_dir(&browser);
-    forward_user_env(&mut cmd);
+fn run_status(mut cmd: Command, label: &str) -> Result<(), String> {
     let status = cmd
         .status()
-        .map_err(|e| format!("failed to spawn npm run sync: {e}"))?;
+        .map_err(|e| format!("failed to spawn {label}: {e}"))?;
     if status.success() {
         Ok(())
     } else {
-        Err(format!("npm run sync exited with {status}"))
+        Err(format!("{label} exited with {status}"))
     }
+}
+
+/// Shell `npm run sync` in browser/ with DEV_USER_ROOT / SCHOOL_SLUG when set.
+pub fn run_canvas_sync(rt: &Runtime) -> Result<(), String> {
+    tick_log("sync");
+    let cmd = rt.browser_script("sync-canvas-canonical")?;
+    run_status(cmd, "canvas sync")
 }
 
 /// First-run deep crawl: same `npm run sync`, but widened to the whole term
 /// (`DAYS`/`CATALOG_DAYS`≈150) instead of the daily 14-day window, so course
 /// catalogs are populated before the student ever asks. Fired once, right
 /// after onboarding confirms a Canvas session — never on the daily cadence.
-pub fn run_bootstrap_sync() -> Result<(), String> {
+pub fn run_bootstrap_sync(rt: &Runtime) -> Result<(), String> {
     tick_log("bootstrap-sync");
-    let browser = browser_dir();
-    if !browser.is_dir() {
-        return Err(format!("browser dir missing: {}", browser.display()));
+    let mut cmd = rt.browser_script("sync-canvas-canonical")?;
+    cmd.env("DAYS", "14").env("CATALOG_DAYS", "150");
+    run_status(cmd, "canvas bootstrap sync")
+}
+
+pub fn canvas_stub() -> bool {
+    matches!(
+        env::var("PRODUCTNAME_STUB_CANVAS").ok().as_deref(),
+        Some("1") | Some("true")
+    )
+}
+
+/// Instructor-published material → `{user_root}/inbox/study-sources/` (Phase 3).
+/// Headless; exits non-zero when the SSO session is missing, and the script
+/// itself writes an honest status.json either way.
+pub fn run_sync_study_sources(rt: &Runtime) -> Result<(), String> {
+    tick_log("sync-study-sources");
+    if canvas_stub() {
+        return stub_sync_progress(rt);
     }
-    let mut cmd = Command::new("npm");
-    cmd.arg("run").arg("sync").current_dir(&browser);
-    cmd.env("DAYS", "150").env("CATALOG_DAYS", "150");
-    forward_user_env(&mut cmd);
-    let status = cmd
-        .status()
-        .map_err(|e| format!("failed to spawn npm run sync (bootstrap): {e}"))?;
-    if status.success() {
-        Ok(())
-    } else {
-        Err(format!("npm run sync (bootstrap) exited with {status}"))
+    let cmd = rt.browser_script("sync-study-sources")?;
+    run_status(cmd, "study source sync")
+}
+
+fn stub_sync_progress(rt: &Runtime) -> Result<(), String> {
+    use std::fs;
+    let dir = rt.user_root.join("inbox").join("study-sources");
+    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let mut courses = Vec::new();
+    if let Ok(entries) = fs::read_dir(&dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name();
+            let name = name.to_string_lossy();
+            if !name.ends_with(".json") || crate::semester::skip_source_file(&name) {
+                continue;
+            }
+            if let Ok(text) = fs::read_to_string(entry.path()) {
+                if let Ok(raw) = serde_json::from_str::<Value>(&text) {
+                    if let Some(c) = crate::semester::course_from_json(&raw) {
+                        courses.push(serde_json::json!({
+                            "id": c.id,
+                            "label": c.label,
+                            "color": c.color,
+                            "assignments": c.counts.assignments,
+                            "quizzes": c.counts.quizzes,
+                            "exam_count": c.counts.exams,
+                            "ok": true,
+                        }));
+                    }
+                }
+            }
+        }
     }
+    let progress = serde_json::json!({ "phase": "done", "courses": courses, "error": null });
+    fs::write(dir.join("progress.json"), progress.to_string()).map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 /// Shell `npm run open-canvas` for SSO login (onboarding "I signed in").
-pub fn run_open_canvas() -> Result<(), String> {
+pub fn run_open_canvas(rt: &Runtime) -> Result<(), String> {
     tick_log("open-canvas");
-    let browser = browser_dir();
-    if !browser.is_dir() {
-        return Err(format!("browser dir missing: {}", browser.display()));
+    if canvas_stub() {
+        return Ok(());
     }
-    let mut cmd = Command::new("npm");
-    cmd.arg("run").arg("open-canvas").current_dir(&browser);
-    forward_user_env(&mut cmd);
-    let status = cmd
-        .status()
-        .map_err(|e| format!("failed to spawn npm run open-canvas: {e}"))?;
-    if status.success() {
-        Ok(())
-    } else {
-        Err(format!("npm run open-canvas exited with {status}"))
-    }
+    let cmd = rt.browser_script("open-canvas")?;
+    run_status(cmd, "open-canvas")
 }
 
 /// Shell `npm run check-session` — headless probe of browser/.auth cookies.
 /// Used by onboarding to skip the sign-in step when a session is already open.
-pub fn run_check_canvas_session() -> Result<bool, String> {
+pub fn run_check_canvas_session(rt: &Runtime) -> Result<bool, String> {
     tick_log("check-session");
-    let browser = browser_dir();
-    if !browser.is_dir() {
-        return Err(format!("browser dir missing: {}", browser.display()));
+    if canvas_stub() {
+        return Ok(true);
     }
-    let mut cmd = Command::new("npm");
-    cmd.arg("run").arg("check-session").current_dir(&browser);
-    forward_user_env(&mut cmd);
+    let mut cmd = rt.browser_script("check-canvas-session")?;
     let output = cmd
         .output()
-        .map_err(|e| format!("failed to spawn npm run check-session: {e}"))?;
+        .map_err(|e| format!("failed to spawn check-session: {e}"))?;
     if !output.status.success() {
-        return Err(format!(
-            "npm run check-session exited with {}",
-            output.status
-        ));
+        return Err(format!("check-session exited with {}", output.status));
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
     let line = stdout
@@ -205,13 +185,11 @@ pub fn run_check_canvas_session() -> Result<bool, String> {
 }
 
 /// Call Python skill router CLI; returns structured route result.
-pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
+pub fn run_route_intent(rt: &Runtime, trigger: &str) -> Result<RouteResultDto, String> {
     tick_log("route-intent");
-    let output = python_module(
-        "canvas_mcp.core.skill_router",
-        &["--json", trigger],
-    )
-    .output()
+    let output = rt
+        .python_module("canvas_mcp.core.skill_router", &["--json", trigger])
+        .output()
     .map_err(|e| format!("failed to spawn skill_router: {e}"))?;
     let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
     if raw.is_empty() {
@@ -246,8 +224,10 @@ pub fn run_route_intent(trigger: &str) -> Result<RouteResultDto, String> {
     })
 }
 
-fn python_json(module: &str, args: &[&str]) -> Result<Value, String> {
-    let output = python_module(module, args)
+fn python_json(rt: &Runtime, module: &str, args: &[&str]) -> Result<Value, String> {
+    rt.usable()?;
+    let output = rt
+        .python_module(module, args)
         .output()
         .map_err(|e| format!("failed to spawn {module}: {e}"))?;
     if !output.status.success() {
@@ -263,30 +243,31 @@ fn python_json(module: &str, args: &[&str]) -> Result<Value, String> {
 }
 
 /// Due claims for the dock session. Empty `items` when nothing is scheduled.
-pub fn run_due_reviews() -> Result<Value, String> {
+pub fn run_due_reviews(rt: &Runtime) -> Result<Value, String> {
     tick_log("due-reviews");
-    python_json("canvas_mcp.core.learn_loop", &["--json", "due"])
+    python_json(rt, "canvas_mcp.core.learn_loop", &["--json", "due"])
 }
 
 /// Brief-day streak. Does not increment — only a written brief does.
-pub fn run_brief_streak() -> Result<Value, String> {
+pub fn run_brief_streak(rt: &Runtime) -> Result<Value, String> {
     tick_log("brief-streak");
-    python_json("canvas_mcp.core.habit", &["--json", "show"])
+    python_json(rt, "canvas_mcp.core.habit", &["--json", "show"])
 }
 
 /// Per-course stability counts. Empty `courses` when no claims are stored.
-pub fn run_learn_progress() -> Result<Value, String> {
+pub fn run_learn_progress(rt: &Runtime) -> Result<Value, String> {
     tick_log("learn-progress");
-    python_json("canvas_mcp.core.learn_loop", &["--json", "progress"])
+    python_json(rt, "canvas_mcp.core.learn_loop", &["--json", "progress"])
 }
 
 const EVAL_NOTE: &str =
     "A single window is not causal. A longer brief count is exposure, not success.";
 
 /// Diff the last two recorded snapshots. Never passes `--record`.
-pub fn run_evaluation_compare() -> Result<Value, String> {
+pub fn run_evaluation_compare(rt: &Runtime) -> Result<Value, String> {
     tick_log("evaluation-compare");
-    let output = python_module("canvas_mcp.core.learn_loop", &["evaluate", "--compare"])
+    let output = rt
+        .python_module("canvas_mcp.core.learn_loop", &["evaluate", "--compare"])
         .output()
         .map_err(|e| format!("failed to spawn canvas_mcp.core.learn_loop: {e}"))?;
     let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
@@ -303,13 +284,14 @@ pub fn run_evaluation_compare() -> Result<Value, String> {
 }
 
 /// Current commitment. Does not create or resolve one.
-pub fn run_read_commitment() -> Result<Value, String> {
+pub fn run_read_commitment(rt: &Runtime) -> Result<Value, String> {
     tick_log("read-commitment");
-    python_json("canvas_mcp.core.commitment", &["--json", "status"])
+    python_json(rt, "canvas_mcp.core.commitment", &["--json", "status"])
 }
 
 /// Store one student-authored commitment. Refuses if one is already open.
 pub fn run_set_commitment(
+    rt: &Runtime,
     text: &str,
     deadline: &str,
     course: &str,
@@ -333,13 +315,14 @@ pub fn run_set_commitment(
         owned.push(linked_item_id.to_string());
     }
     let refs: Vec<&str> = owned.iter().map(|part| part.as_str()).collect();
-    python_json("canvas_mcp.core.commitment", &refs)
+    python_json(rt, "canvas_mcp.core.commitment", &refs)
 }
 
 /// Student-scored close. Does not infer the outcome from activity.
-pub fn run_resolve_commitment(status: &str) -> Result<Value, String> {
+pub fn run_resolve_commitment(rt: &Runtime, status: &str) -> Result<Value, String> {
     tick_log("resolve-commitment");
     python_json(
+        rt,
         "canvas_mcp.core.commitment",
         &["--json", "resolve", "--status", status],
     )
@@ -347,6 +330,7 @@ pub fn run_resolve_commitment(status: &str) -> Result<Value, String> {
 
 /// Record a retrieval score. `same_session` must stay false for a scheduled dock check.
 pub fn run_record_review_outcome(
+    rt: &Runtime,
     item_id: &str,
     outcome: &str,
     same_session: bool,
@@ -363,13 +347,13 @@ pub fn run_record_review_outcome(
     if same_session {
         args.push("--same-session");
     }
-    python_json("canvas_mcp.core.learn_loop", &args)
+    python_json(rt, "canvas_mcp.core.learn_loop", &args)
 }
 
 /// Student's optional start line from the learning profile. Empty when unset.
-pub fn run_read_check_intention() -> Result<String, String> {
+pub fn run_read_check_intention(rt: &Runtime) -> Result<String, String> {
     tick_log("read-check-intention");
-    let value = python_json("canvas_mcp.core.learning_profile", &["--json", "show"])?;
+    let value = python_json(rt, "canvas_mcp.core.learning_profile", &["--json", "show"])?;
     Ok(value
         .get("if_then")
         .and_then(|v| v.as_str())
@@ -379,6 +363,7 @@ pub fn run_read_check_intention() -> Result<String, String> {
 
 /// Write the onboarding learning-profile games' answers via the Python CLI.
 pub fn run_save_learning_profile(
+    rt: &Runtime,
     practice_format: &str,
     autonomy: &str,
     chunk_size: &str,
@@ -386,7 +371,8 @@ pub fn run_save_learning_profile(
     if_then: &str,
 ) -> Result<(), String> {
     tick_log("save-learning-profile");
-    let output = python_module(
+    let output = rt
+        .python_module(
         "canvas_mcp.core.learning_profile",
         &[
             "--json",
@@ -421,6 +407,7 @@ pub fn run_save_learning_profile(
 /// Python CLI (see canvas_mcp.core.user_profile). Ranked lists (interests,
 /// career priorities, values) are passed as repeated `--flag value` pairs.
 pub fn run_save_user_profile(
+    rt: &Runtime,
     name: &str,
     institution: &str,
     school_slug: &str,
@@ -472,7 +459,8 @@ pub fn run_save_user_profile(
         args.push("--values");
         args.push(value);
     }
-    let output = python_module("canvas_mcp.core.user_profile", &args)
+    let output = rt
+        .python_module("canvas_mcp.core.user_profile", &args)
         .output()
         .map_err(|e| format!("failed to spawn user_profile: {e}"))?;
     if output.status.success() {
@@ -488,8 +476,8 @@ pub fn run_save_user_profile(
 }
 
 /// Background cadence loop — logs ticks and optionally runs sync on each interval.
-pub fn spawn_cadence_loop() {
-    thread::spawn(|| {
+pub fn spawn_cadence_loop(rt: Arc<Runtime>) {
+    thread::spawn(move || {
         loop {
             let weekend = is_weekend_now();
             let wait = next_sync_interval(weekend);
@@ -499,11 +487,88 @@ pub fn spawn_cadence_loop() {
             } else {
                 "cadence-weekday"
             });
-            if let Err(e) = run_canvas_sync() {
+            if let Err(e) = run_canvas_sync(&rt) {
                 eprintln!("[productname-daemon] sync error: {e}");
             }
         }
     });
+}
+
+/// Study command bridge: the request JSON goes over stdin (no shell quoting,
+/// no argv length limit) and the reply is the CLI's single JSON envelope.
+/// Answer keys never appear in argv or logs.
+/// Keys the renderer may never send: the clock, the profile root, and local
+/// file paths are decided natively (adopted from candidate B's bridge).
+const FORBIDDEN_REQUEST_KEYS: [&str; 5] = ["now", "user_root", "root", "path", "zone"];
+const MAX_REQUEST_BYTES: usize = 256 * 1024;
+const MAX_REPLY_BYTES: usize = 4 * 1024 * 1024;
+
+pub fn validate_study_request(request: &Value) -> Result<(), String> {
+    let object = request.as_object().ok_or("study request must be an object")?;
+    match object.get("cmd").and_then(Value::as_str) {
+        Some(cmd) if !cmd.is_empty() && cmd.len() <= 64 && cmd.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') => {}
+        _ => return Err("study request needs a short cmd".into()),
+    }
+    for key in object.keys() {
+        if FORBIDDEN_REQUEST_KEYS.contains(&key.as_str()) {
+            return Err(format!("study request may not set {key}"));
+        }
+        if key != "cmd" && key != "params" {
+            return Err(format!("unexpected study request field {key}"));
+        }
+    }
+    if let Some(params) = object.get("params") {
+        let params = params.as_object().ok_or("params must be an object")?;
+        for key in params.keys() {
+            if FORBIDDEN_REQUEST_KEYS.contains(&key.as_str()) {
+                return Err(format!("study params may not set {key}"));
+            }
+        }
+    }
+    if request.to_string().len() > MAX_REQUEST_BYTES {
+        return Err("study request too large".into());
+    }
+    Ok(())
+}
+
+pub fn run_study(rt: &Runtime, request: &Value) -> Result<Value, String> {
+    tick_log("study");
+    rt.usable()?;
+    validate_study_request(request)?;
+    let mut child = rt
+        .study_command(&["--json", "run"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("failed to spawn study core: {e}"))?;
+    {
+        let stdin = child.stdin.as_mut().ok_or("study core stdin unavailable")?;
+        stdin
+            .write_all(request.to_string().as_bytes())
+            .map_err(|e| format!("failed to send study request: {e}"))?;
+    }
+    let output = child
+        .wait_with_output()
+        .map_err(|e| format!("study core failed: {e}"))?;
+    if output.stdout.len() > MAX_REPLY_BYTES {
+        return Err("study core reply too large; narrow the request (history is paginated)".into());
+    }
+    let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let line = raw
+        .lines()
+        .rev()
+        .find(|l| l.trim_start().starts_with('{'))
+        .ok_or_else(|| {
+            // stderr may carry a traceback with response text: log it locally,
+            // never hand it to the webview.
+            let err = String::from_utf8_lossy(&output.stderr);
+            for l in err.lines().rev().take(3) {
+                eprintln!("[productname-daemon] study core: {l}");
+            }
+            format!("study core produced no reply (exit {})", output.status)
+        })?;
+    serde_json::from_str(line).map_err(|e| format!("study core JSON parse failed: {e}"))
 }
 
 fn is_weekend_now() -> bool {
@@ -523,6 +588,53 @@ fn is_weekend_now() -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Rust ↔ Python contract: a real study round trip on a throwaway profile.
+    /// Skips (with a note) when the repo venv is absent, e.g. on CI without Python deps.
+    #[test]
+    fn study_roundtrip_via_python_core() {
+        let tmp = std::env::temp_dir().join(format!("pn-study-rt-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::env::set_var("DEV_USER_ROOT", &tmp);
+        let rt = crate::runtime::resolve(None);
+        if !rt.python.is_file() || rt.mode != crate::runtime::RuntimeMode::Dev {
+            eprintln!("skipping: no dev python at {}", rt.python.display());
+            return;
+        }
+        let status = run_study(&rt, &serde_json::json!({"cmd": "status"})).expect("status");
+        assert_eq!(status["ok"], true);
+        assert_eq!(status["items"]["active"], 0);
+        let offer = run_study(&rt, &serde_json::json!({"cmd": "offer", "params": {}})).expect("offer");
+        assert_eq!(offer["kind"], "missing_source");
+        let imported = run_study(&rt, &serde_json::json!({"cmd": "import-template", "params": {"packet_id": "Q"}}))
+            .expect("import");
+        assert_eq!(imported["ok"], true);
+        let offer = run_study(&rt, &serde_json::json!({"cmd": "offer", "params": {}})).expect("offer");
+        assert_eq!(offer["kind"], "offer");
+        // The public item carries no key before submission.
+        assert!(offer["item"].get("key").is_none());
+        // Error envelope surfaces as Ok(json) with ok=false, never a panic.
+        let bad = run_study(&rt, &serde_json::json!({"cmd": "start", "params": {"item_id": "nope"}})).expect("envelope");
+        assert_eq!(bad["ok"], false);
+        assert_eq!(bad["error"]["code"], "not_found");
+        std::env::remove_var("DEV_USER_ROOT");
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn study_requests_cannot_move_the_clock_or_choose_paths() {
+        assert!(validate_study_request(&serde_json::json!({"cmd": "status"})).is_ok());
+        assert!(validate_study_request(&serde_json::json!({"cmd": "offer", "params": {"minutes": 5}})).is_ok());
+        for bad in [
+            serde_json::json!({"cmd": "status", "now": "2030-01-01T00:00:00Z"}),
+            serde_json::json!({"cmd": "import", "params": {"path": "/etc/passwd"}}),
+            serde_json::json!({"cmd": "status", "params": {"user_root": "/tmp/x"}}),
+            serde_json::json!({"cmd": "../evil"}),
+            serde_json::json!(["status"]),
+        ] {
+            assert!(validate_study_request(&bad).is_err(), "{bad}");
+        }
+    }
 
     #[test]
     fn cadence_respects_floor() {

@@ -28,6 +28,21 @@
     "allow-set-commitment",
     "allow-resolve-commitment",
     "allow-read-check-intention",
-    "allow-route-intent"
+    "allow-route-intent",
+    "allow-study",
+    "allow-sync-study-sources",
+    "allow-read-semester",
+    "allow-read-sync-progress",
+    "allow-read-calendar-surface",
+    "allow-read-sync-health",
+    "allow-read-work-surface",
+    "allow-read-course-map",
+    "allow-read-grade-truth",
+    "allow-add-calendar-event",
+    "allow-dismiss-calendar-suggestion",
+    "allow-open-external-url",
+    "allow-runtime-info",
+    "allow-set-profile",
+    "allow-list-profiles"
   ]
 }

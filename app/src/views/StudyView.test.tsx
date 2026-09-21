@@ -124,7 +124,7 @@ describe("StudyView journey", () => {
     const user = userEvent.setup();
     render(<StudyView onGoToSources={goto} />);
     expect(await screen.findByRole("heading", { name: "No practice item is ready" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Import a source" }));
+    await user.click(screen.getByRole("button", { name: "Canvas data" }));
     expect(goto).toHaveBeenCalled();
   });
 });

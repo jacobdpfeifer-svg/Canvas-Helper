@@ -528,3 +528,258 @@ export async function onSyncFailed(
   if (!isTauri()) return () => undefined;
   return listen<string>("sync-failed", (event) => handler(event.payload));
 }
+
+export type SemesterTick = {
+  id: string;
+  course_id: string;
+  course_label: string;
+  color: string;
+  title: string;
+  kind: string;
+  due_at: string | null;
+  points_possible: number | null;
+  weight_share: number;
+  html_url: string | null;
+  completed: boolean;
+  description: string;
+};
+
+export type SemesterCourse = {
+  id: string;
+  label: string;
+  code: string;
+  name: string;
+  color: string;
+  term: { start_at: string | null; end_at: string | null; source: string };
+  ticks: SemesterTick[];
+  counts: { assignments: number; quizzes: number; exams: number };
+};
+
+export type SemesterSurface = {
+  courses: SemesterCourse[];
+  range: string;
+  window_start: string;
+  window_end: string;
+  today: string;
+};
+
+export async function readSemester(range: string, today: string): Promise<SemesterSurface> {
+  if (!isTauri()) {
+    return { courses: [], range, window_start: today, window_end: today, today };
+  }
+  return invoke<SemesterSurface>("read_semester", { range, today });
+}
+
+export type SyncProgressCourse = {
+  id: string;
+  label: string;
+  color?: string;
+  assignments?: number;
+  quizzes?: number;
+  exam_count?: number;
+  ok?: boolean;
+};
+
+export type SyncProgress = {
+  phase: string;
+  courses: SyncProgressCourse[];
+  error?: string | null;
+};
+
+export async function readSyncProgress(): Promise<SyncProgress> {
+  if (!isTauri()) return { phase: "idle", courses: [] };
+  return invoke<SyncProgress>("read_sync_progress");
+}
+
+export async function onStudySyncProgress(
+  handler: (progress: SyncProgress) => void
+): Promise<UnlistenFn | (() => void)> {
+  if (!isTauri()) return () => undefined;
+  return listen<SyncProgress>("study-sync-progress", (event) => handler(event.payload));
+}
+
+export async function syncStudySourcesIpc(): Promise<SyncResult> {
+  if (!isTauri()) return { ok: false, error: "Canvas sync needs the desktop app" };
+  return invoke<SyncResult>("sync_study_sources");
+}
+
+export type CalendarEvent = {
+  id: string;
+  kind: string;
+  title: string;
+  start: string;
+  end: string;
+  course_id?: string | null;
+  color?: string | null;
+  note?: string | null;
+};
+
+export type CalendarSuggestion = {
+  source_message_id: string;
+  title: string;
+  start: string;
+  end: string;
+  confidence: number;
+  why: string;
+};
+
+export type CalendarSurface = {
+  events: CalendarEvent[];
+  canvas_events?: CalendarEvent[];
+  suggestions: CalendarSuggestion[];
+  commitment: CommitmentState;
+  sync_health?: SyncHealth;
+};
+
+export async function readCalendarSurface(): Promise<CalendarSurface> {
+  const empty: CalendarSurface = {
+    events: [],
+    canvas_events: [],
+    suggestions: [],
+    commitment: EMPTY_COMMITMENT,
+  };
+  if (!isTauri()) return empty;
+  try {
+    const payload = await invoke<CalendarSurface>("read_calendar_surface");
+    return {
+      events: payload?.events ?? [],
+      canvas_events: payload?.canvas_events ?? [],
+      suggestions: payload?.suggestions ?? [],
+      commitment: payload?.commitment ?? EMPTY_COMMITMENT,
+      sync_health: payload?.sync_health,
+    };
+  } catch {
+    return empty;
+  }
+}
+
+export async function addCalendarEvent(event: Omit<CalendarEvent, "id"> & { id?: string }): Promise<CalendarEvent> {
+  if (!isTauri()) {
+    const row: CalendarEvent = {
+      id: event.id || `cal-${Date.now()}`,
+      kind: event.kind,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      course_id: event.course_id,
+      color: event.color,
+      note: event.note,
+    };
+    const key = "pn_calendar_local";
+    const prev = JSON.parse(localStorage.getItem(key) || "[]") as CalendarEvent[];
+    prev.push(row);
+    localStorage.setItem(key, JSON.stringify(prev));
+    return row;
+  }
+  return invoke<CalendarEvent>("add_calendar_event", { event });
+}
+
+export async function dismissCalendarSuggestion(sourceMessageId: string): Promise<void> {
+  if (!isTauri()) return;
+  await invoke("dismiss_calendar_suggestion", { sourceMessageId });
+}
+
+export async function openExternalUrl(url: string): Promise<void> {
+  if (!isTauri()) {
+    window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  await invoke("open_external_url", { url });
+}
+
+export type SyncHealth = {
+  state?: string;
+  sync_id?: string | null;
+  as_of?: string | null;
+  surfaces_enabled?: boolean;
+  empty_means?: string;
+  inspect_in_canvas?: boolean;
+  failed_endpoints?: unknown[];
+  named_courses_failed?: string[];
+  truncated?: string[];
+  timezone?: string;
+};
+
+export type WorkItem = {
+  id: string;
+  course_id: string;
+  canvas_id: string;
+  title: string;
+  effective_due_at?: string | null;
+  submission_state?: string;
+  html_url?: string | null;
+  seen_in?: string[];
+  disagreements?: { field: string; values: string[] }[];
+  lti?: boolean;
+  course_name?: string | null;
+  course_code?: string | null;
+};
+
+export type WorkSurface = {
+  sync_id?: string;
+  health_state?: string;
+  as_of?: string;
+  items?: WorkItem[];
+  buckets?: Record<string, WorkItem[]>;
+  empty_means?: string;
+};
+
+export type CourseMap = {
+  sync_id?: string;
+  health_state?: string;
+  as_of?: string;
+  fallback_reason?: string | null;
+  course?: { id: string; code?: string; name?: string; label?: string; color?: string; html_url?: string | null };
+  start_here?: { kind: string; title: string; html_url?: string | null }[];
+  learn?: { id: string; title: string; html_url?: string | null; locked?: boolean; lti?: boolean }[];
+  do?: WorkItem[];
+  check?: { missing?: WorkItem[]; unsubmitted?: WorkItem[]; grade?: GradeTruth };
+};
+
+export type GradeScenario = {
+  status: string;
+  scenario: string;
+  percent: number | null;
+  letter?: string | null;
+  included_item_ids?: string[];
+  excluded_item_ids?: string[];
+  warnings?: { code: string; item_ids?: string[] }[];
+  as_of?: string;
+};
+
+export type GradeTruth = {
+  course_id?: string;
+  as_of?: string;
+  canvas_reported?: GradeScenario;
+  graded_only?: GradeScenario;
+  risk_adjusted?: GradeScenario;
+  what_if?: GradeScenario;
+  lead?: {
+    canvas_says?: number | null;
+    canvas_letter?: string | null;
+    unsubmitted_due_count?: number;
+    risk?: number | null;
+    why?: string;
+  };
+};
+
+export async function readSyncHealth(): Promise<SyncHealth> {
+  if (!isTauri()) return { state: "empty_unverified", surfaces_enabled: false };
+  return invoke<SyncHealth>("read_sync_health");
+}
+
+export async function readWorkSurface(filters: Record<string, string> = {}): Promise<WorkSurface> {
+  if (!isTauri()) return { items: [], buckets: {} };
+  return invoke<WorkSurface>("read_work_surface", { filters });
+}
+
+export async function readCourseMap(courseId: string): Promise<CourseMap> {
+  if (!isTauri()) return { course: { id: courseId } };
+  return invoke<CourseMap>("read_course_map", { courseId });
+}
+
+export async function readGradeTruth(courseId: string): Promise<GradeTruth> {
+  if (!isTauri()) return { course_id: courseId };
+  return invoke<GradeTruth>("read_grade_truth", { courseId });
+}
+

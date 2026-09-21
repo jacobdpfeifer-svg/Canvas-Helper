@@ -1,0 +1,71 @@
+{
+  "packet_id": "W",
+  "version": 1,
+  "title": "Claim and warrant (synthetic packet W)",
+  "course": "WRTG 1150 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "W1",
+      "locator": "W §1 (article)",
+      "text": "Westbridge University piloted free evening buses on two routes for four weeks. Library visits on those routes rose 18% against the prior month. The pilot ran during midterms; visits on routes without the new service rose 12%. Routes were selected because students had requested more service. Riders reported that later buses made studying easier. The university has not measured course grades or whether new riders replaced walking trips. The transport committee must decide whether to extend the pilot before commissioning a broader evaluation."
+    },
+    {
+      "id": "W2",
+      "locator": "W §2 (rubric)",
+      "text": "Make a bounded claim supported by this article; give a warrant connecting evidence to claim; name a limitation of the causal inference."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "claim-warrant",
+      "label": "Write a bounded claim with a warrant and a limitation"
+    }
+  ],
+  "items": [
+    {
+      "id": "W-1",
+      "objective_id": "claim-warrant",
+      "source_refs": [
+        "W1",
+        "W2"
+      ],
+      "kind": "writing",
+      "stem": "Write a two-sentence claim and warrant about extending this pilot, including one limitation.",
+      "neutral_locator": "W §1–§2",
+      "fields": [
+        {
+          "id": "response",
+          "label": "Claim, warrant, limitation",
+          "kind": "long_text",
+          "checker": {
+            "type": "none"
+          }
+        }
+      ],
+      "example": {
+        "title": "Article (W §1)",
+        "text": "Westbridge University piloted free evening buses on two routes for four weeks. Library visits on those routes rose 18% against the prior month. The pilot ran during midterms; visits on routes without the new service rose 12%. Routes were selected because students had requested more service. Riders reported that later buses made studying easier. The university has not measured course grades or whether new riders replaced walking trips. The transport committee must decide whether to extend the pilot before commissioning a broader evaluation."
+      },
+      "key": {
+        "reference": "Continue a limited pilot while measuring outcomes: increased access and reported convenience justify further testing, but midterms and nonrandom route selection prevent attributing the entire increase to buses.",
+        "explanation": "Multiple defensible claims are acceptable. There is no deterministic prose grade; use the rubric (W §2) to self-check claim, warrant, and limitation.",
+        "support_refs": []
+      },
+      "feedback": {},
+      "predicted_seconds": 130
+    }
+  ],
+  "exams": [
+    {
+      "id": "W-exam",
+      "label": "Essay exam (synthetic)",
+      "value": "date_only",
+      "date": "2026-10-02",
+      "objective_scope": [
+        "claim-warrant"
+      ]
+    }
+  ]
+}

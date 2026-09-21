@@ -64,7 +64,7 @@ _Start bias and initiation levers — not a learner type. Retrieval is still req
 
 ## Automation posture
 
-**Primary job:** help with academic *processes* (planning, drafts, checklists). Submitting work is exceptional and permission-gated until calibrated.
+**Primary job:** help the student prepare for exams and manage academic processes (planning, drafts, checklists). Canvas submission, submission comments, and discussion posts/replies are preview-only; the student performs those actions in Canvas. Personal email sends and calendar event writes require explicit confirmation of each exact preview and never become automatic through calibration. Profile preferences do not override these boundaries.
 
 ## Communication preferences
 

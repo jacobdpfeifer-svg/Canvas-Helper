@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-grade-truth"
+description = "Enables the read_grade_truth command without any pre-configured scope."
+commands.allow = ["read_grade_truth"]
+
+[[permission]]
+identifier = "deny-read-grade-truth"
+description = "Denies the read_grade_truth command without any pre-configured scope."
+commands.deny = ["read_grade_truth"]

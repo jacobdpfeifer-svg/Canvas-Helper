@@ -2,11 +2,13 @@
 //!
 //! Prefer `Open with:` (the closed-book check). Do not fall back to
 //! `week.md` — that due-list is not a retrieval.
+//!
+//! The user root itself is resolved once at boot by `runtime::resolve` (profile
+//! identity shared with Python/JS); every helper here takes it explicitly.
 
 use serde::Serialize;
-use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Top3Item {
@@ -15,61 +17,16 @@ pub struct Top3Item {
     pub due: String,
 }
 
-/// Resolve the active user root (DEV_USER_ROOT or OS app-support `dev`).
-pub fn user_root() -> PathBuf {
-    if let Ok(root) = env::var("DEV_USER_ROOT") {
-        let trimmed = root.trim();
-        if !trimmed.is_empty() {
-            return PathBuf::from(trimmed);
-        }
-    }
-    default_user_root()
+pub fn week_md_path(user_root: &Path) -> PathBuf {
+    user_root.join("inbox").join("week.md")
 }
 
-fn default_user_root() -> PathBuf {
-    #[cfg(target_os = "macos")]
-    {
-        dirs_home()
-            .join("Library")
-            .join("Application Support")
-            .join("ProductName")
-            .join("dev")
-    }
-    #[cfg(target_os = "windows")]
-    {
-        env::var_os("APPDATA")
-            .map(PathBuf::from)
-            .unwrap_or_else(|| dirs_home().join("AppData").join("Roaming"))
-            .join("ProductName")
-            .join("dev")
-    }
-    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    {
-        env::var_os("XDG_DATA_HOME")
-            .map(PathBuf::from)
-            .unwrap_or_else(|| dirs_home().join(".local").join("share"))
-            .join("ProductName")
-            .join("dev")
-    }
+pub fn focus_md_path(user_root: &Path) -> PathBuf {
+    user_root.join("inbox").join("focus.md")
 }
 
-fn dirs_home() -> PathBuf {
-    env::var_os("HOME")
-        .or_else(|| env::var_os("USERPROFILE"))
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("."))
-}
-
-pub fn week_md_path() -> PathBuf {
-    user_root().join("inbox").join("week.md")
-}
-
-pub fn focus_md_path() -> PathBuf {
-    user_root().join("inbox").join("focus.md")
-}
-
-pub fn auth_dir() -> PathBuf {
-    user_root().join("auth")
+pub fn auth_dir(user_root: &Path) -> PathBuf {
+    user_root.join("auth")
 }
 
 /// Parse markdown table rows from sync-week output.
@@ -212,8 +169,8 @@ fn split_focus_item(body: &str) -> (String, String) {
     (title, due)
 }
 
-pub fn read_top3(limit: usize) -> Result<Vec<Top3Item>, String> {
-    let focus = focus_md_path();
+pub fn read_top3(user_root: &Path, limit: usize) -> Result<Vec<Top3Item>, String> {
+    let focus = focus_md_path(user_root);
     if !focus.is_file() {
         return Ok(Vec::new());
     }
@@ -222,14 +179,13 @@ pub fn read_top3(limit: usize) -> Result<Vec<Top3Item>, String> {
     Ok(parse_focus_top3(&md, limit))
 }
 
-pub fn save_school_slug(slug: &str) -> Result<(), String> {
-    let root = user_root();
-    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
-    fs::write(root.join("school_slug"), slug.trim()).map_err(|e| e.to_string())
+pub fn save_school_slug(user_root: &Path, slug: &str) -> Result<(), String> {
+    fs::create_dir_all(user_root).map_err(|e| e.to_string())?;
+    fs::write(user_root.join("school_slug"), slug.trim()).map_err(|e| e.to_string())
 }
 
-pub fn save_cloud_key(key: &str) -> Result<(), String> {
-    let dir = auth_dir();
+pub fn save_cloud_key(user_root: &Path, key: &str) -> Result<(), String> {
+    let dir = auth_dir(user_root);
     fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let path = dir.join("cloud_key");
     fs::write(&path, key.trim()).map_err(|e| e.to_string())?;
@@ -242,23 +198,23 @@ pub fn save_cloud_key(key: &str) -> Result<(), String> {
 }
 
 /// Career / course priorities note from onboarding (plain text).
-pub fn save_priorities(text: &str) -> Result<(), String> {
-    let root = user_root().join("calibration");
+pub fn save_priorities(user_root: &Path, text: &str) -> Result<(), String> {
+    let root = user_root.join("calibration");
     fs::create_dir_all(&root).map_err(|e| e.to_string())?;
     fs::write(root.join("priorities.txt"), text.trim()).map_err(|e| e.to_string())
 }
 
 /// Persist Sentry opt-in for the local daemon / telemetry helper.
-pub fn save_sentry_opt_in(opt_in: bool) -> Result<(), String> {
-    let root = user_root().join("calibration");
+pub fn save_sentry_opt_in(user_root: &Path, opt_in: bool) -> Result<(), String> {
+    let root = user_root.join("calibration");
     fs::create_dir_all(&root).map_err(|e| e.to_string())?;
     let value = if opt_in { "1" } else { "0" };
     fs::write(root.join("sentry_opt_in"), value).map_err(|e| e.to_string())
 }
 
 /// Waitlist email when the student's school is not yet supported.
-pub fn save_waitlist_email(email: &str) -> Result<(), String> {
-    let root = user_root().join("calibration");
+pub fn save_waitlist_email(user_root: &Path, email: &str) -> Result<(), String> {
+    let root = user_root.join("calibration");
     fs::create_dir_all(&root).map_err(|e| e.to_string())?;
     fs::write(root.join("waitlist_email.txt"), email.trim()).map_err(|e| e.to_string())
 }

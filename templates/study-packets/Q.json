@@ -1,0 +1,138 @@
+{
+  "packet_id": "Q",
+  "version": 1,
+  "title": "Chain rule (synthetic packet Q)",
+  "course": "MATH 1300 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "Q",
+      "locator": "Q §chain",
+      "text": "For y = f(g(x)), y′ = f′(g(x)) · g′(x). The derivative of sin x is cos x. Example: y = (3x² + 1)^5 gives y′ = 5(3x² + 1)^4 · 6x. The 6x differentiates the inside."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "chain-rule",
+      "label": "Apply the chain rule to a power of a function"
+    }
+  ],
+  "items": [
+    {
+      "id": "Q-1",
+      "objective_id": "chain-rule",
+      "source_refs": [
+        "Q"
+      ],
+      "kind": "procedural",
+      "stem": "Differentiate y = (sin x)^4. Name the inner function and enter the derivative.",
+      "neutral_locator": "Q §chain",
+      "fields": [
+        {
+          "id": "inner",
+          "label": "Inner function",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "sin x",
+              "sin(x)",
+              "sinx",
+              "u=sinx",
+              "u=sin(x)",
+              "the sine",
+              "sine"
+            ]
+          }
+        },
+        {
+          "id": "derivative",
+          "label": "Derivative y′",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "4sin^3(x)cos(x)",
+              "4cos(x)sin^3(x)",
+              "4(sinx)^3cosx",
+              "4sin(x)^3cos(x)",
+              "4sinx^3cosx",
+              "4(sin(x))^3cos(x)",
+              "4cosx(sinx)^3",
+              "4cos(x)(sin(x))^3"
+            ]
+          }
+        }
+      ],
+      "example": {
+        "title": "Worked example from Q §chain",
+        "text": "y = (3x² + 1)^5. Outer rule: 5(inner)^4. Inner derivative: 6x. So y′ = 5(3x² + 1)^4 · 6x. The 6x comes from differentiating 3x² + 1.",
+        "faded_step": "For y = (sin x)^4, the outer power gives 4(sin x)^3. Fill the missing inner derivative."
+      },
+      "hint": "The inside of the power is sin x. What is the derivative of sin x?",
+      "key": {
+        "inner": "sin x",
+        "derivative": "4 sin³(x) cos(x)",
+        "explanation": "Outer power rule gives 4(sin x)^3; multiply by the derivative of the inside, cos x (Q §chain).",
+        "support_refs": [
+          "Q §chain"
+        ]
+      },
+      "feedback": {
+        "correct": "Both parts match Q §chain: the inner function sin x and the extra factor cos x.",
+        "partial": "Multiply by the derivative of the inside: cos x. Q §chain states both that derivative and the chain rule. The result is 4 sin³x cos x.",
+        "incorrect": "Identify the inner function first (sin x), apply the power rule to the outside, then multiply by cos x (Q §chain)."
+      },
+      "predicted_seconds": 180
+    },
+    {
+      "id": "Q-2",
+      "objective_id": "chain-rule",
+      "source_refs": [
+        "Q"
+      ],
+      "kind": "procedural",
+      "stem": "Differentiate y = (2x + 1)^7.",
+      "neutral_locator": "Q §chain",
+      "fields": [
+        {
+          "id": "derivative",
+          "label": "Derivative y′",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "14(2x+1)^6",
+              "14(1+2x)^6",
+              "7(2x+1)^6*2",
+              "2*7(2x+1)^6",
+              "7*2(2x+1)^6"
+            ]
+          }
+        }
+      ],
+      "hint": "The inside is 2x + 1; its derivative is a constant.",
+      "key": {
+        "derivative": "14(2x + 1)^6",
+        "explanation": "7(2x + 1)^6 times the inner derivative 2 (Q §chain).",
+        "support_refs": [
+          "Q §chain"
+        ]
+      },
+      "feedback": {
+        "correct": "7(2x+1)^6 · 2 = 14(2x+1)^6, as Q §chain's rule requires.",
+        "incorrect": "Apply the outer power rule, then multiply by the inner derivative 2 (Q §chain)."
+      },
+      "predicted_seconds": 120
+    }
+  ],
+  "exams": [
+    {
+      "id": "Q-exam",
+      "label": "Midterm (synthetic)",
+      "value": "date_only",
+      "date": "2026-09-28",
+      "objective_scope": [
+        "chain-rule"
+      ]
+    }
+  ]
+}

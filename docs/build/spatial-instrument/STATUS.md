@@ -1,6 +1,6 @@
 # Spatial Instrument — STATUS
 
-Branch intent: land on `phase1-productname-pivot`. Worktree `~/.cache/productname-spatial` / `spatial-instrument` used so this restyle does not require `main`.
+Landed on `phase1-productname-pivot` as `be0eb3c` (fast-forward from worktree branch `spatial-instrument`). Worktree remains at `~/.cache/productname-spatial`. Not pushed.
 
 **Round-1 has not landed.** Tabs remain Study / Plan / Sources / Settings. Home, Calendar, and Exam Prep were not invented.
 

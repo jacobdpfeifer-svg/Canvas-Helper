@@ -1,0 +1,84 @@
+{
+  "packet_id": "C",
+  "version": 1,
+  "title": "Buffers (synthetic packet C)",
+  "course": "CHEM 1113 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "C",
+      "locator": "C §buffer",
+      "text": "A buffer contains a weak acid HA and its conjugate base A−. Small additions of strong acid consume A− to form HA. Strong base consumes HA. Buffering limits pH change within capacity; it does not mean pH 7."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "buffer-response",
+      "label": "Predict which buffer species reacts with an added strong acid or base"
+    }
+  ],
+  "items": [
+    {
+      "id": "C-1",
+      "objective_id": "buffer-response",
+      "source_refs": [
+        "C"
+      ],
+      "kind": "concept",
+      "stem": "An HF/F− buffer receives a small addition of HCl. Choose HF or F− as the species consumed; explain in one or two sentences.",
+      "neutral_locator": "C §buffer",
+      "fields": [
+        {
+          "id": "species",
+          "label": "Species consumed",
+          "kind": "choice",
+          "options": [
+            "HF",
+            "F−"
+          ],
+          "checker": {
+            "type": "choice",
+            "accept": [
+              "F−",
+              "F-",
+              "fluoride",
+              "fluoride ion"
+            ]
+          }
+        },
+        {
+          "id": "explanation",
+          "label": "Explanation",
+          "checker": {
+            "type": "none"
+          }
+        }
+      ],
+      "hint": "Added HCl supplies H+. Which species can accept it?",
+      "key": {
+        "species": "F−",
+        "explanation": "F− accepts H+ from HCl and forms HF, so a small addition changes pH only a little (C §buffer). The explanation field is shown against the source but is not scored.",
+        "support_refs": [
+          "C §buffer"
+        ]
+      },
+      "feedback": {
+        "correct": "F− is the keyed species. C §buffer explains its reaction with added acid. This is a check of species selection; it does not establish all of buffer chemistry.",
+        "incorrect": "Added strong acid consumes the conjugate base F−, forming HF (C §buffer)."
+      },
+      "predicted_seconds": 150
+    }
+  ],
+  "exams": [
+    {
+      "id": "C-exam",
+      "label": "Exam 2 (synthetic)",
+      "value": "date_only",
+      "date": "2026-09-24",
+      "objective_scope": [
+        "buffer-response"
+      ]
+    }
+  ]
+}

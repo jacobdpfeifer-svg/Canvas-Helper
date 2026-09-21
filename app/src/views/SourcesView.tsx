@@ -4,7 +4,7 @@ import { isTauri } from "../ipc";
 import { STABILITY_LABEL, fmtWhen } from "../study/format";
 import type { ExamView, PacketSummary, Template } from "../study/types";
 
-export function SourcesView() {
+export function SourcesView({ inspectOnly = false }: { inspectOnly?: boolean }) {
   const [packets, setPackets] = useState<PacketSummary[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [exams, setExams] = useState<ExamView[]>([]);
@@ -89,10 +89,12 @@ export function SourcesView() {
 
   return (
     <section className="sources" aria-labelledby="sources-heading">
-      <h1 id="sources-heading">Sources</h1>
+      <h1 id="sources-heading">{inspectOnly ? "Canvas data" : "Sources"}</h1>
+      {inspectOnly ? null : (
       <p className="muted">
         Practice is built only from material you import here. Synthetic packets are labeled; they are not your instructor's material.
       </p>
+      )}
       {error && (
         <p className="error" role="alert">
           {error}
@@ -126,10 +128,12 @@ export function SourcesView() {
       {canvas && canvas.courses.length === 0 && canvas.status.state !== "never" && <p className="empty">No course material was found in the last sync.</p>}
       <ul className="packet-list">
         {canvas?.courses.map((course) => (
-          <CanvasCourseRow key={course.course_id} course={course} onImported={refresh} onError={setError} onMessage={setMessage} />
+          <CanvasCourseRow key={course.course_id} course={course} inspectOnly={inspectOnly} onImported={refresh} onError={setError} onMessage={setMessage} />
         ))}
       </ul>
 
+      {!inspectOnly && (
+        <>
       <h2>Imported packets</h2>
       {packets.length === 0 && !loading && <p className="empty">Nothing imported yet.</p>}
       <ul className="packet-list">
@@ -203,6 +207,8 @@ export function SourcesView() {
           Import pasted packet
         </button>
       </div>
+        </>
+      )}
     </section>
   );
 }
@@ -258,11 +264,13 @@ function ExamRow({ exam, onSaved }: { exam: ExamView; onSaved: () => Promise<voi
 
 function CanvasCourseRow({
   course,
+  inspectOnly = false,
   onImported,
   onError,
   onMessage,
 }: {
   course: CanvasSources["courses"][number];
+  inspectOnly?: boolean;
   onImported: () => Promise<void>;
   onError: (e: string) => void;
   onMessage: (m: string) => void;
@@ -302,6 +310,7 @@ function CanvasCourseRow({
           {course.errors.length ? ` · ${course.errors.length} fetch error(s)` : ""}
         </span>
       </div>
+      {!inspectOnly && (
       <fieldset className="source-pick">
         <legend className="visually-hidden">Sources to import for {course.label}</legend>
         {course.sources.map((s) => (
@@ -312,16 +321,28 @@ function CanvasCourseRow({
         ))}
         {course.sources.length === 0 && <span className="muted">No text material published.</span>}
       </fieldset>
+      )}
+      {inspectOnly && (
+        <ul className="packet-sources">
+          {course.sources.map((s) => (
+            <li key={s.id}>
+              {s.title} · {s.kind}
+            </li>
+          ))}
+        </ul>
+      )}
       {course.exams.length > 0 && (
         <p className="muted">
           Exam dates inferred from titles: {course.exams.map((e) => `${e.label}${e.due_at ? ` (${fmtWhen(e.due_at)})` : " (no date)"}`).join(", ")}. Inferred — check them before relying on a cap.
         </p>
       )}
+      {!inspectOnly && (
       <div className="row">
         <button type="button" className="primary" disabled={busy || selected.size === 0} onClick={() => void doImport()}>
           {course.imported_version ? "Re-import selected" : "Import selected"}
         </button>
       </div>
+      )}
     </li>
   );
 }

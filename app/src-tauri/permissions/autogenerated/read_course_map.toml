@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-course-map"
+description = "Enables the read_course_map command without any pre-configured scope."
+commands.allow = ["read_course_map"]
+
+[[permission]]
+identifier = "deny-read-course-map"
+description = "Denies the read_course_map command without any pre-configured scope."
+commands.deny = ["read_course_map"]

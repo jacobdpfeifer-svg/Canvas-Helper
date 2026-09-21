@@ -1,0 +1,1 @@
+Screenshots were not captured in this coding session (no live Tauri window). After launch on the synthetic profile, save Paper and Night shots of: onboarding 1–3, Home ranges, hover bubble, exam popup, Exam Prep, Calendar.

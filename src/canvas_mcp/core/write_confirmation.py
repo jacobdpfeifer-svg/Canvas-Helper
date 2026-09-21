@@ -80,6 +80,22 @@ class ConfirmationGuard:
         """Replace the caller-identity source (used by student_write at import)."""
         self._identity_provider = provider
 
+    def export_state(self) -> tuple[bytes, dict[str, float]]:
+        """Secret + redeemed nonces, for a caller that must persist the guard
+        across short-lived processes (the desktop app runs one core process per
+        command). Persist under the profile with owner-only permissions."""
+        self._purge()
+        return self._secret, dict(self._redeemed)
+
+    def import_state(self, secret: bytes, redeemed: dict[str, float]) -> None:
+        """Restore ``export_state`` output. Same preview → single-use token
+        semantics; only the storage of the secret and claims moves."""
+        if len(secret) < 32:
+            raise ValueError("guard secret must be at least 32 bytes")
+        self._secret = bytes(secret)
+        self._redeemed = {str(k): float(v) for k, v in redeemed.items()}
+        self._purge()
+
     def credential_digest(self, api_token: str) -> str:
         """Non-reversible handle for a Canvas API token (HMAC with guard secret)."""
         return hmac.new(
