@@ -35,3 +35,16 @@ Order is privacy first, then “can we claim this works.”
 - Do not replace the Tauri shell or start notarization while decisions 3–4 remain park / not yet.
 - Do not rewrite upstream `CHANGELOG.md` to look like a ProductName product history.
 - Do not add `llm_provider_cli.py` or a chat call site besides `prompt_assembly.chat_assembled` / `chat_skill`.
+
+## Addendum — 2026-09-17: beta preparation reopened
+
+Jacob's current conversation requests a study-first student beta, initial tests
+September 18–20, and classmates by September 21–22 if ready. This reopens UX and
+distribution preparation previously parked in rows 3–4. It does not certify the
+app as ready to ship, select a replacement shell, or authorize publishing an
+untested installer. Keep the historical decisions above intact; follow the
+[current beta record](student-beta-2026-09-17.md) for confirmed requirements,
+engineering recommendations, pending data decisions, and release evidence.
+
+Jacob will fund beta AI usage ($50–$100 first week); paid subscriptions remain
+later work. No billing/mobile stubs are being restored by this addendum.

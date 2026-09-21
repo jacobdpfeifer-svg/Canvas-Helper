@@ -1,0 +1,471 @@
+{
+  "schema": 2,
+  "course": {
+    "id": "1110",
+    "name": "General Physics 1",
+    "code": "PHYS 1110",
+    "label": "PHYS 1110 — General Physics 1",
+    "color": "#2E86AB"
+  },
+  "term": {
+    "start_at": "2026-08-26T16:00:00.000Z",
+    "end_at": "2026-12-17T16:00:00.000Z",
+    "source": "inferred"
+  },
+  "fetched_at": "2026-09-20T12:00:00Z",
+  "sources": [
+    {
+      "id": "syllabus-1110",
+      "kind": "syllabus",
+      "title": "Syllabus",
+      "canvas_id": "1110",
+      "updated_at": null,
+      "url": null,
+      "text": "Labs plus a cumulative final.",
+      "truncated": false
+    },
+    {
+      "id": "assignment-2001",
+      "kind": "assignment",
+      "title": "Lab writeup 1",
+      "canvas_id": "2001",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2001",
+      "text": "Lab writeup 1 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2002",
+      "kind": "assignment",
+      "title": "Lab writeup 2",
+      "canvas_id": "2002",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2002",
+      "text": "Lab writeup 2 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2003",
+      "kind": "assignment",
+      "title": "Lab writeup 3",
+      "canvas_id": "2003",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2003",
+      "text": "Lab writeup 3 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2004",
+      "kind": "assignment",
+      "title": "Lab writeup 4",
+      "canvas_id": "2004",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2004",
+      "text": "Lab writeup 4 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2005",
+      "kind": "assignment",
+      "title": "Lab writeup 5",
+      "canvas_id": "2005",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2005",
+      "text": "Lab writeup 5 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2006",
+      "kind": "assignment",
+      "title": "Lab writeup 6",
+      "canvas_id": "2006",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2006",
+      "text": "Lab writeup 6 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2007",
+      "kind": "assignment",
+      "title": "Lab writeup 7",
+      "canvas_id": "2007",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2007",
+      "text": "Lab writeup 7 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2008",
+      "kind": "assignment",
+      "title": "Lab writeup 8",
+      "canvas_id": "2008",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2008",
+      "text": "Lab writeup 8 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2009",
+      "kind": "assignment",
+      "title": "Lab writeup 9",
+      "canvas_id": "2009",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2009",
+      "text": "Lab writeup 9 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2010",
+      "kind": "assignment",
+      "title": "Lab writeup 10",
+      "canvas_id": "2010",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2010",
+      "text": "Lab writeup 10 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2011",
+      "kind": "assignment",
+      "title": "Lab writeup 11",
+      "canvas_id": "2011",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2011",
+      "text": "Lab writeup 11 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2012",
+      "kind": "assignment",
+      "title": "Lab writeup 12",
+      "canvas_id": "2012",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/2012",
+      "text": "Lab writeup 12 practice set.",
+      "truncated": false,
+      "course_id": "1110"
+    },
+    {
+      "id": "assignment-2201",
+      "kind": "assignment",
+      "title": "Final exam",
+      "canvas_id": "2201",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/1110/assignments/2201",
+      "text": "Cumulative mechanics final: kinematics, forces, energy.",
+      "truncated": false,
+      "course_id": "1110"
+    }
+  ],
+  "items": [
+    {
+      "id": "item-a2001",
+      "canvas_id": "2001",
+      "course_id": "1110",
+      "title": "Lab writeup 1",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-02T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2001",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 1 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2002",
+      "canvas_id": "2002",
+      "course_id": "1110",
+      "title": "Lab writeup 2",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-03T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2002",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 2 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2003",
+      "canvas_id": "2003",
+      "course_id": "1110",
+      "title": "Lab writeup 3",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-04T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2003",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 3 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2004",
+      "canvas_id": "2004",
+      "course_id": "1110",
+      "title": "Lab writeup 4",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-05T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2004",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 4 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2005",
+      "canvas_id": "2005",
+      "course_id": "1110",
+      "title": "Lab writeup 5",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-06T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2005",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 5 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2006",
+      "canvas_id": "2006",
+      "course_id": "1110",
+      "title": "Lab writeup 6",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-07T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2006",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 6 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2007",
+      "canvas_id": "2007",
+      "course_id": "1110",
+      "title": "Lab writeup 7",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-08T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2007",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 7 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2008",
+      "canvas_id": "2008",
+      "course_id": "1110",
+      "title": "Lab writeup 8",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-09T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2008",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 8 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2009",
+      "canvas_id": "2009",
+      "course_id": "1110",
+      "title": "Lab writeup 9",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-10T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2009",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 9 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2010",
+      "canvas_id": "2010",
+      "course_id": "1110",
+      "title": "Lab writeup 10",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-11T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2010",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 10 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2011",
+      "canvas_id": "2011",
+      "course_id": "1110",
+      "title": "Lab writeup 11",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-12T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2011",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 11 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2012",
+      "canvas_id": "2012",
+      "course_id": "1110",
+      "title": "Lab writeup 12",
+      "kind": "assignment",
+      "points_possible": 20,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-13T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/2012",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Lab writeup 12 practice set.",
+      "weight_share": 0.043478260869565216
+    },
+    {
+      "id": "item-a2201",
+      "canvas_id": "2201",
+      "course_id": "1110",
+      "title": "Final exam",
+      "kind": "exam",
+      "points_possible": 200,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-12-10T16:00:00Z",
+      "html_url": "https://canvas.example/courses/1110/assignments/2201",
+      "submission_types": [
+        "on_paper"
+      ],
+      "completed": false,
+      "description": "Cumulative mechanics final: kinematics, forces, energy.",
+      "weight_share": 0.43478260869565216
+    },
+    {
+      "id": "item-q2301",
+      "canvas_id": "2301",
+      "course_id": "1110",
+      "title": "Quiz A",
+      "kind": "quiz",
+      "points_possible": 10,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-10-02T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/quizzes/2301",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "completed": false,
+      "description": "Quiz A covers recent modules.",
+      "weight_share": 0.021739130434782608
+    },
+    {
+      "id": "item-q2302",
+      "canvas_id": "2302",
+      "course_id": "1110",
+      "title": "Quiz B",
+      "kind": "quiz",
+      "points_possible": 10,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-11-06T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/quizzes/2302",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "completed": false,
+      "description": "Quiz B covers recent modules.",
+      "weight_share": 0.021739130434782608
+    }
+  ],
+  "exams": [
+    {
+      "id": "canvas-exam-1110-a2201",
+      "label": "Final exam",
+      "due_at": "2026-12-10T16:00:00Z",
+      "kind": "assignment",
+      "points": 200,
+      "inferred": true
+    },
+    {
+      "id": "canvas-exam-1110-q2301",
+      "label": "Quiz A",
+      "due_at": "2026-10-02T16:00:00Z",
+      "kind": "quiz",
+      "points": 10,
+      "inferred": true
+    },
+    {
+      "id": "canvas-exam-1110-q2302",
+      "label": "Quiz B",
+      "due_at": "2026-11-06T16:00:00Z",
+      "kind": "quiz",
+      "points": 10,
+      "inferred": true
+    }
+  ],
+  "truncated": false,
+  "errors": []
+}

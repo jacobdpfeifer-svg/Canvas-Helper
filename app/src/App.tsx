@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
 import { FirstRun } from "./components/FirstRun";
+import { CalendarView } from "./views/CalendarView";
+import { ExamPrepView } from "./views/ExamPrepView";
+import { HomeView } from "./views/HomeView";
 import { PlanView } from "./views/PlanView";
 import { SettingsView } from "./views/SettingsView";
-import { SourcesView } from "./views/SourcesView";
 import { StudyView } from "./views/StudyView";
-import { IconPlan, IconSettings, IconSources, IconStudy } from "./components/Icons";
+import { IconPlan, IconSettings, IconStudy } from "./components/Icons";
 import { useTheme } from "./theme";
-import { setDockMode } from "./ipc";
+import { setDockMode, type SemesterTick } from "./ipc";
 
-export type Tab = "study" | "plan" | "sources" | "settings";
+export type Tab = "home" | "plan" | "study" | "calendar" | "settings";
 
 const TABS: { id: Tab; label: string; Icon: typeof IconStudy }[] = [
-  { id: "study", label: "Study", Icon: IconStudy },
+  { id: "home", label: "Home", Icon: IconStudy },
   { id: "plan", label: "Plan", Icon: IconPlan },
-  { id: "sources", label: "Sources", Icon: IconSources },
+  { id: "study", label: "Study", Icon: IconStudy },
+  { id: "calendar", label: "Calendar", Icon: IconPlan },
   { id: "settings", label: "Settings", Icon: IconSettings },
 ];
 
@@ -23,12 +26,18 @@ export function App() {
   const [onboarded, setOnboarded] = useState(() => localStorage.getItem("pn_onboarded") === "1");
   const [tab, setTab] = useState<Tab>(() => {
     const raw = localStorage.getItem(TAB_KEY);
-    return TABS.some((t) => t.id === raw) ? (raw as Tab) : "study";
+    return TABS.some((t) => t.id === raw) ? (raw as Tab) : "home";
   });
+  const [examTick, setExamTick] = useState<SemesterTick | null>(null);
+  const [studyPreselect, setStudyPreselect] = useState<{ course?: string; examId?: string } | null>(null);
   useTheme();
 
   useEffect(() => {
-    localStorage.setItem(TAB_KEY, tab);
+    if (tab !== "settings" && tab !== "home" && tab !== "study" && tab !== "calendar" && tab !== "plan") {
+      setTab("home");
+    } else {
+      localStorage.setItem(TAB_KEY, tab);
+    }
   }, [tab]);
 
   useEffect(() => {
@@ -41,8 +50,27 @@ export function App() {
         onDone={() => {
           localStorage.setItem("pn_onboarded", "1");
           setOnboarded(true);
+          setTab("home");
         }}
       />
+    );
+  }
+
+  if (examTick) {
+    return (
+      <div className="workspace">
+        <ExamPrepView
+          tick={examTick}
+          sources={examTick.description ? [{ title: examTick.title, text: examTick.description }] : []}
+          hasPractice={Boolean(examTick.description)}
+          onBack={() => setExamTick(null)}
+          onTest={() => {
+            setStudyPreselect({ course: examTick.course_label, examId: examTick.id });
+            setExamTick(null);
+            setTab("study");
+          }}
+        />
+      </div>
     );
   }
 
@@ -87,9 +115,12 @@ export function App() {
         </ul>
       </nav>
       <main id="main" className="workspace-main" role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={-1}>
-        {tab === "study" && <StudyView onGoToSources={() => setTab("sources")} />}
+        {tab === "home" && <HomeView onExamPrep={setExamTick} />}
         {tab === "plan" && <PlanView />}
-        {tab === "sources" && <SourcesView />}
+        {tab === "study" && (
+          <StudyView onGoToSources={() => setTab("settings")} preselect={studyPreselect} />
+        )}
+        {tab === "calendar" && <CalendarView />}
         {tab === "settings" && <SettingsView />}
       </main>
     </div>

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-semester"
+description = "Enables the read_semester command without any pre-configured scope."
+commands.allow = ["read_semester"]
+
+[[permission]]
+identifier = "deny-read-semester"
+description = "Denies the read_semester command without any pre-configured scope."
+commands.deny = ["read_semester"]

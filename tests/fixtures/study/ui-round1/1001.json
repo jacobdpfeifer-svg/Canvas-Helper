@@ -1,0 +1,252 @@
+{
+  "schema": 2,
+  "course": {
+    "id": "1001",
+    "name": "First-Year Writing",
+    "code": "ENGL 1001",
+    "label": "ENGL 1001 — First-Year Writing",
+    "color": "#6A994E"
+  },
+  "term": {
+    "start_at": "2026-08-24T06:00:00Z",
+    "end_at": "2026-12-18T06:00:00Z",
+    "source": "canvas"
+  },
+  "fetched_at": "2026-09-20T12:00:00Z",
+  "sources": [
+    {
+      "id": "syllabus-1001",
+      "kind": "syllabus",
+      "title": "Syllabus",
+      "canvas_id": "1001",
+      "updated_at": null,
+      "url": null,
+      "text": "Six essays.",
+      "truncated": false
+    },
+    {
+      "id": "assignment-4001",
+      "kind": "assignment",
+      "title": "Essay 1",
+      "canvas_id": "4001",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4001",
+      "text": "Essay 1 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    },
+    {
+      "id": "assignment-4002",
+      "kind": "assignment",
+      "title": "Essay 2",
+      "canvas_id": "4002",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4002",
+      "text": "Essay 2 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    },
+    {
+      "id": "assignment-4003",
+      "kind": "assignment",
+      "title": "Essay 3",
+      "canvas_id": "4003",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4003",
+      "text": "Essay 3 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    },
+    {
+      "id": "assignment-4004",
+      "kind": "assignment",
+      "title": "Essay 4",
+      "canvas_id": "4004",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4004",
+      "text": "Essay 4 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    },
+    {
+      "id": "assignment-4005",
+      "kind": "assignment",
+      "title": "Essay 5",
+      "canvas_id": "4005",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4005",
+      "text": "Essay 5 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    },
+    {
+      "id": "assignment-4006",
+      "kind": "assignment",
+      "title": "Essay 6",
+      "canvas_id": "4006",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/4006",
+      "text": "Essay 6 practice set.",
+      "truncated": false,
+      "course_id": "1001"
+    }
+  ],
+  "items": [
+    {
+      "id": "item-a4001",
+      "canvas_id": "4001",
+      "course_id": "1001",
+      "title": "Essay 1",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-04T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4001",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 1 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4002",
+      "canvas_id": "4002",
+      "course_id": "1001",
+      "title": "Essay 2",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-08T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4002",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 2 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4003",
+      "canvas_id": "4003",
+      "course_id": "1001",
+      "title": "Essay 3",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-12T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4003",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 3 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4004",
+      "canvas_id": "4004",
+      "course_id": "1001",
+      "title": "Essay 4",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-16T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4004",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 4 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4005",
+      "canvas_id": "4005",
+      "course_id": "1001",
+      "title": "Essay 5",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-20T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4005",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 5 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4006",
+      "canvas_id": "4006",
+      "course_id": "1001",
+      "title": "Essay 6",
+      "kind": "assignment",
+      "points_possible": 100,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-10-24T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/4006",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Essay 6 practice set.",
+      "weight_share": 0.11666666666666665
+    },
+    {
+      "id": "item-a4099",
+      "canvas_id": "4099",
+      "course_id": "1001",
+      "title": "Discussion: week 3",
+      "kind": "discussion",
+      "points_possible": 0,
+      "assignment_group_id": "4",
+      "group_weight": 70,
+      "due_at": "2026-09-08T16:00:00Z",
+      "html_url": "https://canvas.example/courses/1001/assignments/4099",
+      "submission_types": [
+        "discussion_topic"
+      ],
+      "completed": false,
+      "description": "",
+      "weight_share": 0
+    },
+    {
+      "id": "item-q4101",
+      "canvas_id": "4101",
+      "course_id": "1001",
+      "title": "Quiz: citations",
+      "kind": "quiz",
+      "points_possible": 10,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-20T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/quizzes/4101",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "completed": false,
+      "description": "Quiz: citations covers recent modules.",
+      "weight_share": 0
+    }
+  ],
+  "exams": [
+    {
+      "id": "canvas-exam-1001-q4101",
+      "label": "Quiz: citations",
+      "due_at": "2026-09-20T16:00:00Z",
+      "kind": "quiz",
+      "points": 10,
+      "inferred": true
+    }
+  ],
+  "truncated": false,
+  "errors": []
+}

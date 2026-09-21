@@ -22,12 +22,18 @@ function useFocusOnChange<T extends HTMLElement>(dep: unknown) {
   return ref;
 }
 
-export function StudyView({ onGoToSources }: { onGoToSources: () => void }) {
+export function StudyView({
+  onGoToSources,
+  preselect,
+}: {
+  onGoToSources: () => void;
+  preselect?: { course?: string; examId?: string } | null;
+}) {
   const [minutes, setMinutes] = useState<number>(() => {
     const raw = localStorage.getItem(MINUTES_KEY);
     return raw === "10" ? 10 : 5;
   });
-  const [course, setCourse] = useState<string | null>(null);
+  const [course, setCourse] = useState<string | null>(preselect?.course ?? null);
   const [courses, setCourses] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [live, setLive] = useState("");
@@ -149,7 +155,7 @@ function ErrorPanel({ error, retry, onGoToSources }: { error: StudyRequestError;
           Retry
         </button>
         <button type="button" onClick={onGoToSources}>
-          Sources
+          Canvas data
         </button>
       </div>
     </div>
@@ -176,9 +182,9 @@ function OfferPanel({
         <h2 ref={heading} tabIndex={-1}>
           No practice item is ready
         </h2>
-        <p>{offer.reason} Import a source packet to use a local template, or read your notes.</p>
+        <p>{offer.reason} Sync Canvas from Settings if this course has no practice items yet.</p>
         <button type="button" className="primary" onClick={onGoToSources}>
-          Import a source
+          Canvas data
         </button>
       </div>
     );
@@ -197,7 +203,7 @@ function OfferPanel({
             </button>
           ) : (
             <button type="button" className="primary" onClick={onGoToSources}>
-              Sources
+              Canvas data
             </button>
           )}
         </div>
@@ -212,7 +218,7 @@ function OfferPanel({
         </h2>
         <p>{offer.reason}</p>
         <button type="button" onClick={onGoToSources}>
-          Sources &amp; exams
+          Canvas data
         </button>
       </div>
     );

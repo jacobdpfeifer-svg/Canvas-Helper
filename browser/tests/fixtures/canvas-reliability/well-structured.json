@@ -1,0 +1,234 @@
+{
+  "id": "well-structured",
+  "course": {
+    "id": 1300,
+    "name": "Calculus 1",
+    "course_code": "MATH 1300",
+    "enrollment_term_id": 1,
+    "time_zone": "America/Denver",
+    "start_at": "2026-08-24T06:00:00Z",
+    "end_at": "2026-12-18T07:00:00Z",
+    "syllabus_body": "<p>MATH 1300 syllabus.</p>",
+    "enrollments": [
+      {
+        "type": "student",
+        "computed_current_score": 88,
+        "computed_current_grade": "B+"
+      }
+    ],
+    "term": {
+      "id": 1,
+      "name": "Fall 2026",
+      "start_at": "2026-08-24T06:00:00Z",
+      "end_at": "2026-12-18T07:00:00Z"
+    }
+  },
+  "assignmentGroups": [
+    {
+      "id": 1,
+      "name": "Homework",
+      "group_weight": 20,
+      "rules": {
+        "drop_lowest": 0,
+        "drop_highest": 0,
+        "never_drop": []
+      }
+    },
+    {
+      "id": 2,
+      "name": "Exams",
+      "group_weight": 80,
+      "rules": {
+        "drop_lowest": 0,
+        "drop_highest": 0,
+        "never_drop": []
+      }
+    }
+  ],
+  "assignments": [
+    {
+      "id": 101,
+      "name": "Homework 1",
+      "due_at": "2026-09-22T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 1,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1300/assignments/101",
+      "submission_types": [
+        "online_upload"
+      ],
+      "all_dates": [
+        {
+          "base": true,
+          "due_at": "2026-09-22T16:00:00Z"
+        }
+      ],
+      "submission": {
+        "workflow_state": "graded",
+        "score": 9,
+        "grade": "9",
+        "submitted_at": "2026-09-21T12:00:00Z",
+        "posted_at": "2026-09-21T13:00:00Z"
+      }
+    },
+    {
+      "id": 102,
+      "name": "Homework 2",
+      "due_at": "2026-10-01T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 1,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1300/assignments/102",
+      "submission_types": [
+        "online_upload"
+      ],
+      "all_dates": [
+        {
+          "base": true,
+          "due_at": "2026-10-01T16:00:00Z"
+        }
+      ],
+      "submission": {
+        "workflow_state": "unsubmitted",
+        "score": null,
+        "submitted_at": null
+      }
+    },
+    {
+      "id": 201,
+      "name": "Midterm 1",
+      "due_at": "2026-10-15T16:00:00Z",
+      "points_possible": 100,
+      "assignment_group_id": 2,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1300/assignments/201",
+      "submission_types": [
+        "on_paper"
+      ],
+      "all_dates": [
+        {
+          "base": true,
+          "due_at": "2026-10-15T16:00:00Z"
+        }
+      ],
+      "submission": {
+        "workflow_state": "unsubmitted"
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "workflow_state": "graded",
+      "score": 9,
+      "grade": "9",
+      "submitted_at": "2026-09-21T12:00:00Z",
+      "posted_at": "2026-09-21T13:00:00Z",
+      "assignment_id": 101,
+      "id": 1010
+    },
+    {
+      "workflow_state": "unsubmitted",
+      "score": null,
+      "submitted_at": null,
+      "assignment_id": 102,
+      "id": 1020
+    },
+    {
+      "workflow_state": "unsubmitted",
+      "assignment_id": 201,
+      "id": 2010
+    }
+  ],
+  "modules": [
+    {
+      "id": 9,
+      "name": "Week 1",
+      "position": 1,
+      "published": true,
+      "items": [
+        {
+          "id": 91,
+          "title": "Start here",
+          "type": "Page",
+          "position": 1,
+          "indent": 0,
+          "published": true,
+          "html_url": "https://canvas.example/courses/1300/pages/start",
+          "content_id": 5,
+          "completion_requirement": null
+        },
+        {
+          "id": 92,
+          "title": "Homework 1",
+          "type": "Assignment",
+          "content_id": 101,
+          "position": 2,
+          "indent": 0,
+          "published": true,
+          "html_url": "https://canvas.example/courses/1300/assignments/101"
+        }
+      ]
+    }
+  ],
+  "discussions": [],
+  "quizzes": [
+    {
+      "id": 55,
+      "title": "Quiz 1",
+      "due_at": "2026-09-26T16:00:00Z",
+      "points_possible": 15,
+      "assignment_id": null,
+      "html_url": "https://canvas.example/courses/1300/quizzes/55"
+    }
+  ],
+  "planner": [
+    {
+      "plannable_id": 101,
+      "plannable_type": "assignment",
+      "course_id": 1300,
+      "context_code": "course_1300",
+      "plannable_date": "2026-09-22T16:00:00Z",
+      "html_url": "https://canvas.example/courses/1300/assignments/101",
+      "plannable": {
+        "id": 101,
+        "title": "Homework 1"
+      }
+    }
+  ],
+  "todo": [
+    {
+      "assignment": {
+        "id": 102,
+        "name": "Homework 2",
+        "due_at": "2026-10-01T16:00:00Z",
+        "course_id": 1300,
+        "html_url": "https://canvas.example/courses/1300/assignments/102",
+        "points_possible": 10
+      }
+    }
+  ],
+  "calendar": [
+    {
+      "id": 7001,
+      "title": "Homework 1",
+      "start_at": "2026-09-22T16:00:00Z",
+      "assignment": {
+        "id": 101
+      },
+      "context_code": "course_1300",
+      "html_url": "https://canvas.example/courses/1300/assignments/101"
+    }
+  ],
+  "pages": [
+    {
+      "page_id": 5,
+      "url": "start",
+      "title": "Start here",
+      "front_page": true,
+      "body": "<p>Read chapter 1.</p>"
+    }
+  ]
+}

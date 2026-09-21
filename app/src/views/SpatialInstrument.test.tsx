@@ -30,7 +30,7 @@ describe("Spatial Instrument chrome", () => {
     const continueBtn = screen.getByRole("button", { name: "Continue" });
     expect(continueBtn).toBeDisabled();
     expect(continueBtn).toHaveClass("primary");
-    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: "Accept terms" }));
     expect(continueBtn).toBeEnabled();
     expect(continueBtn).not.toHaveAttribute("aria-disabled", "true");
   });

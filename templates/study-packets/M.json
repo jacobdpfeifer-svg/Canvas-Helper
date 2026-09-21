@@ -1,0 +1,96 @@
+{
+  "packet_id": "M",
+  "version": 1,
+  "title": "Practice-test guide (synthetic packet M)",
+  "course": "MATH 1300 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "M-scope",
+      "locator": "M §scope",
+      "text": "Practice test scope: chain-rule derivatives and identifying buffer responses. No spring-energy questions."
+    },
+    {
+      "id": "M-rule",
+      "locator": "M §rule",
+      "text": "For y = f(g(x)), y′ = f′(g(x)) · g′(x). The derivative of 2x + 1 is 2; the outer derivative of u^7 is 7u^6."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "chain-rule",
+      "label": "Apply the chain rule to a power of a function"
+    }
+  ],
+  "items": [
+    {
+      "id": "M-1",
+      "objective_id": "chain-rule",
+      "source_refs": [
+        "M-rule",
+        "M-scope"
+      ],
+      "kind": "procedural",
+      "stem": "Differentiate (2x + 1)^7 and name the inner derivative.",
+      "neutral_locator": "M §rule",
+      "why": "This is explicitly in your guide (M §scope); we can check one application.",
+      "fields": [
+        {
+          "id": "inner_derivative",
+          "label": "Inner derivative",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "2"
+            ]
+          }
+        },
+        {
+          "id": "derivative",
+          "label": "Derivative",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "14(2x+1)^6",
+              "14(1+2x)^6",
+              "7(2x+1)^6*2",
+              "2*7(2x+1)^6"
+            ]
+          }
+        }
+      ],
+      "example": {
+        "title": "Rule from M §rule",
+        "text": "y′ = f′(g(x)) · g′(x). Here the outer derivative of u^7 is 7u^6 and the inner derivative of 2x + 1 is 2."
+      },
+      "hint": "Outer: 7u^6. Inner: derivative of 2x + 1.",
+      "key": {
+        "inner_derivative": "2",
+        "derivative": "14(2x + 1)^6",
+        "explanation": "Multiply 7(2x + 1)^6 by the inner derivative 2 (M §rule).",
+        "support_refs": [
+          "M §rule"
+        ]
+      },
+      "feedback": {
+        "correct": "Correct application of the two derivatives in M §rule.",
+        "partial": "One of the two derivatives is off; compare each with M §rule.",
+        "incorrect": "Outer derivative 7u^6, inner derivative 2; multiply (M §rule)."
+      },
+      "predicted_seconds": 180
+    }
+  ],
+  "exams": [
+    {
+      "id": "M-exam",
+      "label": "Exam tomorrow (synthetic)",
+      "value": "known_instant",
+      "at": "2026-09-19T10:00:00",
+      "zone": "America/Denver",
+      "objective_scope": [
+        "chain-rule"
+      ]
+    }
+  ]
+}

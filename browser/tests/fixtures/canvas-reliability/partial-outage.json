@@ -1,0 +1,82 @@
+{
+  "id": "partial-outage",
+  "course": {
+    "id": 1600,
+    "name": "Intro Programming",
+    "course_code": "CSCI 1300",
+    "enrollment_term_id": 1,
+    "time_zone": "America/Denver",
+    "start_at": "2026-08-24T06:00:00Z",
+    "end_at": "2026-12-18T07:00:00Z",
+    "syllabus_body": "<p>CSCI 1300 syllabus.</p>",
+    "enrollments": [
+      {
+        "type": "student",
+        "computed_current_score": 88,
+        "computed_current_grade": "B+"
+      }
+    ],
+    "term": {
+      "id": 1,
+      "name": "Fall 2026",
+      "start_at": "2026-08-24T06:00:00Z",
+      "end_at": "2026-12-18T07:00:00Z"
+    },
+    "score": null,
+    "grade": null
+  },
+  "assignmentGroups": [
+    {
+      "id": 21,
+      "name": "Work",
+      "group_weight": 100,
+      "rules": {}
+    }
+  ],
+  "assignments": [
+    {
+      "id": 601,
+      "name": "Project 1",
+      "due_at": "2026-09-25T16:00:00Z",
+      "points_possible": 50,
+      "assignment_group_id": 21,
+      "published": true,
+      "html_url": "https://canvas.example/courses/1600/assignments/601",
+      "submission": {
+        "workflow_state": "submitted",
+        "submitted_at": "2026-09-20T12:00:00Z",
+        "score": null
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "assignment_id": 601,
+      "workflow_state": "submitted",
+      "submitted_at": "2026-09-20T12:00:00Z"
+    }
+  ],
+  "modules": [],
+  "discussions": [],
+  "quizzes": [],
+  "planner": [],
+  "todo": [],
+  "calendar": [],
+  "pages": [],
+  "endpointFailures": {
+    "modules": {
+      "ok": false,
+      "status": 500,
+      "items": []
+    },
+    "quizzes": {
+      "ok": true,
+      "status": 200,
+      "items": [],
+      "truncated": false
+    }
+  },
+  "truncated": [
+    "assignments"
+  ]
+}

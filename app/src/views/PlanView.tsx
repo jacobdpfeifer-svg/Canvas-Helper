@@ -20,6 +20,8 @@ import {
   routeIntent,
   setCommitment,
   syncCanvas,
+  readSyncHealth,
+  readWorkSurface,
   type CommitmentState,
   type CourseProgress,
   type EvaluationCompare,
@@ -31,7 +33,10 @@ import {
   type ReviewBudget,
   type Top3Item,
   type Trail,
+  type SyncHealth,
+  type WorkSurface,
 } from "../ipc";
+import { SyncHealthBanner } from "../components/SyncHealthBanner";
 
 function RetentionSkeletonRows({ count = 2 }: { count?: number }) {
   return (
@@ -107,6 +112,8 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
   const [commitmentReady, setCommitmentReady] = useState(false);
   const [evalReady, setEvalReady] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [canvasHealth, setCanvasHealth] = useState<SyncHealth | null>(null);
+  const [work, setWork] = useState<WorkSurface | null>(null);
 
   const dueReadyRef = useRef(false);
   const progressReadyRef = useRef(false);
@@ -205,6 +212,8 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     if (!onboarded) return;
     refreshTop3();
+    void readSyncHealth().then(setCanvasHealth);
+    void readWorkSurface({}).then(setWork);
     let unlistenInbox: (() => void) | undefined;
     let unlistenSync: (() => void) | undefined;
     onInboxUpdated(() => {
@@ -285,6 +294,33 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
           <IconCommand />
         </button>
       </header>
+      <SyncHealthBanner health={canvasHealth} />
+      {canvasHealth?.surfaces_enabled && (
+        <section className="glass work-week" aria-label="Upcoming Canvas work">
+          <h2>Upcoming work</h2>
+          {(!work?.items || work.items.length === 0) && canvasHealth.state === "empty_unverified" && (
+            <p>No Canvas snapshot has been verified yet.</p>
+          )}
+          {(!work?.items || work.items.length === 0) && canvasHealth.state === "fresh_complete" && (
+            <p>No work items in the snapshot.</p>
+          )}
+          <ul>
+            {(work?.items || [])
+              .filter((it) => it.submission_state !== "suppressed")
+              .slice(0, 12)
+              .map((it) => (
+                <li key={it.id}>
+                  {it.title}
+                  <span className="muted">
+                    {" "}
+                    · {it.submission_state}
+                    {it.disagreements && it.disagreements.length > 0 ? " · sources disagree" : ""}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </section>
+      )}
 
       {reviewOpen && sessionItems.length > 0 ? (
         <ReviewSession

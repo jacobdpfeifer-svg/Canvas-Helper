@@ -1,34 +1,89 @@
 import { useEffect, useRef, useState } from "react";
-import { GENERIC_LEGAL, LEGAL_BY_SCHOOL } from "../legal";
-import { checkCanvasSession, isTauri, openCanvasSso, saveOnboarding } from "../ipc";
+import { schoolLegalText } from "../legal";
+import {
+  checkCanvasSession,
+  onStudySyncProgress,
+  openCanvasSso,
+  saveOnboarding,
+  syncStudySourcesIpc,
+  type SyncProgressCourse,
+} from "../ipc";
+import { ConnectCanvasMark, useReducedMotion } from "./ConnectCanvasMark";
 
-/**
- * First run: school + policy, an optional Canvas sign-in, then straight to a
- * first study cycle. Everything else (profile, study-style games, themes) is
- * reachable later from Settings — first value before preferences.
- */
-export function FirstRun({ onDone }: { onDone: () => void }) {
-  const [step, setStep] = useState<0 | 1 | 2>(0);
+type Step = "school" | "waitlist" | "canvas" | "sync";
+
+export function FirstRun({
+  onDone,
+  progressCourses,
+  startStep = "school",
+}: {
+  onDone: () => void;
+  progressCourses?: SyncProgressCourse[];
+  startStep?: Step;
+}) {
+  const [step, setStep] = useState<Step>(startStep);
   const [school, setSchool] = useState("cu-boulder");
   const [accepted, setAccepted] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [session, setSession] = useState<"unknown" | "checking" | "found" | "missing">("unknown");
   const [ssoBusy, setSsoBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [courses, setCourses] = useState<SyncProgressCourse[]>(progressCourses ?? []);
+  const [syncing, setSyncing] = useState(false);
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
   const heading = useRef<HTMLHeadingElement | null>(null);
-  const legal = LEGAL_BY_SCHOOL[school] || GENERIC_LEGAL;
+  const reduced = useReducedMotion();
+  const legal = schoolLegalText(school);
 
   useEffect(() => {
     heading.current?.focus();
   }, [step]);
 
   useEffect(() => {
-    if (step !== 1 || session !== "unknown" || !isTauri()) return;
+    if (progressCourses) setCourses(progressCourses);
+  }, [progressCourses]);
+
+  useEffect(() => {
+    if (step !== "canvas" || session !== "unknown") return;
     setSession("checking");
     checkCanvasSession()
       .then((ok) => setSession(ok ? "found" : "missing"))
       .catch(() => setSession("missing"));
   }, [step, session]);
+
+  useEffect(() => {
+    if (step !== "canvas" || session !== "found") return;
+    const t = window.setTimeout(() => setStep("sync"), 700);
+    return () => window.clearTimeout(t);
+  }, [step, session]);
+
+  useEffect(() => {
+    if (step !== "sync") return;
+    let cancelled = false;
+    setSyncing(true);
+    void onStudySyncProgress((p) => {
+      if (!cancelled && p.courses) setCourses(p.courses);
+    });
+    void saveOnboarding(school, "", {});
+    syncStudySourcesIpc()
+      .then((res) => {
+        if (cancelled) return;
+        if (!res.ok) setError(res.error || "Some courses did not load");
+        doneRef.current();
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : String(e));
+        doneRef.current();
+      })
+      .finally(() => {
+        if (!cancelled) setSyncing(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [step, school]);
 
   const signIn = async () => {
     setSsoBusy(true);
@@ -37,118 +92,126 @@ export function FirstRun({ onDone }: { onDone: () => void }) {
       await openCanvasSso();
       const ok = await checkCanvasSession();
       setSession(ok ? "found" : "missing");
-      if (!ok) setError("No Canvas session was found after the browser closed. You can try again or continue without Canvas.");
+      if (!ok) setError("Login window closed or no session found.");
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(/network/i.test(msg) ? "Network error." : msg || "Login window closed or no session found.");
+      setSession("missing");
     } finally {
       setSsoBusy(false);
     }
   };
 
-  const finish = async () => {
-    setSaving(true);
-    setError(null);
-    try {
-      await saveOnboarding(school, "", {});
-      onDone();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
-    <div className="onboarding first-run">
+    <div className="onboarding first-run thirds">
       <p className="brand-lockup">
         <span className="brand-echo" aria-hidden="true">
           ProductName
         </span>
         <span>ProductName</span>
       </p>
-      <ol className="onboarding-steps" aria-label={`Step ${step + 1} of 3`}>
-        {["School & policy", "Canvas", "Start"].map((label, i) => (
-          <li key={label} className={i === step ? "active" : i < step ? "done" : undefined}>
-            {label}
-          </li>
-        ))}
-      </ol>
 
-      {step === 0 && (
+      {step === "school" && (
         <section className="onboarding-body">
           <h1 ref={heading} tabIndex={-1}>
-            Your school and the ground rules
+            Your school
           </h1>
           <label htmlFor="school">School</label>
           <select id="school" value={school} onChange={(e) => setSchool(e.target.value)}>
             <option value="cu-boulder">CU Boulder</option>
             <option value="waitlist">Somewhere else (waitlist)</option>
           </select>
-          <pre className="legal-sheet" tabIndex={0} aria-label="Policy">
-            {legal}
-          </pre>
-          <label className="check">
-            <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
-            <span className="check-box" aria-hidden="true" />
-            I understand and agree.
-          </label>
-          <div className="row">
-            <button type="button" className="primary" disabled={!accepted} onClick={() => setStep(school === "waitlist" ? 2 : 1)}>
+          <button type="button" className="ghost" onClick={() => setTermsOpen(true)}>
+            View terms
+          </button>
+          <div className="stack-actions">
+            <button
+              type="button"
+              className={accepted ? "accept-toggle filled" : "accept-toggle"}
+              aria-pressed={accepted}
+              onClick={() => setAccepted((v) => !v)}
+            >
+              Accept terms
+            </button>
+            <button
+              type="button"
+              className="primary"
+              disabled={!accepted}
+              onClick={() => setStep(school === "waitlist" ? "waitlist" : "canvas")}
+            >
               Continue
             </button>
           </div>
         </section>
       )}
 
-      {step === 1 && (
+      {step === "waitlist" && (
         <section className="onboarding-body">
           <h1 ref={heading} tabIndex={-1}>
-            Connect Canvas (optional)
+            Waitlist
           </h1>
-          <p>
-            Signing in lets the app pull your course pages, syllabus and exam dates so practice is built from your actual material. It opens your school's login in a separate browser window; no password is stored here.
-          </p>
-          {session === "checking" && <p className="muted">Checking for an existing Canvas session…</p>}
-          {session === "found" && <p className="notice">Signed in to Canvas already.</p>}
-          {!isTauri() && <p className="muted">Canvas sign-in needs the desktop app; you can still practice with bundled material.</p>}
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
-          <div className="row">
+        </section>
+      )}
+
+      {step === "canvas" && (
+        <section className="onboarding-body connect-thirds">
+          <h1 ref={heading} tabIndex={-1} className="third-top">
+            {session === "found" ? "Already signed in" : "Connect Canvas"}
+          </h1>
+          <div className="third-mid">
+            <ConnectCanvasMark reduced={reduced || session === "found"} />
+          </div>
+          <div className="third-bot stack-actions">
+            {error && (
+              <p className="error" role="alert">
+                {error}
+              </p>
+            )}
             {session !== "found" && (
-              <button type="button" className="primary" disabled={ssoBusy || !isTauri()} onClick={() => void signIn()}>
-                {ssoBusy ? "Waiting for sign-in…" : "Sign in to Canvas"}
+              <button type="button" className="primary" disabled={ssoBusy} onClick={() => void signIn()}>
+                {ssoBusy ? "Waiting…" : error ? "Try again" : "Sign in to Canvas"}
               </button>
             )}
-            <button type="button" className="btn-secondary" onClick={() => setStep(2)}>
-              {session === "found" ? "Continue" : "Skip for now"}
-            </button>
           </div>
         </section>
       )}
 
-      {step === 2 && (
+      {step === "sync" && (
         <section className="onboarding-body">
           <h1 ref={heading} tabIndex={-1}>
-            Ready for a first check
+            Syncing
           </h1>
-          <p>
-            Study is where you practice: one question at a time, backed by material you import. You will see why each item was chosen, and your answers stay on this computer.
-          </p>
-          <p className="muted">Themes, study-style preferences and your profile live in Settings whenever you want them.</p>
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
-          <div className="row">
-            <button type="button" className="primary" disabled={saving} onClick={() => void finish()}>
-              Open Study
+          <ul className="sync-cards">
+            {courses.map((c) => (
+              <li key={c.id} className="sync-card glass" style={{ ["--course" as string]: c.color || "var(--accent)" }}>
+                <span className="sync-swatch" aria-hidden="true" />
+                <strong>{c.label}</strong>
+                <span>
+                  {c.assignments ?? 0} assignments · {c.quizzes ?? 0} quizzes · {c.exam_count ?? 0} exams
+                </span>
+              </li>
+            ))}
+          </ul>
+          {syncing && <p className="visually-hidden">Syncing courses</p>}
+        </section>
+      )}
+
+      {termsOpen && (
+        <div className="sheet-backdrop" role="presentation" onClick={() => setTermsOpen(false)}>
+          <div
+            className="glass legal-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="terms-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="terms-title">Terms</h2>
+            <pre className="legal-sheet">{legal}</pre>
+            <button type="button" className="primary" onClick={() => setTermsOpen(false)}>
+              Close
             </button>
           </div>
-        </section>
+        </div>
       )}
     </div>
   );

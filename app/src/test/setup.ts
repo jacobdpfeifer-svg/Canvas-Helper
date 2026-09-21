@@ -24,7 +24,30 @@ if (!globalThis.localStorage) {
   Object.defineProperty(globalThis, "localStorage", { value: shim, configurable: true, writable: true });
 }
 
+if (!globalThis.ResizeObserver) {
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as typeof ResizeObserver;
+}
+
+if (!window.matchMedia) {
+  window.matchMedia = ((query: string) => ({
+    matches: false,
+    media: query,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+    addListener: () => undefined,
+    removeListener: () => undefined,
+    dispatchEvent: () => false,
+    onchange: null,
+  })) as typeof window.matchMedia;
+}
+
 afterEach(() => {
   cleanup();
   localStorage.clear();
 });
+
+

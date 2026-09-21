@@ -5,6 +5,7 @@ import { THEMES, useTheme } from "../theme";
 import { checkCanvasSession, isTauri, openCanvasSso, setDockMode, syncCanvas } from "../ipc";
 import { Onboarding } from "../components/Onboarding";
 import { ConnectorsPanel } from "./ConnectorsPanel";
+import { SourcesView } from "./SourcesView";
 
 export function SettingsView() {
   const { theme, setTheme, motion, setMotion } = useTheme();
@@ -100,7 +101,9 @@ export function SettingsView() {
         </button>
       </div>
       {canvas && <p role="status">{canvas}</p>}
-      {!isTauri() && <p className="muted">Canvas actions need the desktop app.</p>}
+
+      <h2>Canvas data</h2>
+      <SourcesView inspectOnly />
 
       <h2>Profiles</h2>
       {profiles ? (

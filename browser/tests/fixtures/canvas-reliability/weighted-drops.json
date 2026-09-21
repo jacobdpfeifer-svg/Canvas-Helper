@@ -1,0 +1,229 @@
+{
+  "id": "weighted-drops",
+  "course": {
+    "id": 1500,
+    "name": "First-Year Writing",
+    "course_code": "WRTG 1150",
+    "enrollment_term_id": 1,
+    "time_zone": "America/Denver",
+    "start_at": "2026-08-24T06:00:00Z",
+    "end_at": "2026-12-18T07:00:00Z",
+    "syllabus_body": "<p>Weighted quizzes drop lowest except never-drop.</p>",
+    "enrollments": [
+      {
+        "type": "student",
+        "computed_current_score": 91,
+        "computed_current_grade": "A-"
+      }
+    ],
+    "term": {
+      "id": 1,
+      "name": "Fall 2026",
+      "start_at": "2026-08-24T06:00:00Z",
+      "end_at": "2026-12-18T07:00:00Z"
+    },
+    "score": 91,
+    "grade": "A-"
+  },
+  "assignmentGroups": [
+    {
+      "id": 11,
+      "name": "Quizzes",
+      "group_weight": 40,
+      "rules": {
+        "drop_lowest": 1,
+        "drop_highest": 0,
+        "never_drop": [
+          403
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "name": "Papers",
+      "group_weight": 70,
+      "rules": {
+        "drop_lowest": 0,
+        "drop_highest": 0,
+        "never_drop": []
+      }
+    }
+  ],
+  "assignments": [
+    {
+      "id": 401,
+      "name": "Quiz 1",
+      "due_at": "2026-09-10T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 11,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/401",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 4,
+        "posted_at": "2026-09-11T12:00:00Z"
+      }
+    },
+    {
+      "id": 402,
+      "name": "Quiz 2",
+      "due_at": "2026-09-17T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 11,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/402",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 10,
+        "posted_at": "2026-09-18T12:00:00Z"
+      }
+    },
+    {
+      "id": 403,
+      "name": "Quiz 3 (never drop)",
+      "due_at": "2026-09-24T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 11,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/403",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 2,
+        "posted_at": "2026-09-25T12:00:00Z"
+      }
+    },
+    {
+      "id": 404,
+      "name": "Quiz 4",
+      "due_at": "2026-10-01T16:00:00Z",
+      "points_possible": 10,
+      "assignment_group_id": 11,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/404",
+      "submission": {
+        "workflow_state": "unsubmitted"
+      }
+    },
+    {
+      "id": 410,
+      "name": "Practice (0 pts)",
+      "due_at": "2026-09-12T16:00:00Z",
+      "points_possible": 0,
+      "assignment_group_id": 11,
+      "published": true,
+      "grading_type": "not_graded",
+      "html_url": "https://canvas.example/courses/1500/assignments/410",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 0
+      }
+    },
+    {
+      "id": 501,
+      "name": "Essay",
+      "due_at": "2026-09-20T16:00:00Z",
+      "points_possible": 100,
+      "assignment_group_id": 12,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/501",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 90,
+        "posted_at": "2026-09-21T12:00:00Z"
+      }
+    },
+    {
+      "id": 502,
+      "name": "Hidden midterm",
+      "due_at": "2026-09-15T16:00:00Z",
+      "points_possible": 100,
+      "assignment_group_id": 12,
+      "published": true,
+      "grading_type": "points",
+      "html_url": "https://canvas.example/courses/1500/assignments/502",
+      "submission": {
+        "workflow_state": "graded",
+        "score": 50,
+        "posted_at": null
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "workflow_state": "graded",
+      "score": 4,
+      "posted_at": "2026-09-11T12:00:00Z",
+      "assignment_id": 401,
+      "id": 401
+    },
+    {
+      "workflow_state": "graded",
+      "score": 10,
+      "posted_at": "2026-09-18T12:00:00Z",
+      "assignment_id": 402,
+      "id": 402
+    },
+    {
+      "workflow_state": "graded",
+      "score": 2,
+      "posted_at": "2026-09-25T12:00:00Z",
+      "assignment_id": 403,
+      "id": 403
+    },
+    {
+      "workflow_state": "unsubmitted",
+      "assignment_id": 404,
+      "id": 404
+    },
+    {
+      "workflow_state": "graded",
+      "score": 0,
+      "assignment_id": 410,
+      "id": 410
+    },
+    {
+      "workflow_state": "graded",
+      "score": 90,
+      "posted_at": "2026-09-21T12:00:00Z",
+      "assignment_id": 501,
+      "id": 501
+    },
+    {
+      "workflow_state": "graded",
+      "score": 50,
+      "posted_at": null,
+      "assignment_id": 502,
+      "id": 502
+    }
+  ],
+  "modules": [
+    {
+      "id": 3,
+      "name": "Unit 1",
+      "position": 1,
+      "published": true,
+      "items": [
+        {
+          "id": 31,
+          "title": "Essay",
+          "type": "Assignment",
+          "content_id": 501,
+          "position": 1,
+          "published": true
+        }
+      ]
+    }
+  ],
+  "discussions": [],
+  "quizzes": [],
+  "planner": [],
+  "todo": [],
+  "calendar": [],
+  "pages": [],
+  "closed_grading_period": false
+}

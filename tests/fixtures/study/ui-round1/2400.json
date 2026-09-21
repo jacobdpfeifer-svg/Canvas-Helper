@@ -1,0 +1,398 @@
+{
+  "schema": 2,
+  "course": {
+    "id": "2400",
+    "name": "Intro to Computing",
+    "code": "CSCI 1300",
+    "label": "CSCI 1300 — Intro to Computing",
+    "color": "#C44569"
+  },
+  "term": {
+    "start_at": "2026-08-24T06:00:00Z",
+    "end_at": "2026-12-18T06:00:00Z",
+    "source": "canvas"
+  },
+  "fetched_at": "2026-09-20T12:00:00Z",
+  "sources": [
+    {
+      "id": "syllabus-2400",
+      "kind": "syllabus",
+      "title": "Syllabus",
+      "canvas_id": "2400",
+      "updated_at": null,
+      "url": null,
+      "text": "Weekly programs and one exam.",
+      "truncated": false
+    },
+    {
+      "id": "page-9",
+      "kind": "page",
+      "title": "Loops",
+      "canvas_id": "9",
+      "updated_at": null,
+      "url": null,
+      "text": "for and while",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3001",
+      "kind": "assignment",
+      "title": "Programming 1",
+      "canvas_id": "3001",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3001",
+      "text": "Programming 1 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3002",
+      "kind": "assignment",
+      "title": "Programming 2",
+      "canvas_id": "3002",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3002",
+      "text": "Programming 2 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3003",
+      "kind": "assignment",
+      "title": "Programming 3",
+      "canvas_id": "3003",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3003",
+      "text": "Programming 3 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3004",
+      "kind": "assignment",
+      "title": "Programming 4",
+      "canvas_id": "3004",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3004",
+      "text": "Programming 4 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3005",
+      "kind": "assignment",
+      "title": "Programming 5",
+      "canvas_id": "3005",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3005",
+      "text": "Programming 5 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3006",
+      "kind": "assignment",
+      "title": "Programming 6",
+      "canvas_id": "3006",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3006",
+      "text": "Programming 6 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3007",
+      "kind": "assignment",
+      "title": "Programming 7",
+      "canvas_id": "3007",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3007",
+      "text": "Programming 7 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3008",
+      "kind": "assignment",
+      "title": "Programming 8",
+      "canvas_id": "3008",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3008",
+      "text": "Programming 8 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3009",
+      "kind": "assignment",
+      "title": "Programming 9",
+      "canvas_id": "3009",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3009",
+      "text": "Programming 9 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3010",
+      "kind": "assignment",
+      "title": "Programming 10",
+      "canvas_id": "3010",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/x/assignments/3010",
+      "text": "Programming 10 practice set.",
+      "truncated": false,
+      "course_id": "2400"
+    },
+    {
+      "id": "assignment-3301",
+      "kind": "assignment",
+      "title": "Exam 1",
+      "canvas_id": "3301",
+      "updated_at": null,
+      "url": "https://canvas.example/courses/1300b/assignments/3301",
+      "text": "Exam 1 covers loops, lists, and file I/O.",
+      "truncated": false,
+      "course_id": "2400"
+    }
+  ],
+  "items": [
+    {
+      "id": "item-a3001",
+      "canvas_id": "3001",
+      "course_id": "2400",
+      "title": "Programming 1",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-05T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3001",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 1 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3002",
+      "canvas_id": "3002",
+      "course_id": "2400",
+      "title": "Programming 2",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-06T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3002",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 2 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3003",
+      "canvas_id": "3003",
+      "course_id": "2400",
+      "title": "Programming 3",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-07T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3003",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 3 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3004",
+      "canvas_id": "3004",
+      "course_id": "2400",
+      "title": "Programming 4",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-08T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3004",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 4 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3005",
+      "canvas_id": "3005",
+      "course_id": "2400",
+      "title": "Programming 5",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-09T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3005",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 5 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3006",
+      "canvas_id": "3006",
+      "course_id": "2400",
+      "title": "Programming 6",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-10T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3006",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 6 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3007",
+      "canvas_id": "3007",
+      "course_id": "2400",
+      "title": "Programming 7",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-11T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3007",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 7 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3008",
+      "canvas_id": "3008",
+      "course_id": "2400",
+      "title": "Programming 8",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-12T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3008",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 8 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3009",
+      "canvas_id": "3009",
+      "course_id": "2400",
+      "title": "Programming 9",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-13T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3009",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 9 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3010",
+      "canvas_id": "3010",
+      "course_id": "2400",
+      "title": "Programming 10",
+      "kind": "assignment",
+      "points_possible": 50,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-14T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/assignments/3010",
+      "submission_types": [
+        "online_upload"
+      ],
+      "completed": false,
+      "description": "Programming 10 practice set.",
+      "weight_share": 0.08264462809917356
+    },
+    {
+      "id": "item-a3301",
+      "canvas_id": "3301",
+      "course_id": "2400",
+      "title": "Exam 1",
+      "kind": "exam",
+      "points_possible": 100,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-10-22T16:00:00Z",
+      "html_url": "https://canvas.example/courses/1300b/assignments/3301",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "completed": false,
+      "description": "Exam 1 covers loops, lists, and file I/O.",
+      "weight_share": 0.1652892561983471
+    },
+    {
+      "id": "item-q3401",
+      "canvas_id": "3401",
+      "course_id": "2400",
+      "title": "Quiz: strings",
+      "kind": "quiz",
+      "points_possible": 5,
+      "assignment_group_id": null,
+      "group_weight": null,
+      "due_at": "2026-09-18T16:00:00Z",
+      "html_url": "https://canvas.example/courses/x/quizzes/3401",
+      "submission_types": [
+        "online_quiz"
+      ],
+      "completed": false,
+      "description": "Quiz: strings covers recent modules.",
+      "weight_share": 0.008264462809917356
+    }
+  ],
+  "exams": [
+    {
+      "id": "canvas-exam-2400-a3301",
+      "label": "Exam 1",
+      "due_at": "2026-10-22T16:00:00Z",
+      "kind": "assignment",
+      "points": 100,
+      "inferred": true
+    },
+    {
+      "id": "canvas-exam-2400-q3401",
+      "label": "Quiz: strings",
+      "due_at": "2026-09-18T16:00:00Z",
+      "kind": "quiz",
+      "points": 5,
+      "inferred": true
+    }
+  ],
+  "truncated": false,
+  "errors": []
+}
