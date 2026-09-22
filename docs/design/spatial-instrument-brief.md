@@ -1,6 +1,8 @@
 # ProductName visual language — Spatial Instrument
 
-**Status:** owner-sourced brief, 2026-09-18. Not yet implemented. Do not restyle production CSS until Jacob reacts to a style tile (see §14).
+> **Superseded on visual direction (2026-09-21).** [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) — *Living Instrument* — is now the source of truth for tokens, material, type, geometry, motion, and anti-patterns, and wins over this file and the style tile wherever they conflict. Keep using this brief for product behavior, screen anatomy, and the owner reference crops.
+
+**Status:** owner-sourced brief, 2026-09-18. Landed as Spatial Instrument in commit `be0eb3c`, then re-tokened to Living Instrument on 2026-09-21.
 
 **Build prompt:** [`docs/handoff/spatial-instrument-build-prompt.md`](../handoff/spatial-instrument-build-prompt.md) — execute that file to put this brief into the Tauri workspace (style tile first, then tokens/chrome).
 

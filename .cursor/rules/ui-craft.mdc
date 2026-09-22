@@ -1,32 +1,35 @@
 ---
-description: Spatial Instrument UI craft — workspace glass + parked dock
-globs: app/src/**/*.{tsx,ts,css},app/index.html,docs/design/ambient-dock-ui.md,design-system/**/*
+description: Living Instrument UI craft — stage composition, material tokens, parked dock
+globs: app/src/**/*.{tsx,ts,css},app/index.html,landing/**/*,docs/design/ambient-dock-ui.md,design-system/**/*
 alwaysApply: false
 ---
 
-# UI craft — ProductName Spatial Instrument
+# UI craft — ProductName Living Instrument
 
-When changing workspace or dock UI, read and obey:
+When changing workspace, landing, or dock UI, read and obey:
 
-1. [`docs/design/spatial-instrument-brief.md`](docs/design/spatial-instrument-brief.md) — numbers, anatomy, anti-examples
-2. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — tokens in the running app
+1. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — source of truth: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test
+2. [`docs/design/spatial-instrument-brief.md`](docs/design/spatial-instrument-brief.md) — product behavior and anatomy (visual direction superseded by MASTER)
 3. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — Peek geometry only
 
 ## Must
 
-- Student-beta is a **real workspace window** (D-11). Peek is still not a dashboard.
-- Glass on chrome (sidebar, sheets, palette, now-playing). Opaque `--surface-2` for study prose and lists.
-- Tokens from brief §6: `--bg`, `--surface-0/1/2`, `--surface-grouped`, `--accent` cobalt, radii 20/24/16/12/pill.
-- Dual density: tight lists vs 44px iOS controls vs 17px study reading. Do not average.
-- Four themes: Paper Solare cream, Night `#1C1C1E`, Forest pine + cream (not mint), High contrast `#0E0E10` no blur.
-- Source Serif 4 + IBM Plex Sans/Mono. Squircle mark; no “PN”.
+- Compose every screen as a **stage**: field → subject → orbit → signal. Pick the subject before drawing any surface.
+- Material is semantic: **ink** for focus/study, **paper** for reading/review, **glass** for temporary chrome only (sidebar, sheets, palette, now-playing), **signal** for live feedback only.
+- Tokens from MASTER §04/§06: primitives `--ink-*`, `--paper-*`, `--signal-*`; semantic `--bg`, `--fg`, `--accent` (one signal per scene), `--surface-0/1/2`, `--surface-grouped`, `--hairline`, `--ring`; radii by role `--radius-window` 22 / `--radius-stage` 18 / `--radius-sheet` 14 / `--radius-control` 10 / `--radius-row` 6 / `--radius-pill`.
+- Five themes (`app/src/theme.ts`): Night `#0C0D0F` cobalt, Paper `#F3EFE7` cobalt/coral, Forest `#17201A` gold, Signal `#111522` violet→coral edge, High contrast `#08090A` yellow with no blur and 2px rules.
+- Type roles: Source Serif 4 display/editorial, IBM Plex Sans utility + 17–19px prose (45–70ch), IBM Plex Mono meta. Scale tokens `--type-*`.
+- Density by zone: tight ledger / medium chrome / reading / cinematic. Do not average.
+- Motion verbs only on real state: settle, reveal, pulse, commit (`--motion-*`). Honor `prefers-reduced-motion` and `data-motion="reduced"`. Never `transition: all`.
 - Hit 44×44. Focus `2px --ring` offset 2. No `outline: none` on controls.
-- Honor `prefers-reduced-motion` and `data-motion="reduced"`. Never `transition-all`.
+- Peek dock keeps 18/14 radii and 6/14/22 spacing under `.dock`.
 
 ## Must not
 
-- 8px default control radius in the workspace; 13.5px root type; 168px bordered tab rail
-- Forest mint `#7fd1a0`; Paper cool-white `#FAF8F3`; Night navy-black `rgb(12,16,24)`
-- Purple/indigo/cyan glow; Inter/Geist/Roboto; emoji icons; 3-up feature cards
-- Full Liquid Glass on paragraph text; Brik motion on tabs/settings/calendar
-- Microphone / ASR; restyling Peek as visionOS panels unless tokens leaked
+- Three equal cards as the first answer; nested cards; cards inside glass; card-grid Home.
+- Blanket glass; glass, blur, or animated texture behind study prose; glass over a flat radial gradient.
+- Purple/indigo/cyan glow atmosphere; lime decoration; gradient text; sparkle-as-AI; emoji-as-brand.
+- One radius on everything; Inter/Geist/Roboto/SF Pro as the identity face.
+- Shimmer, confetti, bounce, endless loops, cursor-following noise; kinetic type in body copy, lists, errors, or nav.
+- Streak/leaderboard celebration mechanics; ChatGPT transcript as Home; voice as a mic glyph or orb.
+- Old Spatial values: `#1C1C1E` night, `#6B8CFF` accent, 24px panel radius, 12px control radius, Forest mint.

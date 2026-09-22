@@ -58,8 +58,10 @@ process is the tray menu's "Quit" item only.
 ## Visual craft — Selective Instrument Glass
 
 Tokens, type, anti-patterns, and component craft rules live in
-[`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md).
-Agents touching the dock UI must follow MASTER; this section is the short map.
+[`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md)
+(Living Instrument). Agents touching the dock UI must follow MASTER; this section
+is the short map. Peek keeps its own 18/14 radii and 6/14/22 spacing — MASTER §06
+calls the dock a specialized object, not the global geometry.
 
 - **Direction:** physical sticky note + Raycast-grade chrome. Frosted shell,
   opaque-enough content. Not a SaaS dashboard, cream/terracotta editorial,

@@ -1,52 +1,101 @@
-/* Spatial Instrument workspace + parked dock — design-system/productname/MASTER.md */
+/* Living Instrument workspace + parked dock — design-system/productname/MASTER.md */
 
 :root {
-  --bg: #1c1c1e;
-  --fg: #f5f5f7;
-  --muted: rgba(235, 235, 245, 0.6);
-  --accent: #6b8cff;
-  --accent-deep: #4a6ae8;
-  --on-accent: #0a1020;
-  --danger: #ff453a;
-  --success: #34c759;
-  --paper-edge: rgba(255, 228, 196, 0.55);
-  --surface-0: rgba(44, 44, 46, 0.52);
-  --surface-1: rgba(58, 58, 60, 0.58);
-  --surface-2: rgba(28, 28, 30, 0.92);
-  --surface-grouped: #2c2c2e;
+  /* --- material primitives (MASTER §04) --- */
+  --ink-0: #0c0d0f;
+  --ink-1: #15171a;
+  --ink-2: #22262a;
+  --paper-0: #f3efe7;
+  --paper-1: #e7dfd1;
+  --paper-ink: #272322;
+  --line-light: rgba(255, 255, 255, 0.16);
+  --line-dark: rgba(26, 22, 20, 0.16);
+
+  /* named signals: a theme picks one as --accent; components never use these directly */
+  --signal-cobalt: #3767ff;
+  --signal-coral: #ff604d;
+  --signal-gold: #e1ad49;
+  --signal-violet: #8b72e8;
+  --signal-cream: #f1d7a7;
+
+  /* --- semantic tokens: Night / Instrument (default) --- */
+  --bg: var(--ink-0);
+  --fg: #f3f1eb;
+  --muted: rgba(243, 241, 235, 0.6);
+  --accent: var(--signal-cobalt);
+  --accent-deep: #2a52d8;
+  --on-accent: #f5f7ff;
+  --danger: #f35b57;
+  --success: #4cc38a;
+  --paper-edge: rgba(241, 215, 167, 0.5);
+  --surface-0: rgba(34, 38, 42, 0.52);
+  --surface-1: rgba(34, 38, 42, 0.68);
+  --surface-2: var(--ink-1);
+  --surface-grouped: var(--ink-2);
   --surface-solid: var(--bg);
-  --hairline: rgba(255, 255, 255, 0.18);
-  --specular: rgba(255, 255, 255, 0.28);
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-  --blur: 24px;
+  --hairline: var(--line-light);
+  --specular: rgba(255, 255, 255, 0.22);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+  --blur: 20px;
   --border: var(--hairline);
   --border-strong: rgba(255, 255, 255, 0.28);
   --divider: rgba(255, 255, 255, 0.08);
-  --ring: #6b8cff;
-  --radius-window: 20px;
-  --radius-panel: 24px;
-  --radius-card: 16px;
-  --radius-control: 12px;
-  --radius-row: 10px;
+  --ring: var(--accent);
+
+  /* --- geometry by role (MASTER §06) --- */
+  --radius-window: 22px;
+  --radius-stage: 18px;
+  --radius-sheet: 14px;
+  --radius-control: 10px;
+  --radius-row: 6px;
   --radius-pill: 999px;
   --radius-thumb: 999px;
   --radius-icon: 999px;
+  --radius-panel: var(--radius-stage);
+  --radius-card: var(--radius-sheet);
   --radius-outer: var(--radius-window);
   --radius-inner: var(--radius-control);
-  --radius-sheet: var(--radius-card);
+  --hairline-width: 1px;
   --space-tight: 8px;
   --space-row: 12px;
   --space-section: 24px;
+
+  /* --- typography roles (MASTER §05) --- */
   --font-display: "Source Serif 4", "Iowan Old Style", "Palatino Linotype",
     Georgia, serif;
   --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --type-display: clamp(56px, 8vw, 104px);
+  --type-display-leading: 0.92;
+  --type-editorial: clamp(28px, 3.4vw, 48px);
+  --type-editorial-leading: 1;
+  --type-ui: 15px;
+  --type-ui-leading: 1.2;
+  --type-prose: 17px;
+  --type-prose-leading: 1.5;
+  --type-meta: 12px;
+  --type-meta-leading: 1.2;
+  --type-label: 11px;
+  --type-label-tracking: 0.1em;
+
+  /* --- motion verbs (MASTER §09) --- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-chrome: 160ms;
+  --motion-settle: 220ms;
+  --motion-sheet: 280ms;
+  --motion-reveal: 420ms;
+  --motion-commit: 120ms;
+  --motion-pulse: 1800ms;
+  --motion-showcase: 760ms;
+
+  /* --- glass: temporary chrome only --- */
   --glass-tint: var(--surface-0);
   --glass-tint-strong: var(--surface-1);
   --glass-border: var(--border);
   --glass-divider: var(--divider);
+
   font-family: var(--font-ui);
-  font-size: 15px;
+  font-size: var(--type-ui);
   line-height: 1.4;
 }
 
@@ -1184,71 +1233,95 @@ button.skip {
 }
 
 /* ===================================================================
-   Workspace (2026-09-18 beta): themes, navigation, study panels.
-   Tokens above are the "night" preset; presets below override them.
+   Workspace: theme recipes (MASTER §04). Tokens above are the "night"
+   preset; each recipe below picks a field, an ink, and ONE signal.
    =================================================================== */
 
+/* Paper / Archive — reading, writing, reference. Warm, never pure white. */
 :root[data-theme="paper"] {
-  --bg: #ece4d5;
-  --fg: #563e3b;
-  --muted: #7a6560;
-  --accent: #2f5bd8;
-  --accent-deep: #1f43ad;
+  --bg: var(--paper-0);
+  --fg: var(--paper-ink);
+  --muted: rgba(39, 35, 34, 0.62);
+  --accent: var(--signal-cobalt);
+  --accent-deep: #2a52d8;
   --on-accent: #ffffff;
-  --danger: #b3261e;
-  --success: #1f7a4d;
-  --surface-0: rgba(255, 252, 246, 0.62);
-  --surface-1: rgba(255, 252, 246, 0.78);
-  --surface-2: #fffcf6;
-  --surface-grouped: #f4ede2;
+  --danger: #c8453f;
+  --success: #2a8a5c;
+  --surface-0: rgba(243, 239, 231, 0.62);
+  --surface-1: rgba(243, 239, 231, 0.8);
+  --surface-2: #f7f4ee;
+  --surface-grouped: var(--paper-1);
   --surface-solid: var(--bg);
-  --hairline: rgba(86, 62, 59, 0.16);
+  --hairline: var(--line-dark);
   --specular: rgba(255, 255, 255, 0.55);
-  --shadow: 0 12px 40px rgba(86, 62, 59, 0.12);
+  --shadow: 0 12px 40px rgba(39, 35, 34, 0.12);
   --border: var(--hairline);
-  --border-strong: rgba(86, 62, 59, 0.28);
-  --divider: rgba(86, 62, 59, 0.1);
-  --ring: #2f5bd8;
+  --border-strong: rgba(26, 22, 20, 0.28);
+  --divider: rgba(26, 22, 20, 0.1);
+  --ring: var(--accent);
   color-scheme: light;
 }
 
+/* Forest / Fieldwork — long sessions, review. Signal is gold, not mint. */
 :root[data-theme="forest"] {
-  --bg: #121a16;
-  --fg: #f4ede4;
-  --muted: rgba(232, 217, 196, 0.72);
-  --accent: #e8d9c4;
-  --accent-deep: #c4a574;
-  --on-accent: #121a16;
-  --danger: #ff453a;
-  --success: #34c759;
-  --surface-0: rgba(232, 217, 196, 0.08);
-  --surface-1: rgba(232, 217, 196, 0.14);
-  --surface-2: rgba(18, 28, 22, 0.94);
-  --surface-grouped: #1a2420;
+  --bg: #17201a;
+  --fg: #efe6d7;
+  --muted: rgba(239, 230, 215, 0.68);
+  --accent: var(--signal-gold);
+  --accent-deep: #c4933a;
+  --on-accent: #17201a;
+  --surface-0: rgba(239, 230, 215, 0.07);
+  --surface-1: rgba(239, 230, 215, 0.12);
+  --surface-2: #1c261f;
+  --surface-grouped: #222d25;
   --surface-solid: var(--bg);
-  --hairline: rgba(232, 217, 196, 0.18);
-  --specular: rgba(255, 255, 255, 0.22);
+  --hairline: rgba(239, 230, 215, 0.16);
+  --specular: rgba(255, 255, 255, 0.18);
   --border: var(--hairline);
-  --border-strong: rgba(232, 217, 196, 0.28);
-  --divider: rgba(232, 217, 196, 0.1);
-  --ring: #e8d9c4;
+  --border-strong: rgba(239, 230, 215, 0.28);
+  --divider: rgba(239, 230, 215, 0.1);
+  --ring: var(--accent);
 }
 
+/* Signal / Live — voice, collaboration, active processing. Violet-to-coral edge light. */
+:root[data-theme="signal"] {
+  --bg: #111522;
+  --fg: #f5f7ff;
+  --muted: rgba(245, 247, 255, 0.62);
+  --accent: var(--signal-violet);
+  --accent-deep: #6d55d1;
+  --on-accent: #0d0f1a;
+  --surface-0: rgba(139, 114, 232, 0.08);
+  --surface-1: rgba(139, 114, 232, 0.14);
+  --surface-2: #161b2c;
+  --surface-grouped: #1c2236;
+  --surface-solid: var(--bg);
+  --hairline: rgba(245, 247, 255, 0.16);
+  --specular: rgba(255, 255, 255, 0.2);
+  --border: var(--hairline);
+  --border-strong: rgba(245, 247, 255, 0.28);
+  --divider: rgba(245, 247, 255, 0.08);
+  --ring: var(--accent);
+  --signal-edge: linear-gradient(135deg, var(--signal-violet), var(--signal-coral));
+}
+
+/* High contrast — no blur, 2px rules, yellow signal. */
 :root[data-theme="contrast"] {
-  --bg: #0e0e10;
+  --bg: #08090a;
   --fg: #ffffff;
   --muted: #d0d0d4;
   --accent: #ffd60a;
   --accent-deep: #ffc300;
   --on-accent: #000000;
-  --danger: #ff453a;
-  --success: #30d158;
-  --surface-0: #0e0e10;
-  --surface-1: #0e0e10;
-  --surface-2: #0e0e10;
-  --surface-grouped: #161618;
+  --danger: #ff5a55;
+  --success: #4cc38a;
+  --surface-0: #08090a;
+  --surface-1: #08090a;
+  --surface-2: #08090a;
+  --surface-grouped: #131416;
   --surface-solid: var(--bg);
   --hairline: #ffffff;
+  --hairline-width: 2px;
   --specular: transparent;
   --shadow: none;
   --blur: 0px;
@@ -1722,13 +1795,16 @@ fieldset.field label {
   background: linear-gradient(135deg, var(--accent), var(--surface-solid));
 }
 .theme-grid label[data-theme-preview="paper"] .swatch {
-  background: linear-gradient(135deg, #2f5bd8, #faf8f3);
+  background: linear-gradient(135deg, var(--signal-cobalt), var(--paper-0));
 }
 .theme-grid label[data-theme-preview="night"] .swatch {
-  background: linear-gradient(135deg, #6b8cff, #0c1018);
+  background: linear-gradient(135deg, var(--signal-cobalt), var(--ink-0));
 }
 .theme-grid label[data-theme-preview="forest"] .swatch {
-  background: linear-gradient(135deg, #7fd1a0, #0b1410);
+  background: linear-gradient(135deg, var(--signal-gold), #17201a);
+}
+.theme-grid label[data-theme-preview="signal"] .swatch {
+  background: linear-gradient(135deg, var(--signal-violet), var(--signal-coral));
 }
 .theme-grid label[data-theme-preview="contrast"] .swatch {
   background: linear-gradient(135deg, #ffd60a, #000);

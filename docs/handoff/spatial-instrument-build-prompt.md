@@ -1,5 +1,7 @@
 # Spatial Instrument: visual-language build
 
+> **Historical (executed 2026-09-18 as `be0eb3c`).** Visual direction has since moved to **Living Instrument** — [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) is the source of truth and its §14 migration order is the current work list. Do not re-run this prompt's token values.
+
 Prepared September 18, 2026 from the owner brief [`docs/design/spatial-instrument-brief.md`](../design/spatial-instrument-brief.md). This is a **build execution prompt** for a coding agent with repository access — the same shape as [`ui-rebuild-round1-build-prompt.md`](./ui-rebuild-round1-build-prompt.md). Product/privacy boundaries in that prompt’s parent ([`student-beta-agent-build-prompt.md`](./student-beta-agent-build-prompt.md) §3 and §8) still apply and are not repeated here.
 
 **How Jacob should run it:** give the agent this repository and say:
