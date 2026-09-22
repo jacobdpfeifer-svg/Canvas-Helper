@@ -38,52 +38,68 @@ export function CalendarView({
     void readCalendarSurface().then(setSurface);
   };
 
+  const events = [
+    ...surface.events.map((e) => ({ ...e, family: "local" as const })),
+    ...(surface.canvas_events || []).map((e) => ({ ...e, family: "canvas" as const })),
+  ];
+  const next = nextEvent(events);
+
   return (
-    <section className="calendar-tab" aria-labelledby="cal-heading">
-      <h1 id="cal-heading">Calendar</h1>
-      <SyncHealthBanner health={surface.sync_health} />
-      {surface.suggestions.length > 0 && (
-        <section className="suggest" aria-label="Suggested">
-          <h2>Suggested</h2>
-          <ul>
-            {surface.suggestions.map((sg) => (
-              <SuggestionRow
-                key={sg.source_message_id}
-                sg={sg}
-                onAdd={async () => {
-                  await addCalendarEvent({
-                    kind: "personal",
-                    title: sg.title,
-                    start: sg.start,
-                    end: sg.end,
-                    note: sg.why,
-                  });
-                  refresh();
-                }}
-                onDismiss={async () => {
-                  await dismissCalendarSuggestion(sg.source_message_id);
-                  setSurface((s) => ({
-                    ...s,
-                    suggestions: s.suggestions.filter((x) => x.source_message_id !== sg.source_message_id),
-                  }));
-                }}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-      <button type="button" className="primary" onClick={() => setSheet(true)}>
-        Add to calendar
-      </button>
-      <MonthGrid
-        date={cursor}
-        events={[
-          ...surface.events.map((e) => ({ ...e, family: "local" as const })),
-          ...(surface.canvas_events || []).map((e) => ({ ...e, family: "canvas" as const })),
-        ]}
-        onPrev={() => setCursor(shiftMonth(cursor, -1))}
-        onNext={() => setCursor(shiftMonth(cursor, 1))}
-      />
+    <section className="calendar-stage scene-ink" aria-labelledby="cal-heading">
+      <div className="calendar-subject">
+        <p className="index-label">Today</p>
+        <h1 id="cal-heading" className="editorial">
+          {next ? next.title : "Nothing scheduled"}
+        </h1>
+        {next && (
+          <p className="calendar-when">
+            {next.family === "canvas" ? "Canvas · " : ""}
+            {formatWhen(next.start)}
+          </p>
+        )}
+        <SyncHealthBanner health={surface.sync_health} />
+        <button type="button" className="primary" onClick={() => setSheet(true)}>
+          Add to calendar
+        </button>
+      </div>
+      <aside className="calendar-orbit" aria-label="Month">
+        {surface.suggestions.length > 0 && (
+          <section className="suggest" aria-label="Suggested">
+            <h2 className="index-label">Suggested</h2>
+            <ul className="month-ledger">
+              {surface.suggestions.map((sg) => (
+                <SuggestionRow
+                  key={sg.source_message_id}
+                  sg={sg}
+                  onAdd={async () => {
+                    await addCalendarEvent({
+                      kind: "personal",
+                      title: sg.title,
+                      start: sg.start,
+                      end: sg.end,
+                      note: sg.why,
+                    });
+                    refresh();
+                  }}
+                  onDismiss={async () => {
+                    await dismissCalendarSuggestion(sg.source_message_id);
+                    setSurface((s) => ({
+                      ...s,
+                      suggestions: s.suggestions.filter((x) => x.source_message_id !== sg.source_message_id),
+                    }));
+                  }}
+                />
+              ))}
+            </ul>
+          </section>
+        )}
+        <MonthLedger
+          date={cursor}
+          events={events}
+          onPrev={() => setCursor(shiftMonth(cursor, -1))}
+          onNext={() => setCursor(shiftMonth(cursor, 1))}
+        />
+      </aside>
       {sheet && (
         <AddSheet
           onClose={() => setSheet(false)}
@@ -125,7 +141,21 @@ function shiftMonth(d: Date, n: number): Date {
   return new Date(d.getFullYear(), d.getMonth() + n, 1);
 }
 
-function MonthGrid({
+function nextEvent(events: (CalendarEvent & { family?: string })[]) {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  return [...events]
+    .filter((e) => new Date(e.start).getTime() >= start.getTime())
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())[0];
+}
+
+function formatWhen(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function MonthLedger({
   date,
   events,
   onPrev,
@@ -138,41 +168,43 @@ function MonthGrid({
 }) {
   const y = date.getFullYear();
   const m = date.getMonth();
-  const first = new Date(y, m, 1).getDay();
-  const days = new Date(y, m + 1, 0).getDate();
-  const cells = Array.from({ length: first + days }, (_, i) => (i < first ? null : i - first + 1));
+  const rows = events
+    .filter((e) => {
+      const s = new Date(e.start);
+      return s.getFullYear() === y && s.getMonth() === m;
+    })
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   return (
-    <div className="month-grid">
+    <div className="month-ledger-wrap">
       <div className="month-nav">
         <button type="button" onClick={onPrev} aria-label="Previous month">
-          ‹
+          Prev
         </button>
-        <h2>
+        <h2 className="index-label">
           {date.toLocaleString(undefined, { month: "long", year: "numeric" })}
         </h2>
         <button type="button" onClick={onNext} aria-label="Next month">
-          ›
+          Next
         </button>
       </div>
-      <ol>
-        {cells.map((d, i) => (
-          <li key={i} className={d ? undefined : "empty"}>
-            {d ?? ""}
-            {d &&
-              events
-                .filter((e) => {
-                  const s = new Date(e.start);
-                  return s.getFullYear() === y && s.getMonth() === m && s.getDate() === d;
-                })
-                .map((e) => (
-                  <span key={e.id} className={`cal-chip${e.family === "canvas" ? " canvas" : ""}`}>
-                    {e.family === "canvas" ? "Canvas · " : ""}
-                    {e.title}
-                  </span>
-                ))}
-          </li>
-        ))}
-      </ol>
+      {rows.length === 0 ? (
+        <p className="muted">Nothing in this month.</p>
+      ) : (
+        <ol className="month-ledger">
+          {rows.map((e, i) => (
+            <li key={e.id}>
+              <span className="mono">{String(i + 1).padStart(2, "0")}</span>
+              <span>
+                <strong>
+                  {e.family === "canvas" ? "Canvas · " : ""}
+                  {e.title}
+                </strong>
+                <span className="muted">{formatWhen(e.start)}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }

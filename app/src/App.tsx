@@ -79,8 +79,8 @@ export function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <nav className="workspace-nav glass" aria-label="Sections">
-        <span className="squircle-mark" aria-hidden="true" />
+      <nav className="workspace-nav" aria-label="Sections">
+        <span className="instrument-mark" aria-hidden="true" />
         <ul role="tablist">
           {TABS.map((t) => (
             <li key={t.id} role="presentation">

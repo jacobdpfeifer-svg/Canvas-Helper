@@ -77,7 +77,7 @@ export function StudyView({
   };
 
   return (
-    <section className="study" aria-labelledby="study-heading">
+    <section className="study scene-paper" aria-labelledby="study-heading">
       <header className="study-header">
         <h1 id="study-heading">Study</h1>
         <div className="study-controls">
@@ -109,7 +109,7 @@ export function StudyView({
         {live}
       </p>
 
-      {phase.kind === "loading" && <p className="muted">Loading…</p>}
+      {phase.kind === "loading" && <p className="page index-label">Loading</p>}
       {phase.kind === "error" && <ErrorPanel error={phase.error} retry={phase.retry} onGoToSources={onGoToSources} />}
       {phase.kind === "offer" && (
         <OfferPanel
@@ -142,7 +142,8 @@ function ErrorPanel({ error, retry, onGoToSources }: { error: StudyRequestError;
   const heading = useFocusOnChange<HTMLHeadingElement>(error);
   const unreachable = error.code === "unreachable";
   return (
-    <div className="panel panel-error" role="alert">
+    <div className="page page-quiet" role="alert">
+      <p className="index-label">Study</p>
       <h2 ref={heading} tabIndex={-1}>
         {unreachable ? "The study core did not answer" : "Something went wrong"}
       </h2>
@@ -178,7 +179,8 @@ function OfferPanel({
   const heading = useFocusOnChange<HTMLHeadingElement>(offer);
   if (offer.kind === "missing_source") {
     return (
-      <div className="panel">
+      <div className="page page-quiet">
+        <p className="index-label">Study</p>
         <h2 ref={heading} tabIndex={-1}>
           No practice item is ready
         </h2>
@@ -191,7 +193,8 @@ function OfferPanel({
   }
   if (offer.kind === "no_eligible_item") {
     return (
-      <div className="panel">
+      <div className="page page-quiet">
+        <p className="index-label">Study</p>
         <h2 ref={heading} tabIndex={-1}>
           {offer.action === "stop" ? "That is everything for this session" : "Nothing is ready yet"}
         </h2>
@@ -212,7 +215,8 @@ function OfferPanel({
   }
   if (offer.kind === "needs_exam_date" || offer.kind === "no_pre_exam_slot") {
     return (
-      <div className="panel">
+      <div className="page page-quiet">
+        <p className="index-label">Study</p>
         <h2 ref={heading} tabIndex={-1}>
           {offer.kind === "needs_exam_date" ? "Add the exam date first" : "No slot before the exam"}
         </h2>
@@ -226,7 +230,8 @@ function OfferPanel({
   if (offer.kind === "no_review_needed") {
     const alt = offer.alternatives[0];
     return (
-      <div className="panel">
+      <div className="page page-quiet">
+        <p className="index-label">Study</p>
         <h2 ref={heading} tabIndex={-1}>
           Nothing is due right now
         </h2>

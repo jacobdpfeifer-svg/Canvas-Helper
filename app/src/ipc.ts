@@ -42,6 +42,19 @@ export async function syncCanvas(): Promise<SyncResult> {
   return invoke<SyncResult>("sync_canvas");
 }
 
+export type CanvasExportResult = {
+  ok: boolean;
+  export_dir: string;
+  zip: string;
+  courses: number;
+  grades_included: boolean;
+};
+
+export async function exportCanvas(includeGrades = false): Promise<CanvasExportResult> {
+  if (!isTauri()) return { ok: false, export_dir: "", zip: "", courses: 0, grades_included: false };
+  return invoke<CanvasExportResult>("export_canvas", { includeGrades });
+}
+
 export async function readTop3(): Promise<Top3Item[]> {
   if (!isTauri()) return [];
   return invoke<Top3Item[]>("read_top3");
@@ -784,4 +797,3 @@ export async function readGradeTruth(courseId: string): Promise<GradeTruth> {
   if (!isTauri()) return { course_id: courseId };
   return invoke<GradeTruth>("read_grade_truth", { courseId });
 }
-

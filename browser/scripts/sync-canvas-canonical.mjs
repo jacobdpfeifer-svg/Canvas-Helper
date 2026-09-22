@@ -18,7 +18,10 @@ import { writeAdaptersFromProjection } from "./lib/canvas-adapters.mjs";
 
 const userRoot = resolveUserRoot({ create: true, announce: true });
 const adaptersOnly = process.env.CANVAS_ADAPTERS_ONLY === "1" || process.env.CANVAS_ADAPTERS_ONLY === "true";
-const daysAhead = Number(process.env.CATALOG_DAYS || process.env.DAYS || 150);
+// Raw fetch depth (term-wide "full scrape") — CATALOG_DAYS only. WEEK_TABLE_DAYS
+// (below) controls only the week.md display window and must not shrink this.
+const daysAhead = Number(process.env.CATALOG_DAYS || 150);
+const weekTableDays = Number(process.env.WEEK_TABLE_DAYS || 30);
 const outDir = path.join(userRoot, "inbox", "study-sources");
 fs.mkdirSync(outDir, { recursive: true });
 const progressPath = path.join(outDir, "progress.json");
@@ -37,7 +40,7 @@ function adaptersFromCurrent() {
     userRoot,
     generation: cur.generation,
     projections,
-    daysAhead: Number(process.env.DAYS || 14),
+    daysAhead: Number(process.env.WEEK_TABLE_DAYS || 30),
   });
   return { ok: ad.ok, error: ad.errors[0], sync_id: cur.pointer.sync_id };
 }
@@ -133,7 +136,7 @@ const adapter = writeAdaptersFromProjection({
   userRoot,
   generation,
   projections,
-  daysAhead: Number(process.env.DAYS || 14),
+  daysAhead: weekTableDays,
 });
 if (!adapter.ok) {
   console.warn(`adapters failed (canonical snapshot kept): ${adapter.errors.join("; ")}`);
@@ -182,14 +185,19 @@ writeProgress({
 });
 
 {
-  const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-  const proc = spawnSync("uv", ["run", "python", "-m", "canvas_mcp.core.learn_loop", "reconcile", "--json"], {
-    cwd: repoRoot,
-    encoding: "utf8",
-    env: process.env,
-  });
+  // repoRoot/browser/.. → repo root. "uv run" re-syncs the editable install from
+  // this repo's own (iCloud-backed) source on every call, which intermittently
+  // drops files and breaks the canvas_mcp.core import; py-mirror-run.sh installs
+  // once against a non-iCloud mirror instead. reconcile has no --json flag.
+  const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+  const proc = spawnSync(
+    path.join(repoRoot, "scripts", "py-mirror-run.sh"),
+    ["-m", "canvas_mcp.core.learn_loop", "reconcile"],
+    { cwd: repoRoot, encoding: "utf8", env: process.env }
+  );
   if (proc.status !== 0) {
     console.warn("learn_loop reconcile exited non-zero — checkpoint drift may be stale");
+    if (proc.stderr) console.warn(proc.stderr.trim());
   }
 }
 

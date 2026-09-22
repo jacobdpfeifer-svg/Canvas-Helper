@@ -40,7 +40,7 @@ describe("CalendarView", () => {
     }));
     const user = userEvent.setup();
     render(<CalendarView />);
-    await screen.findByRole("heading", { name: "Calendar" });
+    await screen.findByRole("heading", { name: "Homework 1" });
     expect(readCalendarSurface).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole("button", { name: "Add to calendar" }));
     await user.type(screen.getByLabelText("Title"), "Chain rule block");

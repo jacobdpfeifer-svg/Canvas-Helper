@@ -32,6 +32,7 @@ fn main() {
             dock::show_dock,
             dock::hide_dock,
             commands::sync_canvas,
+            commands::export_canvas,
             commands::read_top3,
             commands::open_canvas_sso,
             commands::check_canvas_session,

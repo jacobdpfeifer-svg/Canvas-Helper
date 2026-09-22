@@ -127,6 +127,13 @@ export async function fetchCanonicalGeneration(page, {
     async function grab(name, pathBase, params) {
       const res = await apiAllPages(page, pathBase, params);
       const ep = endpointResult(res, `${name}:${id}`);
+      if (!ep.ok && ep.status === 404) {
+        // A 404 on a per-course sub-resource (e.g. Classic Quizzes disabled/migrated
+        // to New Quizzes) means the feature is off for this course, not a fetch
+        // failure — don't fail the whole course sync over it.
+        ep.ok = true;
+        ep.items = [];
+      }
       if (!ep.ok) {
         courseErrors.push(name);
         failed_endpoints.push({ endpoint: `${name}:${id}`, status: ep.status });
@@ -169,6 +176,10 @@ export async function fetchCanonicalGeneration(page, {
       items: (assignments.items || []).map((a) => a.submission).filter(Boolean),
       truncated: false,
     };
+    // Derived from the assignments fetch above (no separate API call), so mark
+    // it covered whenever assignments succeeded — otherwise "submissions" would
+    // never appear in coverage.completed even on a fully successful sync.
+    if (assignments.ok && !completed.includes("submissions")) completed.push("submissions");
     if (courseErrors.length) named_courses_failed.push(String(id));
     let pages = [];
     try {

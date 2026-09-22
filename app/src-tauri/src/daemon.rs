@@ -78,6 +78,24 @@ fn run_status(mut cmd: Command, label: &str) -> Result<(), String> {
     }
 }
 
+/// Build a student-operated portable Canvas bundle from the last canonical
+/// snapshot. The exporter writes Markdown/JSON and a ZIP under the profile's
+/// inbox/export directory; no network request is made here.
+pub fn run_canvas_export(rt: &Runtime, include_grades: bool) -> Result<String, String> {
+    tick_log("export-canvas");
+    let mut cmd = rt.browser_script("export-portable")?;
+    cmd.env("EXPORT_INCLUDE_GRADES", if include_grades { "1" } else { "0" });
+    let output = cmd
+        .output()
+        .map_err(|e| format!("failed to spawn Canvas export: {e}"))?;
+    if !output.status.success() {
+        let detail = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        return Err(if detail.is_empty() { format!("Canvas export exited with {}", output.status) } else { detail });
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    stdout.lines().rev().find(|line| !line.trim().is_empty()).map(str::to_string).ok_or_else(|| "Canvas export returned no result".into())
+}
+
 /// Shell `npm run sync` in browser/ with DEV_USER_ROOT / SCHOOL_SLUG when set.
 pub fn run_canvas_sync(rt: &Runtime) -> Result<(), String> {
     tick_log("sync");
