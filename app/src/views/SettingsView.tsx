@@ -102,7 +102,6 @@ export function SettingsView() {
       </div>
       {canvas && <p role="status">{canvas}</p>}
 
-      <h2>Canvas data</h2>
       <SourcesView inspectOnly />
 
       <h2>Profiles</h2>

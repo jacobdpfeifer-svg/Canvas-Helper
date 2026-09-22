@@ -6,17 +6,17 @@ import { HomeView } from "./views/HomeView";
 import { PlanView } from "./views/PlanView";
 import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
-import { IconPlan, IconSettings, IconStudy } from "./components/Icons";
+import { IconCalendar, IconHome, IconPlan, IconSettings, IconStudy } from "./components/Icons";
 import { useTheme } from "./theme";
 import { setDockMode, type SemesterTick } from "./ipc";
 
 export type Tab = "home" | "plan" | "study" | "calendar" | "settings";
 
 const TABS: { id: Tab; label: string; Icon: typeof IconStudy }[] = [
-  { id: "home", label: "Home", Icon: IconStudy },
+  { id: "home", label: "Home", Icon: IconHome },
   { id: "plan", label: "Plan", Icon: IconPlan },
   { id: "study", label: "Study", Icon: IconStudy },
-  { id: "calendar", label: "Calendar", Icon: IconPlan },
+  { id: "calendar", label: "Calendar", Icon: IconCalendar },
   { id: "settings", label: "Settings", Icon: IconSettings },
 ];
 

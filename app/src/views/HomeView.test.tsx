@@ -56,7 +56,10 @@ describe("HomeView", () => {
   it("renders a row per course and taller exam ticks", () => {
     render(<HomeView surface={surface} onExamPrep={() => undefined} />);
     expect(screen.getByRole("heading", { name: "Home" })).toBeInTheDocument();
-    expect(screen.getByText("MATH 1300")).toBeInTheDocument();
+    expect(screen.getAllByText("MATH 1300").length).toBeGreaterThan(0);
+    // subject statement is the next due tick; orbit rail indexes the next three
+    expect(screen.getByRole("button", { name: "Homework 1" })).toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "Next up" })).toHaveTextContent("01");
     const ticks = screen.getAllByRole("option");
     expect(ticks.length).toBeGreaterThanOrEqual(2);
     const exam = ticks.find((t) => t.getAttribute("aria-label") === "Midterm 1") as HTMLElement;
@@ -101,7 +104,8 @@ describe("HomeView", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/not an empty week/i);
   });
 
-  it("renders Start here / Learn / Do / Check and grade lead copy", () => {
+  it("puts Start here / Learn / Do / Check and grade lead copy in the tick sheet", async () => {
+    const user = userEvent.setup();
     render(
       <HomeView
         surface={surface}
@@ -125,8 +129,11 @@ describe("HomeView", () => {
         onExamPrep={() => undefined}
       />
     );
+    expect(screen.queryByRole("heading", { name: "Start here" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("option", { name: "Homework 1" }));
     expect(screen.getByRole("heading", { name: "Start here" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Learn" })).toBeInTheDocument();
+    // empty groups stay out of the sheet
+    expect(screen.queryByRole("heading", { name: "Learn" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Do" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Check" })).toBeInTheDocument();
     expect(screen.getByText(/Canvas says 88/)).toBeInTheDocument();

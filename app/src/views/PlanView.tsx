@@ -281,9 +281,9 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
               ];
 
   return (
-    <div className={`plan ${expanded ? "dock-expanded" : "dock-peek"}`}>
-      <header className="dock-controls">
-        <h1 className="plan-heading">Plan</h1>
+    <div className={`plan scene-ink ${expanded ? "dock-expanded" : "dock-peek"}`}>
+      <header className="dock-controls plan-index">
+        <h1 className="plan-heading index-label">Plan</h1>
         <button
           type="button"
           className="ghost icon-btn"
@@ -295,33 +295,7 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
         </button>
       </header>
       <SyncHealthBanner health={canvasHealth} />
-      {canvasHealth?.surfaces_enabled && (
-        <section className="glass work-week" aria-label="Upcoming Canvas work">
-          <h2>Upcoming work</h2>
-          {(!work?.items || work.items.length === 0) && canvasHealth.state === "empty_unverified" && (
-            <p>No Canvas snapshot has been verified yet.</p>
-          )}
-          {(!work?.items || work.items.length === 0) && canvasHealth.state === "fresh_complete" && (
-            <p>No work items in the snapshot.</p>
-          )}
-          <ul>
-            {(work?.items || [])
-              .filter((it) => it.submission_state !== "suppressed")
-              .slice(0, 12)
-              .map((it) => (
-                <li key={it.id}>
-                  {it.title}
-                  <span className="muted">
-                    {" "}
-                    · {it.submission_state}
-                    {it.disagreements && it.disagreements.length > 0 ? " · sources disagree" : ""}
-                  </span>
-                </li>
-              ))}
-          </ul>
-        </section>
-      )}
-
+      <div className="plan-stage">
       {reviewOpen && sessionItems.length > 0 ? (
         <ReviewSession
           items={sessionItems}
@@ -362,10 +336,59 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
           }}
         />
       )}
-      <section className="retention" aria-label="Calendar">
-        <h2>Calendar</h2>
-        <PlanEvent />
-      </section>
+      <aside className="plan-orbit" aria-label="Alongside">
+        {commitmentReady && !forceSkeleton ? (
+          <CommitmentPanel
+            state={commitment}
+            onSet={async (input) => {
+              await setCommitment(input);
+              refreshTop3();
+            }}
+            onResolve={async (status) => {
+              await resolveCommitment(status);
+              refreshTop3();
+            }}
+          />
+        ) : (
+          <div className="commit-line" aria-label="Commitment" aria-busy="true">
+            <span className="index-label">Commitment</span>
+            <Skeleton className="skeleton-line" width="70%" />
+          </div>
+        )}
+        <div className="commit-line" aria-label="Calendar">
+          <span className="index-label">Calendar</span>
+          <PlanEvent />
+        </div>
+      </aside>
+      {canvasHealth?.surfaces_enabled && (
+        <section className="ledger work-ledger" aria-label="Upcoming Canvas work">
+          <h2 className="index-label">Upcoming work</h2>
+          {(!work?.items || work.items.length === 0) && canvasHealth.state === "empty_unverified" && (
+            <p>No Canvas snapshot has been verified yet.</p>
+          )}
+          {(!work?.items || work.items.length === 0) && canvasHealth.state === "fresh_complete" && (
+            <p>No work items in the snapshot.</p>
+          )}
+          <ul>
+            {(work?.items || [])
+              .filter((it) => it.submission_state !== "suppressed")
+              .slice(0, 12)
+              .map((it, i) => (
+                <li key={it.id}>
+                  <span className="mono idx">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="rail-body">
+                    <strong>{it.title}</strong>
+                    <span className="mono muted">
+                      {it.submission_state}
+                      {it.disagreements && it.disagreements.length > 0 ? " · sources disagree" : ""}
+                    </span>
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </section>
+      )}
+      </div>
       {routeHint && <p className="route-hint">{routeHint}</p>}
       {syncError && (
         <p className="route-hint" role="alert">
@@ -480,26 +503,6 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
         </section>
       )}
 
-      {expanded && (!commitmentReady || forceSkeleton) && (
-        <section className="retention" aria-label="Commitment" aria-busy="true">
-          <h2>Commitment</h2>
-          <Skeleton className="skeleton-line" width="88%" />
-          <Skeleton className="skeleton-line-sm" width="55%" />
-        </section>
-      )}
-      {expanded && commitmentReady && !forceSkeleton && (
-        <CommitmentPanel
-          state={commitment}
-          onSet={async (input) => {
-            await setCommitment(input);
-            refreshTop3();
-          }}
-          onResolve={async (status) => {
-            await resolveCommitment(status);
-            refreshTop3();
-          }}
-        />
-      )}
 
       {paletteOpen && (
         <CommandPalette

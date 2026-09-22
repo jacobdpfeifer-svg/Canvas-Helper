@@ -89,7 +89,11 @@ export function SourcesView({ inspectOnly = false }: { inspectOnly?: boolean }) 
 
   return (
     <section className="sources" aria-labelledby="sources-heading">
-      <h1 id="sources-heading">{inspectOnly ? "Canvas data" : "Sources"}</h1>
+      {inspectOnly ? (
+        <h2 id="sources-heading">Canvas data</h2>
+      ) : (
+        <h1 id="sources-heading">Sources</h1>
+      )}
       {inspectOnly ? null : (
       <p className="muted">
         Practice is built only from material you import here. Synthetic packets are labeled; they are not your instructor's material.

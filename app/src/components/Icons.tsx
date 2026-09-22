@@ -56,8 +56,9 @@ export function IconPlan(props: IconProps) {
   return (
     <svg {...base} className={props.className}>
       {props.title ? <title>{props.title}</title> : null}
-      <rect x="4" y="5" width="16" height="15" rx="2" />
-      <path d="M8 3v4M16 3v4M4 10h16" />
+      <path d="M5 7h2M10 7h9" />
+      <path d="M5 12h2M10 12h9" />
+      <path d="M5 17h2M10 17h6" />
     </svg>
   );
 }
@@ -118,6 +119,30 @@ export function IconQuiz(props: IconProps) {
       <circle cx="12" cy="12" r="8" />
       <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7V14" />
       <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
+/** Home: the semester line — a rule with ticks and a today marker. */
+export function IconHome(props: IconProps) {
+  return (
+    <svg {...base} className={props.className}>
+      {props.title ? <title>{props.title}</title> : null}
+      <path d="M3 16h18" />
+      <path d="M7 16v-4M12 16v-7M17 16v-3" />
+      <path d="M10 5v14" strokeDasharray="1.5 2" />
+    </svg>
+  );
+}
+
+/** Calendar: month grid with one marked day. */
+export function IconCalendar(props: IconProps) {
+  return (
+    <svg {...base} className={props.className}>
+      {props.title ? <title>{props.title}</title> : null}
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M4 10h16" />
+      <path d="M9 14h2v2H9z" fill="currentColor" stroke="none" />
     </svg>
   );
 }

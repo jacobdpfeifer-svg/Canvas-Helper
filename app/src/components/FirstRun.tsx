@@ -183,7 +183,7 @@ export function FirstRun({
           </h1>
           <ul className="sync-cards">
             {courses.map((c) => (
-              <li key={c.id} className="sync-card glass" style={{ ["--course" as string]: c.color || "var(--accent)" }}>
+              <li key={c.id} className="sync-card" style={{ ["--course" as string]: c.color || "var(--accent)" }}>
                 <span className="sync-swatch" aria-hidden="true" />
                 <strong>{c.label}</strong>
                 <span>

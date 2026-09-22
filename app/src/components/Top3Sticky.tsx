@@ -95,7 +95,7 @@ export function Top3Sticky({
         aria-label="Today priorities, open ledger"
         aria-busy={loading || undefined}
       >
-        <h1>Today</h1>
+        <h2 className="editorial today-title">Today</h2>
         {updating && !loading ? (
           <p className="updating-cue">Updating…</p>
         ) : null}

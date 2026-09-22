@@ -12,6 +12,9 @@
     "test:watch": "node ./node_modules/vitest/vitest.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-autostart": "^2.0.0",
     "react": "^19.0.0",
