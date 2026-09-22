@@ -61,6 +61,13 @@ export function readPointer(file) {
   }
 }
 
+function confinedPointerPath(root, candidate) {
+  if (!candidate || typeof candidate !== "string") return null;
+  const base = path.resolve(root);
+  const resolved = path.resolve(candidate);
+  return resolved === base || resolved.startsWith(`${base}${path.sep}`) ? resolved : null;
+}
+
 export function writeEndpointFile(dir, name, payload) {
   writeJsonAtomic(path.join(dir, name), payload);
 }
@@ -89,6 +96,7 @@ export function materializeGenerationDir(dest, generation) {
   fs.mkdirSync(path.join(dest, "global"), { recursive: true });
   put(path.join("global", "planner.json"), generation.global?.planner || []);
   put(path.join("global", "todo.json"), generation.global?.todo || []);
+  put(path.join("global", "missing-submissions.json"), generation.global?.["missing-submissions"] || []);
   put(path.join("global", "calendar-events.json"), generation.global?.["calendar-events"] || []);
   const manifest = {
     ...generation.manifest,
@@ -135,6 +143,7 @@ export function loadGeneration(dir) {
     global: {
       planner: g("planner.json"),
       todo: g("todo.json"),
+      "missing-submissions": g("missing-submissions.json"),
       "calendar-events": g("calendar-events.json"),
     },
     fetched_at: manifest.finished_at,
@@ -158,7 +167,7 @@ export function commitRawGeneration(userRoot, generation, { sync_id } = {}) {
   });
   const loaded = loadGeneration(stagingDir);
   const check = validateGeneration(loaded);
-  if (!check.ok && !manifest.usable_partial) {
+  if (!check.ok) {
     fs.rmSync(stagingDir, { recursive: true, force: true });
     return { ok: false, errors: check.errors, unkeyed_sources: check.unkeyed_sources, sync_id: id };
   }
@@ -177,6 +186,51 @@ export function commitRawGeneration(userRoot, generation, { sync_id } = {}) {
   return { ok: true, sync_id: id, dir: dest, validation: check, manifest };
 }
 
+/**
+ * A partial fetch must not turn an endpoint outage into apparent deletion.
+ * Carry forward only the affected endpoint/course slice from the last raw
+ * generation; the new manifest still records the failure and remains partial.
+ */
+export function carryForwardFailedData(previous, next) {
+  if (!previous?.manifest || next?.manifest?.complete) return next;
+  const out = structuredClone(next);
+  const failed = [
+    ...(out.manifest.failed_endpoints || []).map((x) => x.endpoint || x),
+    ...(out.manifest.pagination || []).filter((x) => x.truncated).map((x) => x.endpoint),
+  ].map(String);
+  const has = (name) => failed.some((x) => x === name || x.startsWith(`${name}:`));
+  const globalMap = {
+    planner: "planner",
+    todo: "todo",
+    missing_submissions: "missing-submissions",
+    calendar_assignments: "calendar-events",
+    calendar_events: "calendar-events",
+  };
+  for (const [endpoint, key] of Object.entries(globalMap)) {
+    if (has(endpoint) && previous.global?.[key]) out.global[key] = structuredClone(previous.global[key]);
+  }
+  const courseMap = {
+    assignments: "assignments",
+    assignment_groups: "assignment-groups",
+    discussions: "discussions",
+    quizzes: "quizzes",
+    submissions: "submissions",
+    modules: "modules",
+    module_items: "modules",
+  };
+  const previousById = new Map((previous.courses || []).map((p) => [String(p.course?.id), p]));
+  for (const pack of out.courses || []) {
+    const id = String(pack.course?.id);
+    const old = previousById.get(id);
+    if (!old) continue;
+    for (const [endpoint, key] of Object.entries(courseMap)) {
+      if (has(`${endpoint}:${id}`) && old[key] != null) pack[key] = structuredClone(old[key]);
+    }
+  }
+  out.manifest.carried_forward_endpoints = failed;
+  return out;
+}
+
 export function commitProjectionPointer(userRoot, { sync_id, dir, health }) {
   const p = pathsFor(userRoot);
   writePointer(p.projPointer, {
@@ -191,15 +245,17 @@ export function commitProjectionPointer(userRoot, { sync_id, dir, health }) {
 export function readCurrentRaw(userRoot) {
   const p = pathsFor(userRoot);
   const ptr = readPointer(p.rawPointer);
-  if (!ptr?.path || !fs.existsSync(ptr.path)) return null;
-  return { pointer: ptr, generation: loadGeneration(ptr.path) };
+  const generationPath = confinedPointerPath(path.join(p.root, "raw", "generations"), ptr?.path);
+  if (!generationPath || !fs.existsSync(generationPath)) return null;
+  return { pointer: ptr, generation: loadGeneration(generationPath) };
 }
 
 export function readCurrentProjections(userRoot) {
   const p = pathsFor(userRoot);
   const ptr = readPointer(p.projPointer);
-  if (!ptr?.path || !fs.existsSync(ptr.path)) return null;
-  return { pointer: ptr, dir: ptr.path };
+  const projectionPath = confinedPointerPath(p.projections, ptr?.path);
+  if (!projectionPath || !fs.existsSync(projectionPath)) return null;
+  return { pointer: ptr, dir: projectionPath };
 }
 
 export function pruneGenerations(parent, currentId, { keepPointer = false } = {}) {

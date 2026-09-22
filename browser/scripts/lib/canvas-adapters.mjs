@@ -27,7 +27,7 @@ export function itemsToWeekRows(items, courses) {
       points: it.points_possible ?? "",
       type: it.object_type,
       html_url: it.html_url || "",
-      complete: ["submitted", "graded", "pending_review", "late"].includes(it.submission_state),
+      complete: ["submitted", "graded", "pending_review"].includes(it.submission_state),
       course_id: it.course_id,
       canvas_id: it.canvas_id,
       lti: it.lti,
@@ -176,9 +176,9 @@ export function writeAdaptersFromProjection({
           started_at: generation.manifest?.started_at,
           finished_at: generation.manifest?.finished_at,
           ok: true,
-          partial: !generation.manifest?.complete,
+          partial: !generation.manifest?.complete || errors.length > 0,
           session: "ok",
-          errors: [],
+          errors,
           courses: summaries,
         },
         null,
@@ -190,4 +190,3 @@ export function writeAdaptersFromProjection({
   }
   return { ok: errors.length === 0, errors, sync_id };
 }
-

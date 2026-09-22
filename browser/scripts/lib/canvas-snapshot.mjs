@@ -5,7 +5,7 @@ import { SCHEMA_VERSION, hashProfileId, sanitizeForLog } from "./canvas-model.mj
 import { getSchoolConfig } from "./school-config.mjs";
 
 export const FETCH_MATRIX = {
-  global: ["courses", "planner", "todo", "calendar_assignments", "calendar_events"],
+  global: ["courses", "planner", "todo", "missing_submissions", "calendar_assignments", "calendar_events"],
   course: ["assignments", "assignment_groups", "discussions", "quizzes", "submissions", "modules"],
 };
 
@@ -85,6 +85,14 @@ export async function fetchCanonicalGeneration(page, {
   else failed_endpoints.push({ endpoint: "todo", status: todoEp.status });
   if (todoEp.truncated) pagination.push({ endpoint: "todo", truncated: true });
 
+  const missingRes = await apiAllPages(page, "/api/v1/users/self/missing_submissions", {
+    "include[]": ["course", "planner_overrides"],
+  });
+  const missingEp = endpointResult(missingRes, "missing_submissions");
+  if (missingEp.ok) completed.push("missing_submissions");
+  else failed_endpoints.push({ endpoint: "missing_submissions", status: missingEp.status });
+  if (missingEp.truncated) pagination.push({ endpoint: "missing_submissions", truncated: true });
+
   const contextCodes = courses.map((c) => `course_${c.id}`);
   let calAssign = { ok: true, items: [], truncated: false, status: 200 };
   let calEvents = { ok: true, items: [], truncated: false, status: 200 };
@@ -148,6 +156,11 @@ export async function fetchCanonicalGeneration(page, {
             "include[]": ["content_details"],
           });
           if (extra.ok) mod.items = extra.items;
+          else {
+            courseErrors.push("module_items");
+            failed_endpoints.push({ endpoint: `module_items:${id}:${mod.id}`, status: extra.status });
+          }
+          if (extra.truncated) pagination.push({ endpoint: `module_items:${id}:${mod.id}`, truncated: true });
         }
       }
     }
@@ -196,6 +209,7 @@ export async function fetchCanonicalGeneration(page, {
     global: {
       planner: plannerEp.items,
       todo: todoEp.items,
+      "missing-submissions": missingEp.items,
       "calendar-events": [...calA.items, ...calE.items],
     },
     manifest: {
