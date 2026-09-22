@@ -29,8 +29,10 @@ fn proj_dir(user_root: &Path) -> Option<std::path::PathBuf> {
     let ptr = pointer(user_root)?;
     let path = ptr.get("path")?.as_str()?;
     let p = Path::new(path);
-    if p.exists() {
-        Some(p.to_path_buf())
+    let root = fs::canonicalize(canvas_root(user_root).join("projections")).ok()?;
+    let p = fs::canonicalize(p).ok()?;
+    if p.starts_with(&root) && p != root {
+        Some(p)
     } else {
         None
     }
@@ -95,6 +97,51 @@ pub fn read_work_surface(user_root: &Path, filters: &Value) -> Value {
     if let Some(cid) = course_id {
         if let Some(items) = surface.get_mut("items").and_then(|v| v.as_array_mut()) {
             items.retain(|it| it.get("course_id").and_then(|c| c.as_str()) == Some(cid));
+        }
+        if let Some(buckets) = surface.get_mut("buckets").and_then(|v| v.as_object_mut()) {
+            for rows in buckets.values_mut() {
+                if let Some(rows) = rows.as_array_mut() {
+                    rows.retain(|it| it.get("course_id").and_then(|c| c.as_str()) == Some(cid));
+                }
+            }
+        }
+    }
+    let bucket = filters.get("bucket").and_then(|v| v.as_str());
+    let state = filters.get("submission_state").and_then(|v| v.as_str());
+    if bucket.is_some() || state.is_some() {
+        let allowed_ids: Option<std::collections::HashSet<String>> = bucket.map(|b| {
+            surface
+                .get("buckets")
+                .and_then(|all| all.get(b))
+                .and_then(|v| v.as_array())
+                .map(|rows| {
+                rows.iter()
+                    .filter_map(|row| row.get("id").and_then(|id| id.as_str()).map(String::from))
+                    .collect()
+                })
+                .unwrap_or_default()
+        });
+        let keep = |it: &Value| {
+            let bucket_ok = allowed_ids
+                .as_ref()
+                .map(|ids| it.get("id").and_then(|id| id.as_str()).is_some_and(|id| ids.contains(id)))
+                .unwrap_or(true);
+            let state_ok = state
+                .map(|s| it.get("submission_state").and_then(|v| v.as_str()) == Some(s))
+                .unwrap_or(true);
+            bucket_ok && state_ok
+        };
+        if let Some(items) = surface.get_mut("items").and_then(|v| v.as_array_mut()) {
+            items.retain(keep);
+        }
+        if let Some(buckets) = surface.get_mut("buckets").and_then(|v| v.as_object_mut()) {
+            for (name, rows) in buckets.iter_mut() {
+                if bucket.is_some_and(|selected| selected != name) {
+                    *rows = Value::Array(Vec::new());
+                } else if let Some(rows) = rows.as_array_mut() {
+                    rows.retain(keep);
+                }
+            }
         }
     }
     surface
@@ -188,6 +235,44 @@ mod tests {
         let items = canvas_calendar_items(&dir);
         assert_eq!(items.len(), 1);
         assert_eq!(items[0]["family"], "canvas");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn filters_work_surface_by_bucket_and_submission_state() {
+        let dir = env::temp_dir().join(format!("pn-cv4-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        let proj = dir.join("inbox/canvas/projections/sync-a");
+        fs::create_dir_all(&proj).unwrap();
+        fs::write(
+            proj.join("sync-health.json"),
+            r#"{"state":"fresh_complete","sync_id":"sync-a","surfaces_enabled":true,"as_of":"2026-09-21T18:00:00Z"}"#,
+        )
+        .unwrap();
+        fs::write(
+            proj.join("work-surface.json"),
+            r#"{
+              "sync_id":"sync-a",
+              "items":[
+                {"id":"t|1|assignment|9","course_id":"1","submission_state":"missing","title":"Missing"},
+                {"id":"t|1|assignment|10","course_id":"1","submission_state":"submitted","title":"Submitted"}
+              ],
+              "buckets":{
+                "missing":[{"id":"t|1|assignment|9","course_id":"1","submission_state":"missing","title":"Missing"}],
+                "submitted":[{"id":"t|1|assignment|10","course_id":"1","submission_state":"submitted","title":"Submitted"}]
+              }
+            }"#,
+        )
+        .unwrap();
+        fs::write(
+            dir.join("inbox/canvas/projections/current.json"),
+            format!(r#"{{"sync_id":"sync-a","path":"{}"}}"#, proj.display()),
+        )
+        .unwrap();
+        let filtered = read_work_surface(&dir, &json!({ "bucket": "missing" }));
+        assert_eq!(filtered["items"].as_array().unwrap().len(), 1);
+        assert_eq!(filtered["items"][0]["submission_state"], "missing");
+        assert_eq!(filtered["buckets"]["submitted"].as_array().unwrap().len(), 0);
         let _ = fs::remove_dir_all(&dir);
     }
 

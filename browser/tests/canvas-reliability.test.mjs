@@ -5,13 +5,13 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { SCHEMA_VERSION, effectiveDateFromAssignment, identityKey, validateGeneration, classifyFreshness, isHttpUrl, hashFields, requireCanvasId } from "../scripts/lib/canvas-model.mjs";
 import { fixtureGeneration, wellStructured, fragmented, weightedDrops, partialOutage } from "../scripts/lib/canvas-reliability-fixtures.mjs";
-import { commitRawGeneration, pathsFor, readCurrentRaw, readPointer, pruneGenerations } from "../scripts/lib/canvas-store.mjs";
+import { carryForwardFailedData, commitRawGeneration, pathsFor, readCurrentRaw, readPointer, pruneGenerations } from "../scripts/lib/canvas-store.mjs";
 import { summarize_sync_health } from "../scripts/lib/canvas-health.mjs";
 import { reconcile_due_items, bucketWorkItem } from "../scripts/lib/canvas-reconcile.mjs";
 import { normalize_course_map } from "../scripts/lib/canvas-course-map.mjs";
 import { compute_grade_scenarios } from "../scripts/lib/canvas-grades.mjs";
 import { buildProjections, promoteProjections } from "../scripts/lib/canvas-project.mjs";
-import { writeAdaptersFromProjection } from "../scripts/lib/canvas-adapters.mjs";
+import { itemsToWeekRows, writeAdaptersFromProjection } from "../scripts/lib/canvas-adapters.mjs";
 import { fetchCanonicalGeneration } from "../scripts/lib/canvas-snapshot.mjs";
 
 function tmpRoot() {
@@ -101,6 +101,30 @@ describe("commit protocol", () => {
     fs.rmSync(a, { recursive: true, force: true });
     fs.rmSync(b, { recursive: true, force: true });
   });
+
+  it("rejects a raw pointer that escapes the profile canvas root", () => {
+    const root = tmpRoot();
+    const outside = tmpRoot();
+    fs.writeFileSync(path.join(outside, "manifest.json"), JSON.stringify({}));
+    const p = pathsFor(root);
+    fs.mkdirSync(path.dirname(p.rawPointer), { recursive: true });
+    fs.writeFileSync(p.rawPointer, JSON.stringify({ path: outside }));
+    assert.equal(readCurrentRaw(root), null);
+    fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(outside, { recursive: true, force: true });
+  });
+
+  it("carries failed endpoint data forward without clearing the partial health", () => {
+    const previous = fixtureGeneration({ sync_id: "sync-old" });
+    const next = fixtureGeneration({ sync_id: "sync-new", complete: false, failed_endpoints: [{ endpoint: "assignments:1300", status: 500 }] });
+    next.manifest.complete = false;
+    next.manifest.failed_endpoints = [{ endpoint: "assignments:1300", status: 500 }];
+    next.courses[0].assignments = [];
+    const merged = carryForwardFailedData(previous, next);
+    assert.equal(merged.courses[0].assignments.length, previous.courses[0].assignments.length);
+    assert.equal(merged.manifest.complete, false);
+    assert.equal(merged.manifest.carried_forward_endpoints[0], "assignments:1300");
+  });
 });
 
 describe("reconciler", () => {
@@ -145,6 +169,30 @@ describe("reconciler", () => {
     assert.equal(items.find((i) => i.canvas_id === "102").submission_state, "unsubmitted");
     assert.equal(items.find((i) => i.canvas_id === "601").submission_state, "submitted");
     assert.equal(items.find((i) => i.canvas_id === "302").submission_state, "suppressed");
+  });
+
+  it("promotes an authoritative missing-submissions signal", () => {
+    const gen = fixtureGeneration({ courses: [wellStructured()] });
+    gen.global["missing-submissions"] = [{ id: 102, name: "Homework 2", course_id: 1300, due_at: "2026-10-01T16:00:00Z" }];
+    const { items } = reconcile_due_items(gen);
+    const item = items.find((i) => i.canvas_id === "102");
+    assert.equal(item.submission_state, "missing");
+    assert.ok(item.seen_in.includes("missing_submissions"));
+  });
+
+  it("keeps late work in the overdue bucket and out of completed adapters", () => {
+    const gen = fixtureGeneration({ courses: [wellStructured()] });
+    gen.courses[0].assignments[0].submission = {
+      workflow_state: "submitted",
+      submitted_at: "2026-09-23T12:00:00Z",
+      late: true,
+    };
+    const { items } = reconcile_due_items(gen);
+    const late = items.find((i) => i.canvas_id === "101");
+    assert.equal(late.submission_state, "late");
+    assert.equal(bucketWorkItem(late, { nowIso: gen.manifest.finished_at }), "overdue");
+    const [row] = itemsToWeekRows([late], [gen.courses[0].course]);
+    assert.equal(row.complete, false);
   });
 });
 

@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { api, apiAllPages, launchCanvasContext, requireLoggedIn, writeCourseCatalogFiles, schoolLocalDay } from "./lib/canvas-session.mjs";
 import { resolveUserRoot, resolveProductUserId } from "./lib/user-root.mjs";
 import { fetchCanonicalGeneration } from "./lib/canvas-snapshot.mjs";
-import { commitRawGeneration, newSyncId, pathsFor, readCurrentRaw, writeSyncRun, writeJsonAtomic } from "./lib/canvas-store.mjs";
+import { carryForwardFailedData, commitRawGeneration, newSyncId, pathsFor, readCurrentRaw, writeSyncRun, writeJsonAtomic } from "./lib/canvas-store.mjs";
 import { buildProjections, promoteProjections } from "./lib/canvas-project.mjs";
 import { writeAdaptersFromProjection } from "./lib/canvas-adapters.mjs";
 
@@ -97,6 +97,8 @@ try {
   process.exit(1);
 }
 
+const previousRaw = readCurrentRaw(userRoot);
+generation = carryForwardFailedData(previousRaw?.generation, generation);
 const committed = commitRawGeneration(userRoot, generation, { sync_id });
 if (!committed.ok) {
   writeProgress({ phase: "failed", error: "validation failed", courses: [] });
@@ -114,10 +116,23 @@ try {
   console.error(`projection failed: ${e.message || e}`);
 }
 
+if (!projections) {
+  writeSyncRun(userRoot, {
+    sync_id,
+    started_at: generation.manifest.started_at,
+    finished_at: generation.manifest.finished_at,
+    complete: false,
+    health: { state: "blocked", blocked_reason: "projection_failed" },
+  });
+  writeProgress({ phase: "failed", error: "projection failed", courses: [] });
+  await context.close();
+  process.exit(1);
+}
+
 const adapter = writeAdaptersFromProjection({
   userRoot,
   generation,
-  projections: projections || buildProjections(generation),
+  projections,
   daysAhead: Number(process.env.DAYS || 14),
 });
 if (!adapter.ok) {

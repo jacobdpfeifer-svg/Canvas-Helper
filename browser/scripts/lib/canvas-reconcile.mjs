@@ -223,6 +223,23 @@ export function reconcile_due_items(generation) {
     pushSeen(item, "todo");
   }
 
+  for (const missing of generation.global?.["missing-submissions"] || []) {
+    const aid = missing?.id ?? missing?.assignment_id;
+    const cid = courseIdFrom(missing, missing?.course_id);
+    if (!cid || aid == null || aid === "") {
+      unkeyed_sources.push({ title: missing?.name || missing?.title, object_type: "missing_submission" });
+      continue;
+    }
+    const item = ensure({ course_id: String(cid), object_type: "assignment", canvas_id: String(aid) });
+    if (!item.title) item.title = missing.name || missing.title || item.title;
+    if (item.submission_state === "unknown" || item.submission_state === "unsubmitted") {
+      item.submission_state = "missing";
+    }
+    if (!item.effective_due_at) item.effective_due_at = missing.due_at || null;
+    item.html_url = isHttpUrl(missing.html_url) ? missing.html_url : item.html_url;
+    pushSeen(item, "missing_submissions");
+  }
+
   for (const ev of generation.global?.["calendar-events"] || []) {
     const cid = courseIdFrom(ev);
     const aid = ev.assignment?.id ?? ev.assignment_id;
@@ -259,7 +276,8 @@ export function bucketWorkItem(item, { nowIso, timezone } = {}) {
   const st = item.submission_state;
   if (st === "suppressed") return "suppressed";
   if (st === "missing") return "missing";
-  if (st === "submitted" || st === "pending_review" || st === "late") return "submitted";
+  if (st === "submitted" || st === "pending_review") return "submitted";
+  if (st === "late") return "overdue";
   if (st === "graded") return item.score == null ? "ungraded" : "graded";
   if (!item.effective_due_at) return "no-date";
   if (st === "unsubmitted" && Number.isFinite(due) && due < now) return "overdue";

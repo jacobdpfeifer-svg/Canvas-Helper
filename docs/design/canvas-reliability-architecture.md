@@ -1,6 +1,6 @@
 # Canvas reliability architecture
 
-**Status:** implemented locally (Phases A–E); live credentialed verification still gated on §6  
+**Status:** implemented locally with audit fixes; live credentialed verification still gated on §6
 **Date:** 2026-09-21
 
 This document maps the three student pain points that matter most for this product:

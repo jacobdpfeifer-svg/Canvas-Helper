@@ -4,7 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { SCHEMA_VERSION } from "./canvas-model.mjs";
-import { pathsFor, writeJsonAtomic, commitProjectionPointer, loadGeneration } from "./canvas-store.mjs";
+import { pathsFor, writeJsonAtomic, commitProjectionPointer, loadGeneration, readCurrentProjections } from "./canvas-store.mjs";
 import { summarize_sync_health } from "./canvas-health.mjs";
 import { reconcile_due_items, workSurfaceFromItems } from "./canvas-reconcile.mjs";
 import { normalize_course_map } from "./canvas-course-map.mjs";
@@ -87,12 +87,11 @@ export function readJsonIf(file) {
 }
 
 export function loadCurrentProjections(userRoot) {
-  const p = pathsFor(userRoot);
-  const ptr = readJsonIf(p.projPointer);
-  if (!ptr?.path) return null;
-  const dir = ptr.path;
+  const cur = readCurrentProjections(userRoot);
+  if (!cur) return null;
+  const dir = cur.dir;
   return {
-    pointer: ptr,
+    pointer: cur.pointer,
     health: readJsonIf(path.join(dir, "sync-health.json")),
     work_surface: readJsonIf(path.join(dir, "work-surface.json")),
     unkeyed_sources: readJsonIf(path.join(dir, "unkeyed-sources.json")) || [],
