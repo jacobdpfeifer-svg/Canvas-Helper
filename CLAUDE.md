@@ -1,6 +1,6 @@
 # CLAUDE.md — ProductName student Canvas platform
 
-Load [`AGENTS.md`](./AGENTS.md) and `{user_root}/USER.md` (template: [`templates/USER.md`](./templates/USER.md)). Architecture: [`docs/architecture.md`](./docs/architecture.md).
+Load [`AGENTS.md`](./AGENTS.md) and `{user_root}/USER.md` (template: [`templates/USER.md`](./templates/USER.md)). Architecture: [`docs/architecture.md`](./docs/architecture.md). Visual craft (any `app/src`, `landing/`, dock UI change): [`design-system/productname/MASTER.md`](./design-system/productname/MASTER.md) — **Living Instrument**, source of truth; supersedes the Spatial Instrument brief and style tile on visuals.
 
 **Default: no Canvas PAT.** Useful via SSO → `/api/v1` → inbox.
 
@@ -48,6 +48,7 @@ uv run python -m pytest tests/ -q
 - MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` is preview-only (readOnlyHint, no execution path — canvas-focus pivot) and never gains a confirm/execute branch back
 - Bucket-A connector MCP writes: dedicated `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard` — no first-write exemption
 - External tool inventory is discovery-only; gaps go to `inbox/tool-gaps.md` — never auto-fetch connector code
+- UI: compose as a stage (field → subject → orbit → signal); glass only on temporary chrome; one `--signal-*` per scene via `--accent`; radii by role (`--radius-stage/sheet/control/row`); motion only on real state via `--motion-*`, never `transition: all`; no 3-up card grids, no glow atmosphere, no glass behind study prose — MASTER §12 anti-patterns and §15 acceptance test apply
 - Never commit `.env` or `browser/.auth/`
 
 ## Out of scope

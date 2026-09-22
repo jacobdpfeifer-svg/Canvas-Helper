@@ -52,7 +52,8 @@ Skill router ← {user_root}/ memory ← Canvas /api/v1 ← SSO (Playwright) or 
 
 | Doc | Status |
 |-----|--------|
-| [`docs/design/spatial-instrument-brief.md`](design/spatial-instrument-brief.md) | **Briefed, not implemented** (2026-09-18) — owner look-alike spec; style tile before any product restyle. Execution prompt: [`handoff/spatial-instrument-build-prompt.md`](handoff/spatial-instrument-build-prompt.md) |
+| [`design-system/productname/MASTER.md`](../design-system/productname/MASTER.md) | **Living Instrument — active** (2026-09-21) — source of truth for visual craft. Migration steps 1–2 (material/color tokens, typography roles, five themes incl. Signal) landed in `app/src/styles.css`, `app/src/spatial.css`, `landing/styles.css`; steps 3–8 (stage recomposition, rails/ledgers, motion verbs on state, texture, geometry re-audit) open |
+| [`docs/design/spatial-instrument-brief.md`](design/spatial-instrument-brief.md) | **Superseded on visuals** (2026-09-21) — product behavior/anatomy still applies; visual direction and style tile yield to MASTER. Original execution prompt: [`handoff/spatial-instrument-build-prompt.md`](handoff/spatial-instrument-build-prompt.md) |
 | [`docs/design/ambient-dock-ui.md`](design/ambient-dock-ui.md) | **Parked** (signed 2026-09-12) — peek/expanded/onboarding + tray as built; Hidden/auto-peek design-only. See [`handoff/ui-shell-alternatives.md`](handoff/ui-shell-alternatives.md) |
 | [`docs/design/learning-profile.md`](design/learning-profile.md) | **v1 built**; start bias only. Learn loop is the teaching model (`learn_loop.py`) |
 | [`docs/design/class-standings.md`](design/class-standings.md) | **Framed, not built, not authorized** — optional hideable class leaderboard frame only; do not ship without a product decision |

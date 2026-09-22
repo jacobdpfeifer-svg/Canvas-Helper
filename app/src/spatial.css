@@ -1,11 +1,12 @@
-/* Spatial Instrument chrome — loaded after styles.css. Tokens live on :root there. */
+/* Living Instrument chrome — loaded after styles.css. Tokens live on :root there.
+   Glass is temporary chrome only (sidebar, sheets, palette, now-playing); content sits on ink or paper. */
 
 .glass {
   background: var(--surface-1);
   backdrop-filter: blur(var(--blur)) saturate(140%);
   -webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
   border: 0.5px solid var(--hairline);
-  border-radius: var(--radius-panel);
+  border-radius: var(--radius-sheet);
   box-shadow: inset 0 1px 0 var(--specular), var(--shadow);
 }
 
@@ -310,7 +311,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: var(--radius-panel);
+  border-radius: var(--radius-sheet);
   background: var(--surface-1);
   border: 0.5px solid var(--hairline);
   box-shadow: inset 0 1px 0 var(--specular);
@@ -561,17 +562,23 @@
 }
 
 .theme-grid label[data-theme-preview="paper"] .swatch {
-  background: #ece4d5;
+  background: var(--paper-0);
+  box-shadow: inset 0 0 0 6px var(--signal-cobalt);
 }
 .theme-grid label[data-theme-preview="night"] .swatch {
-  background: #1c1c1e;
+  background: var(--ink-0);
+  box-shadow: inset 0 0 0 6px var(--signal-cobalt);
 }
 .theme-grid label[data-theme-preview="forest"] .swatch {
-  background: #121a16;
-  box-shadow: inset 0 0 0 6px #e8d9c4;
+  background: #17201a;
+  box-shadow: inset 0 0 0 6px var(--signal-gold);
+}
+.theme-grid label[data-theme-preview="signal"] .swatch {
+  background: #111522;
+  box-shadow: inset 0 0 0 6px var(--signal-violet);
 }
 .theme-grid label[data-theme-preview="contrast"] .swatch {
-  background: #0e0e10;
+  background: #08090a;
   box-shadow: inset 0 0 0 3px #ffd60a;
 }
 
@@ -699,7 +706,7 @@
   background: var(--surface-1);
   backdrop-filter: blur(var(--blur)) saturate(140%);
   -webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
-  border-radius: var(--radius-panel);
+  border-radius: var(--radius-sheet);
   border: 0.5px solid var(--hairline);
   box-shadow: inset 0 1px 0 var(--specular), var(--shadow);
   max-width: 560px;

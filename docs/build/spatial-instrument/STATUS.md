@@ -1,5 +1,7 @@
 # Spatial Instrument — STATUS
 
+> **Superseded 2026-09-21 by Living Instrument** — [`design-system/productname/MASTER.md`](../../../design-system/productname/MASTER.md). The token values listed below are historical; current values (Night `#0C0D0F`, Paper `#F3EFE7`, Forest `#17201A` gold, Signal `#111522`, High contrast `#08090A`; radii 22/18/14/10/6) live in MASTER §04/§06. Chrome classes and IPC boundaries described here are unchanged.
+
 Landed on `phase1-productname-pivot` as `be0eb3c` (fast-forward from worktree branch `spatial-instrument`). Worktree remains at `~/.cache/productname-spatial`. Not pushed.
 
 **Round-1 has not landed.** Tabs remain Study / Plan / Sources / Settings. Home, Calendar, and Exam Prep were not invented.

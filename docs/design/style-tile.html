@@ -3,38 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spatial Instrument — style tile</title>
+    <title>Living Instrument — style tile</title>
     <style>
+      /* Tokens mirror app/src/styles.css — design-system/productname/MASTER.md §04–§06 is the source of truth. */
       :root {
-        --bg: #1c1c1e;
-        --surface-0: rgba(44, 44, 46, 0.52);
-        --surface-1: rgba(58, 58, 60, 0.58);
-        --surface-2: rgba(28, 28, 30, 0.92);
-        --surface-grouped: #2c2c2e;
-        --fg: #f5f5f7;
-        --muted: rgba(235, 235, 245, 0.6);
-        --hairline: rgba(255, 255, 255, 0.18);
-        --specular: rgba(255, 255, 255, 0.28);
-        --shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-        --blur: 24px;
-        --accent: #6b8cff;
-        --on-accent: #0a1020;
-        --accent-deep: #4a6ae8;
-        --ring: #6b8cff;
-        --danger: #ff453a;
-        --success: #34c759;
-        --radius-window: 20px;
-        --radius-panel: 24px;
-        --radius-card: 16px;
-        --radius-control: 12px;
-        --radius-row: 10px;
+        --ink-0: #0c0d0f; --ink-1: #15171a; --ink-2: #22262a;
+        --paper-0: #f3efe7; --paper-1: #e7dfd1; --paper-ink: #272322;
+        --line-light: rgba(255, 255, 255, 0.16); --line-dark: rgba(26, 22, 20, 0.16);
+        --signal-cobalt: #3767ff; --signal-coral: #ff604d; --signal-gold: #e1ad49;
+        --signal-violet: #8b72e8; --signal-cream: #f1d7a7;
+
+        --bg: var(--ink-0);
+        --surface-0: rgba(34, 38, 42, 0.52);
+        --surface-1: rgba(34, 38, 42, 0.68);
+        --surface-2: var(--ink-1);
+        --surface-grouped: var(--ink-2);
+        --fg: #f3f1eb;
+        --muted: rgba(243, 241, 235, 0.6);
+        --hairline: var(--line-light);
+        --specular: rgba(255, 255, 255, 0.22);
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+        --blur: 20px;
+        --accent: var(--signal-cobalt);
+        --on-accent: #f5f7ff;
+        --accent-deep: #2a52d8;
+        --ring: var(--accent);
+        --danger: #f35b57;
+        --success: #4cc38a;
+        --radius-window: 22px;
+        --radius-stage: 18px;
+        --radius-sheet: 14px;
+        --radius-control: 10px;
+        --radius-row: 6px;
         --radius-pill: 999px;
         --radius-thumb: 999px;
         --radius-icon: 999px;
+        --radius-panel: var(--radius-stage);
+        --radius-card: var(--radius-sheet);
         --font-display: "Source Serif 4", "Iowan Old Style", Palatino, serif;
         --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
         --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-        --course: #5b8def;
+        --course: var(--signal-cobalt);
         font-family: var(--font-ui);
         font-size: 15px;
         line-height: 1.4;
@@ -42,46 +51,59 @@
         background: var(--bg);
       }
       :root[data-theme="paper"] {
-        --bg: #ece4d5;
-        --surface-0: rgba(255, 252, 246, 0.62);
-        --surface-1: rgba(255, 252, 246, 0.78);
-        --surface-2: #fffcf6;
-        --surface-grouped: #f4ede2;
-        --fg: #563e3b;
-        --muted: #7a6560;
-        --hairline: rgba(86, 62, 59, 0.16);
+        --bg: var(--paper-0);
+        --surface-0: rgba(243, 239, 231, 0.62);
+        --surface-1: rgba(243, 239, 231, 0.8);
+        --surface-2: #f7f4ee;
+        --surface-grouped: var(--paper-1);
+        --fg: var(--paper-ink);
+        --muted: rgba(39, 35, 34, 0.62);
+        --hairline: var(--line-dark);
         --specular: rgba(255, 255, 255, 0.55);
-        --shadow: 0 12px 40px rgba(86, 62, 59, 0.12);
-        --accent: #2f5bd8;
+        --shadow: 0 12px 40px rgba(39, 35, 34, 0.12);
+        --accent: var(--signal-cobalt);
         --on-accent: #ffffff;
-        --accent-deep: #1f43ad;
-        --ring: #2f5bd8;
-        --danger: #b3261e;
-        --success: #1f7a4d;
+        --accent-deep: #2a52d8;
+        --ring: var(--accent);
+        --danger: #c8453f;
+        --success: #2a8a5c;
       }
       :root[data-theme="forest"] {
-        --bg: #121a16;
-        --surface-0: rgba(232, 217, 196, 0.08);
-        --surface-1: rgba(232, 217, 196, 0.14);
-        --surface-2: rgba(18, 28, 22, 0.94);
-        --surface-grouped: #1a2420;
-        --fg: #f4ede4;
-        --muted: rgba(232, 217, 196, 0.72);
-        --hairline: rgba(232, 217, 196, 0.18);
-        --specular: rgba(255, 255, 255, 0.22);
-        --accent: #e8d9c4;
-        --on-accent: #121a16;
-        --accent-deep: #c4a574;
-        --ring: #e8d9c4;
-        --danger: #ff453a;
-        --success: #34c759;
+        --bg: #17201a;
+        --surface-0: rgba(239, 230, 215, 0.07);
+        --surface-1: rgba(239, 230, 215, 0.12);
+        --surface-2: #1c261f;
+        --surface-grouped: #222d25;
+        --fg: #efe6d7;
+        --muted: rgba(239, 230, 215, 0.68);
+        --hairline: rgba(239, 230, 215, 0.16);
+        --specular: rgba(255, 255, 255, 0.18);
+        --accent: var(--signal-gold);
+        --on-accent: #17201a;
+        --accent-deep: #c4933a;
+        --ring: var(--accent);
+      }
+      :root[data-theme="signal"] {
+        --bg: #111522;
+        --surface-0: rgba(139, 114, 232, 0.08);
+        --surface-1: rgba(139, 114, 232, 0.14);
+        --surface-2: #161b2c;
+        --surface-grouped: #1c2236;
+        --fg: #f5f7ff;
+        --muted: rgba(245, 247, 255, 0.62);
+        --hairline: rgba(245, 247, 255, 0.16);
+        --specular: rgba(255, 255, 255, 0.2);
+        --accent: var(--signal-violet);
+        --on-accent: #0d0f1a;
+        --accent-deep: #6d55d1;
+        --ring: var(--accent);
       }
       :root[data-theme="contrast"] {
-        --bg: #0e0e10;
-        --surface-0: #0e0e10;
-        --surface-1: #0e0e10;
-        --surface-2: #0e0e10;
-        --surface-grouped: #161618;
+        --bg: #08090a;
+        --surface-0: #08090a;
+        --surface-1: #08090a;
+        --surface-2: #08090a;
+        --surface-grouped: #131416;
         --fg: #ffffff;
         --muted: #d0d0d4;
         --hairline: #ffffff;
@@ -92,8 +114,8 @@
         --on-accent: #000000;
         --accent-deep: #ffc300;
         --ring: #ffd60a;
-        --danger: #ff453a;
-        --success: #30d158;
+        --danger: #ff5a55;
+        --success: #4cc38a;
       }
       * { box-sizing: border-box; }
       body { margin: 0; background: var(--bg); color: var(--fg); min-height: 100vh; }
@@ -112,7 +134,7 @@
         -webkit-backdrop-filter: blur(var(--blur)) saturate(140%);
         box-shadow: inset 0 1px 0 var(--specular), var(--shadow);
         border: 0.5px solid var(--hairline);
-        border-radius: var(--radius-panel);
+        border-radius: var(--radius-sheet);
       }
       :root[data-theme="contrast"] .glass { backdrop-filter: none; -webkit-backdrop-filter: none; border-width: 2px; box-shadow: none; }
       .btn {
@@ -188,10 +210,11 @@
         <button type="button" data-theme="night" aria-pressed="true">Night</button>
         <button type="button" data-theme="paper" aria-pressed="false">Paper</button>
         <button type="button" data-theme="forest" aria-pressed="false">Forest</button>
+        <button type="button" data-theme="signal" aria-pressed="false">Signal</button>
         <button type="button" data-theme="contrast" aria-pressed="false">High contrast</button>
       </div>
       <h1 class="large-title">ProductName</h1>
-      <p class="body">Spatial Instrument chrome: glass on the frame, opaque prose on the work.</p>
+      <p class="body">Living Instrument: glass only on temporary chrome; content sits on ink or paper.</p>
       <p class="mono-caption">12px mono · due 21:00 · 3.2% weight</p>
 
       <h2>Buttons</h2>

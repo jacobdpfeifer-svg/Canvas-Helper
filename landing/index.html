@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProductName — the Canvas grade you can actually trust</title>
+<meta name="description" content="ProductName reads your Canvas courses, tells you what your grade really is, and builds short practice checks from your own material. It never submits, posts, or scrapes anything on your behalf.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="nav-shell">
+  <nav class="nav glass" aria-label="Primary">
+    <a class="wordmark" href="#top">
+      <span class="mark" aria-hidden="true"></span>
+      ProductName
+    </a>
+    <div class="nav-links">
+      <a href="#what-it-does">What it does</a>
+      <a href="#non-goals">What it won't do</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#download">Get access</a>
+    </div>
+    <div class="nav-actions">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button type="button" data-theme="night" aria-pressed="true">Night</button>
+        <button type="button" data-theme="paper" aria-pressed="false">Paper</button>
+      </div>
+      <a class="btn primary" href="#download" style="min-height:36px; padding:0 16px; font-size:0.85rem;">Get access</a>
+    </div>
+  </nav>
+</div>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero wrap">
+    <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Private beta &middot; CU Boulder &middot; invitation only</span>
+    <h1 class="hero-title">The grade Canvas shows you <em>isn't always the real one.</em></h1>
+    <p class="hero-sub">ProductName reads your Canvas courses over SSO — no token required — and turns them into an honest due list, a real grade calculation, and short practice checks built from your own course material.</p>
+    <div class="hero-ctas">
+      <a class="btn primary" href="#download">Get notified for macOS</a>
+      <a class="btn" href="#what-it-does">See what it actually does</a>
+    </div>
+
+    <div class="hero-frame glass reveal">
+      <div class="chrome-bar" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="frame-body">
+        <div class="frame-row">
+          <span class="dot-course" style="background:var(--signal-cobalt)" aria-hidden="true"></span>
+          <div>
+            <div class="row-title">CHEM 1113 — Problem Set 6</div>
+            <div class="row-meta">Due tomorrow, 11:59pm</div>
+          </div>
+          <span class="row-badge">due soon</span>
+        </div>
+        <div class="frame-row">
+          <span class="dot-course" style="background:#e8a33d" aria-hidden="true"></span>
+          <div>
+            <div class="row-title">Canvas shows: 84.2%</div>
+          </div>
+          <span class="row-badge canvas">Canvas ≠ real</span>
+        </div>
+        <div class="frame-row">
+          <span class="dot-course" style="background:var(--success)" aria-hidden="true"></span>
+          <div>
+            <div class="row-title">Your real grade: 89.6%</div>
+          </div>
+          <span class="row-badge real">recalculated</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PAIN POINTS ============ -->
+  <section class="wrap" id="pain">
+    <div class="section-head reveal">
+      <div class="section-kicker">Why this exists</div>
+      <h2 class="section-title">Every class runs Canvas differently. That's the actual problem.</h2>
+    </div>
+    <div class="grid reveal">
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </div>
+        <h3>Every course is its own island</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <h3>The Canvas grade lies by omission</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+        </div>
+        <h3>The dashboard misses what's due</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg>
+        </div>
+        <h3>You don't trust tools near your grades</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wrap" id="how">
+    <div class="section-head reveal">
+      <div class="section-kicker">How it gets your data</div>
+      <h2 class="section-title">No API token. No password stored. Just your school login.</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Sign in once, via SSO</h3>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>It reads Canvas's own API</h3>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>You study, plan, and check your grade</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT DOES ============ -->
+  <section class="wrap" id="what-it-does">
+    <div class="section-head reveal">
+      <div class="section-kicker">What's actually built</div>
+      <h2 class="section-title">Four things, done honestly</h2>
+    </div>
+    <div class="grid reveal">
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20l-7-4V6l7 4 7-4v10l-7 4z"/></svg>
+        </div>
+        <h3>Study</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <h3>Sources</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        </div>
+        <h3>Plan</h3>
+      </div>
+      <div class="card">
+        <div class="card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.4 4.86L20 8.6l-4 3.9.94 5.5L12 15.6l-4.94 2.4.94-5.5-4-3.9 5.6-.74L12 3z"/></svg>
+        </div>
+        <h3>Real grade + course suggestions</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NON-GOALS ============ -->
+  <section class="wrap" id="non-goals">
+    <div class="section-head reveal">
+      <div class="section-kicker">The part most tools bury in a footnote</div>
+      <h2 class="section-title">What ProductName will never do</h2>
+    </div>
+    <div class="nongoals reveal">
+      <div class="nongoals-list">
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>Never submits, comments, or posts for you</strong></p>
+        </div>
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>No educator or grading tools</strong></p>
+        </div>
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>No DegreeWorks / Buff Portal scraping or login</strong></p>
+        </div>
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>No RateMyProfessors scraping</strong></p>
+        </div>
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>No losable-state gamification</strong></p>
+        </div>
+        <div class="nongoal-item">
+          <span class="x" aria-hidden="true">&times;</span>
+          <p><strong>No standing automation on your accounts</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRIVACY ============ -->
+  <section class="wrap" id="privacy">
+    <div class="section-head reveal">
+      <div class="section-kicker">Where your data actually goes</div>
+      <h2 class="section-title">Local-first, not "cloud-first with a privacy page"</h2>
+    </div>
+    <div class="reveal" style="max-width:680px; margin:0 auto;">
+      <div class="privacy-list">
+        <div class="privacy-row">
+          <span class="check" aria-hidden="true">&#10003;</span>
+          <p><strong>Your study history stays local</strong></p>
+        </div>
+        <div class="privacy-row">
+          <span class="check" aria-hidden="true">&#10003;</span>
+          <p><strong>Canvas cookies and Google/Microsoft tokens stay in your local profile folder</strong></p>
+        </div>
+        <div class="privacy-row">
+          <span class="check" aria-hidden="true">&#10003;</span>
+          <p><strong>Optional AI help sends only the material you're actively studying</strong></p>
+        </div>
+        <div class="privacy-row">
+          <span class="check" aria-hidden="true">&#10003;</span>
+          <p><strong>Crash reporting is off by default</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOWNLOAD ============ -->
+  <section class="wrap" id="download">
+    <div class="download-panel glass reveal">
+      <span class="status-pill"><span class="dot" aria-hidden="true"></span> No installer published yet</span>
+      <h2>We're not going to link you a download that doesn't exist.</h2>
+
+      <form id="waitlist-form" class="email-form" novalidate>
+        <label for="waitlist-email" class="visually-hidden" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);">Email address</label>
+        <input id="waitlist-email" type="email" placeholder="you@colorado.edu" required autocomplete="email">
+        <button class="btn primary" type="submit">Notify me</button>
+      </form>
+      <p class="form-status" id="waitlist-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="footer-row">
+    <p class="fine">Not affiliated with Instructure/Canvas or your school. &copy; <span id="year">2026</span>.</p>
+    <div class="footer-links">
+      <a href="#privacy">Privacy</a>
+      <a href="#non-goals">Non-goals</a>
+      <a href="mailto:jacobdpfeifer@gmail.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

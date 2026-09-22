@@ -10,7 +10,8 @@ Product architecture for ProductName (Phase 1).
 | [`research/study-session-revision-closure-matrix.md`](research/study-session-revision-closure-matrix.md) | Revision acceptance evidence and unresolved specification or integration questions |
 | [`research/funded-ai-access-2026-09-17.md`](research/funded-ai-access-2026-09-17.md) | Funded cloud AI alternatives, recommendation, credential and privacy boundaries |
 | [`research/study-session-deep-research-prompt.md`](research/study-session-deep-research-prompt.md) | Standalone comprehensive research assignment for 5- and 10-minute study sessions |
-| [`design/spatial-instrument-brief.md`](design/spatial-instrument-brief.md) | Owner visual-language prompt: visionOS glass chrome, iOS control weight, Solare/Brik motion in Study only — style tile before restyle |
+| [`../design-system/productname/MASTER.md`](../design-system/productname/MASTER.md) | **Living Instrument** design system (2026-09-21) — source of truth for visual craft: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test |
+| [`design/spatial-instrument-brief.md`](design/spatial-instrument-brief.md) | Owner product-behavior brief (2026-09-18); its visual direction and style tile are superseded by MASTER where they conflict |
 | [`architecture.md`](architecture.md) | Truth path, tenants, permissions, skills |
 | [`schools/`](schools/) | Per-school notes (e.g. CU Boulder) |
 | [`handoff/architect-brief.md`](handoff/architect-brief.md) | Architect handback status |
