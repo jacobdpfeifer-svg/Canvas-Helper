@@ -37,27 +37,6 @@
     });
   }
 
-  function initReveal() {
-    var items = document.querySelectorAll(".reveal");
-    if (!items.length) return;
-    if (!("IntersectionObserver" in window)) {
-      items.forEach(function (el) { el.classList.add("in"); });
-      return;
-    }
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.14 }
-    );
-    items.forEach(function (el) { io.observe(el); });
-  }
-
   // Email capture: no backend exists yet. We are honest about that in the
   // UI copy. Submitting opens the visitor's own mail client addressed to
   // the maintainer, with the entered address in the body, so nothing is
@@ -91,7 +70,6 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
-    initReveal();
     initEmailForm();
     var yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());

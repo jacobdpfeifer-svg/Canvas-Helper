@@ -81,7 +81,6 @@ export function CommandPalette({
           aria-autocomplete="list"
           disabled={loading}
         />
-        <button type="button" className="field-mic-seam" tabIndex={-1} aria-hidden="true" />
         <div id="palette-results" className="palette-actions" role="listbox" aria-label="Actions">
           {loading ? (
             <div aria-hidden="true">
@@ -116,10 +115,9 @@ export function CommandPalette({
           )}
         </div>
         {loading && (
-          <div className="thinking-capsule" role="status">
-            <span className="mark" aria-hidden="true" />
-            <p>Thinking …</p>
-          </div>
+          <p className="index-label" role="status">
+            Working
+          </p>
         )}
         <p className="palette-footer">↑↓ select · ↵ run · esc close</p>
       </div>

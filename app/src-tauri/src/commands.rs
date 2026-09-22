@@ -48,6 +48,14 @@ pub fn sync_canvas(app: AppHandle, rt: Rt<'_>) -> Result<SyncResult, String> {
     }
 }
 
+/// Export the last canonical Canvas snapshot. Grades are excluded unless the
+/// student explicitly opts in for this action.
+#[tauri::command]
+pub fn export_canvas(rt: Rt<'_>, include_grades: Option<bool>) -> Result<serde_json::Value, String> {
+    let raw = daemon::run_canvas_export(&rt, include_grades.unwrap_or(false))?;
+    serde_json::from_str(&raw).map_err(|e| format!("invalid export result: {e}"))
+}
+
 #[tauri::command]
 pub fn read_top3(rt: Rt<'_>) -> Result<Vec<inbox::Top3Item>, String> {
     inbox::read_top3(&rt.user_root, 3)

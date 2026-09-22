@@ -120,20 +120,10 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className="onboarding">
-      <h1 className="brand-mark">ProductName</h1>
-      <p className="onboarding-step-label">Private beta · codename</p>
-      <div
-        className="onboarding-steps"
-        aria-label={`Step ${step + 1} of ${visibleStepCount}`}
-      >
-        {Array.from({ length: visibleStepCount }, (_, i) => (
-          <span
-            key={i}
-            className={i === step ? "active" : i < step ? "done" : undefined}
-          />
-        ))}
-      </div>
+    <div className="onboarding scene-paper">
+      <p className="index-label" aria-label={`Step ${step + 1} of ${visibleStepCount}`}>
+        {String(step + 1).padStart(2, "0")} / {String(visibleStepCount).padStart(2, "0")}
+      </p>
 
       {step > 0 && (
         <button

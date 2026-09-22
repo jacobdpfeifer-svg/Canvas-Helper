@@ -281,8 +281,8 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
               ];
 
   return (
-    <div className={`plan scene-ink ${expanded ? "dock-expanded" : "dock-peek"}`}>
-      <header className="dock-controls plan-index">
+    <div className="plan scene-ink">
+      <header className="plan-index">
         <h1 className="plan-heading index-label">Plan</h1>
         <button
           type="button"
@@ -359,7 +359,6 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
           <span className="index-label">Calendar</span>
           <PlanEvent />
         </div>
-      </aside>
       {canvasHealth?.surfaces_enabled && (
         <section className="ledger work-ledger" aria-label="Upcoming Canvas work">
           <h2 className="index-label">Upcoming work</h2>
@@ -388,7 +387,6 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
           </ul>
         </section>
       )}
-      </div>
       {routeHint && <p className="route-hint">{routeHint}</p>}
       {syncError && (
         <p className="route-hint" role="alert">
@@ -502,7 +500,8 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
           {evalCompare.note ? <p className="check-chip">{evalCompare.note}</p> : null}
         </section>
       )}
-
+      </aside>
+      </div>
 
       {paletteOpen && (
         <CommandPalette

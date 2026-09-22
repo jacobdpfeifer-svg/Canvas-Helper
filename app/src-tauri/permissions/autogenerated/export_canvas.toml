@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-export-canvas"
+description = "Enables the export_canvas command without any pre-configured scope."
+commands.allow = ["export_canvas"]
+
+[[permission]]
+identifier = "deny-export-canvas"
+description = "Denies the export_canvas command without any pre-configured scope."
+commands.deny = ["export_canvas"]

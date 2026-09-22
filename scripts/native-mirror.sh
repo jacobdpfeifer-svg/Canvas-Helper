@@ -26,6 +26,8 @@ for d in src browser schools templates skills plugins; do
     "$REPO/$d/" "$MIRROR/$d/"
 done
 cp -f "$REPO/pyproject.toml" "$MIRROR/pyproject.toml"
+cp -f "$REPO/LICENSE" "$MIRROR/LICENSE"
+cp -f "$REPO/README.md" "$MIRROR/README.md"
 if [ "${1:-}" = "cargo" ]; then
   cd "$MIRROR/app/src-tauri"
 else

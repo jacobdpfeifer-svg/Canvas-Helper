@@ -19,7 +19,9 @@
     "rsvp-ai-lab": "node scripts/rsvp-ai-lab.mjs",
     "process-capture-queue": "node scripts/process-capture-queue.mjs",
     "test": "node --test tests/*.test.mjs",
-    "sync-sources": "node scripts/sync-study-sources.mjs"
+    "sync-sources": "node scripts/sync-study-sources.mjs",
+    "export-bundle": "node scripts/export-bundle.mjs",
+    "export-portable": "node scripts/export-portable.mjs"
   },
   "_comment_cu_plugin": "sync-dinners/sync-ai-labs/rsvp-* are CU Boulder CampusGroups plugin CLIs (plugins/cu-boulder-campusgroups/), not core product sync. RSVP requires --confirm.",
   "devDependencies": {

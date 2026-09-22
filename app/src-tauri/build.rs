@@ -5,6 +5,7 @@ fn main() {
             "show_dock",
             "hide_dock",
             "sync_canvas",
+            "export_canvas",
             "read_top3",
             "open_canvas_sso",
             "save_onboarding",
