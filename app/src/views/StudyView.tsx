@@ -263,9 +263,9 @@ function EligibleOffer({
   const [mode, setMode] = useState<Mode>(offer.mode ?? "review");
   const total = offer.timeline.reduce((sum, b) => sum + b.seconds, 0);
   return (
-    <div className="panel offer">
+    <div className="page offer">
       <p className="eyebrow">
-        {item.course} · <LetterFlip text={item.objective_label} />
+        {item.course} · {item.objective_label}
       </p>
       <h2 ref={headingRef} tabIndex={-1}>
         {mode === "learn" ? "Learn with one example" : mode === "practice" ? "Practice" : "One check"}
@@ -361,21 +361,35 @@ function NowPlaying({
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [startedAt, paused]);
+  const pct = plannedSeconds > 0 ? Math.min(100, (elapsed / plannedSeconds) * 100) : 0;
   return (
-    <div className="now-playing" data-now-playing="" style={{ ["--course" as string]: courseColor(course) }}>
-      <span className="np-bar" aria-hidden="true" />
-      <div className="np-body">
-        <p className="np-title">{title}</p>
-        <p className="np-elapsed">
-          {fmtSeconds(elapsed)} / {fmtSeconds(plannedSeconds)}
-        </p>
+    <div className="tape" data-now-playing="" style={{ ["--course" as string]: courseColor(course) }}>
+      <div
+        className="tape-track"
+        role="progressbar"
+        aria-label="Session position"
+        aria-valuemin={0}
+        aria-valuemax={plannedSeconds}
+        aria-valuenow={Math.min(elapsed, plannedSeconds)}
+        aria-valuetext={`${fmtSeconds(elapsed)} of ${fmtSeconds(plannedSeconds)} planned`}
+      >
+        <span className="tape-head" style={{ left: `${pct}%` }} aria-hidden="true" />
       </div>
-      <button type="button" className="btn-icon" aria-label={paused ? "Resume" : "Pause"} onClick={() => setPaused((p) => !p)}>
-        <IconPause />
-      </button>
-      <button type="button" className="btn-icon ghost stop" aria-label="Stop" onClick={onStop}>
-        <IconStop />
-      </button>
+      <p className="mono tape-readout">
+        <span className="np-title">{title}</span>
+        <span className="np-elapsed">
+          {fmtSeconds(elapsed)} / {fmtSeconds(plannedSeconds)}
+          {paused ? " · paused" : ""}
+        </span>
+      </p>
+      <div className="tape-controls">
+        <button type="button" className="btn-icon" aria-label={paused ? "Resume" : "Pause"} onClick={() => setPaused((p) => !p)}>
+          <IconPause />
+        </button>
+        <button type="button" className="btn-icon ghost stop" aria-label="Stop" onClick={onStop}>
+          <IconStop />
+        </button>
+      </div>
     </div>
   );
 }
@@ -521,7 +535,7 @@ function AttemptPanel({
 
   return (
     <form
-      className="panel attempt"
+      className="page attempt"
       onSubmit={(e) => {
         e.preventDefault();
         void submit();
@@ -734,7 +748,8 @@ function FeedbackPanel({ result, item, announce, onNext }: { result: Assessed; i
   };
 
   return (
-    <div className="panel feedback">
+    <div className="page feedback">
+      <aside className="margin-note">
       <p className="eyebrow">
         {item.course} · {item.neutral_locator}
       </p>
@@ -751,6 +766,8 @@ function FeedbackPanel({ result, item, announce, onNext }: { result: Assessed; i
       </p>
       {a.grader === "student_self" && <p className="muted">Recorded as your own check; it does not change the schedule.</p>}
       {a.grader === "abstained" && <p className="muted">Nothing here can be checked automatically.</p>}
+      </aside>
+      <div className="feedback-body">
       {a.checker && a.checker.fields.some((f) => f.scored) && (
         <ul className="field-results grouped">
           {a.checker.fields
@@ -842,6 +859,7 @@ function FeedbackPanel({ result, item, announce, onNext }: { result: Assessed; i
             I disagree with this grading
           </button>
         )}
+      </div>
       </div>
     </div>
   );

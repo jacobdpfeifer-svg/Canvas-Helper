@@ -20,14 +20,15 @@ export function CommitmentPanel({
   const [deadline, setDeadline] = useState("");
   const [linkedItemId, setLinkedItemId] = useState("");
   const [error, setError] = useState("");
+  const [sheetOpen, setSheetOpen] = useState(false);
   const active = state.commitment;
   const checkIn = state.check_in;
 
   if (checkIn) {
     return (
-      <section className="retention" aria-label="Commitment check-in">
-        <h2>Commitment</h2>
-        <p className="check-chip">{state.line || checkIn.text}</p>
+      <div className="commit-line" aria-label="Commitment check-in">
+        <span className="index-label">Commitment</span>
+        <p className="commit-text">{state.line || checkIn.text}</p>
         <div className="commitment-actions">
           <button type="button" className="primary" onClick={() => onResolve("met").catch(() => undefined)}>
             Met
@@ -39,22 +40,47 @@ export function CommitmentPanel({
             Drop
           </button>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (active) {
     return (
-      <section className="retention" aria-label="Commitment">
-        <h2>Commitment</h2>
-        <p className="check-chip">{state.line || active.text}</p>
-      </section>
+      <div className="commit-line" aria-label="Commitment">
+        <span className="index-label">Commitment</span>
+        <p className="commit-text">{state.line || active.text}</p>
+      </div>
+    );
+  }
+
+  // No commitment yet: one quiet affordance; the form lives in a sheet.
+  if (!sheetOpen) {
+    return (
+      <div className="commit-line" aria-label="Commitment">
+        <span className="index-label">Commitment</span>
+        <button type="button" className="link" onClick={() => setSheetOpen(true)}>
+          Set one thing you will do
+        </button>
+      </div>
     );
   }
 
   return (
-    <section className="retention" aria-label="Commitment">
-      <h2>Commitment</h2>
+    <div
+      className="sheet-backdrop"
+      onClick={() => setSheetOpen(false)}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") setSheetOpen(false);
+      }}
+      role="presentation"
+    >
+      <section
+        className="glass sheet commitment-sheet"
+        role="dialog"
+        aria-labelledby="commit-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+      <h2 id="commit-title" className="editorial">Commitment</h2>
       <form
         className="commitment-form"
         onSubmit={(event) => {
@@ -67,6 +93,7 @@ export function CommitmentPanel({
               setCourse("");
               setDeadline("");
               setLinkedItemId("");
+              setSheetOpen(false);
             })
             .catch((err: unknown) => {
               setError(err instanceof Error ? err.message : String(err));
@@ -105,10 +132,18 @@ export function CommitmentPanel({
             onChange={(event) => setLinkedItemId(event.target.value)}
           />
         </label>
-        <button type="submit">Save</button>
+        <div className="sheet-actions">
+          <button type="submit" className="primary">
+            Save
+          </button>
+          <button type="button" className="ghost" onClick={() => setSheetOpen(false)}>
+            Cancel
+          </button>
+        </div>
         {error ? <p className="check-chip">{error}</p> : null}
       </form>
-    </section>
+      </section>
+    </div>
   );
 }
 

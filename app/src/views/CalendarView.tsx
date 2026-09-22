@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { CommitmentPanel } from "../components/Commitment";
 import {
   addCalendarEvent,
   dismissCalendarSuggestion,
   readCalendarSurface,
-  resolveCommitment,
-  setCommitment,
   type CalendarEvent,
   type CalendarSuggestion,
   type CalendarSurface,
-  type CommitmentState,
 } from "../ipc";
 import { SyncHealthBanner } from "../components/SyncHealthBanner";
 
@@ -46,19 +42,8 @@ export function CalendarView({
     <section className="calendar-tab" aria-labelledby="cal-heading">
       <h1 id="cal-heading">Calendar</h1>
       <SyncHealthBanner health={surface.sync_health} />
-      <CommitmentPanel
-        state={surface.commitment as CommitmentState}
-        onSet={async (input) => {
-          const next = await setCommitment(input);
-          setSurface((s) => ({ ...s, commitment: next }));
-        }}
-        onResolve={async (status) => {
-          const next = await resolveCommitment(status);
-          setSurface((s) => ({ ...s, commitment: next }));
-        }}
-      />
       {surface.suggestions.length > 0 && (
-        <section className="glass suggest" aria-label="Suggested">
+        <section className="suggest" aria-label="Suggested">
           <h2>Suggested</h2>
           <ul>
             {surface.suggestions.map((sg) => (
@@ -157,7 +142,7 @@ function MonthGrid({
   const days = new Date(y, m + 1, 0).getDate();
   const cells = Array.from({ length: first + days }, (_, i) => (i < first ? null : i - first + 1));
   return (
-    <div className="month-grid glass">
+    <div className="month-grid">
       <div className="month-nav">
         <button type="button" onClick={onPrev} aria-label="Previous month">
           ‹

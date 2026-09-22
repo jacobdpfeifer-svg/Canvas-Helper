@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { fixtureEnabled, fixtureHealth, fixtureSemester } from "./dev/fixtures";
 
 export type Top3Item = { id: string; title: string; due: string };
 
@@ -565,6 +566,7 @@ export type SemesterSurface = {
 
 export async function readSemester(range: string, today: string): Promise<SemesterSurface> {
   if (!isTauri()) {
+    if (fixtureEnabled()) return fixtureSemester(range);
     return { courses: [], range, window_start: today, window_end: today, today };
   }
   return invoke<SemesterSurface>("read_semester", { range, today });
@@ -764,7 +766,7 @@ export type GradeTruth = {
 };
 
 export async function readSyncHealth(): Promise<SyncHealth> {
-  if (!isTauri()) return { state: "empty_unverified", surfaces_enabled: false };
+  if (!isTauri()) return fixtureEnabled() ? fixtureHealth() : { state: "empty_unverified", surfaces_enabled: false };
   return invoke<SyncHealth>("read_sync_health");
 }
 

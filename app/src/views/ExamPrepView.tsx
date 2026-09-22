@@ -34,33 +34,41 @@ export function ExamPrepView({
     [tick, sources, today, seed]
   );
 
+  const dueLabel = tick.due_at
+    ? new Date(tick.due_at).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })
+    : "No date";
+  const daysLeft = tick.due_at ? Math.max(0, Math.round((Date.parse(tick.due_at) - today.getTime()) / 86_400_000)) : null;
+
   return (
-    <section className="exam-prep">
-      <button type="button" className="ghost" onClick={onBack}>
-        Back
-      </button>
-      <div className="exam-orb glass" aria-hidden="false">
-        <h1>{tick.title}</h1>
-      </div>
-      <p className="muted">Draft plan — reshuffled locally until a model planner exists.</p>
-      <ol className="prep-days">
-        {plan.days.map((d) => (
-          <li key={d.date} className={`prep-day glass${d.isToday ? " today" : ""}`}>
-            <strong>{d.label}</strong>
-            <span className="muted">{d.mode === "review" ? "Review" : "Study"}</span>
-            <ul>
-              {d.topics.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
+    <section className="exam-prep scene-paper" style={{ ["--course" as string]: tick.color }}>
+      <header className="exam-index">
+        <button type="button" className="ghost" onClick={onBack}>
+          Return
+        </button>
+        <span className="mono">
+          {tick.course_label} · {dueLabel}
+          {daysLeft !== null ? ` · ${daysLeft} ${daysLeft === 1 ? "day" : "days"}` : ""}
+        </span>
+      </header>
+      <h1 className="display exam-title">{tick.title}</h1>
+      <p className="muted mono">Draft plan — reshuffled locally until a model planner exists.</p>
+      <ol className="ledger prep-days">
+        {plan.days.map((d, i) => (
+          <li key={d.date} className={`prep-day${d.isToday ? " today" : ""}`} aria-current={d.isToday ? "date" : undefined}>
+            <span className="mono idx">{String(i + 1).padStart(2, "0")}</span>
+            <span className="rail-body">
+              <strong>{d.label}</strong>
+              <span className="mono muted">{d.mode === "review" ? "Review" : "Study"}</span>
+              <ul>
+                {d.topics.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </span>
           </li>
         ))}
       </ol>
       <div className="stack-actions">
-        <button type="button" onClick={() => setSeed((s) => s + 1)}>
-          Redo this plan
-        </button>
-        <p className="muted">Reshuffles this draft. It is not an agent rewrite yet.</p>
         {hasPractice ? (
           <button type="button" className="primary" onClick={onTest}>
             Let’s test your knowledge
@@ -68,6 +76,10 @@ export function ExamPrepView({
         ) : (
           <p className="empty">No practice items for this exam yet</p>
         )}
+        <button type="button" className="ghost" onClick={() => setSeed((s) => s + 1)}>
+          Redo this plan
+        </button>
+        <p className="muted">Reshuffles this draft. It is not an agent rewrite yet.</p>
       </div>
     </section>
   );
