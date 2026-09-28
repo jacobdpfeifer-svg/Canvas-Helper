@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-09-20T22:47:04.734Z",
+  "events": [
+    {
+      "at": "2026-09-20T22:47:04.734Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "error",
+    "error": "WebAssign Chrome did not start CDP in time.",
+    "stack": "Error: WebAssign Chrome did not start CDP in time.\n    at acquireWebAssignPage (file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/lib/webassign/browser-session.mjs:154:13)\n    at async file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:101:39"
+  },
+  "finishedAt": "2026-09-20T22:47:51.769Z"
+}

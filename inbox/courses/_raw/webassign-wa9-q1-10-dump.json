@@ -1,0 +1,513 @@
+[
+  {
+    "number": 1,
+    "submitId": "submit_6000999_0",
+    "problemId": "SPreCalc8 2.3.002.",
+    "pointsRaw": "2 / 4 Points",
+    "text": "1.\n[2 / 4 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.002.\n Problem 1 \nRefer to the graph of f shown below.\nGiven Figure\n Given Figure Description\nRead and complete the following.\nThe domain of the function f is all the \nSelect your first answer.\nSelect\ny\nx\n \n -values of the points on the graph, and the range is all the corresponding \nSelect your second answer.\nSelect\nx\ny\n \n -values. From the graph of f we see that the domain of f is the interval \nWrite your third answer.\n \nPress Space or Enter to edit this math answer.\n  and the range of f is the interval \nWrite your fourth answer.\n \nPress Space or Enter to edit this math answer.\n . (Write your answers using interval notation.)\nViewing Saved Work Revert to Last Response",
+    "mathsRough": [
+      "(1,0)",
+      "(2,7)",
+      "(3,4)",
+      "(4,2)",
+      "(4.6,4)",
+      "(5,6)",
+      "(6,4)",
+      "(7,0)",
+      ""
+    ],
+    "textInputs": [],
+    "radioGroups": []
+  },
+  {
+    "number": 2,
+    "submitId": "submit_6001063_1",
+    "problemId": "SPreCalc8 2.3.005.",
+    "pointsRaw": "2 / 4 Points",
+    "text": "2.\n[2 / 4 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.005.\n Problem 2 \nRefer to the graph of f shown below.\nGiven Figure\n Given Figure Description\nRead and complete the following.\nThe solutions of the equation \n𝑓(𝑥)=0\n𝑓\n(\n𝑥\n)\n=\n0\n are the \nSelect your first answer.\nSelect\nx\ny\n \n -intercepts of the graph of f. The solution of the inequality \n𝑓(𝑥)≥0\n𝑓\n(\n𝑥\n)\n≥\n0\n is the set of x-values at which the graph of f is on or above the \nSelect your second answer.\nSelect\nx\ny\n \n -axis.\nRead and complete the following.\nFrom the graph of f we find that the solutions of the equation \n𝑓(𝑥)=0\n𝑓\n(\n𝑥\n)\n=\n0\n are \n𝑥=\n𝑥\n=\n \n \nPress Space or Enter to edit this math answer.\n . (Write your answers in the form of a comma-separated list.)\nRead and complete the following.\nThe solution of the inequality \n𝑓(𝑥)≥0\n𝑓\n(\n𝑥\n)\n≥\n0\n is \nWrite your fourth answer.\n \nPress Space or Enter to edit this math answer.\n . (Write your answer using interval notation.)",
+    "mathsRough": [
+      "(1,0)",
+      "(2,7)",
+      "(3,4)",
+      "(4,2)",
+      "(4.6,4)",
+      "(5,6)",
+      "(6,4)",
+      "(7,0)",
+      "f(x)=0",
+      "f(x)≥0",
+      "f(x)=0",
+      "x=",
+      "f(x)≥0"
+    ],
+    "textInputs": [],
+    "radioGroups": []
+  },
+  {
+    "number": 3,
+    "submitId": "submit_5960206_2",
+    "problemId": "SPreCalc8 2.3.007.",
+    "pointsRaw": "1 / 9 Points",
+    "text": "3.\n[1 / 9 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.007.\n Problem 3 \nThe graph of a function h is given.\nGiven Figure\n Given Figure Description\n(a)\nFind \nℎ(−2)\nℎ\n(\n−\n2\n)\n, \nℎ(0)\nℎ\n(\n0\n)\n, \nℎ(2)\nℎ\n(\n2\n)\n, and \nℎ(3)\nℎ\n(\n3\n)\n.\nℎ(−2)=\nℎ\n(\n−\n2\n)\n=\n\t\n\nℎ(0)=\nℎ\n(\n0\n)\n=\n\t\n\nℎ(2)=\nℎ\n(\n2\n)\n=\n\t\n\nℎ(3)=\nℎ\n(\n3\n)\n=\n\t\n(b)\nFind the domain and range of h. (Write your answers using interval notation.)\ndomain\t\n \nPress Space or Enter to edit this math answer.\n \nrange\t\n \nPress Space or Enter to edit this math answer.\n \n(c)\nFind the values of x for which \nℎ(𝑥)=4\nℎ\n(\n𝑥\n)\n=\n4\n. (Write your answers in the form of a comma-separated list.)\n𝑥=\n𝑥\n=\n \n \nPress Space or Enter to edit this math answer.\n \n(d)\nFind the values of x for which \nℎ(𝑥)≤4\nℎ\n(\n𝑥\n)\n≤\n4\n.\n−3,2,4\n−\n3\n,\n2\n,\n4\n[−3,2] and 4\n[\n−\n3\n,\n2\n]\n and \n4\n(2,4)\n(\n2\n,\n4\n)\n[2,4] and −3\n[\n2\n,\n4\n]\n and \n−\n3\n(−3,2)\n(\n−\n3\n,\n2\n)\n\n\n(e)\nFind the net change in h between \n𝑥=−3 and 𝑥=3\n𝑥\n=\n−\n3\n and \n𝑥\n=\n3\n.\nWrite your answer for part (e).",
+    "mathsRough": [
+      "(−3,4)",
+      "(−2,2)",
+      "(−1,0.5)",
+      "(1,1)",
+      "(2,4)",
+      "(3,5)",
+      "(4,4)",
+      "h(−2)",
+      "h(0)",
+      "h(2)",
+      "h(3)",
+      "h(−2)=",
+      "h(0)=",
+      "h(2)=",
+      "h(3)=",
+      "h(x)=4",
+      "x=",
+      "h(x)≤4",
+      "−3,2,4",
+      "[−3,2]&nbsp;and&nbsp;4",
+      "(2,4)",
+      "[2,4]&nbsp;and&nbsp;−3",
+      "(−3,2)",
+      "x=−3&nbsp;and&nbsp;x=3"
+    ],
+    "textInputs": [
+      {
+        "id": "RN_5960206_2_0_5964685",
+        "name": "RN_5960206_2_0_5964685",
+        "value": ""
+      },
+      {
+        "id": "RN_5960206_2_1_5964685",
+        "name": "RN_5960206_2_1_5964685",
+        "value": ""
+      },
+      {
+        "id": "RN_5960206_2_2_5964685",
+        "name": "RN_5960206_2_2_5964685",
+        "value": ""
+      },
+      {
+        "id": "RN_5960206_2_3_5964685",
+        "name": "RN_5960206_2_3_5964685",
+        "value": ""
+      },
+      {
+        "id": "RN_5960206_2_8_5964685",
+        "name": "RN_5960206_2_8_5964685",
+        "value": ""
+      }
+    ],
+    "radioGroups": [
+      {
+        "name": "RC_5960206_2_7_5964685",
+        "options": [
+          {
+            "value": "0",
+            "label": "−3,2,4\n−\n3\n,\n2\n,\n4",
+            "id": "RC_5960206_2_7_5964685_0"
+          },
+          {
+            "value": "1",
+            "label": "[−3,2] and 4\n[\n−\n3\n,\n2\n]\n and \n4",
+            "id": "RC_5960206_2_7_5964685_1"
+          },
+          {
+            "value": "2",
+            "label": "(2,4)\n(\n2\n,\n4\n)",
+            "id": "RC_5960206_2_7_5964685_2"
+          },
+          {
+            "value": "3",
+            "label": "[2,4] and −3\n[\n2\n,\n4\n]\n and \n−\n3",
+            "id": "RC_5960206_2_7_5964685_3"
+          },
+          {
+            "value": "4",
+            "label": "(−3,2)\n(\n−\n3\n,\n2\n)",
+            "id": "RC_5960206_2_7_5964685_4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "number": 4,
+    "submitId": "submit_6001027_3",
+    "problemId": "SPreCalc8 2.3.009.",
+    "pointsRaw": "3 / 5 Points",
+    "text": "4.\n[3 / 5 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.009.\n Problem 4 \nGraphs of the functions f and g are given.\nGiven Figure\n Given Figure Description\n(a)\nWhich is larger, \n𝑓(0) or 𝑔(0)\n𝑓\n(\n0\n)\n or \n𝑔\n(\n0\n)\n?\n𝑓(0)\n𝑓\n(\n0\n)\n is larger.\n𝑔(0)\n𝑔\n(\n0\n)\n is larger.\nNeither is larger.\n\n(b)\nWhich is larger, \n𝑓(−4) or 𝑔(−4)\n𝑓\n(\n−\n4\n)\n or \n𝑔\n(\n−\n4\n)\n?\n𝑓(−4)\n𝑓\n(\n−\n4\n)\n is larger.\n𝑔(−4)\n𝑔\n(\n−\n4\n)\n is larger.\nNeither is larger.\n\n(c)\nFor which values of x is \n𝑓(𝑥)=𝑔(𝑥)\n𝑓\n(\n𝑥\n)\n=\n𝑔\n(\n𝑥\n)\n? (Write your answers in the form of a comma-separated list.)\n𝑥=\n𝑥\n=\n \n \nPress Space or Enter to edit this math answer.\n \n(d)\nFor which values of x is \n𝑓(𝑥)≤𝑔(𝑥)\n𝑓\n(\n𝑥\n)\n≤\n𝑔\n(\n𝑥\n)\n?\n[−2,4]\n[\n−\n2\n,\n4\n]\n[−2,2]\n[\n−\n2\n,\n2\n]\n[−4,2]\n[\n−\n4\n,\n2\n]\n[−4,−2]\n[\n−\n4\n,\n−\n2\n]\n and \n[2,4]\n[\n2\n,\n4\n]\n[−2,0]\n[\n−\n2\n,\n0\n]\n and \n[2,4]\n[\n2\n,\n4\n]\n\n\n(e)\nFor which values of x is \n𝑓(𝑥)>𝑔(𝑥)\n𝑓\n(\n𝑥\n)\n>\n𝑔\n(\n𝑥\n)\n?\n[−4,2)\n[\n−\n4\n,\n2\n)\n and \n(2,4]\n(\n2\n,\n4\n]\n[−4,4]\n[\n−\n4\n,\n4\n]\n(−2,2)\n(\n−\n2\n,\n2\n)\n[−4,2)\n[\n−\n4\n,\n2\n)\n and \n(2,3]\n(\n2\n,\n3\n]\n[−4,3]\n[\n−\n4\n,\n3\n]\n\n",
+    "mathsRough": [
+      "(−4,−2)",
+      "(−2.5,0)",
+      "(−2,1)",
+      "(0,3)",
+      "(2,2)",
+      "(3.5,0)",
+      "(4,−1)",
+      "(−4,2.5)",
+      "(−2,1)",
+      "(−1.5,0)",
+      "(0,−1.5)",
+      "(1.5,0)",
+      "(2,2)",
+      "(3,5)",
+      "(4,4)",
+      "f(0)&nbsp;or&nbsp;g(0)",
+      "f(0)",
+      "g(0)",
+      "f(−4)&nbsp;or&nbsp;g(−4)",
+      "f(−4)",
+      "g(−4)",
+      "f(x)=g(x)",
+      "x=",
+      "f(x)≤g(x)",
+      "[−2,4]",
+      "[−2,2]",
+      "[−4,2]",
+      "[−4,−2]",
+      "[2,4]",
+      "[−2,0]",
+      "[2,4]",
+      "f(x)&gt;g(x)",
+      "[−4,2)",
+      "(2,4]",
+      "[−4,4]",
+      "(−2,2)",
+      "[−4,2)",
+      "(2,3]",
+      "[−4,3]"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_6001027_3_0_6005506",
+        "options": [
+          {
+            "value": "0",
+            "label": "𝑓(0)\n𝑓\n(\n0\n)\n is larger.",
+            "id": "RC_6001027_3_0_6005506_0"
+          },
+          {
+            "value": "1",
+            "label": "𝑔(0)\n𝑔\n(\n0\n)\n is larger.",
+            "id": "RC_6001027_3_0_6005506_1"
+          },
+          {
+            "value": "2",
+            "label": "Neither is larger.",
+            "id": "RC_6001027_3_0_6005506_2"
+          }
+        ]
+      },
+      {
+        "name": "RC_6001027_3_1_6005506",
+        "options": [
+          {
+            "value": "0",
+            "label": "𝑓(−4)\n𝑓\n(\n−\n4\n)\n is larger.",
+            "id": "RC_6001027_3_1_6005506_0"
+          },
+          {
+            "value": "1",
+            "label": "𝑔(−4)\n𝑔\n(\n−\n4\n)\n is larger.",
+            "id": "RC_6001027_3_1_6005506_1"
+          },
+          {
+            "value": "2",
+            "label": "Neither is larger.",
+            "id": "RC_6001027_3_1_6005506_2"
+          }
+        ]
+      },
+      {
+        "name": "RC_6001027_3_3_6005506",
+        "options": [
+          {
+            "value": "0",
+            "label": "[−2,4]\n[\n−\n2\n,\n4\n]",
+            "id": "RC_6001027_3_3_6005506_0"
+          },
+          {
+            "value": "1",
+            "label": "[−2,2]\n[\n−\n2\n,\n2\n]",
+            "id": "RC_6001027_3_3_6005506_1"
+          },
+          {
+            "value": "2",
+            "label": "[−4,2]\n[\n−\n4\n,\n2\n]",
+            "id": "RC_6001027_3_3_6005506_2"
+          },
+          {
+            "value": "3",
+            "label": "[−4,−2]\n[\n−\n4\n,\n−\n2\n]\n and \n[2,4]\n[\n2\n,\n4\n]",
+            "id": "RC_6001027_3_3_6005506_3"
+          },
+          {
+            "value": "4",
+            "label": "[−2,0]\n[\n−\n2\n,\n0\n]\n and \n[2,4]\n[\n2\n,\n4\n]",
+            "id": "RC_6001027_3_3_6005506_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_6001027_3_4_6005506",
+        "options": [
+          {
+            "value": "0",
+            "label": "[−4,2)\n[\n−\n4\n,\n2\n)\n and \n(2,4]\n(\n2\n,\n4\n]",
+            "id": "RC_6001027_3_4_6005506_0"
+          },
+          {
+            "value": "1",
+            "label": "[−4,4]\n[\n−\n4\n,\n4\n]",
+            "id": "RC_6001027_3_4_6005506_1"
+          },
+          {
+            "value": "2",
+            "label": "(−2,2)\n(\n−\n2\n,\n2\n)",
+            "id": "RC_6001027_3_4_6005506_2"
+          },
+          {
+            "value": "3",
+            "label": "[−4,2)\n[\n−\n4\n,\n2\n)\n and \n(2,3]\n(\n2\n,\n3\n]",
+            "id": "RC_6001027_3_4_6005506_3"
+          },
+          {
+            "value": "4",
+            "label": "[−4,3]\n[\n−\n4\n,\n3\n]",
+            "id": "RC_6001027_3_4_6005506_4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "number": 5,
+    "submitId": "submit_5959822_4",
+    "problemId": "SPreCalc8 2.3.015.",
+    "pointsRaw": "0 / 3 Points",
+    "text": "5.\n[0 / 3 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.015.\n Problem 5 \nA function f is given.\n𝑓(𝑥)=4𝑥+5\n𝑓\n(\n𝑥\n)\n=\n4\n𝑥\n+\n5\n(a)\nSketch a graph of f.\nSelection Tool\nLine\nRay\nSegment\nCircle\nVertical Parabola\nHorizontal Parabola\nPoint\nNo Solution\nHelp\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nClear Graph\nDelete Layer\nFill\nWebAssign Graphing Tool\nGraph Layers\nToggle Open/Closed\nRay 1\nRemove This Layer\n\nSubmission Data\n\n(b)\nUse the graph to find the domain and range of f. (Write your answers using interval notation.)\ndomain\t\n \nPress Space or Enter to edit this math answer.\n \nrange\t\n \nPress Space or Enter to edit this math answer.\n \nViewing Saved Work Revert to Last Response",
+    "mathsRough": [
+      "f(x)=4x+5",
+      "-∞",
+      ""
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "toolbar-tools",
+        "options": [
+          {
+            "value": "on",
+            "label": "Selection Tool",
+            "id": "toolbar-selection-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Line",
+            "id": "toolbar-line-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Ray",
+            "id": "toolbar-ray-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Segment",
+            "id": "toolbar-segment-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Circle",
+            "id": "toolbar-circle-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Vertical Parabola",
+            "id": "toolbar-vertical-parabola-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Horizontal Parabola",
+            "id": "toolbar-horizontal-parabola-RG_5959822_4_0_5964301"
+          },
+          {
+            "value": "on",
+            "label": "Point",
+            "id": "toolbar-point-RG_5959822_4_0_5964301"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "number": 6,
+    "submitId": "submit_5992358_5",
+    "problemId": "SPreCalc8 2.3.019.MI.",
+    "pointsRaw": "– / 3 Points",
+    "text": "6.\n[– / 3 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.019.MI.\n Problem 6 \nA function f is given.\n𝑓(𝑥)=𝑥−3,−3≤𝑥≤7\n𝑓\n(\n𝑥\n)\n=\n𝑥\n−\n3\n,\n−\n3\n≤\n𝑥\n≤\n7\n(a)\nSketch a graph of f.\nSelection Tool\nLine\nRay\nSegment\nCircle\nVertical Parabola\nHorizontal Parabola\nPoint\nNo Solution\nHelp\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nClear Graph\nDelete Layer\nFill\nWebAssign Graphing Tool\nGraph Layers\nToggle Open/Closed\nAfter you add an object to the graph you can use Graph Layers to view and edit its properties.\n(b)\nUse the graph to find the domain and range of f. (Write your answers using interval notation.)\ndomain\t\n \nPress Space or Enter to edit this math answer.\n \nrange\t\n \nPress Space or Enter to edit this math answer.\n ",
+    "mathsRough": [
+      "f(x)=x−3,−3≤x≤7"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "toolbar-tools",
+        "options": [
+          {
+            "value": "on",
+            "label": "Selection Tool",
+            "id": "toolbar-selection-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Line",
+            "id": "toolbar-line-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Ray",
+            "id": "toolbar-ray-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Segment",
+            "id": "toolbar-segment-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Circle",
+            "id": "toolbar-circle-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Vertical Parabola",
+            "id": "toolbar-vertical-parabola-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Horizontal Parabola",
+            "id": "toolbar-horizontal-parabola-RG_5992358_5_0_5996837"
+          },
+          {
+            "value": "on",
+            "label": "Point",
+            "id": "toolbar-point-RG_5992358_5_0_5996837"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "number": 7,
+    "submitId": "submit_5960269_6",
+    "problemId": "SPreCalc8 2.3.020.",
+    "pointsRaw": "0 / 3 Points",
+    "text": "7.\n[0 / 3 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.3.020.\n Problem 7 \nA function f is given.\n𝑓(𝑥)=5−2𝑥,1<𝑥<5\n𝑓\n(\n𝑥\n)\n=\n5\n−\n2\n𝑥\n,\n1\n<\n𝑥\n<\n5\n(a)\nSketch a graph of f.\nSelection Tool\nLine\nRay\nSegment\nCircle\nVertical Parabola\nHorizontal Parabola\nPoint\nNo Solution\nHelp\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n-10\n-9\n-8\n-7\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nClear Graph\nDelete Layer\nFill\nWebAssign Graphing Tool\nGraph Layers\nToggle Open/Closed\nLine 1\nRemove This Layer\n\nSubmission Data\n\n(b)\nUse the graph to find the domain and range of f. (Write your answers using interval notation.)\ndomain\t\n \nPress Space or Enter to edit this math answer.\n \nrange\t\n \nPress Space or Enter to edit this math answer.\n ",
+    "mathsRough": [
+      "f(x)=5−2x,1&lt;x&lt;5"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "toolbar-tools",
+        "options": [
+          {
+            "value": "on",
+            "label": "Selection Tool",
+            "id": "toolbar-selection-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Line",
+            "id": "toolbar-line-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Ray",
+            "id": "toolbar-ray-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Segment",
+            "id": "toolbar-segment-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Circle",
+            "id": "toolbar-circle-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Vertical Parabola",
+            "id": "toolbar-vertical-parabola-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Horizontal Parabola",
+            "id": "toolbar-horizontal-parabola-RG_5960269_6_0_5964748"
+          },
+          {
+            "value": "on",
+            "label": "Point",
+            "id": "toolbar-point-RG_5960269_6_0_5964748"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "number": 8,
+    "submitId": "submit_5960141_7",
+    "problemId": "SPreCalc8 2.3.516.XP.",
+    "pointsRaw": "– / 2 Points",
+    "text": "8.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.516.XP.\n Problem 8 \nSolve the given equation or inequality graphically.\n(a)\n𝑥−1=3−𝑥\n𝑥\n−\n1\n=\n3\n−\n𝑥\n (Write your answers in the form of a comma-separated list.)\n𝑥=\n𝑥\n=\n \n \nPress Space or Enter to edit this math answer.\n \n(b)\n𝑥−1>3−𝑥\n𝑥\n−\n1\n>\n3\n−\n𝑥\n (Write your answer using interval notation.)\nWrite your answer for part (b).\n \n \nPress Space or Enter to edit this math answer.\n ",
+    "mathsRough": [
+      "x−1=3−x",
+      "x=",
+      "x−1&gt;3−x"
+    ],
+    "textInputs": [],
+    "radioGroups": []
+  },
+  {
+    "number": 9,
+    "submitId": "submit_5992232_8",
+    "problemId": "SPreCalc8 2.3.031.MI.",
+    "pointsRaw": "– / 2 Points",
+    "text": "9.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.031.MI.\n Problem 9 \nSolve the given equation or inequality graphically.\n(a)\n𝑥\n2\n=12−𝑥\n𝑥\n2\n=\n12\n−\n𝑥\n (Write your answers in the form of a comma-separated list.)\n𝑥=\n𝑥\n=\n \n \nPress Space or Enter to edit this math answer.\n \n(b)\n𝑥\n2\n≤12−𝑥\n𝑥\n2\n≤\n12\n−\n𝑥\n (Write your answer using interval notation.)\nWrite your answer for part (b).\n \n \nPress Space or Enter to edit this math answer.\n \nViewing Saved Work Revert to Last Response",
+    "mathsRough": [
+      "x2=12−x",
+      "x=",
+      "",
+      "",
+      "x2≤12−x"
+    ],
+    "textInputs": [],
+    "radioGroups": []
+  },
+  {
+    "number": 10,
+    "submitId": "submit_5960057_9",
+    "problemId": "SPreCalc8 2.3.037.",
+    "pointsRaw": "– / 4 Points",
+    "text": "10.\n[– / 4 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.037.\n Problem 10 \nThe graph of a function f is given. Use the graph to estimate the following. (Write your answers using interval notation.)\nGiven Figure\n Given Figure Description\n(a)\nThe domain and range of f.\ndomain\t\n \nPress Space or Enter to edit this math answer.\n \nrange\t\n \nPress Space or Enter to edit this math answer.\n \n(b)\nThe intervals on which f is increasing and on which f is decreasing.\nincreasing\t\n \nPress Space or Enter to edit this math answer.\n \ndecreasing\t\n \nPress Space or Enter to edit this math answer.\n ",
+    "mathsRough": [
+      "(−3,2)",
+      "(−1,3)",
+      "(−0.5,1.5)",
+      "x=−0.3",
+      "(0,−1)",
+      "x=1.2",
+      "(2,2)"
+    ],
+    "textInputs": [],
+    "radioGroups": []
+  }
+]

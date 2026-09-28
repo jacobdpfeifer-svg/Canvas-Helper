@@ -1,0 +1,17 @@
+{
+  "number": 14,
+  "text": "14.\n[– / 3 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.1.045.\n Problem 14 \nFind \n𝑓(𝑎)\n𝑓\n(\n𝑎\n)\n, \n𝑓(𝑎+ℎ)\n𝑓\n(\n𝑎\n+\nℎ\n)\n, and the difference quotient \n𝑓(𝑎+ℎ)−𝑓(𝑎)\nℎ\n𝑓\n(\n𝑎\n+\nℎ\n)\n−\n𝑓\n(\n𝑎\n)\nℎ\n, where \nℎ≠0\nℎ\n≠\n0\n.\n𝑓(𝑥)=7−𝑥\n𝑓\n(\n𝑥\n)\n=\n7\n−\n𝑥\n𝑓(𝑎)=\n𝑓\n(\n𝑎\n)\n=\n\t\n \nPress Space or Enter to edit this math answer.\n \n\n𝑓(𝑎+ℎ)=\n𝑓\n(\n𝑎\n+\nℎ\n)\n=\n\t\n \nPress Space or Enter to edit this math answer.\n \n\n𝑓(𝑎+ℎ)−𝑓(𝑎)\nℎ\n=\n𝑓\n(\n𝑎\n+\nℎ\n)\n−\n𝑓\n(\n𝑎\n)\nℎ\n=\n\t\n \nPress Space or Enter to edit this math answer.\n ",
+  "mathsRough": [
+    "f(a)",
+    "f(a+h)",
+    "(f(a+h)−f(a)h)/",
+    "h≠0",
+    "f(x)=7−x",
+    "f(a)=",
+    "f(a+h)=",
+    "(f(a+h)−f(a)h)/="
+  ],
+  "mathPadCount": 0,
+  "textInputs": [],
+  "radioGroups": []
+}

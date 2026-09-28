@@ -1,0 +1,479 @@
+{
+  "startedAt": "2026-09-25T01:19:52.447Z",
+  "events": [
+    {
+      "at": "2026-09-25T01:19:52.447Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": false,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:19:57.080Z",
+      "type": "reuse_webassign_tab",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:19:59.098Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:19:59.163Z",
+      "type": "inventory",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083",
+      "score": {
+        "earned": 28,
+        "max": 74
+      },
+      "questions": [
+        {
+          "number": 1,
+          "submitId": "submit_6000999_0",
+          "questionId": "6000999",
+          "pointsRaw": "4 / 4 Points",
+          "earned": 4,
+          "max": 4,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.002."
+        },
+        {
+          "number": 2,
+          "submitId": "submit_6001063_1",
+          "questionId": "6001063",
+          "pointsRaw": "4 / 4 Points",
+          "earned": 4,
+          "max": 4,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.005."
+        },
+        {
+          "number": 3,
+          "submitId": "submit_5960206_2",
+          "questionId": "5960206",
+          "pointsRaw": "7 / 9 Points",
+          "earned": 7,
+          "max": 9,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.007."
+        },
+        {
+          "number": 4,
+          "submitId": "submit_6001027_3",
+          "questionId": "6001027",
+          "pointsRaw": "5 / 5 Points",
+          "earned": 5,
+          "max": 5,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.009."
+        },
+        {
+          "number": 5,
+          "submitId": "submit_5959822_4",
+          "questionId": "5959822",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.015."
+        },
+        {
+          "number": 6,
+          "submitId": "submit_5992358_5",
+          "questionId": "5992358",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.019.MI."
+        },
+        {
+          "number": 7,
+          "submitId": "submit_5960269_6",
+          "questionId": "5960269",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.020."
+        },
+        {
+          "number": 8,
+          "submitId": "submit_5960141_7",
+          "questionId": "5960141",
+          "pointsRaw": "0 / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.516.XP."
+        },
+        {
+          "number": 9,
+          "submitId": "submit_5992232_8",
+          "questionId": "5992232",
+          "pointsRaw": "1 / 2 Points",
+          "earned": 1,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.031.MI."
+        },
+        {
+          "number": 10,
+          "submitId": "submit_5960057_9",
+          "questionId": "5960057",
+          "pointsRaw": "1 / 4 Points",
+          "earned": 1,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.037."
+        },
+        {
+          "number": 11,
+          "submitId": "submit_5959869_10",
+          "questionId": "5959869",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.519.XP."
+        },
+        {
+          "number": 12,
+          "submitId": "submit_5960176_11",
+          "questionId": "5960176",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.520.XP."
+        },
+        {
+          "number": 13,
+          "submitId": "submit_5960111_12",
+          "questionId": "5960111",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.064."
+        },
+        {
+          "number": 14,
+          "submitId": "submit_5959925_13",
+          "questionId": "5959925",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.027."
+        },
+        {
+          "number": 15,
+          "submitId": "submit_5960079_14",
+          "questionId": "5960079",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.051."
+        },
+        {
+          "number": 16,
+          "submitId": "submit_5959966_15",
+          "questionId": "5959966",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.049."
+        },
+        {
+          "number": 17,
+          "submitId": "submit_5959843_16",
+          "questionId": "5959843",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.070."
+        },
+        {
+          "number": 18,
+          "submitId": "submit_5959832_17",
+          "questionId": "5959832",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.542.XP."
+        },
+        {
+          "number": 19,
+          "submitId": "submit_5341639_18",
+          "questionId": "5341639",
+          "pointsRaw": "– / 0 Points",
+          "earned": 0,
+          "max": 0,
+          "complete": false,
+          "problemId": null
+        },
+        {
+          "number": 20,
+          "submitId": "submit_6008218_19",
+          "questionId": "6008218",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.067.MI."
+        },
+        {
+          "number": 21,
+          "submitId": "submit_6013062_20",
+          "questionId": "6013062",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 1.8.045."
+        }
+      ]
+    },
+    {
+      "at": "2026-09-25T01:19:59.166Z",
+      "type": "question_start",
+      "number": 3,
+      "submitId": "submit_5960206_2"
+    },
+    {
+      "at": "2026-09-25T01:20:07.955Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960141_7",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:20:13.051Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083#question5960141_7"
+    },
+    {
+      "at": "2026-09-25T01:20:52.076Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960206_2",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:20:57.421Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:20:57.443Z",
+      "type": "question_start",
+      "number": 5,
+      "submitId": "submit_5959822_4"
+    },
+    {
+      "at": "2026-09-25T01:21:03.925Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:21:47.435Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5959822_4",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:21:57.757Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:21:57.830Z",
+      "type": "question_start",
+      "number": 6,
+      "submitId": "submit_5992358_5"
+    },
+    {
+      "at": "2026-09-25T01:22:08.408Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:22:53.711Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:22:53.787Z",
+      "type": "question_start",
+      "number": 7,
+      "submitId": "submit_5960269_6"
+    },
+    {
+      "at": "2026-09-25T01:23:03.703Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    }
+  ],
+  "questions": [
+    {
+      "at": "2026-09-25T01:20:57.443Z",
+      "number": 3,
+      "status": "wrong",
+      "score": {
+        "raw": "7 / 9 Points",
+        "earned": 7,
+        "max": 9,
+        "complete": false
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5960206_2_0_5964685",
+            "name": "RN_5960206_2_0_5964685",
+            "value": "2"
+          },
+          {
+            "id": "RN_5960206_2_1_5964685",
+            "name": "RN_5960206_2_1_5964685",
+            "value": "0.75"
+          },
+          {
+            "id": "RN_5960206_2_2_5964685",
+            "name": "RN_5960206_2_2_5964685",
+            "value": "4"
+          },
+          {
+            "id": "RN_5960206_2_3_5964685",
+            "name": "RN_5960206_2_3_5964685",
+            "value": "5"
+          },
+          {
+            "id": "RN_5960206_2_8_5964685",
+            "name": "RN_5960206_2_8_5964685",
+            "value": "1"
+          }
+        ],
+        "mathPads": [
+          "[-3,4]",
+          "[1/2,5]",
+          "2,4"
+        ],
+        "radios": [
+          {
+            "name": "RC_5960206_2_7_5964685",
+            "value": "1",
+            "label": "[−3,2] and 4"
+          }
+        ],
+        "confidence": 1,
+        "source": "graph-read"
+      },
+      "fillResult": {
+        "graph": 0,
+        "mathPads": 3,
+        "selects": 0,
+        "textInputs": 3,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.007."
+    },
+    {
+      "at": "2026-09-25T01:21:57.829Z",
+      "number": 5,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 3 Points",
+        "earned": 2,
+        "max": 3,
+        "complete": false
+      },
+      "answer": {
+        "graph": {
+          "type": "line",
+          "points": [
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              9
+            ]
+          ]
+        },
+        "mathPads": [
+          "(-infinity,infinity)",
+          "(-infinity,infinity)"
+        ],
+        "confidence": 1,
+        "source": "linear"
+      },
+      "fillResult": {
+        "graph": 2,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.015."
+    },
+    {
+      "at": "2026-09-25T01:22:53.787Z",
+      "number": 6,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 3 Points",
+        "earned": 2,
+        "max": 3,
+        "complete": false
+      },
+      "answer": {
+        "graph": {
+          "type": "segment",
+          "points": [
+            [
+              -3,
+              -6
+            ],
+            [
+              7,
+              4
+            ]
+          ]
+        },
+        "mathPads": [
+          "[-3,7]",
+          "[-6,4]"
+        ],
+        "confidence": 1,
+        "source": "piecewise-segment"
+      },
+      "fillResult": {
+        "graph": 2,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.019.MI."
+    }
+  ],
+  "result": {
+    "status": "error",
+    "error": "locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[data-wa-q-root=\"7\"]')\n    2 × waiting for \"https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave\" navigation to finish...\n      - navigated to \"https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave\"\n    - waiting for \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083\" navigation to finish...\n    - navigated to \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083\"\n",
+    "stack": "locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[data-wa-q-root=\"7\"]')\n    2 × waiting for \"https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave\" navigation to finish...\n      - navigated to \"https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave\"\n    - waiting for \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083\" navigation to finish...\n    - navigated to \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083\"\n\n    at drawGraph (/Users/jacobpfeifer/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Canvas Automation/canvas-mcp/browser/scripts/lib/webassign/graph.mjs:50:15)\n    at async applyAnswer (/Users/jacobpfeifer/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Canvas Automation/canvas-mcp/browser/scripts/lib/webassign/fill.mjs:331:27)\n    at async file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:173:24"
+  },
+  "finishedAt": "2026-09-25T01:24:04.919Z"
+}

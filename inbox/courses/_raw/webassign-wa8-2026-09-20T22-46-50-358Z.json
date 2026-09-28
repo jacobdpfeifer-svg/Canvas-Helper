@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-09-20T22:46:50.358Z",
+  "events": [
+    {
+      "at": "2026-09-20T22:46:50.358Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "error",
+    "error": "WebAssign CDP not ready at http://127.0.0.1:9223. Run: cd browser && npm run open-webassign",
+    "stack": "Error: WebAssign CDP not ready at http://127.0.0.1:9223. Run: cd browser && npm run open-webassign\n    at connectWebAssignBrowser (file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/lib/webassign/browser-session.mjs:95:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async acquireWebAssignPage (file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/lib/webassign/browser-session.mjs:158:38)\n    at async file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:101:39"
+  },
+  "finishedAt": "2026-09-20T22:46:58.128Z"
+}

@@ -1,0 +1,480 @@
+{
+  "startedAt": "2026-09-25T01:01:23.762Z",
+  "events": [
+    {
+      "at": "2026-09-25T01:01:23.762Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-25T01:01:41.202Z",
+      "type": "goto_webassign_direct",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-25T01:01:43.813Z",
+      "type": "waiting_webassign",
+      "url": "https://account.cengage.com/login?SAMLRequest=fZLbauswEEV%2FxejdN6WKbRGnhBMKgTaU3ih9E%2FLEFcceuRo5af6%2BqtOU9uEc0JOYWXuzpMXle99Fe3BkLNYsTzIWAWrbGGxr9vhwFZfscrkg1Xd8kKvRv%2BIdvI1APloRgfNh7Y9FGntw9%2BD2RsPj3XXNXr0fSKapChuJBmxVC4m2fUpk04mWZlbxuSjzHdL2WWzb1UwULFoHtEHlpzrfFK3tiP4XqLOtQRZdWadh6lWzneoIWLRZ18w0RVlW8yoriotMzKtyVgnBc16JXBS8CkNEI2yQvEJfM57xeZxVMRcPWS7DuciTIpu9sOjprIZ%2FqgmykOTJRs1Gh9IqMiRR9UDSa3m%2FurmWYVQOznqrbce%2B5Mkp0P0k%2FB%2BgznrZ8qzhcDgk9q9XJ5GTRDo5j0Pc3jTgUhr22PSA6mgH176p5tj4RfqzwvdrbkPmZn1rO6OPnx575f9dKU%2Fy6cY08W4alSPSANrsDDQsXX5l%2FP4jyw8%3D&RelayState=%252Foauth2%252Fv1%252Fauthorize%252Fredirect%253Fokta_key%253DXYz4JWUKHEbCHaRAkoGnMCoDkas0hXYykjflGafR40s&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=duVV9NPiSs8zsR2XwJw5pZzNIPHsxUikpR2Wh730VTCqoCD2oucMdCbNHyPT4n5Z6WzEVCzq1Hg9l%2BWJ7kxfYFI5Vb%2BSgHWuhJkQkxnT2L5Ej8X1fNnulGkAdMW5d4YryB%2F8G6O%2B%2B8cog851s%2Bm%2BwhtzwS9vrlmOrsNw4acSWoT%2FuADNLafjswMxZUM4hsYIXdRAYdMiToyCrk9%2B%2FHj1MA8Ftg951pAymIV43AwD0LsCZv%2BSkusE%2FW7lTA7XEB5Ftyf5V%2BRNcS7zd9bCZ0MRx1%2Bl6EPVWU8GFTVxIgRS5vglbXzlXmKqMINPVyK5r%2B7DIua9asgcTII3Th3cXYohQg%3D%3D"
+    },
+    {
+      "at": "2026-09-25T01:02:26.452Z",
+      "type": "webassign_ready",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:02:28.896Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:02:29.041Z",
+      "type": "inventory",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083",
+      "score": {
+        "earned": 8,
+        "max": 74
+      },
+      "questions": [
+        {
+          "number": 1,
+          "submitId": "submit_6000999_0",
+          "questionId": "6000999",
+          "pointsRaw": "2 / 4 Points",
+          "earned": 2,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.002."
+        },
+        {
+          "number": 2,
+          "submitId": "submit_6001063_1",
+          "questionId": "6001063",
+          "pointsRaw": "2 / 4 Points",
+          "earned": 2,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.005."
+        },
+        {
+          "number": 3,
+          "submitId": "submit_5960206_2",
+          "questionId": "5960206",
+          "pointsRaw": "1 / 9 Points",
+          "earned": 1,
+          "max": 9,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.007."
+        },
+        {
+          "number": 4,
+          "submitId": "submit_6001027_3",
+          "questionId": "6001027",
+          "pointsRaw": "3 / 5 Points",
+          "earned": 3,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.009."
+        },
+        {
+          "number": 5,
+          "submitId": "submit_5959822_4",
+          "questionId": "5959822",
+          "pointsRaw": "0 / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.015."
+        },
+        {
+          "number": 6,
+          "submitId": "submit_5992358_5",
+          "questionId": "5992358",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.019.MI."
+        },
+        {
+          "number": 7,
+          "submitId": "submit_5960269_6",
+          "questionId": "5960269",
+          "pointsRaw": "0 / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.020."
+        },
+        {
+          "number": 8,
+          "submitId": "submit_5960141_7",
+          "questionId": "5960141",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.516.XP."
+        },
+        {
+          "number": 9,
+          "submitId": "submit_5992232_8",
+          "questionId": "5992232",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.031.MI."
+        },
+        {
+          "number": 10,
+          "submitId": "submit_5960057_9",
+          "questionId": "5960057",
+          "pointsRaw": "– / 4 Points",
+          "earned": 0,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.037."
+        },
+        {
+          "number": 11,
+          "submitId": "submit_5959869_10",
+          "questionId": "5959869",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.519.XP."
+        },
+        {
+          "number": 12,
+          "submitId": "submit_5960176_11",
+          "questionId": "5960176",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.520.XP."
+        },
+        {
+          "number": 13,
+          "submitId": "submit_5960111_12",
+          "questionId": "5960111",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.064."
+        },
+        {
+          "number": 14,
+          "submitId": "submit_5959925_13",
+          "questionId": "5959925",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.027."
+        },
+        {
+          "number": 15,
+          "submitId": "submit_5960079_14",
+          "questionId": "5960079",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.051."
+        },
+        {
+          "number": 16,
+          "submitId": "submit_5959966_15",
+          "questionId": "5959966",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.049."
+        },
+        {
+          "number": 17,
+          "submitId": "submit_5959843_16",
+          "questionId": "5959843",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.070."
+        },
+        {
+          "number": 18,
+          "submitId": "submit_5959832_17",
+          "questionId": "5959832",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.542.XP."
+        },
+        {
+          "number": 19,
+          "submitId": "submit_5341639_18",
+          "questionId": "5341639",
+          "pointsRaw": "– / 0 Points",
+          "earned": 0,
+          "max": 0,
+          "complete": false,
+          "problemId": null
+        },
+        {
+          "number": 20,
+          "submitId": "submit_6008218_19",
+          "questionId": "6008218",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.067.MI."
+        },
+        {
+          "number": 21,
+          "submitId": "submit_6013062_20",
+          "questionId": "6013062",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 1.8.045."
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "list",
+    "summary": {
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083",
+      "score": {
+        "earned": 8,
+        "max": 74
+      },
+      "questions": [
+        {
+          "number": 1,
+          "submitId": "submit_6000999_0",
+          "questionId": "6000999",
+          "pointsRaw": "2 / 4 Points",
+          "earned": 2,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.002."
+        },
+        {
+          "number": 2,
+          "submitId": "submit_6001063_1",
+          "questionId": "6001063",
+          "pointsRaw": "2 / 4 Points",
+          "earned": 2,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.005."
+        },
+        {
+          "number": 3,
+          "submitId": "submit_5960206_2",
+          "questionId": "5960206",
+          "pointsRaw": "1 / 9 Points",
+          "earned": 1,
+          "max": 9,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.007."
+        },
+        {
+          "number": 4,
+          "submitId": "submit_6001027_3",
+          "questionId": "6001027",
+          "pointsRaw": "3 / 5 Points",
+          "earned": 3,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.009."
+        },
+        {
+          "number": 5,
+          "submitId": "submit_5959822_4",
+          "questionId": "5959822",
+          "pointsRaw": "0 / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.015."
+        },
+        {
+          "number": 6,
+          "submitId": "submit_5992358_5",
+          "questionId": "5992358",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.019.MI."
+        },
+        {
+          "number": 7,
+          "submitId": "submit_5960269_6",
+          "questionId": "5960269",
+          "pointsRaw": "0 / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.020."
+        },
+        {
+          "number": 8,
+          "submitId": "submit_5960141_7",
+          "questionId": "5960141",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.516.XP."
+        },
+        {
+          "number": 9,
+          "submitId": "submit_5992232_8",
+          "questionId": "5992232",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.031.MI."
+        },
+        {
+          "number": 10,
+          "submitId": "submit_5960057_9",
+          "questionId": "5960057",
+          "pointsRaw": "– / 4 Points",
+          "earned": 0,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.037."
+        },
+        {
+          "number": 11,
+          "submitId": "submit_5959869_10",
+          "questionId": "5959869",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.519.XP."
+        },
+        {
+          "number": 12,
+          "submitId": "submit_5960176_11",
+          "questionId": "5960176",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.520.XP."
+        },
+        {
+          "number": 13,
+          "submitId": "submit_5960111_12",
+          "questionId": "5960111",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.064."
+        },
+        {
+          "number": 14,
+          "submitId": "submit_5959925_13",
+          "questionId": "5959925",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.027."
+        },
+        {
+          "number": 15,
+          "submitId": "submit_5960079_14",
+          "questionId": "5960079",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.051."
+        },
+        {
+          "number": 16,
+          "submitId": "submit_5959966_15",
+          "questionId": "5959966",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.049."
+        },
+        {
+          "number": 17,
+          "submitId": "submit_5959843_16",
+          "questionId": "5959843",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.070."
+        },
+        {
+          "number": 18,
+          "submitId": "submit_5959832_17",
+          "questionId": "5959832",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.542.XP."
+        },
+        {
+          "number": 19,
+          "submitId": "submit_5341639_18",
+          "questionId": "5341639",
+          "pointsRaw": "– / 0 Points",
+          "earned": 0,
+          "max": 0,
+          "complete": false,
+          "problemId": null
+        },
+        {
+          "number": 20,
+          "submitId": "submit_6008218_19",
+          "questionId": "6008218",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.067.MI."
+        },
+        {
+          "number": 21,
+          "submitId": "submit_6013062_20",
+          "questionId": "6013062",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 1.8.045."
+        }
+      ]
+    }
+  },
+  "finishedAt": "2026-09-25T01:02:29.043Z"
+}

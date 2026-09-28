@@ -1,0 +1,60 @@
+{
+  "number": 26,
+  "text": "26.\n[1 / 6 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nThis question and the following question(s) are part of your Preview Assignment for Section 2.2. You can find the preview assignment in Canvas assignments or by clicking the hyperlink in the assignment description at the top of this page.\n\n\nSketch the graph of the function by first making a table of values. (If an answer is undefined, enter UNDEFINED.)\nf(x) = x2 − 4\nx\t\nf(x) = x2 − 4\n\n±4\t\n±3\t\n±2\t\n±1\t\n0\t\nSketch the graph.\nThe x y-coordinate plane is given. The curve enters the window in the second quadrant, goes down and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, −3), changes direction at the point (0, −4), goes up and right becoming more steep, passes through the point (1, −3), crosses the x-axis at x = 2, and exits the window in the first quadrant.\n \nThe x y-coordinate plane is given. A function enters the window in the third quadrant, goes up and right linearly, crosses the x-axis at x = −4, passes through the point (−2, 2), passes through the point (−1, 3), sharply changes direction at the point (0, 4), goes down and right linearly, passes through the point (1, 3), passes through the point (2, 2), crosses the x-axis at x = 4, and exits the window in the fourth quadrant.\n \nThe x y-coordinate plane is given. A function enters the window in the second quadrant, goes down and right linearly, crosses the x-axis at x = −4, passes through the point (−2, −2), passes through the point (−1, −3), sharply changes direction at the point (0, −4), goes up and right linearly, passes through the point (1, −3), passes through the point (2, −2), crosses the x-axis at x = 4, and exits the window in the first quadrant.\n \nThe x y-coordinate plane is given. The curve enters the window in the third quadrant, goes up and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, 3), changes direction at the point (0, 4), goes down and right becoming more steep, passes through the point (1, 3), crosses the x-axis at x = 2, and exits the window in the fourth quadrant.\n\n",
+  "mathsRough": [],
+  "mathPadCount": 0,
+  "textInputs": [
+    {
+      "id": "RN_5763630_25_0_5773413",
+      "name": "RN_5763630_25_0_5773413",
+      "value": ""
+    },
+    {
+      "id": "RN_5763630_25_1_5773413",
+      "name": "RN_5763630_25_1_5773413",
+      "value": ""
+    },
+    {
+      "id": "RN_5763630_25_2_5773413",
+      "name": "RN_5763630_25_2_5773413",
+      "value": ""
+    },
+    {
+      "id": "RN_5763630_25_3_5773413",
+      "name": "RN_5763630_25_3_5773413",
+      "value": ""
+    },
+    {
+      "id": "RN_5763630_25_4_5773413",
+      "name": "RN_5763630_25_4_5773413",
+      "value": ""
+    }
+  ],
+  "radioGroups": [
+    {
+      "name": "RC_5763630_25_5_5773413",
+      "options": [
+        {
+          "value": "0",
+          "label": "The x y-coordinate plane is given. The curve enters the window in the second quadrant, goes down and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, −3), changes direction at the point (0, −4), goes up and right becoming more steep, passes through the point (1, −3), crosses the x-axis at x = 2, and exits the window in the first quadrant.",
+          "id": "RC_5763630_25_5_5773413_0"
+        },
+        {
+          "value": "1",
+          "label": "The x y-coordinate plane is given. A function enters the window in the third quadrant, goes up and right linearly, crosses the x-axis at x = −4, passes through the point (−2, 2), passes through the point (−1, 3), sharply changes direction at the point (0, 4), goes down and right linearly, passes through the point (1, 3), passes through the point (2, 2), crosses the x-axis at x = 4, and exits the window in the fourth quadrant.",
+          "id": "RC_5763630_25_5_5773413_1"
+        },
+        {
+          "value": "2",
+          "label": "The x y-coordinate plane is given. A function enters the window in the second quadrant, goes down and right linearly, crosses the x-axis at x = −4, passes through the point (−2, −2), passes through the point (−1, −3), sharply changes direction at the point (0, −4), goes up and right linearly, passes through the point (1, −3), passes through the point (2, −2), crosses the x-axis at x = 4, and exits the window in the first quadrant.",
+          "id": "RC_5763630_25_5_5773413_2"
+        },
+        {
+          "value": "3",
+          "label": "The x y-coordinate plane is given. The curve enters the window in the third quadrant, goes up and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, 3), changes direction at the point (0, 4), goes down and right becoming more steep, passes through the point (1, 3), crosses the x-axis at x = 2, and exits the window in the fourth quadrant.",
+          "id": "RC_5763630_25_5_5773413_3"
+        }
+      ]
+    }
+  ]
+}

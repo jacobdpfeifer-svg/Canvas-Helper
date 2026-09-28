@@ -1,0 +1,1629 @@
+{
+  "startedAt": "2026-09-20T22:15:28.864Z",
+  "events": [
+    {
+      "at": "2026-09-20T22:15:28.864Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": false
+    },
+    {
+      "at": "2026-09-20T22:15:35.195Z",
+      "type": "goto_canvas_assignment",
+      "url": "https://canvas.colorado.edu/courses/141255/assignments/2754105"
+    },
+    {
+      "at": "2026-09-20T22:15:42.824Z",
+      "type": "waiting_webassign",
+      "url": "https://www.webassign.net/colorado/login.html"
+    },
+    {
+      "at": "2026-09-20T22:21:19.034Z",
+      "type": "webassign_ready",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T22:21:21.038Z",
+      "type": "assignment_page",
+      "title": "WA 8 (2.1) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T22:21:21.052Z",
+      "type": "inventory",
+      "title": "WA 8 (2.1) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079",
+      "score": {
+        "earned": 12,
+        "max": 70
+      },
+      "questions": [
+        {
+          "number": 1,
+          "submitId": "submit_5960200_0",
+          "questionId": "5960200",
+          "pointsRaw": "2 / 2 Points",
+          "earned": 2,
+          "max": 2,
+          "complete": true,
+          "problemId": "SPreCalc8 2.1.002."
+        },
+        {
+          "number": 2,
+          "submitId": "submit_5992582_1",
+          "questionId": "5992582",
+          "pointsRaw": "4 / 4 Points",
+          "earned": 4,
+          "max": 4,
+          "complete": true,
+          "problemId": "SPreCalc8 2.1.003."
+        },
+        {
+          "number": 3,
+          "submitId": "submit_5960004_2",
+          "questionId": "5960004",
+          "pointsRaw": "2 / 2 Points",
+          "earned": 2,
+          "max": 2,
+          "complete": true,
+          "problemId": "SPreCalc8 2.1.005."
+        },
+        {
+          "number": 4,
+          "submitId": "submit_5959924_3",
+          "questionId": "5959924",
+          "pointsRaw": "3 / 3 Points",
+          "earned": 3,
+          "max": 3,
+          "complete": true,
+          "problemId": "SPreCalc8 2.1.006."
+        },
+        {
+          "number": 5,
+          "submitId": "submit_5959884_4",
+          "questionId": "5959884",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.009."
+        },
+        {
+          "number": 6,
+          "submitId": "submit_5960017_5",
+          "questionId": "5960017",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.011."
+        },
+        {
+          "number": 7,
+          "submitId": "submit_5960042_6",
+          "questionId": "5960042",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.021."
+        },
+        {
+          "number": 8,
+          "submitId": "submit_5960108_7",
+          "questionId": "5960108",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.026."
+        },
+        {
+          "number": 9,
+          "submitId": "submit_5959854_8",
+          "questionId": "5959854",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.028."
+        },
+        {
+          "number": 10,
+          "submitId": "submit_5959853_9",
+          "questionId": "5959853",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.033."
+        },
+        {
+          "number": 11,
+          "submitId": "submit_5992263_10",
+          "questionId": "5992263",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.035.MI."
+        },
+        {
+          "number": 12,
+          "submitId": "submit_5960165_11",
+          "questionId": "5960165",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.038."
+        },
+        {
+          "number": 13,
+          "submitId": "submit_5960173_12",
+          "questionId": "5960173",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.042."
+        },
+        {
+          "number": 14,
+          "submitId": "submit_5960242_13",
+          "questionId": "5960242",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.045."
+        },
+        {
+          "number": 15,
+          "submitId": "submit_5959864_14",
+          "questionId": "5959864",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.046."
+        },
+        {
+          "number": 16,
+          "submitId": "submit_5959882_15",
+          "questionId": "5959882",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.047."
+        },
+        {
+          "number": 17,
+          "submitId": "submit_5959827_16",
+          "questionId": "5959827",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.048."
+        },
+        {
+          "number": 18,
+          "submitId": "submit_5960245_17",
+          "questionId": "5960245",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.050."
+        },
+        {
+          "number": 19,
+          "submitId": "submit_5960184_18",
+          "questionId": "5960184",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.059."
+        },
+        {
+          "number": 20,
+          "submitId": "submit_5960012_19",
+          "questionId": "5960012",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.061."
+        },
+        {
+          "number": 21,
+          "submitId": "submit_5960068_20",
+          "questionId": "5960068",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.063."
+        },
+        {
+          "number": 22,
+          "submitId": "submit_5960235_21",
+          "questionId": "5960235",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.064."
+        },
+        {
+          "number": 23,
+          "submitId": "submit_5959789_22",
+          "questionId": "5959789",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.069."
+        },
+        {
+          "number": 24,
+          "submitId": "submit_5959843_23",
+          "questionId": "5959843",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.070."
+        },
+        {
+          "number": 25,
+          "submitId": "submit_5960169_24",
+          "questionId": "5960169",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.072."
+        },
+        {
+          "number": 26,
+          "submitId": "submit_5763630_25",
+          "questionId": "5763630",
+          "pointsRaw": "1 / 6 Points",
+          "earned": 1,
+          "max": 6,
+          "complete": false,
+          "problemId": null
+        }
+      ]
+    },
+    {
+      "at": "2026-09-20T22:21:21.055Z",
+      "type": "question_start",
+      "number": 5,
+      "submitId": "submit_5959884_4"
+    },
+    {
+      "at": "2026-09-20T22:21:33.561Z",
+      "type": "question_start",
+      "number": 6,
+      "submitId": "submit_5960017_5"
+    },
+    {
+      "at": "2026-09-20T22:21:43.037Z",
+      "type": "question_start",
+      "number": 7,
+      "submitId": "submit_5960042_6"
+    },
+    {
+      "at": "2026-09-20T22:21:52.412Z",
+      "type": "question_start",
+      "number": 8,
+      "submitId": "submit_5960108_7"
+    },
+    {
+      "at": "2026-09-20T22:22:01.680Z",
+      "type": "question_start",
+      "number": 9,
+      "submitId": "submit_5959854_8"
+    },
+    {
+      "at": "2026-09-20T22:22:11.195Z",
+      "type": "question_start",
+      "number": 10,
+      "submitId": "submit_5959853_9"
+    },
+    {
+      "at": "2026-09-20T22:22:25.999Z",
+      "type": "question_start",
+      "number": 11,
+      "submitId": "submit_5992263_10"
+    },
+    {
+      "at": "2026-09-20T22:22:39.139Z",
+      "type": "question_start",
+      "number": 12,
+      "submitId": "submit_5960165_11"
+    },
+    {
+      "at": "2026-09-20T22:22:48.654Z",
+      "type": "question_start",
+      "number": 13,
+      "submitId": "submit_5960173_12"
+    },
+    {
+      "at": "2026-09-20T22:22:59.087Z",
+      "type": "question_start",
+      "number": 14,
+      "submitId": "submit_5960242_13"
+    },
+    {
+      "at": "2026-09-20T22:23:08.846Z",
+      "type": "question_start",
+      "number": 15,
+      "submitId": "submit_5959864_14"
+    },
+    {
+      "at": "2026-09-20T22:23:18.143Z",
+      "type": "question_start",
+      "number": 16,
+      "submitId": "submit_5959882_15"
+    },
+    {
+      "at": "2026-09-20T22:23:27.643Z",
+      "type": "question_start",
+      "number": 17,
+      "submitId": "submit_5959827_16"
+    },
+    {
+      "at": "2026-09-20T22:23:37.054Z",
+      "type": "question_start",
+      "number": 18,
+      "submitId": "submit_5960245_17"
+    },
+    {
+      "at": "2026-09-20T22:23:46.417Z",
+      "type": "question_start",
+      "number": 19,
+      "submitId": "submit_5960184_18"
+    },
+    {
+      "at": "2026-09-20T22:23:55.762Z",
+      "type": "question_start",
+      "number": 20,
+      "submitId": "submit_5960012_19"
+    },
+    {
+      "at": "2026-09-20T22:24:05.004Z",
+      "type": "question_start",
+      "number": 21,
+      "submitId": "submit_5960068_20"
+    },
+    {
+      "at": "2026-09-20T22:24:14.407Z",
+      "type": "question_start",
+      "number": 22,
+      "submitId": "submit_5960235_21"
+    },
+    {
+      "at": "2026-09-20T22:24:28.345Z",
+      "type": "question_start",
+      "number": 23,
+      "submitId": "submit_5959789_22"
+    },
+    {
+      "at": "2026-09-20T22:24:37.708Z",
+      "type": "question_start",
+      "number": 24,
+      "submitId": "submit_5959843_23"
+    },
+    {
+      "at": "2026-09-20T22:24:47.041Z",
+      "type": "question_start",
+      "number": 25,
+      "submitId": "submit_5960169_24"
+    },
+    {
+      "at": "2026-09-20T22:24:56.075Z",
+      "type": "question_start",
+      "number": 26,
+      "submitId": "submit_5763630_25"
+    }
+  ],
+  "questions": [
+    {
+      "at": "2026-09-20T22:21:33.561Z",
+      "number": 5,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "3x-9"
+        ],
+        "confidence": 1,
+        "source": "rule"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.009."
+    },
+    {
+      "at": "2026-09-20T22:21:43.037Z",
+      "number": 6,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "sqrt(x^2+8)"
+        ],
+        "confidence": 1,
+        "source": "rule"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.011."
+    },
+    {
+      "at": "2026-09-20T22:21:52.411Z",
+      "number": 7,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 5 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "11/4",
+          "11/4",
+          "undefined",
+          "64",
+          "12/5"
+        ],
+        "confidence": 1,
+        "source": "eval"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.021."
+    },
+    {
+      "at": "2026-09-20T22:22:01.679Z",
+      "number": 8,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 5 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "-5",
+          "29/5",
+          "17/2",
+          "(x-1)+4/(x-1)",
+          "1/x+4x"
+        ],
+        "confidence": 1,
+        "source": "eval"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.026."
+    },
+    {
+      "at": "2026-09-20T22:22:11.194Z",
+      "number": 9,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 6 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "0",
+          "undefined",
+          "-1",
+          "(a+8)/(a-8)",
+          "a^2/(a^2-16)",
+          "(a+9)/(a-7)"
+        ],
+        "confidence": 1,
+        "source": "eval"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.028."
+    },
+    {
+      "at": "2026-09-20T22:22:25.998Z",
+      "number": 10,
+      "status": "correct",
+      "score": {
+        "raw": "5 / 5 Points",
+        "earned": 5,
+        "max": 5,
+        "complete": true
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5959853_9_0_5969636",
+            "name": "RN_5959853_9_0_5969636",
+            "value": "-35"
+          },
+          {
+            "id": "RN_5959853_9_1_5969636",
+            "name": "RN_5959853_9_1_5969636",
+            "value": "1"
+          },
+          {
+            "id": "RN_5959853_9_2_5969636",
+            "name": "RN_5959853_9_2_5969636",
+            "value": "4"
+          },
+          {
+            "id": "RN_5959853_9_3_5969636",
+            "name": "RN_5959853_9_3_5969636",
+            "value": "15"
+          },
+          {
+            "id": "RN_5959853_9_4_5969636",
+            "name": "RN_5959853_9_4_5969636",
+            "value": "24"
+          }
+        ],
+        "confidence": 1,
+        "source": "piecewise"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 5,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.033."
+    },
+    {
+      "at": "2026-09-20T22:22:39.138Z",
+      "number": 11,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 5 Points",
+        "earned": 2,
+        "max": 5,
+        "complete": false
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5992263_10_0_6002046",
+            "name": "RN_5992263_10_0_6002046",
+            "value": "10"
+          },
+          {
+            "id": "RN_5992263_10_1_6002046",
+            "name": "RN_5992263_10_1_6002046",
+            "value": "121/16"
+          },
+          {
+            "id": "RN_5992263_10_2_6002046",
+            "name": "RN_5992263_10_2_6002046",
+            "value": "7"
+          },
+          {
+            "id": "RN_5992263_10_3_6002046",
+            "name": "RN_5992263_10_3_6002046",
+            "value": "0"
+          },
+          {
+            "id": "RN_5992263_10_4_6002046",
+            "name": "RN_5992263_10_4_6002046",
+            "value": "-1"
+          }
+        ],
+        "confidence": 1,
+        "source": "piecewise"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 5,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.035.MI."
+    },
+    {
+      "at": "2026-09-20T22:22:48.653Z",
+      "number": 12,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 2 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "14x-3",
+          "14x-6"
+        ],
+        "confidence": 1,
+        "source": "algebra"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.038."
+    },
+    {
+      "at": "2026-09-20T22:22:59.085Z",
+      "number": 13,
+      "status": "correct",
+      "score": {
+        "raw": "1 / 1 Points",
+        "earned": 1,
+        "max": 1,
+        "complete": true
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5960173_12_0_5969956",
+            "name": "RN_5960173_12_0_5969956",
+            "value": "-16"
+          }
+        ],
+        "confidence": 1,
+        "source": "net-change"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 1,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.042."
+    },
+    {
+      "at": "2026-09-20T22:23:08.845Z",
+      "number": 14,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 3 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "7-a",
+          "7-a-h",
+          "-1"
+        ],
+        "confidence": 1,
+        "source": "diff-quot"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.045."
+    },
+    {
+      "at": "2026-09-20T22:23:18.142Z",
+      "number": 15,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 3 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "a^2-6a",
+          "a^2+2ah+h^2-6a-6h",
+          "2a+h-6"
+        ],
+        "confidence": 1,
+        "source": "diff-quot"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.046."
+    },
+    {
+      "at": "2026-09-20T22:23:27.643Z",
+      "number": 16,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 3 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "3",
+          "3",
+          "0"
+        ],
+        "confidence": 1,
+        "source": "diff-quot"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.047."
+    },
+    {
+      "at": "2026-09-20T22:23:37.052Z",
+      "number": 17,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 3 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "2/(a+4)",
+          "2/(a+h+4)",
+          "-2/((a+h+4)(a+4))"
+        ],
+        "confidence": 1,
+        "source": "diff-quot"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.048."
+    },
+    {
+      "at": "2026-09-20T22:23:46.416Z",
+      "number": 18,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 3 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(a-4)/a",
+          "(a+h-4)/(a+h)",
+          "2(a-2)/(a(a+h))"
+        ],
+        "confidence": 1,
+        "source": "diff-quot"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.050."
+    },
+    {
+      "at": "2026-09-20T22:23:55.761Z",
+      "number": 19,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(-7,infinity)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.059."
+    },
+    {
+      "at": "2026-09-20T22:24:05.003Z",
+      "number": 20,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(-infinity,-2)U(-2,2)U(2,infinity)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.061."
+    },
+    {
+      "at": "2026-09-20T22:24:14.406Z",
+      "number": 21,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(-infinity,4]"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.063."
+    },
+    {
+      "at": "2026-09-20T22:24:28.344Z",
+      "number": 22,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(-infinity,infinity)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.064."
+    },
+    {
+      "at": "2026-09-20T22:24:37.706Z",
+      "number": 23,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "[-5,7)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.069."
+    },
+    {
+      "at": "2026-09-20T22:24:47.039Z",
+      "number": 24,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "[0,1/4)U(1/4,infinity)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.070."
+    },
+    {
+      "at": "2026-09-20T22:24:56.074Z",
+      "number": 25,
+      "status": "submitted",
+      "score": {
+        "raw": "– / 1 Points"
+      },
+      "answer": {
+        "mathPads": [
+          "(-infinity,-3]U[5,infinity)"
+        ],
+        "confidence": 1,
+        "source": "domain"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.1.072."
+    },
+    {
+      "at": "2026-09-20T22:25:07.405Z",
+      "number": 26,
+      "status": "correct",
+      "score": {
+        "raw": "6 / 6 Points",
+        "earned": 6,
+        "max": 6,
+        "complete": true
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5763630_25_0_5773413",
+            "name": "RN_5763630_25_0_5773413",
+            "value": "12"
+          },
+          {
+            "id": "RN_5763630_25_1_5773413",
+            "name": "RN_5763630_25_1_5773413",
+            "value": "5"
+          },
+          {
+            "id": "RN_5763630_25_2_5773413",
+            "name": "RN_5763630_25_2_5773413",
+            "value": "0"
+          },
+          {
+            "id": "RN_5763630_25_3_5773413",
+            "name": "RN_5763630_25_3_5773413",
+            "value": "-3"
+          },
+          {
+            "id": "RN_5763630_25_4_5773413",
+            "name": "RN_5763630_25_4_5773413",
+            "value": "-4"
+          }
+        ],
+        "radio": {
+          "name": "RC_5763630_25_5_5773413",
+          "value": "0",
+          "label": "The x y-coordinate plane is given. The curve enters the window in the second quadrant, goes down and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, −3), changes direction at the point (0, −4), goes up and right becoming more steep, passes through the point (1, −3), crosses the x-axis at x = 2, and exits the window in the first quadrant."
+        },
+        "confidence": 1,
+        "source": "preview-graph"
+      },
+      "fillResult": {
+        "mathPads": 0,
+        "selects": 0,
+        "textInputs": 5,
+        "radio": 1
+      },
+      "problemId": null
+    }
+  ],
+  "result": {
+    "status": "complete",
+    "finalScore": {
+      "earned": 25,
+      "max": 70
+    },
+    "results": [
+      {
+        "number": 5,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "3x-9"
+          ],
+          "confidence": 1,
+          "source": "rule"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.009."
+      },
+      {
+        "number": 6,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "sqrt(x^2+8)"
+          ],
+          "confidence": 1,
+          "source": "rule"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.011."
+      },
+      {
+        "number": 7,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 5 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "11/4",
+            "11/4",
+            "undefined",
+            "64",
+            "12/5"
+          ],
+          "confidence": 1,
+          "source": "eval"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.021."
+      },
+      {
+        "number": 8,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 5 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "-5",
+            "29/5",
+            "17/2",
+            "(x-1)+4/(x-1)",
+            "1/x+4x"
+          ],
+          "confidence": 1,
+          "source": "eval"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.026."
+      },
+      {
+        "number": 9,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 6 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "0",
+            "undefined",
+            "-1",
+            "(a+8)/(a-8)",
+            "a^2/(a^2-16)",
+            "(a+9)/(a-7)"
+          ],
+          "confidence": 1,
+          "source": "eval"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.028."
+      },
+      {
+        "number": 10,
+        "status": "correct",
+        "score": {
+          "raw": "5 / 5 Points",
+          "earned": 5,
+          "max": 5,
+          "complete": true
+        },
+        "answer": {
+          "textInputs": [
+            {
+              "id": "RN_5959853_9_0_5969636",
+              "name": "RN_5959853_9_0_5969636",
+              "value": "-35"
+            },
+            {
+              "id": "RN_5959853_9_1_5969636",
+              "name": "RN_5959853_9_1_5969636",
+              "value": "1"
+            },
+            {
+              "id": "RN_5959853_9_2_5969636",
+              "name": "RN_5959853_9_2_5969636",
+              "value": "4"
+            },
+            {
+              "id": "RN_5959853_9_3_5969636",
+              "name": "RN_5959853_9_3_5969636",
+              "value": "15"
+            },
+            {
+              "id": "RN_5959853_9_4_5969636",
+              "name": "RN_5959853_9_4_5969636",
+              "value": "24"
+            }
+          ],
+          "confidence": 1,
+          "source": "piecewise"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 5,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.033."
+      },
+      {
+        "number": 11,
+        "status": "wrong",
+        "score": {
+          "raw": "2 / 5 Points",
+          "earned": 2,
+          "max": 5,
+          "complete": false
+        },
+        "answer": {
+          "textInputs": [
+            {
+              "id": "RN_5992263_10_0_6002046",
+              "name": "RN_5992263_10_0_6002046",
+              "value": "10"
+            },
+            {
+              "id": "RN_5992263_10_1_6002046",
+              "name": "RN_5992263_10_1_6002046",
+              "value": "121/16"
+            },
+            {
+              "id": "RN_5992263_10_2_6002046",
+              "name": "RN_5992263_10_2_6002046",
+              "value": "7"
+            },
+            {
+              "id": "RN_5992263_10_3_6002046",
+              "name": "RN_5992263_10_3_6002046",
+              "value": "0"
+            },
+            {
+              "id": "RN_5992263_10_4_6002046",
+              "name": "RN_5992263_10_4_6002046",
+              "value": "-1"
+            }
+          ],
+          "confidence": 1,
+          "source": "piecewise"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 5,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.035.MI."
+      },
+      {
+        "number": 12,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 2 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "14x-3",
+            "14x-6"
+          ],
+          "confidence": 1,
+          "source": "algebra"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.038."
+      },
+      {
+        "number": 13,
+        "status": "correct",
+        "score": {
+          "raw": "1 / 1 Points",
+          "earned": 1,
+          "max": 1,
+          "complete": true
+        },
+        "answer": {
+          "textInputs": [
+            {
+              "id": "RN_5960173_12_0_5969956",
+              "name": "RN_5960173_12_0_5969956",
+              "value": "-16"
+            }
+          ],
+          "confidence": 1,
+          "source": "net-change"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 1,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.042."
+      },
+      {
+        "number": 14,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 3 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "7-a",
+            "7-a-h",
+            "-1"
+          ],
+          "confidence": 1,
+          "source": "diff-quot"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.045."
+      },
+      {
+        "number": 15,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 3 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "a^2-6a",
+            "a^2+2ah+h^2-6a-6h",
+            "2a+h-6"
+          ],
+          "confidence": 1,
+          "source": "diff-quot"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.046."
+      },
+      {
+        "number": 16,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 3 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "3",
+            "3",
+            "0"
+          ],
+          "confidence": 1,
+          "source": "diff-quot"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.047."
+      },
+      {
+        "number": 17,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 3 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "2/(a+4)",
+            "2/(a+h+4)",
+            "-2/((a+h+4)(a+4))"
+          ],
+          "confidence": 1,
+          "source": "diff-quot"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.048."
+      },
+      {
+        "number": 18,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 3 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(a-4)/a",
+            "(a+h-4)/(a+h)",
+            "2(a-2)/(a(a+h))"
+          ],
+          "confidence": 1,
+          "source": "diff-quot"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.050."
+      },
+      {
+        "number": 19,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(-7,infinity)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.059."
+      },
+      {
+        "number": 20,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(-infinity,-2)U(-2,2)U(2,infinity)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.061."
+      },
+      {
+        "number": 21,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(-infinity,4]"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.063."
+      },
+      {
+        "number": 22,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(-infinity,infinity)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.064."
+      },
+      {
+        "number": 23,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "[-5,7)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.069."
+      },
+      {
+        "number": 24,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "[0,1/4)U(1/4,infinity)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.070."
+      },
+      {
+        "number": 25,
+        "status": "submitted",
+        "score": {
+          "raw": "– / 1 Points"
+        },
+        "answer": {
+          "mathPads": [
+            "(-infinity,-3]U[5,infinity)"
+          ],
+          "confidence": 1,
+          "source": "domain"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.1.072."
+      },
+      {
+        "number": 26,
+        "status": "correct",
+        "score": {
+          "raw": "6 / 6 Points",
+          "earned": 6,
+          "max": 6,
+          "complete": true
+        },
+        "answer": {
+          "textInputs": [
+            {
+              "id": "RN_5763630_25_0_5773413",
+              "name": "RN_5763630_25_0_5773413",
+              "value": "12"
+            },
+            {
+              "id": "RN_5763630_25_1_5773413",
+              "name": "RN_5763630_25_1_5773413",
+              "value": "5"
+            },
+            {
+              "id": "RN_5763630_25_2_5773413",
+              "name": "RN_5763630_25_2_5773413",
+              "value": "0"
+            },
+            {
+              "id": "RN_5763630_25_3_5773413",
+              "name": "RN_5763630_25_3_5773413",
+              "value": "-3"
+            },
+            {
+              "id": "RN_5763630_25_4_5773413",
+              "name": "RN_5763630_25_4_5773413",
+              "value": "-4"
+            }
+          ],
+          "radio": {
+            "name": "RC_5763630_25_5_5773413",
+            "value": "0",
+            "label": "The x y-coordinate plane is given. The curve enters the window in the second quadrant, goes down and right becoming less steep, crosses the x-axis at x = −2, passes through the point (−1, −3), changes direction at the point (0, −4), goes up and right becoming more steep, passes through the point (1, −3), crosses the x-axis at x = 2, and exits the window in the first quadrant."
+          },
+          "confidence": 1,
+          "source": "preview-graph"
+        },
+        "fillResult": {
+          "mathPads": 0,
+          "selects": 0,
+          "textInputs": 5,
+          "radio": 1
+        },
+        "problemId": null
+      }
+    ],
+    "url": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902079&tags=autosave#question5763630_25"
+  },
+  "finishedAt": "2026-09-20T22:25:07.422Z"
+}

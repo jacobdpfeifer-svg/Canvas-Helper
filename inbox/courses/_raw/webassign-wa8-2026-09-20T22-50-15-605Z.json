@@ -1,0 +1,40 @@
+{
+  "startedAt": "2026-09-20T22:50:15.606Z",
+  "events": [
+    {
+      "at": "2026-09-20T22:50:15.606Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T22:50:15.811Z",
+      "type": "goto_webassign_direct",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T22:50:19.045Z",
+      "type": "waiting_webassign",
+      "url": "https://account.cengage.com/login?SAMLRequest=fZLLTsMwEEV%2FJfI%2BLzdJg9UUVVSVKkGFeAmxs5xpapGMg8dp6d9jUopgAVtr5tyrM55dvndtsAdL2mDF0ihhAaAytcamYo8Pq7Bkl%2FMZya7lvVgMbod38DYAuWBBBNb5tSuDNHRg78HutYLHu%2BuK7ZzrScSx9BuRAmxkA5EyXUxk4pEWJ0byIi%2FTLdLmOd80i0k%2BZcHSozVKN9b5pihlBnS%2FQK1pNLJgZayCsVfFtrIlYMF6WTFdh1Ne5vk0vyiSLE34tJxkk7TI8jLjfOKD1kQDrJGcRFcxnvAiTC5CnjxwLvJEpEWUpeULC57ObvinG28LSZx0VGywKIwkTQJlByScEveLm2vhR0VvjTPKtOzLnhgD7U%2FC%2FwB59svmZw%2BHwyEyr06eTI4W6SQ99HF7XYONqd9j3QHKo%2Blt8ybrY%2B1m8c8K3%2Bfc%2BMz18ta0Wh0%2FRXbS%2FV0pjdLxxZvdjqNiQOpB6a2GmsXzr4zfn2T%2BAQ%3D%3D&RelayState=%252Foauth2%252Fv1%252Fauthorize%252Fredirect%253Fokta_key%253DjMbhrlcLplhM2nSfV3gV0jYNZUIMNINpPZpDTX0xcyA&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=eDLl7RrnX4WSSuqd85s6LexaDu%2B296Pul4ZYCq%2FmEA%2FPYI0gMA7basDKo25%2FdvHXHLuq1KncZXxb5MLpWf2Zih6RJER4dsjR34CWBBKObbQgtXlMPMEqClBDfhOmDuY37hMFsXSNxSHl8oCnMn8GrOOtIJX6PFngBNMjIPRfGkTahcFJ1GcMTlZ0VjwK8XD11AZK%2FRmyICgPJj%2Fmy%2FhUHee01J5XgBz1yZy6vEeoKKVIp3mqjzhRHa1Lkbn358PtXOXQegqRYnxciet5SIyeXmLVKS0mI0ml6SYD9XoY5aPgOU1%2B0q6acJqusUBRvL2S9cPq9gmUXJWTSlGCZyUxZg%3D%3D"
+    },
+    {
+      "at": "2026-09-20T22:50:58.972Z",
+      "type": "webassign_ready",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T22:51:00.978Z",
+      "type": "assignment_page",
+      "title": "WA 8 (2.1) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "error",
+    "error": "title is not defined",
+    "stack": "ReferenceError: title is not defined\n    at file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:101:27"
+  },
+  "finishedAt": "2026-09-20T22:51:00.980Z"
+}

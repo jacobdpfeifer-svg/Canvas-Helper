@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-09-28T04:21:53.253Z",
+  "events": [
+    {
+      "at": "2026-09-28T04:21:53.253Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902084"
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "error",
+    "error": "No WebAssign browser session. Run: cd browser && npm run open-webassign",
+    "stack": "Error: No WebAssign browser session. Run: cd browser && npm run open-webassign\n    at acquireWebAssignPage (file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/lib/webassign/browser-session.mjs:164:13)\n    at async file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:115:20"
+  },
+  "finishedAt": "2026-09-28T04:21:53.289Z"
+}

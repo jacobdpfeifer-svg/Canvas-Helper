@@ -1,0 +1,41 @@
+{
+  "number": 10,
+  "text": "10.\n[– / 5 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.1.033.\n Problem 10 \nEvaluate the piecewise defined function at the indicated values.\n𝑓(𝑥)={\n9𝑥\n𝑥\n2\n+\n−\n1\n1\n if 𝑥<4\n if 𝑥≥4\n𝑓\n(\n𝑥\n)\n=\n{\n9\n𝑥\n\t\n+\n\t\n1\n\t\n\t\n if \n𝑥\n<\n4\n\n\n𝑥\n2\n\t\n−\n\t\n1\n\t\t\n if \n𝑥\n≥\n4\n𝑓(−4)=\n𝑓\n(\n−\n4\n)\n=\n\t\n\n𝑓(0)=\n𝑓\n(\n0\n)\n=\n\t\n\n𝑓(\n1\n3\n)=\n𝑓\n(\n1\n3\n)\n=\n\t\n\n𝑓(4)=\n𝑓\n(\n4\n)\n=\n\t\n\n𝑓(5)=\n𝑓\n(\n5\n)\n=\n\t",
+  "mathsRough": [
+    "f(x)={9x+1&nbsp;if&nbsp;x&lt;4x2−1&nbsp;if&nbsp;x≥4",
+    "f(−4)=",
+    "f(0)=",
+    "f((13)/)=",
+    "f(4)=",
+    "f(5)="
+  ],
+  "mathPadCount": 0,
+  "textInputs": [
+    {
+      "id": "RN_5959853_9_0_5969636",
+      "name": "RN_5959853_9_0_5969636",
+      "value": ""
+    },
+    {
+      "id": "RN_5959853_9_1_5969636",
+      "name": "RN_5959853_9_1_5969636",
+      "value": ""
+    },
+    {
+      "id": "RN_5959853_9_2_5969636",
+      "name": "RN_5959853_9_2_5969636",
+      "value": ""
+    },
+    {
+      "id": "RN_5959853_9_3_5969636",
+      "name": "RN_5959853_9_3_5969636",
+      "value": ""
+    },
+    {
+      "id": "RN_5959853_9_4_5969636",
+      "name": "RN_5959853_9_4_5969636",
+      "value": ""
+    }
+  ],
+  "radioGroups": []
+}

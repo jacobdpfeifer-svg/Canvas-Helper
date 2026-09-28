@@ -1,6 +1,6 @@
 ---
 name: jacob-canvas-browser
-description: SSO sync Canvas REST into inbox/ without a PAT; LTI/external UI escape hatch with Jacob; WeVideo/PlayPosit full-auto when Jacob asks. Use for "sync Canvas", "pull todo", "open Canvas", "ZyBooks", "WebAssign", "PlayPosit", "WeVideo", "ONLINEEXP", "FYE".
+description: SSO sync Canvas REST into inbox/ without a PAT; LTI escape hatch; WeVideo/PlayPosit full-auto when Jacob asks; WebAssign full-auto via APPM1235-webassign.md when Jacob asks. Use for "sync Canvas", "pull todo", "open Canvas", "ZyBooks", "WebAssign", "run webassign", "PlayPosit", "WeVideo", "ONLINEEXP", "FYE".
 ---
 
 # Jacob Canvas browser (SSO)
@@ -44,9 +44,23 @@ cd browser && npm run wevideo -- --assignment <canvas-assignment-url>
 
 Uses `browser/.auth` only (not IDE browser). Logs under `inbox/courses/_raw/wevideo-*.json`. Details: [`docs/CU_BROWSER.md`](../../docs/CU_BROWSER.md) § WeVideo.
 
-## D — Cursor browser LTI escape hatch (Jacob driving)
+## D — WebAssign full-auto (APPM1235, when Jacob asks)
 
-For WebAssign, ZyBooks, Achieve/LearningCurve, proctored quizzes, other non-WeVideo LTI:
+**Playbook:** [`inbox/courses/APPM1235-webassign.md`](../../inbox/courses/APPM1235-webassign.md) — read every session.
+
+```bash
+cd browser && npm run open-webassign
+cd browser && npm run webassign -- --list
+cd browser && npm run webassign -- --all-open --title 'WA N' --wa-url '<dep URL>'
+```
+
+Persistent Chrome CDP (`browser/.auth-webassign`, port 9224). Leave window open between runs. Logs: `inbox/courses/_raw/webassign-*.json`.
+
+If Jacob did **not** ask for automation → use § E below instead.
+
+## E — Cursor browser LTI escape hatch (Jacob driving)
+
+For WebAssign (process help), ZyBooks, Achieve/LearningCurve, proctored quizzes, other non-WeVideo LTI:
 
 1. Open the tool via Canvas (Jacob completes MFA if needed).
 2. Draft steps/answers in chat.

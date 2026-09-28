@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-09-20T23:16:39.788Z",
+  "events": [
+    {
+      "at": "2026-09-20T23:16:39.788Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    },
+    {
+      "at": "2026-09-20T23:16:49.944Z",
+      "type": "goto_webassign_direct",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079"
+    }
+  ],
+  "questions": [],
+  "result": {
+    "status": "error",
+    "error": "page.goto: net::ERR_ABORTED at https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079\nCall log:\n  - navigating to \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079\", waiting until \"domcontentloaded\"\n",
+    "stack": "page.goto: net::ERR_ABORTED at https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079\nCall log:\n  - navigating to \"https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902079\", waiting until \"domcontentloaded\"\n\n    at acquireWebAssignPage (/Users/jacobpfeifer/Library/Mobile Documents/com~apple~CloudDocs/Desktop/Canvas Automation/canvas-mcp/browser/scripts/lib/webassign/browser-session.mjs:180:16)\n    at async file:///Users/jacobpfeifer/Library/Mobile%20Documents/com%7Eapple%7ECloudDocs/Desktop/Canvas%20Automation/canvas-mcp/browser/scripts/webassign-complete.mjs:102:20"
+  },
+  "finishedAt": "2026-09-20T23:16:49.948Z"
+}

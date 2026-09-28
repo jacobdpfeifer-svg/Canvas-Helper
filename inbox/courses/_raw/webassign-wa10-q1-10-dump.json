@@ -1,0 +1,820 @@
+[
+  {
+    "number": 1,
+    "submitId": "submit_5959889_0",
+    "problemId": "SPreCalc8 2.6.005.",
+    "pointsRaw": "1 / 1 Points",
+    "text": "1.\n[1 / 1 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nSPreCalc8 2.6.005.\n Problem 1 \nIf a function f is an even function, then what type of symmetry does the graph of f have?\nThe function f has symmetry with respect to the x-axis.\nThe function f has symmetry with respect to the y-axis.\nThe function f has symmetry with respect to the origin.\n",
+    "mathsRough": [],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5959889_0_0_5960403",
+        "options": [
+          {
+            "value": "0",
+            "label": "The function f has symmetry with respect to the x-axis.",
+            "id": "RC_5959889_0_0_5960403_0"
+          },
+          {
+            "value": "1",
+            "label": "The function f has symmetry with respect to the y-axis.",
+            "id": "RC_5959889_0_0_5960403_1"
+          },
+          {
+            "value": "2",
+            "label": "The function f has symmetry with respect to the origin.",
+            "id": "RC_5959889_0_0_5960403_2"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 2,
+    "submitId": "submit_5960080_1",
+    "problemId": "SPreCalc8 2.6.006.",
+    "pointsRaw": "0 / 1 Points",
+    "text": "2.\n[0 / 1 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nSPreCalc8 2.6.006.\n Problem 2 \nIf a function f is an odd function, then what type of symmetry does the graph of f have?\nThe function f has symmetry with respect to the x-axis.\nThe function f has symmetry with respect to the y-axis.\nThe function f has symmetry with respect to the origin.\n",
+    "mathsRough": [],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5960080_1_0_5960594",
+        "options": [
+          {
+            "value": "0",
+            "label": "The function f has symmetry with respect to the x-axis.",
+            "id": "RC_5960080_1_0_5960594_0"
+          },
+          {
+            "value": "1",
+            "label": "The function f has symmetry with respect to the y-axis.",
+            "id": "RC_5960080_1_0_5960594_1"
+          },
+          {
+            "value": "2",
+            "label": "The function f has symmetry with respect to the origin.",
+            "id": "RC_5960080_1_0_5960594_2"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 3,
+    "submitId": "submit_5961814_2",
+    "problemId": "SPreCalc8 2.6.513.XP.",
+    "pointsRaw": "2 / 2 Points",
+    "text": "3.\n[2 / 2 Points]\nDETAILS\nMY NOTES\nPREVIOUS ANSWERS\nPRACTICE ANOTHER\nSPreCalc8 2.6.513.XP.\n Problem 3 \nSuppose the graph of f is given. Describe how the graph of each function can be obtained from the graph of f.\n(a)\n𝑓(𝑥)−1\n𝑓\n(\n𝑥\n)\n−\n1\nshift left 1 unit\nshift right 1 unit\nshift up 1 unit\nshift down 1 unit\nstretch vertically by a factor of 1\n\n(b)\n𝑓(𝑥−1)\n𝑓\n(\n𝑥\n−\n1\n)\nshift left 1 unit\nshift right 1 unit\nshift up 1 unit\nshift down 1 unit\nstretch vertically by a factor of 1\n",
+    "mathsRough": [
+      "f(x)−1",
+      "f(x−1)"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5961814_2_0_5962328",
+        "options": [
+          {
+            "value": "0",
+            "label": "shift left 1 unit",
+            "id": "RC_5961814_2_0_5962328_0"
+          },
+          {
+            "value": "1",
+            "label": "shift right 1 unit",
+            "id": "RC_5961814_2_0_5962328_1"
+          },
+          {
+            "value": "2",
+            "label": "shift up 1 unit",
+            "id": "RC_5961814_2_0_5962328_2"
+          },
+          {
+            "value": "3",
+            "label": "shift down 1 unit",
+            "id": "RC_5961814_2_0_5962328_3"
+          },
+          {
+            "value": "4",
+            "label": "stretch vertically by a factor of 1",
+            "id": "RC_5961814_2_0_5962328_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961814_2_1_5962328",
+        "options": [
+          {
+            "value": "0",
+            "label": "shift left 1 unit",
+            "id": "RC_5961814_2_1_5962328_0"
+          },
+          {
+            "value": "1",
+            "label": "shift right 1 unit",
+            "id": "RC_5961814_2_1_5962328_1"
+          },
+          {
+            "value": "2",
+            "label": "shift up 1 unit",
+            "id": "RC_5961814_2_1_5962328_2"
+          },
+          {
+            "value": "3",
+            "label": "shift down 1 unit",
+            "id": "RC_5961814_2_1_5962328_3"
+          },
+          {
+            "value": "4",
+            "label": "stretch vertically by a factor of 1",
+            "id": "RC_5961814_2_1_5962328_4"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 4,
+    "submitId": "submit_5961516_3",
+    "problemId": "SPreCalc8 2.6.515.XP.",
+    "pointsRaw": "– / 2 Points",
+    "text": "4.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.515.XP.\n Problem 4 \nSuppose the graph of f is given. Describe how the graph of each function can be obtained from the graph of f.\n(a)\n𝑓(−𝑥)\n𝑓\n(\n−\n𝑥\n)\nreflect about the y-axis\nreflect about the x-axis\nreflect about the origin\nshift to the left by 1 unit\nshift to the right by 1 unit\n\n(b)\n4𝑓(𝑥)\n4\n𝑓\n(\n𝑥\n)\nreflect about the y-axis\nreflect about the x-axis\nreflect about the origin\nshrink vertically by 4\nstretch vertically by 4\n",
+    "mathsRough": [
+      "f(−x)",
+      "4f(x)"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5961516_3_0_5962030",
+        "options": [
+          {
+            "value": "0",
+            "label": "reflect about the y-axis",
+            "id": "RC_5961516_3_0_5962030_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the x-axis",
+            "id": "RC_5961516_3_0_5962030_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the origin",
+            "id": "RC_5961516_3_0_5962030_2"
+          },
+          {
+            "value": "3",
+            "label": "shift to the left by 1 unit",
+            "id": "RC_5961516_3_0_5962030_3"
+          },
+          {
+            "value": "4",
+            "label": "shift to the right by 1 unit",
+            "id": "RC_5961516_3_0_5962030_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961516_3_1_5962030",
+        "options": [
+          {
+            "value": "0",
+            "label": "reflect about the y-axis",
+            "id": "RC_5961516_3_1_5962030_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the x-axis",
+            "id": "RC_5961516_3_1_5962030_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the origin",
+            "id": "RC_5961516_3_1_5962030_2"
+          },
+          {
+            "value": "3",
+            "label": "shrink vertically by 4",
+            "id": "RC_5961516_3_1_5962030_3"
+          },
+          {
+            "value": "4",
+            "label": "stretch vertically by 4",
+            "id": "RC_5961516_3_1_5962030_4"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 5,
+    "submitId": "submit_5961692_4",
+    "problemId": "SPreCalc8 2.6.519.XP.",
+    "pointsRaw": "– / 2 Points",
+    "text": "5.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.519.XP.\n Problem 5 \nSuppose the graph of f is given. Describe how the graph of each function can be obtained from the graph of f.\n(a)\n𝑦=−𝑓(𝑥)+3\n𝑦\n=\n−\n𝑓\n(\n𝑥\n)\n+\n3\nreflect about the y-axis, then shift down 3 units\nreflect about the y-axis, then shift up 3 units\nreflect about the x-axis, then shift up 3 units\nreflect about the x-axis, then shift down 3 units\nreflect about the y-axis, then shift left 3 units\n\n(b)\n𝑦=7𝑓(𝑥)−3\n𝑦\n=\n7\n𝑓\n(\n𝑥\n)\n−\n3\nstretch vertically by a factor of 7, then shift down 3 units\nshrink vertically by a factor of 7, then shift down 3 units\nshift down 3 units, then stretch vertically by a factor of 7\nstretch vertically by a factor of 3, then shift down 7 units\nstretch vertically by a factor of 7, then shift up 3 units\n",
+    "mathsRough": [
+      "y=−f(x)+3",
+      "y=7f(x)−3"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5961692_4_0_5962206",
+        "options": [
+          {
+            "value": "0",
+            "label": "reflect about the y-axis, then shift down 3 units",
+            "id": "RC_5961692_4_0_5962206_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the y-axis, then shift up 3 units",
+            "id": "RC_5961692_4_0_5962206_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the x-axis, then shift up 3 units",
+            "id": "RC_5961692_4_0_5962206_2"
+          },
+          {
+            "value": "3",
+            "label": "reflect about the x-axis, then shift down 3 units",
+            "id": "RC_5961692_4_0_5962206_3"
+          },
+          {
+            "value": "4",
+            "label": "reflect about the y-axis, then shift left 3 units",
+            "id": "RC_5961692_4_0_5962206_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961692_4_1_5962206",
+        "options": [
+          {
+            "value": "0",
+            "label": "stretch vertically by a factor of 7, then shift down 3 units",
+            "id": "RC_5961692_4_1_5962206_0"
+          },
+          {
+            "value": "1",
+            "label": "shrink vertically by a factor of 7, then shift down 3 units",
+            "id": "RC_5961692_4_1_5962206_1"
+          },
+          {
+            "value": "2",
+            "label": "shift down 3 units, then stretch vertically by a factor of 7",
+            "id": "RC_5961692_4_1_5962206_2"
+          },
+          {
+            "value": "3",
+            "label": "stretch vertically by a factor of 3, then shift down 7 units",
+            "id": "RC_5961692_4_1_5962206_3"
+          },
+          {
+            "value": "4",
+            "label": "stretch vertically by a factor of 7, then shift up 3 units",
+            "id": "RC_5961692_4_1_5962206_4"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 6,
+    "submitId": "submit_5960208_5",
+    "problemId": "SPreCalc8 2.6.019.",
+    "pointsRaw": "– / 2 Points",
+    "text": "6.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.019.\n Problem 6 \nExplain how the graph of g is obtained from the graph of f.\n(a)\n𝑓(𝑥)=|𝑥|,𝑔(𝑥)=|𝑥+7|−7\n𝑓\n(\n𝑥\n)\n=\n|\n𝑥\n|\n,\n𝑔\n(\n𝑥\n)\n=\n|\n𝑥\n+\n7\n|\n−\n7\nshift right 7 units, then shift up 7 units\nreflect about the x-axis, then shift left 7 units\nshift left 7 units, then shift up 7 units\nshift right 7 units, then shift down 7 units\nshift left 7 units, then shift down 7 units\n\n(b)\n𝑓(𝑥)=|𝑥|,𝑔(𝑥)=|𝑥−7|+7\n𝑓\n(\n𝑥\n)\n=\n|\n𝑥\n|\n,\n𝑔\n(\n𝑥\n)\n=\n|\n𝑥\n−\n7\n|\n+\n7\nshift right 7 units, then shift down 7 units\nshift right 7 units, then shift up 7 units\nreflect about the x-axis, then shift right 7 units\nshift left 7 units, then shift up 7 units\nshift left 7 units, then shift down 7 units\n",
+    "mathsRough": [
+      "f(x)=|x|,g(x)=|x+7|−7",
+      "f(x)=|x|,g(x)=|x−7|+7"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5960208_5_0_5960722",
+        "options": [
+          {
+            "value": "0",
+            "label": "shift right 7 units, then shift up 7 units",
+            "id": "RC_5960208_5_0_5960722_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the x-axis, then shift left 7 units",
+            "id": "RC_5960208_5_0_5960722_1"
+          },
+          {
+            "value": "2",
+            "label": "shift left 7 units, then shift up 7 units",
+            "id": "RC_5960208_5_0_5960722_2"
+          },
+          {
+            "value": "3",
+            "label": "shift right 7 units, then shift down 7 units",
+            "id": "RC_5960208_5_0_5960722_3"
+          },
+          {
+            "value": "4",
+            "label": "shift left 7 units, then shift down 7 units",
+            "id": "RC_5960208_5_0_5960722_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_5960208_5_1_5960722",
+        "options": [
+          {
+            "value": "0",
+            "label": "shift right 7 units, then shift down 7 units",
+            "id": "RC_5960208_5_1_5960722_0"
+          },
+          {
+            "value": "1",
+            "label": "shift right 7 units, then shift up 7 units",
+            "id": "RC_5960208_5_1_5960722_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the x-axis, then shift right 7 units",
+            "id": "RC_5960208_5_1_5960722_2"
+          },
+          {
+            "value": "3",
+            "label": "shift left 7 units, then shift up 7 units",
+            "id": "RC_5960208_5_1_5960722_3"
+          },
+          {
+            "value": "4",
+            "label": "shift left 7 units, then shift down 7 units",
+            "id": "RC_5960208_5_1_5960722_4"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 7,
+    "submitId": "submit_5959909_6",
+    "problemId": "SPreCalc8 2.6.020.",
+    "pointsRaw": "– / 2 Points",
+    "text": "7.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.020.\n Problem 7 \nExplain how the graph of g is obtained from the graph of f.\n(a)\n𝑓(𝑥)=\n𝑥\n‾\n‾\n√\n,𝑔(𝑥)=−\n𝑥\n‾\n‾\n√\n+4\n𝑓\n(\n𝑥\n)\n=\n𝑥\n,\n𝑔\n(\n𝑥\n)\n=\n−\n𝑥\n+\n4\nreflect about the y-axis, then shift up 4 units\nreflect about the x-axis, then shift up 4 units\nreflect about the x-axis, then shift down 4 units\nreflect about the y-axis, then shift down 4 units\nshift up 4 units, then reflect about the x-axis\n\n(b)\n𝑓(𝑥)=\n𝑥\n‾\n‾\n√\n,𝑔(𝑥)=\n−𝑥\n‾\n‾\n‾\n√\n+4\n𝑓\n(\n𝑥\n)\n=\n𝑥\n,\n𝑔\n(\n𝑥\n)\n=\n−\n𝑥\n+\n4\nreflect about the y-axis, then shift down 4 units\nreflect about the x-axis, then shift up 4 units\nreflect about the x-axis, then shift down 4 units\nreflect about the y-axis, then shift up 4 units\nshift down 4 units, then reflect about the y-axis\n",
+    "mathsRough": [
+      "f(x)=sqrt(x),g(x)=−sqrt(x)+4",
+      "f(x)=sqrt(x),g(x)=sqrt(−x)+4"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5959909_6_0_5960423",
+        "options": [
+          {
+            "value": "0",
+            "label": "reflect about the y-axis, then shift up 4 units",
+            "id": "RC_5959909_6_0_5960423_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the x-axis, then shift up 4 units",
+            "id": "RC_5959909_6_0_5960423_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the x-axis, then shift down 4 units",
+            "id": "RC_5959909_6_0_5960423_2"
+          },
+          {
+            "value": "3",
+            "label": "reflect about the y-axis, then shift down 4 units",
+            "id": "RC_5959909_6_0_5960423_3"
+          },
+          {
+            "value": "4",
+            "label": "shift up 4 units, then reflect about the x-axis",
+            "id": "RC_5959909_6_0_5960423_4"
+          }
+        ]
+      },
+      {
+        "name": "RC_5959909_6_1_5960423",
+        "options": [
+          {
+            "value": "0",
+            "label": "reflect about the y-axis, then shift down 4 units",
+            "id": "RC_5959909_6_1_5960423_0"
+          },
+          {
+            "value": "1",
+            "label": "reflect about the x-axis, then shift up 4 units",
+            "id": "RC_5959909_6_1_5960423_1"
+          },
+          {
+            "value": "2",
+            "label": "reflect about the x-axis, then shift down 4 units",
+            "id": "RC_5959909_6_1_5960423_2"
+          },
+          {
+            "value": "3",
+            "label": "reflect about the y-axis, then shift up 4 units",
+            "id": "RC_5959909_6_1_5960423_3"
+          },
+          {
+            "value": "4",
+            "label": "shift down 4 units, then reflect about the y-axis",
+            "id": "RC_5959909_6_1_5960423_4"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 8,
+    "submitId": "submit_5961623_7",
+    "problemId": "SPreCalc8 2.6.525.XP.",
+    "pointsRaw": "– / 4 Points",
+    "text": "8.\n[– / 4 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.525.XP.\n Problem 8 \nUse the graph of \n𝑦=\n𝑥\n2\n𝑦\n=\n𝑥\n2\n (in blue) to graph the following (in red).\n(a)\nConsider the following figures.\nFigure A.1\n Figure A.1 Description\n Figure A.2\n Figure A.2 Description\n Figure A.3\n Figure A.3 Description\n Figure A.4\n Figure A.4 Description\n𝑔(𝑥)=\n𝑥\n2\n+5\n𝑔\n(\n𝑥\n)\n=\n𝑥\n2\n+\n5\n (Select the correct figure.)\nFigure A.1\nFigure A.2\nFigure A.3\nFigure A.4\n\n(b)\nConsider the following figures.\nFigure B.1\n Figure B.1 Description\n Figure B.2\n Figure B.2 Description\n Figure B.3\n Figure B.3 Description\n Figure B.4\n Figure B.4 Description\n𝑔(𝑥)=(𝑥−5\n)\n2\n𝑔\n(\n𝑥\n)\n=\n(\n𝑥\n−\n5\n)\n2\n (Select the correct figure.)\nFigure B.1\nFigure B.2\nFigure B.3\nFigure B.4\n\n(c)\nConsider the following figures.\nFigure C.1\n Figure C.1 Description\n Figure C.2\n Figure C.2 Description\n Figure C.3\n Figure C.3 Description\n Figure C.4\n Figure C.4 Description\n𝑔(𝑥)=−\n𝑥\n2\n𝑔\n(\n𝑥\n)\n=\n−\n𝑥\n2\n (Select the correct figure.)\nFigure C.1\nFigure C.2\nFigure C.3\nFigure C.4\n\n(d)\nConsider the following figures.\nFigure D.1\n Figure D.1 Description\n Figure D.2\n Figure D.2 Description\n Figure D.3\n Figure D.3 Description\n Figure D.4\n Figure D.4 Description\n𝑔(𝑥)=(𝑥−5\n)\n2\n+4\n𝑔\n(\n𝑥\n)\n=\n(\n𝑥\n−\n5\n)\n2\n+\n4\n (Select the correct figure.)\nFigure D.1\nFigure D.2\nFigure D.3\nFigure D.4\n",
+    "mathsRough": [
+      "y=x2",
+      "(−1,1)",
+      "(1,1)",
+      "(−1,6)",
+      "(0,5)",
+      "(1,6)",
+      "(−1,1)",
+      "(1,1)",
+      "(4,1)",
+      "(5,0)",
+      "(6,1)",
+      "(−1,1)",
+      "(1,1)",
+      "(−6,1)",
+      "(−5,0)",
+      "(−4,1)",
+      "(−1,1)",
+      "(1,1)",
+      "x=−2.2",
+      "(−1,−4)",
+      "(0,−5)",
+      "(1,−4)",
+      "x=2.2",
+      "g(x)=x2+5",
+      "(−1,1)",
+      "(1,1)",
+      "(−6,1)",
+      "(−5,0)",
+      "(−4,1)",
+      "(−1,1)",
+      "(1,1)",
+      "(4,1)",
+      "(5,0)",
+      "(6,1)",
+      "(−1,1)",
+      "(1,1)",
+      "x=−2.2",
+      "(−1,−4)",
+      "(0,−5)",
+      "(1,−4)",
+      "x=2.2",
+      "(−1,1)",
+      "(1,1)",
+      "(−1,6)",
+      "(0,5)",
+      "(1,6)",
+      "g(x)=(x−5)2",
+      "(−1,1)",
+      "(1,1)",
+      "(−1,−1)",
+      "(1,−1)",
+      "(−1,1)",
+      "(1,1)",
+      "(4,−1)",
+      "(5,0)",
+      "(6,−1)",
+      "(−1,1)",
+      "(1,1)",
+      "(−6,−1)",
+      "(−5,0)",
+      "(−4,−1)",
+      "(−1,1)",
+      "(1,1)",
+      "(−1,−6)",
+      "(0,−5)",
+      "(1,−6)",
+      "g(x)=−x2",
+      "(−1,1)",
+      "(1,1)",
+      "(−6,5)",
+      "(−5,4)",
+      "(−4,5)",
+      "(−1,1)",
+      "(1,1)",
+      "(4,5)",
+      "(5,4)",
+      "(6,5)",
+      "(−1,1)",
+      "(1,1)",
+      "x=−7",
+      "(−6,−3)",
+      "(−5,−4)",
+      "(−4,−3)",
+      "x=−3",
+      "(−1,1)",
+      "(1,1)",
+      "x=3",
+      "(4,−3)",
+      "(5,−4)",
+      "(6,−3)",
+      "x=7",
+      "g(x)=(x−5)2+4"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5961623_7_0_5962137",
+        "options": [
+          {
+            "value": "0",
+            "label": "Figure A.1",
+            "id": "RC_5961623_7_0_5962137_0"
+          },
+          {
+            "value": "1",
+            "label": "Figure A.2",
+            "id": "RC_5961623_7_0_5962137_1"
+          },
+          {
+            "value": "2",
+            "label": "Figure A.3",
+            "id": "RC_5961623_7_0_5962137_2"
+          },
+          {
+            "value": "3",
+            "label": "Figure A.4",
+            "id": "RC_5961623_7_0_5962137_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961623_7_1_5962137",
+        "options": [
+          {
+            "value": "0",
+            "label": "Figure B.1",
+            "id": "RC_5961623_7_1_5962137_0"
+          },
+          {
+            "value": "1",
+            "label": "Figure B.2",
+            "id": "RC_5961623_7_1_5962137_1"
+          },
+          {
+            "value": "2",
+            "label": "Figure B.3",
+            "id": "RC_5961623_7_1_5962137_2"
+          },
+          {
+            "value": "3",
+            "label": "Figure B.4",
+            "id": "RC_5961623_7_1_5962137_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961623_7_2_5962137",
+        "options": [
+          {
+            "value": "0",
+            "label": "Figure C.1",
+            "id": "RC_5961623_7_2_5962137_0"
+          },
+          {
+            "value": "1",
+            "label": "Figure C.2",
+            "id": "RC_5961623_7_2_5962137_1"
+          },
+          {
+            "value": "2",
+            "label": "Figure C.3",
+            "id": "RC_5961623_7_2_5962137_2"
+          },
+          {
+            "value": "3",
+            "label": "Figure C.4",
+            "id": "RC_5961623_7_2_5962137_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5961623_7_3_5962137",
+        "options": [
+          {
+            "value": "0",
+            "label": "Figure D.1",
+            "id": "RC_5961623_7_3_5962137_0"
+          },
+          {
+            "value": "1",
+            "label": "Figure D.2",
+            "id": "RC_5961623_7_3_5962137_1"
+          },
+          {
+            "value": "2",
+            "label": "Figure D.3",
+            "id": "RC_5961623_7_3_5962137_2"
+          },
+          {
+            "value": "3",
+            "label": "Figure D.4",
+            "id": "RC_5961623_7_3_5962137_3"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 9,
+    "submitId": "submit_5960074_8",
+    "problemId": "SPreCalc8 2.6.004.",
+    "pointsRaw": "– / 2 Points",
+    "text": "9.\n[– / 2 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.004.\n Problem 9 \nA graph of a function f is given. Match each equation with one of the graphs labeled I-IV.\nGiven Figure\n Given Figure Description\n(a)\n𝑓(𝑥)+2\n𝑓\n(\n𝑥\n)\n+\n2\nI\nII\nIII\nIV\n\n(b)\n𝑓(𝑥+3)\n𝑓\n(\n𝑥\n+\n3\n)\nI\nII\nIII\nIV\n\n(c)\n𝑓(𝑥−2)\n𝑓\n(\n𝑥\n−\n2\n)\nI\nII\nIII\nIV\n\n(d)\n𝑓(𝑥)−4\n𝑓\n(\n𝑥\n)\n−\n4\nI\nII\nIII\nIV\n",
+    "mathsRough": [
+      "(2,2)",
+      "(−3,0)",
+      "(−1,2)",
+      "(0,2)",
+      "(2,4)",
+      "(2,0)",
+      "(4,2)",
+      "(0,−4)",
+      "(2,−2)",
+      "f(x)+2",
+      "f(x+3)",
+      "f(x−2)",
+      "f(x)−4"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5960074_8_0_5960588",
+        "options": [
+          {
+            "value": "0",
+            "label": "I",
+            "id": "RC_5960074_8_0_5960588_0"
+          },
+          {
+            "value": "1",
+            "label": "II",
+            "id": "RC_5960074_8_0_5960588_1"
+          },
+          {
+            "value": "2",
+            "label": "III",
+            "id": "RC_5960074_8_0_5960588_2"
+          },
+          {
+            "value": "3",
+            "label": "IV",
+            "id": "RC_5960074_8_0_5960588_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5960074_8_1_5960588",
+        "options": [
+          {
+            "value": "0",
+            "label": "I",
+            "id": "RC_5960074_8_1_5960588_0"
+          },
+          {
+            "value": "1",
+            "label": "II",
+            "id": "RC_5960074_8_1_5960588_1"
+          },
+          {
+            "value": "2",
+            "label": "III",
+            "id": "RC_5960074_8_1_5960588_2"
+          },
+          {
+            "value": "3",
+            "label": "IV",
+            "id": "RC_5960074_8_1_5960588_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5960074_8_2_5960588",
+        "options": [
+          {
+            "value": "0",
+            "label": "I",
+            "id": "RC_5960074_8_2_5960588_0"
+          },
+          {
+            "value": "1",
+            "label": "II",
+            "id": "RC_5960074_8_2_5960588_1"
+          },
+          {
+            "value": "2",
+            "label": "III",
+            "id": "RC_5960074_8_2_5960588_2"
+          },
+          {
+            "value": "3",
+            "label": "IV",
+            "id": "RC_5960074_8_2_5960588_3"
+          }
+        ]
+      },
+      {
+        "name": "RC_5960074_8_3_5960588",
+        "options": [
+          {
+            "value": "0",
+            "label": "I",
+            "id": "RC_5960074_8_3_5960588_0"
+          },
+          {
+            "value": "1",
+            "label": "II",
+            "id": "RC_5960074_8_3_5960588_1"
+          },
+          {
+            "value": "2",
+            "label": "III",
+            "id": "RC_5960074_8_3_5960588_2"
+          },
+          {
+            "value": "3",
+            "label": "IV",
+            "id": "RC_5960074_8_3_5960588_3"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  },
+  {
+    "number": 10,
+    "submitId": "submit_5961996_9",
+    "problemId": "SPreCalc8 2.6.533.XP.",
+    "pointsRaw": "– / 1 Points",
+    "text": "10.\n[– / 1 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.6.533.XP.\n Problem 10 \nConsider the following.\n𝑓(𝑥)=\n1\n6\n|𝑥|\n𝑓\n(\n𝑥\n)\n=\n1\n6\n|\n𝑥\n|\nConsider the following figures.\nFigure A\n Figure A Description\n Figure B\n Figure B Description\n Figure C\n Figure C Description\n Figure D\n Figure D Description\nSketch the graph of the function, not by plotting points, but by starting with the graph of a standard function and applying transformations. (Select the correct figure.)\nFigure A\nFigure B\nFigure C\nFigure D\n",
+    "mathsRough": [
+      "f(x)=(16)/|x|",
+      "(−6,6)",
+      "(6,6)",
+      "(−1,6)",
+      "(1,6)",
+      "(−6,1)",
+      "(6,1)",
+      "x=−6",
+      "(0,−6)",
+      "x=6"
+    ],
+    "textInputs": [],
+    "radioGroups": [
+      {
+        "name": "RC_5961996_9_0_5962510",
+        "options": [
+          {
+            "value": "0",
+            "label": "Figure A",
+            "id": "RC_5961996_9_0_5962510_0"
+          },
+          {
+            "value": "1",
+            "label": "Figure B",
+            "id": "RC_5961996_9_0_5962510_1"
+          },
+          {
+            "value": "2",
+            "label": "Figure C",
+            "id": "RC_5961996_9_0_5962510_2"
+          },
+          {
+            "value": "3",
+            "label": "Figure D",
+            "id": "RC_5961996_9_0_5962510_3"
+          }
+        ]
+      }
+    ],
+    "selects": []
+  }
+]

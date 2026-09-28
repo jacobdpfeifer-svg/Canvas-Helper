@@ -20,6 +20,8 @@
     "open-google-calendar": "node scripts/open-google-calendar.mjs",
     "sync-calendar": "node scripts/sync-calendar.mjs",
     "wevideo": "node scripts/wevideo-complete.mjs",
+    "open-webassign": "node scripts/open-webassign.mjs",
+    "webassign": "node scripts/webassign-complete.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {

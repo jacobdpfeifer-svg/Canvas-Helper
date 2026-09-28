@@ -47,6 +47,7 @@ When MCP works: prefer it for the **same** REST facts and for `submit_assignment
 | “review syllabus”, “update course catalog”, hash change | `jacob-syllabus-intake` |
 | “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
 | SSO sync, LTI escape hatch | `jacob-canvas-browser` |
+| WebAssign full-auto (APPM1235, Jacob asks) | [`inbox/courses/APPM1235-webassign.md`](inbox/courses/APPM1235-webassign.md) + `npm run webassign` |
 | “intake this photo”, “class capture”, attached image | `jacob-photo-intake` |
 | “add to my calendar”, “sync school schedule” | `jacob-calendar-sync` |
 | study notes, review reflections, mastery/confidence in chat | append `inbox/courses/CODE.md` → `## Class notes` (default — no ask) |

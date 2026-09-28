@@ -1,0 +1,1068 @@
+{
+  "startedAt": "2026-09-25T01:26:10.146Z",
+  "events": [
+    {
+      "at": "2026-09-25T01:26:10.146Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": false,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:12.714Z",
+      "type": "reuse_webassign_tab",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:14.872Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:14.921Z",
+      "type": "inventory",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083",
+      "score": {
+        "earned": 29,
+        "max": 74
+      },
+      "questions": [
+        {
+          "number": 1,
+          "submitId": "submit_6000999_0",
+          "questionId": "6000999",
+          "pointsRaw": "4 / 4 Points",
+          "earned": 4,
+          "max": 4,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.002."
+        },
+        {
+          "number": 2,
+          "submitId": "submit_6001063_1",
+          "questionId": "6001063",
+          "pointsRaw": "4 / 4 Points",
+          "earned": 4,
+          "max": 4,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.005."
+        },
+        {
+          "number": 3,
+          "submitId": "submit_5960206_2",
+          "questionId": "5960206",
+          "pointsRaw": "7 / 9 Points",
+          "earned": 7,
+          "max": 9,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.007."
+        },
+        {
+          "number": 4,
+          "submitId": "submit_6001027_3",
+          "questionId": "6001027",
+          "pointsRaw": "5 / 5 Points",
+          "earned": 5,
+          "max": 5,
+          "complete": true,
+          "problemId": "SPreCalc8 2.3.009."
+        },
+        {
+          "number": 5,
+          "submitId": "submit_5959822_4",
+          "questionId": "5959822",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.015."
+        },
+        {
+          "number": 6,
+          "submitId": "submit_5992358_5",
+          "questionId": "5992358",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.019.MI."
+        },
+        {
+          "number": 7,
+          "submitId": "submit_5960269_6",
+          "questionId": "5960269",
+          "pointsRaw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.020."
+        },
+        {
+          "number": 8,
+          "submitId": "submit_5960141_7",
+          "questionId": "5960141",
+          "pointsRaw": "1 / 2 Points",
+          "earned": 1,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.516.XP."
+        },
+        {
+          "number": 9,
+          "submitId": "submit_5992232_8",
+          "questionId": "5992232",
+          "pointsRaw": "1 / 2 Points",
+          "earned": 1,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.031.MI."
+        },
+        {
+          "number": 10,
+          "submitId": "submit_5960057_9",
+          "questionId": "5960057",
+          "pointsRaw": "1 / 4 Points",
+          "earned": 1,
+          "max": 4,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.037."
+        },
+        {
+          "number": 11,
+          "submitId": "submit_5959869_10",
+          "questionId": "5959869",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.519.XP."
+        },
+        {
+          "number": 12,
+          "submitId": "submit_5960176_11",
+          "questionId": "5960176",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.520.XP."
+        },
+        {
+          "number": 13,
+          "submitId": "submit_5960111_12",
+          "questionId": "5960111",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.064."
+        },
+        {
+          "number": 14,
+          "submitId": "submit_5959925_13",
+          "questionId": "5959925",
+          "pointsRaw": "– / 6 Points",
+          "earned": 0,
+          "max": 6,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.027."
+        },
+        {
+          "number": 15,
+          "submitId": "submit_5960079_14",
+          "questionId": "5960079",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.051."
+        },
+        {
+          "number": 16,
+          "submitId": "submit_5959966_15",
+          "questionId": "5959966",
+          "pointsRaw": "– / 3 Points",
+          "earned": 0,
+          "max": 3,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.049."
+        },
+        {
+          "number": 17,
+          "submitId": "submit_5959843_16",
+          "questionId": "5959843",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.070."
+        },
+        {
+          "number": 18,
+          "submitId": "submit_5959832_17",
+          "questionId": "5959832",
+          "pointsRaw": "– / 1 Points",
+          "earned": 0,
+          "max": 1,
+          "complete": false,
+          "problemId": "SPreCalc8 2.1.542.XP."
+        },
+        {
+          "number": 19,
+          "submitId": "submit_5341639_18",
+          "questionId": "5341639",
+          "pointsRaw": "– / 0 Points",
+          "earned": 0,
+          "max": 0,
+          "complete": false,
+          "problemId": null
+        },
+        {
+          "number": 20,
+          "submitId": "submit_6008218_19",
+          "questionId": "6008218",
+          "pointsRaw": "– / 5 Points",
+          "earned": 0,
+          "max": 5,
+          "complete": false,
+          "problemId": "SPreCalc8 2.3.067.MI."
+        },
+        {
+          "number": 21,
+          "submitId": "submit_6013062_20",
+          "questionId": "6013062",
+          "pointsRaw": "– / 2 Points",
+          "earned": 0,
+          "max": 2,
+          "complete": false,
+          "problemId": "SPreCalc8 1.8.045."
+        }
+      ]
+    },
+    {
+      "at": "2026-09-25T01:26:14.923Z",
+      "type": "question_start",
+      "number": 3,
+      "submitId": "submit_5960206_2"
+    },
+    {
+      "at": "2026-09-25T01:26:19.029Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:41.278Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960206_2",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:47.542Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:26:47.550Z",
+      "type": "question_start",
+      "number": 5,
+      "submitId": "submit_5959822_4"
+    },
+    {
+      "at": "2026-09-25T01:26:51.644Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:02.104Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5959822_4",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:06.971Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:06.977Z",
+      "type": "question_start",
+      "number": 6,
+      "submitId": "submit_5992358_5"
+    },
+    {
+      "at": "2026-09-25T01:27:11.071Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:21.859Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5992358_5",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:27.221Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:27.229Z",
+      "type": "question_start",
+      "number": 7,
+      "submitId": "submit_5960269_6"
+    },
+    {
+      "at": "2026-09-25T01:27:31.321Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:41.596Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960269_6",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:46.801Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:27:46.806Z",
+      "type": "question_start",
+      "number": 8,
+      "submitId": "submit_5960141_7"
+    },
+    {
+      "at": "2026-09-25T01:27:50.902Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:04.388Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960141_7",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:09.523Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:09.533Z",
+      "type": "question_start",
+      "number": 9,
+      "submitId": "submit_5992232_8"
+    },
+    {
+      "at": "2026-09-25T01:28:13.634Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:27.140Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5992232_8",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:32.673Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:32.678Z",
+      "type": "question_start",
+      "number": 10,
+      "submitId": "submit_5960057_9"
+    },
+    {
+      "at": "2026-09-25T01:28:36.772Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:45.858Z",
+      "type": "leave_autosave_submit",
+      "from": "https://www.webassign.net/web/Student/Assignment-Responses/submit?dep=39902083&tags=autosave#question5960057_9",
+      "to": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:51.046Z",
+      "type": "assignment_page",
+      "title": "WA 9 (2.3) (Homework)",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-25T01:28:51.053Z",
+      "type": "question_start",
+      "number": 11,
+      "submitId": "submit_5959869_10"
+    },
+    {
+      "at": "2026-09-25T01:28:53.659Z",
+      "type": "question_start",
+      "number": 12,
+      "submitId": "submit_5960176_11"
+    },
+    {
+      "at": "2026-09-25T01:28:56.229Z",
+      "type": "question_start",
+      "number": 13,
+      "submitId": "submit_5960111_12"
+    }
+  ],
+  "questions": [
+    {
+      "at": "2026-09-25T01:26:47.549Z",
+      "number": 3,
+      "status": "wrong",
+      "score": {
+        "raw": "7 / 9 Points",
+        "earned": 7,
+        "max": 9,
+        "complete": false
+      },
+      "answer": {
+        "textInputs": [
+          {
+            "id": "RN_5960206_2_0_5964685",
+            "name": "RN_5960206_2_0_5964685",
+            "value": "2"
+          },
+          {
+            "id": "RN_5960206_2_1_5964685",
+            "name": "RN_5960206_2_1_5964685",
+            "value": "0.75"
+          },
+          {
+            "id": "RN_5960206_2_2_5964685",
+            "name": "RN_5960206_2_2_5964685",
+            "value": "4"
+          },
+          {
+            "id": "RN_5960206_2_3_5964685",
+            "name": "RN_5960206_2_3_5964685",
+            "value": "5"
+          },
+          {
+            "id": "RN_5960206_2_8_5964685",
+            "name": "RN_5960206_2_8_5964685",
+            "value": "1"
+          }
+        ],
+        "mathPads": [
+          "[-3,4]",
+          "[1/2,5]",
+          "2,4"
+        ],
+        "radios": [
+          {
+            "name": "RC_5960206_2_7_5964685",
+            "value": "1",
+            "label": "[−3,2] and 4"
+          }
+        ],
+        "confidence": 1,
+        "source": "graph-read"
+      },
+      "fillResult": {
+        "graph": 0,
+        "mathPads": 3,
+        "selects": 0,
+        "textInputs": 5,
+        "radio": 1
+      },
+      "problemId": "SPreCalc8 2.3.007."
+    },
+    {
+      "at": "2026-09-25T01:27:06.976Z",
+      "number": 5,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 3 Points",
+        "earned": 2,
+        "max": 3,
+        "complete": false
+      },
+      "answer": {
+        "graph": {
+          "type": "line",
+          "points": [
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              9
+            ]
+          ]
+        },
+        "mathPads": [
+          "(-infinity,infinity)",
+          "(-infinity,infinity)"
+        ],
+        "confidence": 1,
+        "source": "linear"
+      },
+      "fillResult": {
+        "graph": 2,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.015."
+    },
+    {
+      "at": "2026-09-25T01:27:27.229Z",
+      "number": 6,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 3 Points",
+        "earned": 2,
+        "max": 3,
+        "complete": false
+      },
+      "answer": {
+        "graph": {
+          "type": "segment",
+          "points": [
+            [
+              -3,
+              -6
+            ],
+            [
+              7,
+              4
+            ]
+          ]
+        },
+        "mathPads": [
+          "[-3,7]",
+          "[-6,4]"
+        ],
+        "confidence": 1,
+        "source": "piecewise-segment"
+      },
+      "fillResult": {
+        "graph": 2,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.019.MI."
+    },
+    {
+      "at": "2026-09-25T01:27:46.806Z",
+      "number": 7,
+      "status": "wrong",
+      "score": {
+        "raw": "2 / 3 Points",
+        "earned": 2,
+        "max": 3,
+        "complete": false
+      },
+      "answer": {
+        "graph": {
+          "type": "segment",
+          "points": [
+            [
+              1,
+              3
+            ],
+            [
+              5,
+              -5
+            ]
+          ]
+        },
+        "mathPads": [
+          "(1,5)",
+          "(-5,3)"
+        ],
+        "confidence": 1,
+        "source": "open-segment"
+      },
+      "fillResult": {
+        "graph": 2,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.020."
+    },
+    {
+      "at": "2026-09-25T01:28:09.532Z",
+      "number": 8,
+      "status": "correct",
+      "score": {
+        "raw": "2 / 2 Points",
+        "earned": 2,
+        "max": 2,
+        "complete": true
+      },
+      "answer": {
+        "mathPads": [
+          "2",
+          "(2,infinity)"
+        ],
+        "confidence": 1,
+        "source": "algebra",
+        "rationale": "x=2; x>2"
+      },
+      "fillResult": {
+        "graph": 0,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.516.XP."
+    },
+    {
+      "at": "2026-09-25T01:28:32.678Z",
+      "number": 9,
+      "status": "correct",
+      "score": {
+        "raw": "2 / 2 Points",
+        "earned": 2,
+        "max": 2,
+        "complete": true
+      },
+      "answer": {
+        "mathPads": [
+          "-4,3",
+          "[-4,3]"
+        ],
+        "confidence": 1,
+        "source": "algebra"
+      },
+      "fillResult": {
+        "graph": 0,
+        "mathPads": 2,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.031.MI."
+    },
+    {
+      "at": "2026-09-25T01:28:51.052Z",
+      "number": 10,
+      "status": "wrong",
+      "score": {
+        "raw": "3 / 4 Points",
+        "earned": 3,
+        "max": 4,
+        "complete": false
+      },
+      "answer": {
+        "mathPads": [
+          "[-3,2]",
+          "[-1,3]",
+          "(-3,-1)U(0,2)",
+          "(-1,0)"
+        ],
+        "confidence": 0.85,
+        "source": "graph-read",
+        "rationale": "estimate from plotted points"
+      },
+      "fillResult": {
+        "graph": 0,
+        "mathPads": 4,
+        "selects": 0,
+        "textInputs": 0,
+        "radio": 0
+      },
+      "problemId": "SPreCalc8 2.3.037."
+    },
+    {
+      "at": "2026-09-25T01:28:53.658Z",
+      "number": 11,
+      "status": "skipped_unsolved",
+      "detail": {
+        "text": "11.\n[– / 6 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.519.XP.\n Problem 11 \nThe graph of a function f is given. Use the graph to estimate the following.\nGiven Figure\n Given Figure Description\n(a)\nAll the local maximum and minimum values of the function and the value of x at which each occurs.\nlocal maximum (smaller x-value)\t\n(𝑥,𝑦)=\n(\n𝑥\n,\n𝑦\n)\n=\n\t\n(\n(\n \nWrite your first answer in part (a).\n \n \nPress Space or Enter to edit this math answer.\n  \n)\n)\n\nlocal maximum (larger x-value)\t\n(\ud835",
+        "mathsRough": [
+          "(−6,3)",
+          "x=−5.4",
+          "(−5,−2)",
+          "(−4,−5)",
+          "(−3,−6)",
+          "(−2,−5)",
+          "(−1,−2)",
+          "(1,−2)",
+          "(2,−4)",
+          "(3,−2)",
+          "x=3.6",
+          "(4,1)",
+          "(5,2)",
+          "(6,1)",
+          "x=6.4",
+          "(7,−2)",
+          "(x,y)=",
+          "(",
+          ")",
+          "(x,y)=",
+          "(",
+          ")",
+          "(x,y)=",
+          "(",
+          ")",
+          "(x,y)=",
+          "(",
+          ")"
+        ]
+      }
+    },
+    {
+      "at": "2026-09-25T01:28:56.228Z",
+      "number": 12,
+      "status": "skipped_unsolved",
+      "detail": {
+        "text": "12.\n[– / 5 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.520.XP.\n Problem 12 \nThe figure shows the power consumption in San Francisco for a day in September (P is measured in megawatts; t is measured in hours starting at midnight).\nGiven Figure\n Given Figure Description\n(a)\nWhat was the power consumption (in MW) at 9:00 A.M.?\nWrite your first answer in part (a).\n MW\nWhat was the power consumption (in MW) at 9:00 P.M.?\nWrite your second answer in part (a).\n MW\n(b)\nWhen was the power con",
+        "mathsRough": [
+          "t(hr)",
+          "P(MW)",
+          "P=570",
+          "(2,415)",
+          "(3,400)",
+          "(4,405)",
+          "(5,425)",
+          "(6,500)",
+          "(7,625)",
+          "(8,700)",
+          "(9,800)",
+          "(10,810)",
+          "(11,850)",
+          "(12,850)",
+          "(13,840)",
+          "(14,825)",
+          "(15,825)",
+          "(16,825)",
+          "(17,800)",
+          "(18,725)",
+          "(19,700)",
+          "(20,700)",
+          "(21,675)",
+          "(22,600)",
+          "(23,550)",
+          "(24,490)",
+          "t=",
+          "t="
+        ]
+      }
+    },
+    {
+      "at": "2026-09-25T01:28:58.789Z",
+      "number": 13,
+      "status": "skipped_unsolved",
+      "detail": {
+        "text": "13.\n[– / 3 Points]\nDETAILS\nMY NOTES\nPRACTICE ANOTHER\nSPreCalc8 2.3.064.\n Problem 13 \nThe following graph shows the vertical acceleration of the ground from the 1994 Northridge earthquake in Los Angeles, as measured by a seismograph. (Here t represents the time in seconds.)\n1994 Northridge Earthquake Seismograph Readings\n Description\n(a)\nAt what time t (in sec) did the earthquake first make noticeable movements of the earth?\nWrite your answer for part (a).\n sec\n(b)\nAt what time t (in sec) did the",
+        "mathsRough": []
+      }
+    }
+  ],
+  "result": {
+    "status": "complete",
+    "finalScore": {
+      "earned": 33,
+      "max": 74
+    },
+    "results": [
+      {
+        "number": 3,
+        "status": "wrong",
+        "score": {
+          "raw": "7 / 9 Points",
+          "earned": 7,
+          "max": 9,
+          "complete": false
+        },
+        "answer": {
+          "textInputs": [
+            {
+              "id": "RN_5960206_2_0_5964685",
+              "name": "RN_5960206_2_0_5964685",
+              "value": "2"
+            },
+            {
+              "id": "RN_5960206_2_1_5964685",
+              "name": "RN_5960206_2_1_5964685",
+              "value": "0.75"
+            },
+            {
+              "id": "RN_5960206_2_2_5964685",
+              "name": "RN_5960206_2_2_5964685",
+              "value": "4"
+            },
+            {
+              "id": "RN_5960206_2_3_5964685",
+              "name": "RN_5960206_2_3_5964685",
+              "value": "5"
+            },
+            {
+              "id": "RN_5960206_2_8_5964685",
+              "name": "RN_5960206_2_8_5964685",
+              "value": "1"
+            }
+          ],
+          "mathPads": [
+            "[-3,4]",
+            "[1/2,5]",
+            "2,4"
+          ],
+          "radios": [
+            {
+              "name": "RC_5960206_2_7_5964685",
+              "value": "1",
+              "label": "[−3,2] and 4"
+            }
+          ],
+          "confidence": 1,
+          "source": "graph-read"
+        },
+        "fillResult": {
+          "graph": 0,
+          "mathPads": 3,
+          "selects": 0,
+          "textInputs": 5,
+          "radio": 1
+        },
+        "problemId": "SPreCalc8 2.3.007."
+      },
+      {
+        "number": 5,
+        "status": "wrong",
+        "score": {
+          "raw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false
+        },
+        "answer": {
+          "graph": {
+            "type": "line",
+            "points": [
+              [
+                0,
+                5
+              ],
+              [
+                1,
+                9
+              ]
+            ]
+          },
+          "mathPads": [
+            "(-infinity,infinity)",
+            "(-infinity,infinity)"
+          ],
+          "confidence": 1,
+          "source": "linear"
+        },
+        "fillResult": {
+          "graph": 2,
+          "mathPads": 2,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.015."
+      },
+      {
+        "number": 6,
+        "status": "wrong",
+        "score": {
+          "raw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false
+        },
+        "answer": {
+          "graph": {
+            "type": "segment",
+            "points": [
+              [
+                -3,
+                -6
+              ],
+              [
+                7,
+                4
+              ]
+            ]
+          },
+          "mathPads": [
+            "[-3,7]",
+            "[-6,4]"
+          ],
+          "confidence": 1,
+          "source": "piecewise-segment"
+        },
+        "fillResult": {
+          "graph": 2,
+          "mathPads": 2,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.019.MI."
+      },
+      {
+        "number": 7,
+        "status": "wrong",
+        "score": {
+          "raw": "2 / 3 Points",
+          "earned": 2,
+          "max": 3,
+          "complete": false
+        },
+        "answer": {
+          "graph": {
+            "type": "segment",
+            "points": [
+              [
+                1,
+                3
+              ],
+              [
+                5,
+                -5
+              ]
+            ]
+          },
+          "mathPads": [
+            "(1,5)",
+            "(-5,3)"
+          ],
+          "confidence": 1,
+          "source": "open-segment"
+        },
+        "fillResult": {
+          "graph": 2,
+          "mathPads": 2,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.020."
+      },
+      {
+        "number": 8,
+        "status": "correct",
+        "score": {
+          "raw": "2 / 2 Points",
+          "earned": 2,
+          "max": 2,
+          "complete": true
+        },
+        "answer": {
+          "mathPads": [
+            "2",
+            "(2,infinity)"
+          ],
+          "confidence": 1,
+          "source": "algebra",
+          "rationale": "x=2; x>2"
+        },
+        "fillResult": {
+          "graph": 0,
+          "mathPads": 2,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.516.XP."
+      },
+      {
+        "number": 9,
+        "status": "correct",
+        "score": {
+          "raw": "2 / 2 Points",
+          "earned": 2,
+          "max": 2,
+          "complete": true
+        },
+        "answer": {
+          "mathPads": [
+            "-4,3",
+            "[-4,3]"
+          ],
+          "confidence": 1,
+          "source": "algebra"
+        },
+        "fillResult": {
+          "graph": 0,
+          "mathPads": 2,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.031.MI."
+      },
+      {
+        "number": 10,
+        "status": "wrong",
+        "score": {
+          "raw": "3 / 4 Points",
+          "earned": 3,
+          "max": 4,
+          "complete": false
+        },
+        "answer": {
+          "mathPads": [
+            "[-3,2]",
+            "[-1,3]",
+            "(-3,-1)U(0,2)",
+            "(-1,0)"
+          ],
+          "confidence": 0.85,
+          "source": "graph-read",
+          "rationale": "estimate from plotted points"
+        },
+        "fillResult": {
+          "graph": 0,
+          "mathPads": 4,
+          "selects": 0,
+          "textInputs": 0,
+          "radio": 0
+        },
+        "problemId": "SPreCalc8 2.3.037."
+      },
+      {
+        "number": 11,
+        "status": "skipped_unsolved"
+      },
+      {
+        "number": 12,
+        "status": "skipped_unsolved"
+      },
+      {
+        "number": 13,
+        "status": "skipped_unsolved"
+      }
+    ],
+    "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+  },
+  "finishedAt": "2026-09-25T01:28:58.808Z"
+}

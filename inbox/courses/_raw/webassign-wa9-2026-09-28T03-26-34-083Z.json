@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-09-28T03:26:34.083Z",
+  "events": [
+    {
+      "at": "2026-09-28T03:26:34.083Z",
+      "type": "start",
+      "assignment": "https://canvas.colorado.edu/courses/141255/assignments/2754105",
+      "list": true,
+      "waUrl": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-28T03:26:48.833Z",
+      "type": "goto_webassign_direct",
+      "url": "https://www.webassign.net/web/Student/Assignment-Responses/last?dep=39902083"
+    },
+    {
+      "at": "2026-09-28T03:26:51.942Z",
+      "type": "waiting_webassign",
+      "url": "https://account.cengage.com/login?SAMLRequest=fZLdauMwEIVfxejeP5ITxxFxQmgoBLph6R%2Bld0KeOKL2yNXIyebtV3Wa0l7s3oqZ7xy%2B0WL1p2ujIzgyFivGk4xFgNrWBpuKPT3exiVbLRekulb0cj34A97D%2BwDkozUROB%2FWbizS0IF7AHc0Gp7u7yp28L4nmaYqbCQasFENJNp2KZFNR1qaWSWKacn3SLuX6a5Z59MZizYBbVD5sc4XRWs7oP8Bam1jkEW31mkYe1Vsr1oCFm03FTN1PBXlLM9KwflsUvBZIUTOi4koeV4WZZgiGmCL5BX6iolMFHE2j0X5mOVSFHIyT%2BZZ%2Fsqi56sb8eEm2EKSFx0VGxxKq8iQRNUBSa%2Flw%2FrXnQyjsnfWW21b9mlPjoHuO%2BH%2FAHX1y5ZXD6fTKbFvXl1MjhbpIj0OcUdTg0upP2LdAaqz7V3zrupz7Rfp9wpf59yFzO3mt22NPn%2BI7JT%2FdyWe8PElmN2Po3JA6kGbvYGapcvPjJ%2BfZPkX&RelayState=%252Foauth2%252Fv1%252Fauthorize%252Fredirect%253Fokta_key%253D6sOdWeKilC8YHgrj-vPcwn9DvCwZB5PvYiwFCOE7Ukw&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=cPJajC0QbZX9qiWJJ4MTcRtU9KTTX9OPWZEu0pr%2F3YZpWcNp9HIaanM7jyEduCVUgVtwTxUBs6DB0HtugKfap6Wth6J43Lt%2Blbj%2FgbXvsLGC5jZp89YEbwye4En%2FEKiFUjGxNPauAfbj1DL2FiwKLWnD8gbWNZ5o1UUtP8mb0bwaX1r%2B7KZr8L%2FMader56L9XVGfW2rCZaA3XGw5qcIt68V9e7WOu3hj68FR3%2B9WidP26wD4qI7mo3Le0Nd5WNL%2B8HBoDeo4vHepA0Vg22w8qs%2BygpUExa3vkg6JObJhZlDoh4BFsgLBUERBHsWBq9HxZIQEbaGAViVi3SnTvalVAg%3D%3D"
+    }
+  ],
+  "questions": [],
+  "result": null
+}

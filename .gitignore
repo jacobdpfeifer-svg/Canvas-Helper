@@ -133,6 +133,9 @@ internal/hosted-spec-draft/
 
 # Jacob hybrid: Playwright SSO session + deps (never commit auth)
 browser/.auth/
+browser/.auth-webassign/
+browser/scripts/.auth-webassign/
+browser/.webassign-session.json
 browser/.auth-google/
 browser/.auth-gcp/
 browser/node_modules/
