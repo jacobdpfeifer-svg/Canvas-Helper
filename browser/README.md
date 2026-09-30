@@ -15,12 +15,16 @@ npm run refresh-profiles   # stamp profile Sources with syllabus hash from sync
 # npm run pull-todo        # alias for sync
 npm run audit              # 45d universe + actionable-miss metrics (does not overwrite week.md)
 npm run process-capture-queue -- --dry-run               # preview pending_mac photo matches (never submits)
+npm run voice-models                                     # Gemini Live models your key can use → set GEMINI_LIVE_MODEL
+npm run voice                                            # local voice interviewer → {user_root}/inbox/goals.md + class notes
 # CONFIRM=1 is ignored — live photo submit is hard-blocked (canvas-focus pivot)
 ```
 
 Photo intake: skill `student-photo-intake` (queue under `{user_root}/inbox/captures/`).
 
 The SSO browser profile lives in `{user_root}/auth/browser/` (per student profile; `AUTH_DIR` overrides). The legacy `browser/.auth/` is gitignored — never commit it.
+
+Voice intake (mic → Gemini Live → `{user_root}/inbox/goals.md`; needs `GEMINI_API_KEY` in the repo-root `.env`): see [`../docs/VOICE.md`](../docs/VOICE.md) and skill `student-voice-intake`.
 
 - **sync** = source of truth for `inbox/week.md` (dated open work in the school-timezone window) and refreshes **Assignment catalog**, **Checkpoints**, and **Tools this semester** in `inbox/courses/*.md`. Also fetches syllabus, instructors, and policy page links; writes Bucket-A connector gaps to `inbox/tool-gaps.md` (flag only — never auto-build).
 - **audit** = deeper 45-day pull + recall check vs prior week.md.
