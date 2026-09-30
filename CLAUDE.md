@@ -10,7 +10,7 @@ Do not restore educator tools, hosted Azure, or quiz-taking automation.
 
 1. Brain: `{user_root}/USER.md` triage (+ `{user_root}/calibration/priority-rubric.md` for priority; `student-course-arc` when the student names a course)
 2. Memory: `{user_root}/inbox/week.md` (+ `inbox/courses/*` catalogs + arc notes; optional dated `inbox/focus.md` Top-3 cache)
-3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST; honor `DEV_USER_ROOT`)
+3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST; honor `DEV_USER_ROOT`). Keep it fresh between syncs: the Chrome extension (`app/extension-chrome/`, GET-only on the student's own session) + tokenized feeds → `npm run freshness` → `{user_root}/inbox/freshness/`
 4. Optional later: PAT + vendored `canvas-mcp-server` (`src/canvas_mcp/` — upstream canvas-mcp fork; see [`vendor/README.md`](./vendor/README.md)) for the same REST + preview-only tools
 5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — student operates; agent drafts
 
@@ -22,7 +22,7 @@ schools/               # tenant yaml (e.g. cu-boulder)
 browser/               # SSO auth + sync scripts (not DOM-primary)
 src/canvas_mcp/       # vendored optional PAT MCP (upstream canvas-mcp)
 skills/                # student-* + canvas-week-plan + discussion
-app/                   # ProductName Tauri shell + daemon (parked)
+app/                   # ProductName Tauri shell + daemon; extension-chrome/ + native-messaging/ (Canvas-page surface)
 plugins/               # school-conditional Bucket-A connectors (see plugins/README.md)
 vendor/                # upstream CHANGELOG boundary + archived articles/examples/internal
 ```
@@ -49,6 +49,8 @@ uv run python -m pytest tests/ -q
 - Bucket-A connector MCP writes: dedicated `ConfirmationGuard` via `canvas_mcp.core.connector_guards.get_connector_guard` — no first-write exemption
 - External tool inventory is discovery-only; gaps go to `inbox/tool-gaps.md` — never auto-fetch connector code
 - UI: compose as a stage (field → subject → orbit → signal); glass only on temporary chrome; one `--signal-*` per scene via `--accent`; radii by role (`--radius-stage/sheet/control/row`); motion only on real state via `--motion-*`, never `transition: all`; no 3-up card grids, no glow atmosphere, no glass behind study prose — MASTER §12 anti-patterns and §15 acceptance test apply
+- Chrome extension reads Canvas only through `app/extension-chrome/lib/canvas-read.js` (GET, allow-listed paths, no CSRF token) and renders Canvas text with `textContent` only; `shared/*.js` is generated from `browser/scripts/lib/freshness/` (`tools/vendor-shared.mjs`). Native host stays stdlib-only
+- Tokenized Canvas feed URLs are secrets: `{user_root}/auth/feeds.json` only (0600), never logged, exported, or held server-side without a signed hosting decision
 - Never commit `.env` or `browser/.auth/`
 
 ## Out of scope
@@ -58,3 +60,5 @@ Handshake, Azure hosting, educator grading, auto-driving LTI tools / Bucket-B as
 **Degree planning scope (2026-09-13, [`docs/handoff/degree-planning-scope-2026-09-13.md`](docs/handoff/degree-planning-scope-2026-09-13.md)):** GPA calculation and interest/prereq-aware course *suggestions* are in scope, computed from Canvas grades + `USER.md` + a small student-maintained `calibration/credit-hours.yaml`. Anything that claims a specific degree/major requirement is satisfied must trace to a dated `{user_root}/inbox/degree-audit.md` import the student pasted from their own Buff Portal/DegreeWorks audit — never inferred from Canvas data alone, never live-scraped.
 
 **Canvas-focus pivot (2026-09-11, [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](docs/handoff/canvas-focus-pivot-2026-09-11.md)):** this product reads Canvas and helps a student plan and study. It does not act on a student's behalf toward anyone else — an instructor, a classmate, or anyone on the other side of a Canvas submit/comment/discussion-post, all of which stay preview-only with no execute path, ever. RateMyProfessors scraping (their ToS prohibits it) and any self-rewriting-prompts pipeline (`self_improve` cluster/draft/shadow/promote — deleted, don't re-add) stay out. `submit_assignment` is preview-only and stays that way. Any gamification on `learn_loop`/`habit` must have no losable state — no learning streaks, no leaderboards (brief-day continuity exposure in `habit` is fine; it is not a learning streak). **Personal Gmail send / Google Calendar event writes (2026-09-13 addendum, same doc):** reopened — these are the student's own accounts, not Canvas-visible. `send_email`/`create_event`/`update_event` execute for real, but only behind `ConfirmationGuard`/`gate_connector_write` (preview → per-instance human "yes, do that" → execute); there is no automatic/standing posture and none may ever escalate to one. Apple Calendar stays hard-blocked (no EventKit helper built, not a policy stance).
+
+**Always-fresh Canvas (2026-09-29, [`docs/handoff/freshness-extension-spike-2026-09-29.md`](docs/handoff/freshness-extension-spike-2026-09-29.md)):** the Chrome extension is a product surface (Canvas dashboard stage + assignment side panel) that reads Canvas with the student's own session; "agent can do" is the student's own logistics (calendar suggestions approved in the app), never a Canvas-visible action or graded work. Never hold a student's Canvas session or cookies server-side. The brain stays local until [`docs/handoff/hosting-decision-criteria-2026-09-30.md`](docs/handoff/hosting-decision-criteria-2026-09-30.md) says otherwise.

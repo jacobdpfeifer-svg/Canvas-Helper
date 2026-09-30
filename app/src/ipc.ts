@@ -536,6 +536,40 @@ export async function onInboxUpdated(
   return listen("inbox-updated", () => handler());
 }
 
+/** One row of "what changed", as built by browser/scripts/lib/freshness/view.mjs. */
+export type FreshnessChange = {
+  key: string;
+  kind: string;
+  label: string;
+  title: string;
+  course?: string | null;
+  at?: string | null;
+  detected_at?: string | null;
+  url?: string | null;
+  detail?: Record<string, unknown>;
+};
+
+/** `{user_root}/inbox/freshness/dashboard.json` — also what the Chrome extension shows. */
+export type FreshnessDashboard = {
+  version: number;
+  generated_at: string;
+  status?: { signed_in?: boolean | null; last_delta_at?: string | null; last_feed_poll_at?: string | null; feeds_configured?: boolean };
+  changes: FreshnessChange[];
+  digest?: { announcements_7d: number; with_actions: number };
+};
+
+export async function readFreshness(): Promise<FreshnessDashboard | null> {
+  if (!isTauri()) return null;
+  return invoke<FreshnessDashboard | null>("read_freshness");
+}
+
+export async function onFreshnessUpdated(
+  handler: () => void
+): Promise<UnlistenFn | (() => void)> {
+  if (!isTauri()) return () => undefined;
+  return listen("freshness-updated", () => handler());
+}
+
 export async function onSyncFailed(
   handler: (message: string) => void
 ): Promise<UnlistenFn | (() => void)> {

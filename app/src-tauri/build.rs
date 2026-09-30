@@ -27,6 +27,7 @@ fn main() {
             "read_sync_progress",
             "read_calendar_surface",
             "read_sync_health",
+            "read_freshness",
             "read_work_surface",
             "read_course_map",
             "read_grade_truth",

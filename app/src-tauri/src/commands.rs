@@ -358,6 +358,11 @@ pub fn read_sync_health(rt: Rt<'_>) -> serde_json::Value {
 }
 
 #[tauri::command]
+pub fn read_freshness(rt: Rt<'_>) -> serde_json::Value {
+    canvas::read_freshness(&rt.user_root)
+}
+
+#[tauri::command]
 pub fn read_work_surface(rt: Rt<'_>, filters: Option<serde_json::Value>) -> serde_json::Value {
     canvas::read_work_surface(&rt.user_root, &filters.unwrap_or_else(|| serde_json::json!({})))
 }

@@ -3,15 +3,22 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-HOST_PY="$ROOT/app/native-messaging/host.py"
+SRC_HOST="$ROOT/app/native-messaging/host.py"
 TEMPLATE="$ROOT/app/native-messaging/com.productname.daemon.json"
+# Chrome-launched processes cannot read files in iCloud Drive or other
+# TCC-protected folders ("Operation not permitted", found 2026-09-29), so the
+# stdlib-only host is copied next to the profile data instead of run in place.
+HOST_DIR="$HOME/Library/Application Support/ProductName/native-host"
+HOST_PY="$HOST_DIR/host.py"
 EXT_ID="${PRODUCTNAME_EXTENSION_ID:-jkjkbgcbpakeenemjgkfohbcfbghmall}"
 if [[ ! "$EXT_ID" =~ ^[a-z]{32}$ ]]; then
   echo "PRODUCTNAME_EXTENSION_ID must be the 32-character ID of the loaded ProductName extension" >&2
   exit 2
 fi
 
-chmod +x "$HOST_PY"
+mkdir -p "$HOST_DIR"
+cp "$SRC_HOST" "$HOST_PY"
+chmod 755 "$HOST_PY"
 
 NM_DIR="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
 mkdir -p "$NM_DIR"
@@ -40,5 +47,5 @@ do
   fi
 done
 
-echo "Installed Native Messaging host com.productname.daemon"
-echo "Set PRODUCTNAME_EXTENSION_ID to your unpacked extension ID and re-run if needed."
+echo "Installed Native Messaging host com.productname.daemon → $HOST_PY"
+echo "Re-run after changing app/native-messaging/host.py (the installed copy does not follow the repo)."

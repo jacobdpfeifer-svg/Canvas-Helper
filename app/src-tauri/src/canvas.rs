@@ -21,6 +21,11 @@ fn read_json(path: &Path) -> Option<Value> {
         .and_then(|t| serde_json::from_str(&t).ok())
 }
 
+/// Freshness dashboard view model (`inbox/freshness/dashboard.json`), or null before the first tick.
+pub fn read_freshness(user_root: &Path) -> Value {
+    read_json(&user_root.join("inbox").join("freshness").join("dashboard.json")).unwrap_or(Value::Null)
+}
+
 fn pointer(user_root: &Path) -> Option<Value> {
     read_json(&canvas_root(user_root).join("projections").join("current.json"))
 }

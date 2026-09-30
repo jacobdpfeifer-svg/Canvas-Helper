@@ -319,6 +319,46 @@ describe("successful vs failed empty", () => {
     assert.equal(gen.manifest.complete, false);
     assert.ok(gen.manifest.named_courses_failed.includes("1"));
   });
+
+  it("records a tab hidden from students as unavailable, not failed", async () => {
+    const page = {};
+    async function apiAllPages(_p, pathBase) {
+      if (pathBase === "/api/v1/courses") {
+        return { ok: true, items: [{ id: 1, name: "X", course_code: "X", enrollments: [] }], truncated: false, status: 200 };
+      }
+      if (pathBase.includes("/discussion_topics")) {
+        return {
+          ok: false,
+          items: [],
+          status: 403,
+          truncated: false,
+          error: { status: "unauthorized", errors: [{ message: "user not authorized to perform that action" }] },
+        };
+      }
+      return { ok: true, items: [], truncated: false, status: 200 };
+    }
+    const gen = await fetchCanonicalGeneration(page, { apiAllPages, sync_id: "sync-hidden", profile_id: "dev" });
+    assert.equal(gen.manifest.complete, true);
+    assert.deepEqual(gen.manifest.failed_endpoints, []);
+    assert.deepEqual(gen.manifest.unavailable_endpoints, [{ endpoint: "discussions:1", status: 403 }]);
+  });
+
+  it("still fails a throttled 403", async () => {
+    const page = {};
+    async function apiAllPages(_p, pathBase) {
+      if (pathBase === "/api/v1/courses") {
+        return { ok: true, items: [{ id: 1, name: "X", course_code: "X", enrollments: [] }], truncated: false, status: 200 };
+      }
+      if (pathBase.includes("/discussion_topics")) {
+        return { ok: false, items: [], status: 403, truncated: false, error: "403 Forbidden (Rate Limit Exceeded)" };
+      }
+      return { ok: true, items: [], truncated: false, status: 200 };
+    }
+    const gen = await fetchCanonicalGeneration(page, { apiAllPages, sync_id: "sync-throttled", profile_id: "dev" });
+    assert.equal(gen.manifest.complete, false);
+    assert.deepEqual(gen.manifest.unavailable_endpoints, []);
+    assert.ok(gen.manifest.failed_endpoints.some((f) => f.endpoint === "discussions:1" && f.status === 403));
+  });
 });
 
 describe("adapters", () => {

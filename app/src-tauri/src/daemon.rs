@@ -31,6 +31,9 @@ pub const SYNC_WEEKDAY: Duration = Duration::from_secs(2 * 60 * 60);
 pub const SYNC_WEEKEND: Duration = Duration::from_secs(6 * 60 * 60);
 /// Absolute floor — never poll Canvas more often than this.
 pub const SYNC_FLOOR: Duration = Duration::from_secs(5 * 60);
+/// Freshness tick: classify extension deltas, poll due feeds. No Canvas session;
+/// feed cadence (10 min announcements, 60 min course/calendar) lives in the tick.
+pub const FRESHNESS_TICK: Duration = Duration::from_secs(2 * 60);
 
 #[allow(dead_code)]
 pub struct DaemonConfig {
@@ -493,6 +496,54 @@ pub fn run_save_user_profile(
     }
 }
 
+/// Parse the tick's last JSON line → number of new change events.
+pub fn parse_freshness_output(stdout: &str) -> Result<u64, String> {
+    let line = stdout
+        .lines()
+        .rev()
+        .find(|l| l.trim_start().starts_with('{'))
+        .ok_or_else(|| "freshness tick produced no JSON".to_string())?;
+    let value: Value = serde_json::from_str(line).map_err(|e| format!("freshness JSON parse failed: {e}"))?;
+    if value.get("ok").and_then(Value::as_bool) != Some(true) {
+        return Err(value
+            .get("error")
+            .and_then(Value::as_str)
+            .unwrap_or("freshness tick failed")
+            .to_string());
+    }
+    Ok(value.get("new_events").and_then(Value::as_u64).unwrap_or(0))
+}
+
+/// One freshness tick (`browser/scripts/freshness-tick.mjs`).
+pub fn run_freshness_tick(rt: &Runtime) -> Result<u64, String> {
+    let output = rt
+        .browser_script("freshness-tick")?
+        .output()
+        .map_err(|e| format!("failed to spawn freshness tick: {e}"))?;
+    parse_freshness_output(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// Keep Canvas changes flowing in while the app runs; `on_update` fires with
+/// the count whenever a tick finds something new.
+pub fn spawn_freshness_loop<F>(rt: Arc<Runtime>, on_update: F)
+where
+    F: Fn(u64) + Send + 'static,
+{
+    thread::spawn(move || loop {
+        if !canvas_stub() {
+            match run_freshness_tick(&rt) {
+                Ok(0) => {}
+                Ok(n) => {
+                    tick_log("freshness");
+                    on_update(n);
+                }
+                Err(e) => eprintln!("[productname-daemon] freshness: {e}"),
+            }
+        }
+        thread::sleep(FRESHNESS_TICK);
+    });
+}
+
 /// Background cadence loop — logs ticks and optionally runs sync on each interval.
 pub fn spawn_cadence_loop(rt: Arc<Runtime>) {
     thread::spawn(move || {
@@ -652,6 +703,15 @@ mod tests {
         ] {
             assert!(validate_study_request(&bad).is_err(), "{bad}");
         }
+    }
+
+    #[test]
+    fn freshness_output_parses_last_json_line() {
+        assert_eq!(parse_freshness_output("[user-root] x\n{\"ok\":true,\"new_events\":3}\n"), Ok(3));
+        assert_eq!(parse_freshness_output("{\"ok\":true}"), Ok(0));
+        assert!(parse_freshness_output("{\"ok\":false,\"error\":\"boom\"}").unwrap_err().contains("boom"));
+        assert!(parse_freshness_output("no json").is_err());
+        assert!(FRESHNESS_TICK >= Duration::from_secs(60));
     }
 
     #[test]

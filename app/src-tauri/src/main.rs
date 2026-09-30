@@ -56,6 +56,7 @@ fn main() {
             commands::read_sync_progress,
             commands::read_calendar_surface,
             commands::read_sync_health,
+            commands::read_freshness,
             commands::read_work_surface,
             commands::read_course_map,
             commands::read_grade_truth,
@@ -131,6 +132,10 @@ fn main() {
             // The main window is the study workspace (normal, resizable). The
             // compact dock geometry is opt-in from the frontend (set_dock_mode).
             daemon::spawn_cadence_loop(Arc::clone(&rt));
+            let handle = app.handle().clone();
+            daemon::spawn_freshness_loop(Arc::clone(&rt), move |n| {
+                let _ = handle.emit("freshness-updated", n);
+            });
             Ok(())
         })
         .run(tauri::generate_context!())

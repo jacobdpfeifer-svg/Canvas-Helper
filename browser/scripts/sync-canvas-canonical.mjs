@@ -16,6 +16,7 @@ import {
   formatTeachers,
   fromAssignments,
   fromDiscussions,
+  getBase,
   launchCanvasContext,
   requireLoggedIn,
   writeCourseCatalogFiles,
@@ -26,6 +27,7 @@ import { fetchCanonicalGeneration } from "./lib/canvas-snapshot.mjs";
 import { carryForwardFailedData, commitRawGeneration, newSyncId, pathsFor, readCurrentRaw, writeSyncRun, writeJsonAtomic } from "./lib/canvas-store.mjs";
 import { buildProjections, promoteProjections } from "./lib/canvas-project.mjs";
 import { writeAdaptersFromProjection } from "./lib/canvas-adapters.mjs";
+import { afterCanonicalSync } from "./lib/freshness-run.mjs";
 
 const userRoot = resolveUserRoot({ create: true, announce: true });
 const adaptersOnly = process.env.CANVAS_ADAPTERS_ONLY === "1" || process.env.CANVAS_ADAPTERS_ONLY === "true";
@@ -197,6 +199,18 @@ writeSyncRun(userRoot, {
   complete: generation.manifest.complete,
   health: projections?.health || null,
 });
+
+// Change events vs the previous generation, skip costs, and (weekly) feed
+// capture while the session page is still open. Never fails the sync.
+const freshness = await afterCanonicalSync({
+  userRoot,
+  previous: previousRaw?.generation || null,
+  generation,
+  page,
+  api,
+  base: getBase(),
+});
+if (freshness.errors.length) console.warn(`freshness: ${freshness.errors.join("; ")}`);
 
 writeProgress({
   phase: generation.manifest.complete ? "done" : "done",

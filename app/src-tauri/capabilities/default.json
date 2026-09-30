@@ -36,6 +36,7 @@
     "allow-read-sync-progress",
     "allow-read-calendar-surface",
     "allow-read-sync-health",
+    "allow-read-freshness",
     "allow-read-work-surface",
     "allow-read-course-map",
     "allow-read-grade-truth",
