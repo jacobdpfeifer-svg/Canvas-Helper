@@ -149,6 +149,9 @@ inbox/captures/**/*.heic
 inbox/captures/**/*.png
 inbox/captures/**/*.webp
 
+# Voice intake — raw speech transcripts stay local; only distilled goals/class notes are tracked
+inbox/voice/sessions/
+
 # Session cookie dumps (never commit)
 **/wa5-cookies.*
 *_cookies.json

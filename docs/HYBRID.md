@@ -56,6 +56,8 @@ Triage, course defaults, calibration (`.jacob/calibrated-courses.md`), priority 
 | `inbox/week.md` | Canonical due list for the agent |
 | `inbox/focus.md` | Optional dated Top-3 cache from `jacob-task-brief` (not a second due-list) |
 | `inbox/courses/*.md` | Per-course notes + assignment catalog + checkpoints (sync) + arc notes (agent) + **instructor profile** (agent) |
+| `inbox/goals.md` | Jacob's spoken goals/values/constraints: voice-tool captures + agent-distilled sections ([`VOICE.md`](VOICE.md)) — the *why* behind the `JACOB.md` career ranking |
+| `inbox/voice/sessions/` | Gitignored raw voice transcripts; reviewed by `jacob-voice-intake` |
 | `inbox/audit-*.md` | Occasional deep sync reports |
 
 Skills read inbox first when PAT is absent.

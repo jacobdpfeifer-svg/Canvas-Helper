@@ -26,9 +26,13 @@ npm run sync-calendar -- --apply               # push to Google Calendar (Compos
 npm run open-google-calendar                   # optional CDP Chrome login for verification
 npm run process-capture-queue -- --dry-run               # preview pending_mac photo uploads
 CONFIRM=1 npm run process-capture-queue                  # after AirDrop + open-canvas
+npm run voice-models                                     # Gemini Live models your key can use → set GEMINI_LIVE_MODEL
+npm run voice                                            # local voice interviewer → ../inbox/goals.md + class notes
 ```
 
 Photo intake from Cursor mobile: see [`../inbox/captures/README.md`](../inbox/captures/README.md) and skill `jacob-photo-intake`.
+
+Voice intake (mic → Gemini Live → `inbox/goals.md`; needs `GEMINI_API_KEY` in the repo-root `.env`): see [`../docs/VOICE.md`](../docs/VOICE.md) and skill `jacob-voice-intake`. Page + client live in `voice/`, server code in `scripts/lib/voice/`.
 
 `browser/.auth/` is gitignored — never commit it.
 

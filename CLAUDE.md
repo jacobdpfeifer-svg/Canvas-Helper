@@ -9,7 +9,7 @@ This is **not** the upstream multi-audience product. Do not restore educator too
 ## Truth path
 
 1. Brain: `JACOB.md` triage (+ `.jacob/priority-rubric.md` when Jacob asks what’s next; `jacob-course-arc` when Jacob names a course)
-2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs, **`## Class notes`**, arc notes; optional dated `inbox/focus.md` Top-3 cache). Chat study notes → append course MD immediately (no ask).
+2. Memory: `inbox/week.md` (+ `inbox/courses/*` catalogs, **`## Class notes`**, arc notes; optional dated `inbox/focus.md` Top-3 cache; `inbox/goals.md` spoken goals from voice sessions → `jacob-voice-intake`). Chat study notes → append course MD immediately (no ask).
 3. Fill memory: `cd browser && npm run sync` (SSO cookies → Canvas REST)
 4. Optional later: PAT + `canvas-mcp-server` for the same REST + native submits
 5. Escape hatch: browser UI for WebAssign / ZyBooks / PlayPosit / proctored / LTI — Jacob operates; agent drafts  
@@ -32,6 +32,11 @@ skills/                # jacob-* + week-plan + task-brief + course-arc + discuss
 cd browser && npm run open-canvas   # once
 cd browser && npm run sync
 
+# Voice goal-capture interviewer (needs GEMINI_API_KEY in .env; docs/VOICE.md)
+cd browser && npm run voice-models  # pick GEMINI_LIVE_MODEL
+cd browser && npm run voice         # then open the printed localhost URL
+cd browser && npm test              # includes tests/voice-*.test.mjs
+
 # Optional MCP
 uv pip install -e .
 uv run canvas-mcp-server --test    # only after PAT in .env
@@ -42,7 +47,8 @@ uv run python -m pytest tests/ -q
 
 - Prefer extending SSO→API→inbox over new scrapers
 - MCP tools: `@mcp.tool()` + `@validate_params`; `submit_assignment` stays preview→confirm
-- Never commit `.env` or `browser/.auth/`
+- Never commit `.env`, `browser/.auth/`, or raw voice transcripts (`inbox/voice/sessions/`)
+- Voice model gets exactly two local-append tools (`save_goal`, `append_class_note`) — no Canvas access or submits from voice
 
 ## Out of scope
 

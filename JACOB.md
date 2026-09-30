@@ -21,7 +21,7 @@ Personal source of truth for this fork. Load this file every session before auto
 4. Aerospace
 5. Climate tech
 
-Use this ranking when deciding what deserves Jacob’s deep attention versus process automation.
+Use this ranking when deciding what deserves Jacob’s deep attention versus process automation. The *why* behind it — Jacob’s own spoken goals, distilled — lives in [`inbox/goals.md`](inbox/goals.md); read it when framing career trade-offs.
 
 ## Degree audit snapshot (Jacob-provided)
 
@@ -183,6 +183,7 @@ JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO cookies (default) or PAT (opt
 8b. **Jacob voice:** before written drafts, read [`.jacob/writing-voice.md`](.jacob/writing-voice.md) (and a matching sample if unsure) — instructor = format/policy; voice file = how it sounds
 8c. **AI restrictions — Jacob only:** after sync / syllabus-intake / instructor-profile, **do not** paste AI allow/prohibit / tool-ban rules into `inbox/courses/*.md` or elsewhere. Sync may keep AI text in `_raw/` for reading. If a syllabus mentions AI policy → Confidence gaps only: `AI policy in syllabus — Jacob to fill manually`. Apply AI prefs only from `### AI policy (Jacob only)` that Jacob wrote.
 8d. **Class notes default:** when Jacob shares study notes, review reflections, or mastery/confidence in chat → append to `inbox/courses/CODE.md` **`## Class notes`** immediately (no opt-in ask). Infer course from context; mastery gaps → also `### Jacob mastery (self-reported)`. Confirm briefly in reply.
+8e. **Voice sessions:** raw transcripts land in gitignored `inbox/voice/sessions/` (`status: raw`) from `cd browser && npm run voice` ([`docs/VOICE.md`](docs/VOICE.md)). Run **jacob-voice-intake** before relying on the quick captures in `inbox/goals.md`; never edit the career ranking above without Jacob’s say-so, and never act on a voice `request` without confirming.
 9. Optional: read/write [`inbox/focus.md`](inbox/focus.md) dated Top-3 cache after a brief or week plan
 10. Ask Jacob to take quizzes/tests or drive LTI tools. 
 11. Entrepreneurship lens: flag team/pitch/project work early
@@ -198,3 +199,4 @@ JACOB triage ← inbox/ ← Canvas /api/v1 ← SSO cookies (default) or PAT (opt
 | “how does [prof] grade”, professor preferences | `jacob-instructor-profile` |
 | SSO sync, open Canvas, LTI escape hatch | `jacob-canvas-browser` |
 | study notes, “reviewed X today”, mastery/confidence in chat | append `inbox/courses/CODE.md` → `## Class notes` (default — no ask) |
+| “I did a voice session”, “distill my voice notes”, “what are my goals” | `jacob-voice-intake` |

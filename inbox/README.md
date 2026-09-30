@@ -11,6 +11,7 @@ Architecture: [`docs/HYBRID.md`](../docs/HYBRID.md)
 inbox/
   week.md                 # canonical due list (14d open rows)
   focus.md                # optional dated Top-3 cache (jacob-task-brief / week-plan)
+  goals.md                # spoken goals: voice captures + distilled (jacob-voice-intake)
   courses/APPM1235.md
   courses/BCOR1030.md
   courses/CALCREADY.md    # Calculus 1 Readiness Prep
@@ -20,6 +21,7 @@ inbox/
   courses/ONLINEEXP.md    # Leeds Online Experience
   courses/LEEDSFYE.md     # Leeds First-Year Experience (WeVideo)
   captures/               # photo intake queue + gitignored inbox/
+  voice/                  # voice interviewer transcripts (gitignored sessions/) — see voice/README.md
   audit-*.md              # accuracy audits (npm run audit)
   archive/                # old snapshots
   _templates/
