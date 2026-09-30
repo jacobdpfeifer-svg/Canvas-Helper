@@ -3,8 +3,12 @@
  * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-major-dinners.md.
  *
  * Usage:
- *   npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --confirm
- *   HEADLESS=1 npm run rsvp-dinner -- --major cs --date 2026-08-26 --name "Student Name" --confirm --log
+ *   npm run rsvp-dinner -- --major cs --name "Student Name"                       # preview, no browser
+ *   npm run rsvp-dinner -- --major cs --name "Student Name" --expect 385793 --confirm
+ *
+ * The preview prints the exact confirm command. --confirm requires --expect <id>
+ * from that preview, so the dinner booked is the dinner the student saw — if
+ * the schedule re-synced or prefs changed in between, the run is refused.
  *
  * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
  * --confirm is required: RSVP is visible to the event organizer (pivot exception
@@ -14,23 +18,31 @@ import fs from "node:fs";
 import {
   COEN_MAJOR_DINNERS_PATH,
   SIGNUP_PREFS_PATH,
-  appendRegistrationLog,
-  ensureCampusGroupsSession,
-  launchCanvasContext,
+  dropPastRows,
   majorMatches,
   parseMajorDinnersTable,
   parseSignupPreferences,
-  performRsvp,
-  verifyRsvp,
+  runRsvpCli,
+  schoolLocalDay,
+  shellQuote,
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { major: null, date: null, verify: true, name: "", log: true, confirm: false };
+  const args = {
+    major: null,
+    date: null,
+    verify: true,
+    name: "",
+    log: true,
+    confirm: false,
+    expect: null,
+  };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--major" && argv[i + 1]) args.major = argv[++i];
     else if (a === "--date" && argv[i + 1]) args.date = argv[++i];
     else if (a === "--name" && argv[i + 1]) args.name = argv[++i];
+    else if (a === "--expect" && argv[i + 1]) args.expect = argv[++i];
     else if (a === "--no-verify") args.verify = false;
     else if (a === "--no-log") args.log = false;
     else if (a === "--confirm") args.confirm = true;
@@ -39,7 +51,7 @@ function parseArgs(argv) {
   return args;
 }
 
-function resolveDinnerRow({ major, date, prefs }) {
+function resolveDinnerRows({ major, date }) {
   let md = "";
   try {
     md = fs.readFileSync(COEN_MAJOR_DINNERS_PATH, "utf8");
@@ -54,30 +66,30 @@ function resolveDinnerRow({ major, date, prefs }) {
     throw new Error("No dinner rows in coen-major-dinners.md — run npm run sync-dinners");
   }
 
-  const majorAlias = major || prefs.majorDinnerDefault;
-  let candidates = rows.filter((r) => majorMatches(r.major, majorAlias));
+  let candidates = dropPastRows(
+    rows.filter((r) => majorMatches(r.major, major)),
+    schoolLocalDay()
+  );
   if (date) {
     candidates = candidates.filter((r) => r.date === date || r.date.startsWith(date));
   }
   if (!candidates.length) {
     throw new Error(
-      `No dinner row for major=${majorAlias} date=${date || "any"} — check inbox/coen-major-dinners.md`
+      `No upcoming dinner for major=${major} date=${date || "any"} — check inbox/coen-major-dinners.md or run npm run sync-dinners`
     );
   }
-  return candidates[0];
+  return candidates;
+}
+
+function fail(message) {
+  console.log(JSON.stringify({ ok: false, outcome: "not_attempted", message }, null, 2));
+  process.exit(1);
 }
 
 const args = parseArgs(process.argv);
 if (!args.name.trim()) {
   console.error(
-    'Usage: npm run rsvp-dinner -- --name "Student Name" --confirm [--major ...] [--date ...]'
-  );
-  process.exit(1);
-}
-if (!args.confirm) {
-  console.error(
-    "Refusing to RSVP without --confirm: this registers you with the event organizer. " +
-      "Pass --confirm only after you've decided to attend."
+    'Usage: npm run rsvp-dinner -- --name "Student Name" [--major ...] [--date ...] [--expect <id> --confirm]'
   );
   process.exit(1);
 }
@@ -91,65 +103,46 @@ try {
 
 if (!args.major) {
   if (prefs.majorDinnerStatus !== "confirmed") {
-    console.error(
-      "Major dinner preference not confirmed — set Status: confirmed in calibration/signup-preferences.md"
+    fail(
+      `No --major given and the major-dinner preference isn't confirmed. Pass --major (e.g. --major cs), ` +
+        `or set Status: confirmed in calibration/signup-preferences.md (default would be ${prefs.majorDinnerDefault}).`
     );
-    console.error(`Default would be: ${prefs.majorDinnerDefault}`);
-    process.exit(1);
   }
   args.major = prefs.majorDinnerDefault;
 }
 
-let row;
+let candidates;
 try {
-  row = resolveDinnerRow({ major: args.major, date: args.date, prefs });
+  candidates = resolveDinnerRows({ major: args.major, date: args.date });
 } catch (e) {
-  console.error(String(e.message || e));
-  process.exit(1);
+  fail(String(e.message || e));
 }
 
-const { context, page } = await launchCanvasContext();
-let result;
+const [row, ...rest] = candidates;
+const label = `${row.major} ${row.date} slot ${row.slot}`;
+const base =
+  `npm run rsvp-dinner -- --name ${shellQuote(args.name)} --major ${shellQuote(args.major)}` +
+  (args.date ? ` --date ${shellQuote(args.date)}` : "");
+// Picking an alternative = re-preview with its exact date.
+const alternatives = rest.map((r) => ({
+  eventId: r.rsvpId,
+  label: `${r.major} ${r.date} slot ${r.slot}`,
+  previewWith: `npm run rsvp-dinner -- --name ${shellQuote(args.name)} --major ${shellQuote(args.major)} --date ${shellQuote(r.date)}`,
+}));
 
-try {
-  await ensureCampusGroupsSession(page);
-  const rsvpResult = await performRsvp(page, row.rsvpId, { confirmed: true });
-
-  let verification = { success: false, method: "none" };
-  if (args.verify) {
-    verification = await verifyRsvp(page, {
-      eventId: row.rsvpId,
-      studentName: args.name,
-    });
-  } else {
-    verification = { success: true, method: "skipped" };
-  }
-
-  result = {
-    ok: verification.success,
-    eventId: row.rsvpId,
-    major: row.major,
-    date: row.date,
-    slot: row.slot,
-    alreadyRegistered: rsvpResult.alreadyRegistered || false,
-    verification,
-    url: page.url(),
-  };
-
-  if (result.ok && args.log) {
-    appendRegistrationLog({
-      major: row.major,
-      date: row.date,
-      eventId: row.rsvpId,
-      slot: row.slot,
-      label: `${row.major} ${row.date} slot ${row.slot}`,
-    });
-  }
-} catch (e) {
-  result = { ok: false, eventId: row.rsvpId, error: String(e.message || e) };
-} finally {
-  await context.close();
-}
+const { result, exitCode } = await runRsvpCli({
+  eventId: row.rsvpId,
+  studentName: args.name,
+  verify: args.verify,
+  confirm: args.confirm,
+  expect: args.expect,
+  expectRequired: true,
+  event: { label, major: row.major, date: row.date, slot: row.slot },
+  alternatives,
+  previewCommand: base,
+  confirmCommand: `${base} --expect ${row.rsvpId} --confirm`,
+  log: args.log,
+});
 
 console.log(JSON.stringify(result, null, 2));
-process.exit(result.ok ? 0 : 1);
+process.exit(exitCode);

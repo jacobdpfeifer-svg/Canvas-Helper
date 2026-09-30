@@ -3,10 +3,12 @@
  * Reads {user_root}/calibration/signup-preferences.md and inbox/coen-ai-labs.md.
  *
  * Usage:
- *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name" --confirm
- *   HEADLESS=1 npm run rsvp-ai-lab -- --event 123456 --name "Student Name" --confirm --log
+ *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name"                    # preview, no browser
+ *   npm run rsvp-ai-lab -- --slot "Wed 2pm" --name "Student Name" --expect 123456 --confirm
+ *   npm run rsvp-ai-lab -- --event 123456 --name "Student Name" --confirm
  *
- * Requires AI Lab preference confirmed in calibration/signup-preferences.md unless --event given.
+ * Slot matching needs --expect <id> from the preview so the workshop booked is
+ * the one the student saw. With an explicit --event, the id is already pinned.
  * Set DEV_USER_ROOT to point at the product user root (calibration + inbox).
  * --confirm is required: RSVP is visible to the event organizer (pivot exception
  * for this CLI escape hatch only — not an MCP tool).
@@ -15,20 +17,28 @@ import fs from "node:fs";
 import {
   COEN_AI_LABS_PATH,
   SIGNUP_PREFS_PATH,
-  appendRegistrationLog,
-  ensureCampusGroupsSession,
-  launchCanvasContext,
-  performRsvp,
-  verifyRsvp,
+  dropPastRows,
+  runRsvpCli,
+  schoolLocalDay,
+  shellQuote,
 } from "./campusgroups-session.mjs";
 
 function parseArgs(argv) {
-  const args = { slot: null, event: null, verify: true, name: "", log: true, confirm: false };
+  const args = {
+    slot: null,
+    event: null,
+    verify: true,
+    name: "",
+    log: true,
+    confirm: false,
+    expect: null,
+  };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--slot" && argv[i + 1]) args.slot = argv[++i];
     else if (a === "--event" && argv[i + 1]) args.event = argv[++i];
     else if (a === "--name" && argv[i + 1]) args.name = argv[++i];
+    else if (a === "--expect" && argv[i + 1]) args.expect = argv[++i];
     else if (a === "--no-verify") args.verify = false;
     else if (a === "--no-log") args.log = false;
     else if (a === "--confirm") args.confirm = true;
@@ -64,9 +74,7 @@ function parseAiLabsTable(md) {
   return rows;
 }
 
-function resolveAiLabRow({ slot, event, prefs }) {
-  if (event) return { rsvpId: String(event), label: `AI Lab event ${event}` };
-
+function resolveAiLabRows({ slot, prefs }) {
   let md = "";
   try {
     md = fs.readFileSync(COEN_AI_LABS_PATH, "utf8");
@@ -74,44 +82,43 @@ function resolveAiLabRow({ slot, event, prefs }) {
     throw new Error(`Missing ${COEN_AI_LABS_PATH} — run: cd browser && npm run sync-ai-labs`);
   }
 
-  const rows = parseAiLabsTable(md);
+  const rows = dropPastRows(parseAiLabsTable(md), schoolLocalDay());
   if (!rows.length) {
-    throw new Error("No AI lab rows in coen-ai-labs.md — run npm run sync-ai-labs");
+    throw new Error("No upcoming AI lab rows in coen-ai-labs.md — run npm run sync-ai-labs");
   }
 
   const needle = (slot || prefs.preferredSlot || "").toLowerCase();
   if (!needle) {
     throw new Error(
-      "No workshop slot specified — set Preferred slot in calibration/signup-preferences.md, or pass --slot / --event"
+      "No workshop slot specified — pass --slot (e.g. --slot \"Wed 2pm\") or --event, or set Preferred slot in calibration/signup-preferences.md"
     );
   }
 
-  const match = rows.find(
+  const matches = rows.filter(
     (r) =>
       `${r.date} ${r.time} ${r.workshop}`.toLowerCase().includes(needle) ||
       r.workshop.toLowerCase().includes(needle) ||
       r.time.toLowerCase().includes(needle)
   );
-  if (!match) {
-    throw new Error(`No AI lab row matches slot="${needle}" — check inbox/coen-ai-labs.md`);
+  if (!matches.length) {
+    throw new Error(`No upcoming AI lab matches slot="${needle}" — check inbox/coen-ai-labs.md`);
   }
-  return {
-    rsvpId: match.rsvpId,
-    label: `AI Lab ${match.date} ${match.time} — ${match.workshop}`,
-  };
+  return matches;
+}
+
+function labelOf(r) {
+  return `AI Lab ${r.date} ${r.time} — ${r.workshop}`;
+}
+
+function fail(message) {
+  console.log(JSON.stringify({ ok: false, outcome: "not_attempted", message }, null, 2));
+  process.exit(1);
 }
 
 const args = parseArgs(process.argv);
 if (!args.name.trim()) {
   console.error(
-    'Usage: npm run rsvp-ai-lab -- --name "Student Name" --confirm [--slot ...] [--event ...]'
-  );
-  process.exit(1);
-}
-if (!args.confirm) {
-  console.error(
-    "Refusing to RSVP without --confirm: this registers you with the event organizer. " +
-      "Pass --confirm only after you've decided to attend."
+    'Usage: npm run rsvp-ai-lab -- --name "Student Name" [--slot ... | --event <id>] [--expect <id> --confirm]'
   );
   process.exit(1);
 }
@@ -123,59 +130,55 @@ try {
   console.warn(`Warning: ${SIGNUP_PREFS_PATH} not found`);
 }
 
-if (!args.event && prefs.status !== "confirmed") {
-  console.error(
-    "AI Lab preference not confirmed — set Status: confirmed and Preferred slot in calibration/signup-preferences.md"
+// An explicit --slot is the student's choice for this run; only the saved
+// preference needs Status: confirmed before it can stand in for one.
+if (!args.event && !args.slot && prefs.status !== "confirmed") {
+  fail(
+    "No --slot or --event given and the AI Lab preference isn't confirmed. Pass --slot (e.g. --slot \"Wed 2pm\"), " +
+      "or set Status: confirmed and Preferred slot in calibration/signup-preferences.md."
   );
-  process.exit(1);
 }
 
 let row;
-try {
-  row = resolveAiLabRow({ slot: args.slot, event: args.event, prefs });
-} catch (e) {
-  console.error(String(e.message || e));
-  process.exit(1);
+let alternatives = [];
+let base;
+if (args.event) {
+  row = { rsvpId: String(args.event), label: `AI Lab event ${args.event}` };
+  base = `npm run rsvp-ai-lab -- --name ${shellQuote(args.name)} --event ${shellQuote(args.event)}`;
+} else {
+  let matches;
+  try {
+    matches = resolveAiLabRows({ slot: args.slot, prefs });
+  } catch (e) {
+    fail(String(e.message || e));
+  }
+  const [first, ...rest] = matches;
+  row = { ...first, label: labelOf(first) };
+  base =
+    `npm run rsvp-ai-lab -- --name ${shellQuote(args.name)}` +
+    (args.slot ? ` --slot ${shellQuote(args.slot)}` : "");
+  // Picking an alternative = confirm it by its own event id.
+  alternatives = rest.map((r) => ({
+    eventId: r.rsvpId,
+    label: labelOf(r),
+    previewWith: `npm run rsvp-ai-lab -- --name ${shellQuote(args.name)} --event ${r.rsvpId}`,
+  }));
 }
 
-const { context, page } = await launchCanvasContext();
-let result;
-
-try {
-  await ensureCampusGroupsSession(page);
-  const rsvpResult = await performRsvp(page, row.rsvpId, { confirmed: true });
-
-  let verification = { success: false, method: "none" };
-  if (args.verify) {
-    verification = await verifyRsvp(page, {
-      eventId: row.rsvpId,
-      studentName: args.name,
-    });
-  } else {
-    verification = { success: true, method: "skipped" };
-  }
-
-  result = {
-    ok: verification.success,
-    eventId: row.rsvpId,
-    alreadyRegistered: rsvpResult.alreadyRegistered || false,
-    verification,
-    url: page.url(),
-  };
-
-  if (result.ok && args.log) {
-    appendRegistrationLog({
-      major: "",
-      date: "",
-      eventId: row.rsvpId,
-      label: row.label,
-    });
-  }
-} catch (e) {
-  result = { ok: false, eventId: row.rsvpId, error: String(e.message || e) };
-} finally {
-  await context.close();
-}
+const { result, exitCode } = await runRsvpCli({
+  eventId: row.rsvpId,
+  studentName: args.name,
+  verify: args.verify,
+  confirm: args.confirm,
+  expect: args.expect,
+  // --event is explicit on the command line; slot matching must be pinned by --expect.
+  expectRequired: !args.event,
+  event: { label: row.label, ...(row.date ? { date: row.date, time: row.time } : {}) },
+  alternatives,
+  previewCommand: base,
+  confirmCommand: args.event ? `${base} --confirm` : `${base} --expect ${row.rsvpId} --confirm`,
+  log: args.log,
+});
 
 console.log(JSON.stringify(result, null, 2));
-process.exit(result.ok ? 0 : 1);
+process.exit(exitCode);

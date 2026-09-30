@@ -32,6 +32,7 @@ Follow [`skills/_SESSION.md`](skills/_SESSION.md), then:
 | “how does [prof] grade”, professor preferences | `student-instructor-profile` |
 | SSO sync, LTI escape hatch | `student-canvas-browser` |
 | “intake this photo”, “class capture”, attached image | `student-photo-intake` |
+| “coach me through this”, “where do I click”, tool screenshot (never taps) | `student-screen-coach` |
 | “explain tangent”, “show diagram”, “struggling with X” | `student-concept-visual` |
 | triage / preview gates (never auto-submit) | `student-assignment-triage` |
 | “update my inbox”, merge due list | `student-inbox-week` |

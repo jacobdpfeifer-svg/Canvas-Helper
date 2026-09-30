@@ -34,16 +34,26 @@ School plugins (e.g. CampusGroups under `plugins/cu-boulder-campusgroups/`) own 
 
 Before calendar-binding RSVP: read [`calibration/signup-preferences.md`](../../calibration/signup-preferences.md). Verify RSVP via the plugin’s success contract — never infer from page text alone. RSVP does not complete the Canvas assignment when a later upload is required.
 
+**RSVP turn, end to end** (CampusGroups; details in the plugin README):
+
+1. Run the RSVP script **without** `--confirm`. Show the student the preview `message`, the event label/date, and any `alternatives`. The organizer sees RSVPs — say so.
+2. Wait for an explicit yes to *that* event. A yes to "sign me up for dinners" in general is not a yes to a specific dinner. If they pick an alternative, run its `previewWith` and show that preview instead.
+3. Run `confirmWith` exactly as printed (it carries `--expect`). Never hand-build a `--confirm` command or drop `--expect`.
+4. Relay `message` and `next` verbatim-in-spirit. On `not_attempted`, say plainly that nothing was registered and give the `next` fix (usually `npm run open-campusgroups`). On `unconfirmed`, say the student **may** be registered and must check CampusGroups → My Events before any retry — do not auto-retry. On `confirmed` / `already_registered`, you may offer a calendar reminder (preview → confirm via the calendar connector).
+5. Don't open or paste the diagnostics folder unless the student asks why it failed; then show the `screenshot` path.
+
 ### C — Cursor browser LTI escape hatch (the student driving)
 
 **Bucket B** (assessment-shaped): WebAssign, ZyBooks, PlayPosit, Norton/EOC/LearningCurve, proctoring (Honorlock/Respondus/etc.), or graded `external_tool` items.
 
 1. Open the tool via Canvas (the student completes MFA if needed).
-2. Draft steps/answers in chat.
+2. Help with navigation and concepts in chat — never the answer to a graded item (don't state, pick, compute, or check it). Asked for the answer → decline in one line and offer the concept or a parallel practice problem. Proctored/exam screens → no help. Same scope as [`student-screen-coach`](../student-screen-coach/SKILL.md) § Graded work.
 3. **The student** submits in the tool UI.
 4. Optionally mark done in `inbox/week.md`.
 
 Never auto-click Submit in those tools. No connector, config flag, or “trust” override may automate Bucket B.
+
+Stuck on where to click? Hand off to [`student-screen-coach`](../student-screen-coach/SKILL.md) — the student sends screenshots, the agent names the next control, the student taps. Device-automation harnesses (cell-use, Appium, mobile-mcp, agent-device) are never a way around this section ([`plugins/README.md`](../../plugins/README.md) rule 7).
 
 **Bucket A** (admin / read-only surfaces, CampusGroups): registry-eligible only. Sync writes a discovery inventory under `## Tools this semester` in each course file and flags missing connectors in `inbox/tool-gaps.md`. Do **not** fetch or generate connector code — maintainers add `plugins/{school}/{tool}/` via reviewed PR ([`plugins/README.md`](../../plugins/README.md)). MCP writes from a Bucket-A connector require `ConfirmationGuard` (`connector_guards.get_connector_guard`).
 
