@@ -8,6 +8,8 @@ fn main() {
             "export_canvas",
             "read_top3",
             "open_canvas_sso",
+            "check_canvas_session",
+            "bootstrap_canvas_sync",
             "save_onboarding",
             "save_learning_profile",
             "save_user_profile",

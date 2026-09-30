@@ -141,3 +141,48 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running ProductName");
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeSet;
+
+    fn between<'a>(src: &'a str, start: &str, end: &str) -> &'a str {
+        let from = src.find(start).expect("start marker") + start.len();
+        let len = src[from..].find(end).expect("end marker");
+        &src[from..from + len]
+    }
+
+    /// With an AppManifest command list, Tauri's app ACL rejects any invoke
+    /// that has no `allow-*` permission, so every registered handler must be
+    /// listed in build.rs and granted by the default capability.
+    #[test]
+    fn every_handler_is_in_app_manifest_and_capability() {
+        let handlers: BTreeSet<String> =
+            between(include_str!("main.rs"), "generate_handler![", "])")
+                .split(',')
+                .map(|s| s.trim().rsplit("::").next().unwrap().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+        let manifest: BTreeSet<String> =
+            between(include_str!("../build.rs"), ".commands(&[", "])")
+                .split(',')
+                .map(|s| s.trim().trim_matches('"').to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+        let cap: serde_json::Value =
+            serde_json::from_str(include_str!("../capabilities/default.json")).unwrap();
+        let allowed: BTreeSet<String> = cap["permissions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|p| p.as_str())
+            .filter_map(|p| p.strip_prefix("allow-"))
+            .map(|p| p.replace('-', "_"))
+            .collect();
+
+        let missing_manifest: Vec<_> = handlers.difference(&manifest).collect();
+        let missing_cap: Vec<_> = handlers.difference(&allowed).collect();
+        assert!(missing_manifest.is_empty(), "not in build.rs: {missing_manifest:?}");
+        assert!(missing_cap.is_empty(), "not in capabilities/default.json: {missing_cap:?}");
+    }
+}
