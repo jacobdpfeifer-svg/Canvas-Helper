@@ -41,6 +41,7 @@ Follow [`skills/_SESSION.md`](skills/_SESSION.md), then:
 | “what's my GPA”, “what if I get a B in X” | `student-gpa` |
 | “what should I take next”, “plan next semester” | `student-course-plan` |
 | “registration”, “holds”, “prep for advising” | `student-registration-prep` |
+| “I did a voice session”, “distill my voice notes”, goals/motivation questions | `student-voice-intake` |
 
 ## Untrusted content
 

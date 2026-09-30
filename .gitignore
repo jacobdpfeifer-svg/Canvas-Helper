@@ -171,3 +171,6 @@ browser/node_modules/
 
 # Audit-time synthetic student roots (fake inbox data; never commit)
 var/
+
+# Voice intake: raw speech transcripts stay local (they live under {user_root}/inbox/voice/sessions/)
+**/voice/sessions/
