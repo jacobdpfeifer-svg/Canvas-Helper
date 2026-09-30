@@ -9,7 +9,18 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { api, apiAllPages, launchCanvasContext, requireLoggedIn, writeCourseCatalogFiles, schoolLocalDay } from "./lib/canvas-session.mjs";
+import {
+  api,
+  apiAllPages,
+  dedupeRows,
+  formatTeachers,
+  fromAssignments,
+  fromDiscussions,
+  launchCanvasContext,
+  requireLoggedIn,
+  writeCourseCatalogFiles,
+  schoolLocalDay,
+} from "./lib/canvas-session.mjs";
 import { resolveUserRoot, resolveProductUserId } from "./lib/user-root.mjs";
 import { fetchCanonicalGeneration } from "./lib/canvas-snapshot.mjs";
 import { carryForwardFailedData, commitRawGeneration, newSyncId, pathsFor, readCurrentRaw, writeSyncRun, writeJsonAtomic } from "./lib/canvas-store.mjs";
@@ -31,6 +42,36 @@ function writeProgress(progress) {
   console.log(JSON.stringify({ type: "study-sync-progress", ...progress }));
 }
 
+function writeCatalogsFromGeneration(generation) {
+  const perCourse = (generation.courses || []).map((pack) => {
+    const teachers = pack.course.teachers || [];
+    const primary = teachers.filter((t) => !/ta\b|teaching assistant/i.test(String(t.display_name || t.name || "")));
+    const tas = teachers.filter((t) => /ta\b|teaching assistant/i.test(String(t.display_name || t.name || "")));
+    return {
+      id: pack.course.id,
+      name: pack.course.name,
+      code: pack.course.course_code,
+      rows: dedupeRows([
+        ...fromAssignments(pack.course.name, pack.course.id, pack.assignments || []),
+        ...fromDiscussions(pack.course.name, pack.course.id, pack.discussions || []),
+      ]),
+      assignments_ok: true,
+      assignments_count: (pack.assignments || []).length,
+      assignments_truncated: false,
+      discussions_ok: true,
+      discussions_count: (pack.discussions || []).length,
+      canvasUrl: pack.course.html_url,
+      primaryInstructors: formatTeachers(primary) || formatTeachers(teachers),
+      tas: formatTeachers(tas),
+      syllabusPlain: String(pack.course.syllabus_body || "").replace(/<[^>]+>/g, " "),
+      syllabusHash: "",
+      policyPages: [],
+      syllabus_ok: Boolean(pack.course.syllabus_body),
+    };
+  });
+  return writeCourseCatalogFiles(perCourse, { today: schoolLocalDay() });
+}
+
 function adaptersFromCurrent() {
   const cur = readCurrentRaw(userRoot);
   if (!cur) return { ok: false, error: "no current generation" };
@@ -42,6 +83,7 @@ function adaptersFromCurrent() {
     projections,
     daysAhead: Number(process.env.WEEK_TABLE_DAYS || 30),
   });
+  writeCatalogsFromGeneration(cur.generation);
   return { ok: ad.ok, error: ad.errors[0], sync_id: cur.pointer.sync_id };
 }
 
@@ -143,25 +185,7 @@ if (!adapter.ok) {
 }
 
 try {
-  const perCourse = generation.courses.map((pack) => ({
-    id: pack.course.id,
-    name: pack.course.name,
-    code: pack.course.course_code,
-    rows: [],
-    assignments_ok: true,
-    assignments_count: (pack.assignments || []).length,
-    assignments_truncated: false,
-    discussions_ok: true,
-    discussions_count: (pack.discussions || []).length,
-    canvasUrl: pack.course.html_url,
-    primaryInstructors: [],
-    tas: [],
-    syllabusPlain: String(pack.course.syllabus_body || "").replace(/<[^>]+>/g, " "),
-    syllabusHash: "",
-    policyPages: [],
-    syllabus_ok: Boolean(pack.course.syllabus_body),
-  }));
-  writeCourseCatalogFiles(perCourse, { today: schoolLocalDay() });
+  writeCatalogsFromGeneration(generation);
 } catch (e) {
   console.warn(`course catalogs adapter failed: ${e.message || e}`);
 }

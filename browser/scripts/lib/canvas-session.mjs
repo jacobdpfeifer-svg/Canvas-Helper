@@ -62,10 +62,11 @@ export function ensureInboxReady() {
 
 /** Assessment / proctored tooling — Bucket B; never automate. */
 export const ASSESSMENT_TOOL_RE =
-  /webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton|eoc|learningcurve/i;
+  /gradescope|webassign|zybooks|playposit|play posit|proctor|lockdown|respondus|honorlock|proctored|norton|eoc|learningcurve/i;
 
 /** Named assessment tools for inventory labels. */
 const ASSESSMENT_TOOL_NAMES = [
+  { re: /gradescope/i, name: "Gradescope", slug: "gradescope" },
   { re: /webassign/i, name: "WebAssign", slug: "webassign" },
   { re: /zybooks/i, name: "ZyBooks", slug: "zybooks" },
   { re: /play\s*posit/i, name: "PlayPosit", slug: "playposit" },
@@ -495,17 +496,17 @@ export function resolveCourseFile(courseName, courseCode) {
   return null;
 }
 
-export function isCheckpoint(title, type) {
-  const blob = `${title || ""} ${type || ""}`;
-  const hint = classifyOutcomeHint(title, type);
+export function isCheckpoint(title, type, description = "", submissionTypes = []) {
+  const blob = `${title || ""} ${type || ""} ${description || ""}`;
+  const hint = classifyOutcomeHint(title, type, description, "", submissionTypes);
   if (hint.includes("outcome:quiz")) return true;
   if (hint.includes("outcome:presentation")) return true;
   if (/thought\s*project/i.test(blob)) return true;
-  return /\bquiz\b|\bexam\b|midterm|final/i.test(blob);
+  return /\bquiz\b|\bexam\b|\bmidterm\b|\bfinal\s+(?:exam|quiz)\b/i.test(blob);
 }
 
-export function outcomeLabel(title, type) {
-  const hint = classifyOutcomeHint(title, type);
+export function outcomeLabel(title, type, description = "", points = "", submissionTypes = []) {
+  const hint = classifyOutcomeHint(title, type, description, points, submissionTypes);
   const m = hint.match(/^outcome:(\w+)/);
   return m ? m[1] : hint ? hint.split(";")[0].trim() : "-";
 }
@@ -518,7 +519,7 @@ export function filterCatalogRows(rows, { today, catalogDays = CATALOG_DAYS } = 
   return (rows || [])
     .filter((r) => {
       if (r.complete) return false;
-      if (isCheckpoint(r.title, r.type)) return true;
+      if (isCheckpoint(r.title, r.type, r.description, r.submission_types)) return true;
       if (!r.due) return true;
       const dueDay = schoolLocalDay(new Date(r.due));
       if (dueDay < startDay) return true;
@@ -540,13 +541,15 @@ export function formatCatalogTable(rows) {
       const status = r.complete ? "complete" : "open";
       return `| ${escCell(r.title)} | ${escCell(due)} | ${escCell(r.points)} | ${escCell(
         r.type
-      )} | ${escCell(outcomeLabel(r.title, r.type))} | ${status} |`;
+      )} | ${escCell(outcomeLabel(r.title, r.type, r.description, r.points, r.submission_types))} | ${status} |`;
     }),
   ].join("\n");
 }
 
 export function formatCheckpoints(rows) {
-  const cps = (rows || []).filter((r) => isCheckpoint(r.title, r.type));
+  const cps = (rows || []).filter((r) =>
+    isCheckpoint(r.title, r.type, r.description, r.submission_types)
+  );
   if (!cps.length) {
     return "- (no quizzes/exams or major milestones on record yet)";
   }
@@ -677,7 +680,13 @@ export function isSignupTitle(title, type) {
 
 /** Build week.md Notes column parts for a sync row. */
 export function buildWeekNoteParts(row) {
-  const hint = classifyOutcomeHint(row.title, row.type, row.description);
+  const hint = classifyOutcomeHint(
+    row.title,
+    row.type,
+    row.description,
+    row.points,
+    row.submission_types
+  );
   const parts = [(row.sources || [row.source]).join("+"), "open", hint].filter(Boolean);
   if (row.html_url) {
     const url = String(row.html_url).startsWith("http")
@@ -1433,8 +1442,14 @@ ${registered || "_None registered for this school._"}
   return { path: TOOL_GAPS_PATH, gapCount: gapRows.length };
 }
 
-export function classifyOutcomeHint(title, type, description = "", points = "") {
-  const blob = `${title || ""} ${type || ""}`.toLowerCase();
+export function classifyOutcomeHint(
+  title,
+  type,
+  description = "",
+  points = "",
+  submissionTypes = []
+) {
+  const blob = `${title || ""} ${type || ""} ${description || ""} ${Array.isArray(submissionTypes) ? submissionTypes.join(" ") : submissionTypes}`.toLowerCase();
   const typeStr = String(type || "").toLowerCase();
   const descHtml = String(description || "").toLowerCase();
 
@@ -1447,7 +1462,7 @@ export function classifyOutcomeHint(title, type, description = "", points = "") 
     return `outcome:external-admin; bucket:A; tool:${tool.name}; registry-eligible — flag gap if no connector; never auto-build`;
   }
 
-  if (/\bquiz\b|exam|midterm|final/.test(blob)) {
+  if (/\bquiz\b|\bexam\b|\bmidterm\b|\bfinal\s+(?:exam|quiz)\b/.test(blob)) {
     return "outcome:quiz; assessment — student only";
   }
   if (/presentation|in-class\s+present/.test(blob)) {
@@ -1485,7 +1500,7 @@ export function classifyOutcomeHint(title, type, description = "", points = "") 
   if (/challenge\s*activit/.test(blob)) {
     return "outcome:lab";
   }
-  if (/discussion_topic|discussion\b|advocate/.test(blob)) {
+  if (/\bdiscussion_topic\b|\bdiscussion\b/.test(`${typeStr} ${descHtml}`)) {
     return "outcome:discussion";
   }
   if (/pre[\s-]?reading|pre[\s-]?class|reading\b/.test(blob)) {
@@ -1628,6 +1643,10 @@ export function fromAssignments(courseName, courseId, assignments) {
           submissionTypes.join(",") ||
           "assignment",
       html_url: a.html_url || "",
+      description: [a.description || "", a.external_tool_tag_attributes?.url || ""]
+        .filter(Boolean)
+        .join(" "),
+      submission_types: submissionTypes,
       complete: submissionComplete(a.submission),
       course_id: courseId,
       canvas_id: a.id != null ? String(a.id) : "",
@@ -1650,6 +1669,8 @@ export function fromDiscussions(courseName, courseId, topics) {
       points: t.assignment?.points_possible ?? t.points_possible ?? "",
       type: t.assignment_id ? "discussion_topic" : "discussion_topic",
       html_url: t.html_url || "",
+      description: t.message || t.description || "",
+      submission_types: t.assignment?.submission_types || [],
       complete: submissionComplete(submission),
       course_id: courseId,
       canvas_id: t.id != null ? String(t.id) : "",
@@ -2071,4 +2092,3 @@ export function collectTruncationWarnings(health) {
   }
   return warnings;
 }
-

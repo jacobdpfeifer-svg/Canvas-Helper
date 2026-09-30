@@ -69,6 +69,8 @@ export function reconcile_due_items(generation) {
         object_type,
         canvas_id,
         title: "",
+        description: "",
+        submission_types: [],
         html_url: null,
         points_possible: null,
         assignment_group_id: null,
@@ -111,6 +113,10 @@ export function reconcile_due_items(generation) {
       }
       const item = ensure({ course_id: cid, object_type: "assignment", canvas_id: got.canvas_id });
       item.title = a.name || a.title || item.title;
+      item.description = [a.description || "", a.external_tool_tag_attributes?.url || ""]
+        .filter(Boolean)
+        .join(" ");
+      item.submission_types = a.submission_types || [];
       item.html_url = isHttpUrl(a.html_url) ? a.html_url : item.html_url;
       item.points_possible = a.points_possible ?? item.points_possible;
       item.assignment_group_id = a.assignment_group_id != null ? String(a.assignment_group_id) : item.assignment_group_id;
@@ -143,6 +149,8 @@ export function reconcile_due_items(generation) {
       if (aid == null) continue;
       const item = ensure({ course_id: cid, object_type: "assignment", canvas_id: String(aid) });
       if (!item.title) item.title = d.title;
+      if (!item.description) item.description = d.message || d.description || "";
+      if (!item.submission_types.length) item.submission_types = d.assignment?.submission_types || [];
       pushSeen(item, "discussion");
     }
 
