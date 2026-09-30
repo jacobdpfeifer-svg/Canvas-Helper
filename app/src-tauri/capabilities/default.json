@@ -17,6 +17,8 @@
     "allow-export-canvas",
     "allow-read-top3",
     "allow-open-canvas-sso",
+    "allow-check-canvas-session",
+    "allow-bootstrap-canvas-sync",
     "allow-save-onboarding",
     "allow-save-learning-profile",
     "allow-save-user-profile",
