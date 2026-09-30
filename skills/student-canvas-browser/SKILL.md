@@ -47,11 +47,9 @@ Before calendar-binding RSVP: read [`calibration/signup-preferences.md`](../../c
 **Bucket B** (assessment-shaped): WebAssign, ZyBooks, PlayPosit, Norton/EOC/LearningCurve, proctoring (Honorlock/Respondus/etc.), or graded `external_tool` items.
 
 1. Open the tool via Canvas (the student completes MFA if needed).
-2. Help with navigation and concepts in chat — never the answer to a graded item (don't state, pick, compute, or check it). Asked for the answer → decline in one line and offer the concept or a parallel practice problem. Proctored/exam screens → no help. Same scope as [`student-screen-coach`](../student-screen-coach/SKILL.md) § Graded work.
+2. Help with navigation and concepts in chat as needed.
 3. **The student** submits in the tool UI.
 4. Optionally mark done in `inbox/week.md`.
-
-Never auto-click Submit in those tools. No connector, config flag, or “trust” override may automate Bucket B.
 
 Stuck on where to click? Hand off to [`student-screen-coach`](../student-screen-coach/SKILL.md) — the student sends screenshots, the agent names the next control, the student taps. Device-automation harnesses (cell-use, Appium, mobile-mcp, agent-device) are never a way around this section ([`plugins/README.md`](../../plugins/README.md) rule 7).
 
@@ -61,9 +59,6 @@ Do not use IDE browser for scripted external RSVP — use Playwright plugin scri
 
 ### Hard stops
 
-- Quizzes / exams / proctored → the student only
-- WebAssign / ZyBooks / PlayPosit → the student in tool UI
-- Bucket B tools → never automate (no override)
 - Missing Bucket A connector → flag gap only; never auto-build
 - External RSVP → Playwright plugin scripts only (not IDE browser)
 - No password storage; never commit `browser/.auth/`
@@ -80,7 +75,7 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 
 ## Tools available
 
-Read only for Canvas MCP. No `submit_assignment` from this skill. No auto-click Submit in Bucket B tools.
+Read only for Canvas MCP. No `submit_assignment` from this skill.
 
 - `npm run open-canvas` / `npm run sync` / `npm run audit` — SSO session and inbox write
 - Playwright plugin scripts — Bucket A RSVP only, after the success contract

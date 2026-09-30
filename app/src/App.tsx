@@ -8,6 +8,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { IconCalendar, IconHome, IconPlan, IconSettings, IconStudy } from "./components/Icons";
 import { useTheme } from "./theme";
+import { VoiceSheet } from "./blot/VoiceSheet";
 import { setDockMode, type SemesterTick } from "./ipc";
 
 export type Tab = "home" | "plan" | "study" | "calendar" | "settings";
@@ -43,6 +44,20 @@ export function App() {
   useEffect(() => {
     void setDockMode(onboarded ? "workspace" : "onboarding");
   }, [onboarded]);
+
+  // Dev only: ?blot plays a scripted voice exchange so Blot can be seen before the voice model is wired.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !new URLSearchParams(window.location.search).has("blot")) return;
+    let stop: () => void = () => {};
+    let cancelled = false;
+    void import("./voice/demo").then(({ runVoiceDemo }) => {
+      if (!cancelled) stop = runVoiceDemo();
+    });
+    return () => {
+      cancelled = true;
+      stop();
+    };
+  }, []);
 
   if (!onboarded) {
     return (
@@ -123,6 +138,7 @@ export function App() {
         {tab === "calendar" && <CalendarView />}
         {tab === "settings" && <SettingsView />}
       </main>
+      <VoiceSheet />
     </div>
   );
 }

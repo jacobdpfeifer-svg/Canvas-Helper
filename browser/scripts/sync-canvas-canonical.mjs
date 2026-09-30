@@ -14,6 +14,7 @@ import {
   apiAllPages,
   dedupeRows,
   formatTeachers,
+  syllabusHash,
   fromAssignments,
   fromDiscussions,
   getBase,
@@ -28,13 +29,14 @@ import { carryForwardFailedData, commitRawGeneration, newSyncId, pathsFor, readC
 import { buildProjections, promoteProjections } from "./lib/canvas-project.mjs";
 import { writeAdaptersFromProjection } from "./lib/canvas-adapters.mjs";
 import { afterCanonicalSync } from "./lib/freshness-run.mjs";
+import { syncCourseColors } from "./lib/course-colors.mjs";
 
 const userRoot = resolveUserRoot({ create: true, announce: true });
 const adaptersOnly = process.env.CANVAS_ADAPTERS_ONLY === "1" || process.env.CANVAS_ADAPTERS_ONLY === "true";
 // Raw fetch depth (term-wide "full scrape") — CATALOG_DAYS only. WEEK_TABLE_DAYS
 // (below) controls only the week.md display window and must not shrink this.
 const daysAhead = Number(process.env.CATALOG_DAYS || 150);
-const weekTableDays = Number(process.env.WEEK_TABLE_DAYS || 30);
+const weekTableDays = Number(process.env.WEEK_TABLE_DAYS || 7);
 const outDir = path.join(userRoot, "inbox", "study-sources");
 fs.mkdirSync(outDir, { recursive: true });
 const progressPath = path.join(outDir, "progress.json");
@@ -49,6 +51,8 @@ function writeCatalogsFromGeneration(generation) {
     const teachers = pack.course.teachers || [];
     const primary = teachers.filter((t) => !/ta\b|teaching assistant/i.test(String(t.display_name || t.name || "")));
     const tas = teachers.filter((t) => /ta\b|teaching assistant/i.test(String(t.display_name || t.name || "")));
+    const syllabusPlain = String(pack.course.syllabus_body || "").replace(/<[^>]+>/g, " ");
+    const usableSyllabus = Boolean(syllabusPlain.trim()) && !/uploading a doc|under construction|preferred to create a syllabus page|course information module/i.test(syllabusPlain);
     return {
       id: pack.course.id,
       name: pack.course.name,
@@ -65,13 +69,15 @@ function writeCatalogsFromGeneration(generation) {
       canvasUrl: pack.course.html_url,
       primaryInstructors: formatTeachers(primary) || formatTeachers(teachers),
       tas: formatTeachers(tas),
-      syllabusPlain: String(pack.course.syllabus_body || "").replace(/<[^>]+>/g, " "),
-      syllabusHash: "",
+      syllabusPlain,
+      syllabusHash: usableSyllabus ? syllabusHash(syllabusPlain) : "",
       policyPages: [],
-      syllabus_ok: Boolean(pack.course.syllabus_body),
+      syllabus_ok: usableSyllabus,
     };
   });
-  return writeCourseCatalogFiles(perCourse, { today: schoolLocalDay() });
+  return writeCourseCatalogFiles(perCourse, {
+    today: schoolLocalDay(new Date(generation.manifest?.finished_at || Date.now())),
+  });
 }
 
 function adaptersFromCurrent() {
@@ -83,7 +89,7 @@ function adaptersFromCurrent() {
     userRoot,
     generation: cur.generation,
     projections,
-    daysAhead: Number(process.env.WEEK_TABLE_DAYS || 30),
+    daysAhead: Number(process.env.WEEK_TABLE_DAYS || 7),
   });
   writeCatalogsFromGeneration(cur.generation);
   return { ok: ad.ok, error: ad.errors[0], sync_id: cur.pointer.sync_id };
@@ -211,6 +217,10 @@ const freshness = await afterCanonicalSync({
   base: getBase(),
 });
 if (freshness.errors.length) console.warn(`freshness: ${freshness.errors.join("; ")}`);
+
+// Course card colours for Blot. One read-only GET; never fails the sync.
+const colors = await syncCourseColors({ page, api, userRoot });
+if (!colors.ok) console.warn(colors.error);
 
 writeProgress({
   phase: generation.manifest.complete ? "done" : "done",

@@ -902,6 +902,43 @@ class StudyService:
             "attempt": self.projection.attempts[attempt_id].to_dict(),
         }
 
+    # --- ask (context-aware question) --------------------------------------
+
+    def ask_create(self, params: dict[str, Any]) -> dict[str, Any]:
+        from .ask import create_ask
+
+        return create_ask(self, params)
+
+    def ask_get(self, input_id: str) -> dict[str, Any]:
+        from .ask import get_ask
+
+        return get_ask(self, input_id)
+
+    def ask_current(self) -> dict[str, Any]:
+        from .ask import get_current
+
+        return get_current(self)
+
+    def ask_correct(self, input_id: str, params: dict[str, Any]) -> dict[str, Any]:
+        from .ask import correct_ask
+
+        return correct_ask(self, input_id, params)
+
+    def ask_mode(self, input_id: str, session_goal: str) -> dict[str, Any]:
+        from .ask import switch_mode
+
+        return switch_mode(self, input_id, session_goal)
+
+    def ask_rank(self, params: dict[str, Any]) -> dict[str, Any]:
+        from .ask import rank_for_service
+
+        return rank_for_service(self, params)
+
+    def ask_pending(self) -> dict[str, Any]:
+        from .ask import promote_pending
+
+        return promote_pending(self)
+
     # --- helpers -----------------------------------------------------------
 
     def _require_attempt(self, attempt_id: str, statuses: tuple[str, ...]) -> AttemptState:

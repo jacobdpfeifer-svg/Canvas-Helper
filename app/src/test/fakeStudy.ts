@@ -142,6 +142,28 @@ export function makeFakeStudy(options: { failWith?: { cmd: string; code: string;
         return { ok: true, attempt: { ...attempt, evidence: "unknown_assistance", assistance: "unknown" }, state: { stability: "fragile", hits: 0, schedule_status: "scheduled", effective_due: null, independent_check_no_earlier_than: null } };
       case "disagree":
         return { ok: true, attempt: { ...attempt, evidence: "no_evidence", outcome: "uncertain" }, state: { stability: "fragile", hits: 0, schedule_status: "scheduled", effective_due: null, independent_check_no_earlier_than: null } };
+      case "ask-create":
+      case "ask-mode":
+      case "ask-correct":
+      case "ask-current":
+      case "ask-pending":
+        return {
+          ok: true,
+          input_id: "ask-1",
+          ask: { input_id: "ask-1", content: String(params.content ?? ""), session_goal: String(params.session_goal ?? "answer_now"), status: "answered" },
+          response: {
+            question_type: "solve",
+            context_chip: "MATH 1300",
+            one_sentence: params.session_goal === "walkthrough" ? "Use the power rule." : "The derivative is 2x.",
+            explanation: "Checked locally in the fake.",
+            assumptions: "Synthetic.",
+            check_status: "checked",
+            next_action: { title: "Use this result", why_now: "now", value: "", urgency: "now", consequence: "", estimated_effort: "a few minutes", dependencies: [], risk: "low", can_prepare_privately: true, student_confirmation_needed: false, source_refs: [] },
+            modes: ["answer_now", "walkthrough", "mastery", "make_handle"],
+            prose: "not_generated",
+            response_mode: params.session_goal === "walkthrough" ? "walkthrough" : "answer_now",
+          },
+        };
       default:
         return { ok: false, error: { code: "validation", message: `fake has no ${cmd}` } };
     }

@@ -9,9 +9,11 @@
  */
 import { assignmentFromUrl, blockBefore, costLine, formatDue, relTime } from "./lib/format.js";
 import { checklistItems, honestPath } from "./lib/assignment-plan.js";
+import { mountBlot } from "./lib/blot-mount.js";
 
 const main = document.getElementById("panel");
 const statusEl = document.getElementById("pn-status");
+const blot = mountBlot(document.getElementById("pn-blot"));
 
 const send = (message) =>
   new Promise((resolve) => chrome.runtime.sendMessage(message, (reply) => resolve(chrome.runtime.lastError ? null : reply)));
@@ -150,6 +152,32 @@ async function assignmentView(ids) {
 
   const pathSection = section("04", "Fastest honest path", el("ol", { class: "pn-steps" }, honestPath(a).map((s) => el("li", { text: s }))));
   const slot = blockBefore(a.due_at);
+  const ask = el("button", { class: "pn-secondary", type: "button", text: "Ask about this" });
+  ask.addEventListener("click", async () => {
+    ask.disabled = true;
+    const types = Array.isArray(a.submission_types) ? a.submission_types : [];
+    const kind = a.is_quiz_assignment ? "quiz" : a.external_tool ? "external_tool" : "assignment";
+    const reply = await send({
+      type: "queue_ask",
+      content: a.description || a.name || "",
+      course_hint: a.course_code || "",
+      assignment_hint: a.name || "",
+      canvas: {
+        kind,
+        title: a.name || "",
+        due_at: a.due_at || "",
+        points: a.points_possible || 0,
+        submission_types: types,
+        lti: Boolean(a.external_tool),
+        proctored: Boolean(a.proctored),
+      },
+    });
+    if (reply?.ok) ask.textContent = "Saved · open ProductName";
+    else if (!reply || reply.error === "host_missing") ask.textContent = "Connect the ProductName app, then try again";
+    else ask.textContent = "Couldn't save the question";
+    if (!reply?.ok) ask.disabled = false;
+  });
+  pathSection.append(ask);
   if (slot && ctx.hostState === "ok") {
     const button = el("button", { class: "pn-secondary", type: "button", text: "Block 90 min before it's due" });
     button.addEventListener("click", async () => {
@@ -190,9 +218,11 @@ async function refresh() {
   lastUrl = url;
   const ids = assignmentFromUrl(url);
   main.replaceChildren(el("p", { class: "pn-note", text: "Loading…" }));
+  blot.set("thinking");
   main.replaceChildren(...(ids ? await assignmentView(ids) : await homeView()));
   const { last = {} } = await chrome.storage.local.get("last");
   statusEl.textContent = last.signedIn === false ? "Signed out of Canvas" : last.lastPollAt ? `Checked ${relTime(last.lastPollAt)}` : "";
+  blot.set(last.signedIn === false ? "error" : "done");
 }
 
 document.getElementById("pn-readout").addEventListener("click", async (event) => {

@@ -9,6 +9,8 @@ import {
   collectTruncationWarnings,
   escCell,
   filterDatedInWindow,
+  formatDueForDisplay,
+  resolveCourseFile,
   schoolLocalDay,
   shouldIncludeInWeekTable,
 } from "./canvas-session.mjs";
@@ -47,6 +49,7 @@ export function generateWeekMarkdown({ items, courses, health, daysAhead = 14, t
     `Canonical projection sync_id=${sync_id}. SSO→/api/v1. Health=${health?.state}.`,
     `Window: ${day} → +${daysAhead}d ${timezone || health?.timezone || "UTC"}. Open: ${openRows.length}; completed hidden: ${doneRows.length}.`,
   ];
+  for (const reason of health?.partial_reasons || []) notes.push(`Partial sync: ${reason}`);
   const truncationWarnings = collectTruncationWarnings({
     planner: { truncated: health?.truncated?.includes("planner") },
     assignments: { truncated: health?.truncated?.includes("assignments") },
@@ -63,7 +66,7 @@ export function generateWeekMarkdown({ items, courses, health, daysAhead = 14, t
       ? openRows
           .map((r) => {
             const noteParts = buildWeekNoteParts(r);
-            return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(String(r.due).replace("T", " ").slice(0, 16))} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(noteParts.join("; "))} |`;
+            return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(formatDueForDisplay(r.due, timezone))} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(noteParts.join("; "))} |`;
           })
           .join("\n")
       : "| | | | | | |";
@@ -107,6 +110,7 @@ export function writeAdaptersFromProjection({
   const inbox = path.join(root, "inbox");
   const errors = [];
   const sync_id = projections.sync_id;
+  const syncDay = schoolLocalDay(new Date(generation.manifest?.finished_at || Date.now()));
   const courses = (generation.courses || []).map((p) => p.course);
   try {
     const md = generateWeekMarkdown({
@@ -114,6 +118,7 @@ export function writeAdaptersFromProjection({
       courses,
       health: projections.health,
       daysAhead,
+      today: syncDay,
       timezone: generation.timezone,
       sync_id,
     });
@@ -127,7 +132,7 @@ export function writeAdaptersFromProjection({
     const lines = [
       `# Synced from Canvas enrollments (computed_* scores). Local GPA estimate only.`,
       `# grade scenarios live in inbox/canvas/projections/${sync_id}/grade-truth/`,
-      `synced_at: "${schoolLocalDay()}"`,
+      `synced_at: "${syncDay}"`,
       `sync_id: "${sync_id}"`,
       `courses:`,
     ];
@@ -135,7 +140,11 @@ export function writeAdaptersFromProjection({
     else {
       for (const c of courses) {
         const enrollment = (c.enrollments || [])[0] || {};
-        lines.push(`  - code: ${JSON.stringify(c.course_code || String(c.id))}`);
+        const filePath = resolveCourseFile(c.name, c.course_code);
+        const code = filePath
+          ? path.basename(filePath, ".md")
+          : String(c.course_code || c.id || "").replace(/\s+/g, "").toUpperCase();
+        lines.push(`  - code: ${JSON.stringify(code)}`);
         lines.push(`    name: ${JSON.stringify(c.name || "")}`);
         lines.push(`    canvas_course_id: ${c.id ?? "null"}`);
         lines.push(`    letter: ${JSON.stringify(enrollment.computed_current_grade || "")}`);

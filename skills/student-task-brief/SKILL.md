@@ -44,14 +44,14 @@ Classify each open item as `workflow` (do-loop only) or teachable (`declarative`
 |---------------|------|--------------------|
 | Signup / calendar | workflow | Open Canvas link → pick slot → add to calendar. No learn item. |
 | LTI (WebAssign/ZyBooks/PlayPosit) | procedural if practice, else workflow | Open tool → one varied attempt → feedback. The student operates the tool. |
-| Quiz / proctored | declarative / confusable | Extract claims that feed the checkpoint. Write learn items and schedule them across days until the exam. Do not emit a study checklist or a night-before cram as the learning action. The student still takes the quiz in the UI. Low-shame tone. |
+| Quiz / proctored | declarative / confusable | Extract claims that feed the checkpoint. Write learn items and schedule them across days until the exam. Do not emit a study checklist or a night-before cram as the learning action. Low-shame tone. |
 | Pre-reading | declarative | One pass for structure, then **close the source** and retrieve the claims. Do not note takeaways while the text is open. |
 | Lab / build | procedural | One attempt at a varied instance, then immediate correction. Not “recall the definition of the lab.” |
 | Discussion | workflow (voice) | Pull instructor profile (below): tone/citation → draft 3 voice bullets to edit. |
 | Written HW | declarative or procedural | Open the prompt, then generate the method with the source closed. Elaborate once: why this method. |
 | Tiny native busywork | workflow | Agent drafts answer; the student paste/submit if calibrated. No learn item. |
 
-Never auto-drive LTI/proctored UIs; `submit_assignment` is preview-only, never submits.
+`submit_assignment` is preview-only, never submits.
 
 If studying feels easy, the check is still scheduled.
 

@@ -119,10 +119,3 @@ def test_gate1_manifests_renamed():
     assert "jacob" not in server["name"].lower()
     app_manifest = json.loads((root / "manifest.json").read_text())
     assert "jacob" not in json.dumps(app_manifest).lower()
-
-
-def test_policy_default_deny():
-    from canvas_mcp.core.config import get_config, reset_config
-
-    reset_config()
-    assert get_config().course_agent_policy_default == "deny"

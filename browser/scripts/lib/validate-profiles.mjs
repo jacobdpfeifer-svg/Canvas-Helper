@@ -19,9 +19,13 @@ function extractSection(body, heading) {
 }
 
 function parseMetaField(body, field) {
-  const re = new RegExp(`^${field.replace(/[()]/g, "\\$&")}:\\s*(.*)$`, "m");
+  const re = new RegExp(`^${field.replace(/[()]/g, "\\$&")}:([^\\n]*)$`, "m");
   const m = body.match(re);
-  return m ? m[1].trim() : "";
+  const value = m ? m[1].trim() : "";
+  if (/^(?:Sections|Canvas URL|Primary instructor\(s\)|TA\(s\)|Syllabus hash):?$/i.test(value)) return "";
+  if (/(?:Canvas URL|Primary instructor\(s\)|TA\(s\)|Syllabus hash):/i.test(value)) return "";
+  if (/^##\s/.test(value)) return "";
+  return value;
 }
 
 function parseSyncedAgentPolicy(policyNotes) {

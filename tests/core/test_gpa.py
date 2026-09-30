@@ -67,6 +67,16 @@ def test_missing_credits():
     assert missing_credits(["CSCI1300", "MATH2300"], {"CSCI1300": 4}) == ["MATH2300"]
 
 
+def test_course_code_normalization_accepts_canvas_labels():
+    assert missing_credits(["_CSCI 1200 Fall 26", "ECON 2010-100"], {"CSCI1200": 4, "ECON2010": 3}) == []
+
+
+def test_percent_without_letter_is_explained():
+    result = term_gpa([CourseGrade("COEN 1500-824,868", "", percent=91.07)], credit_hours={"COEN1500": 3})
+    assert result.gpa is None
+    assert "letter grade unavailable" in result.skipped[0][1]
+
+
 def test_what_if_override_and_extra():
     base = [
         CourseGrade("CSCI1300", "B", credits=4),

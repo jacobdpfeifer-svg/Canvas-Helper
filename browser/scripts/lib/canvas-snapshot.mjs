@@ -295,7 +295,7 @@ export async function fetchCanonicalGeneration(page, {
       /* pages optional */
     }
     const syllabusPdf = await fetchModuleSyllabusPdf(page, id, modules.items, api);
-    if (syllabusPdf && syllabusPdf.text && (!courseDetail.syllabus_body || /uploading a doc|under construction/i.test(String(courseDetail.syllabus_body)))) {
+    if (syllabusPdf && syllabusPdf.text && (!courseDetail.syllabus_body || /uploading a doc|under construction|preferred to create a syllabus page|course information module/i.test(String(courseDetail.syllabus_body)))) {
       courseDetail = {
         ...courseDetail,
         syllabus_body: syllabusPdf.text,

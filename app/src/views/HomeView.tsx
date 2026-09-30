@@ -12,6 +12,10 @@ import {
 import { ChangesLedger } from "../components/ChangesLedger";
 import { SyncHealthBanner } from "../components/SyncHealthBanner";
 import { clusterTicks, kindLabel, loadRange, saveRange, tickHeightPx, type RangeId } from "../semesterTicks";
+import { dueWithZone, rankOpenWork } from "../ask/rank";
+import { AskPanel } from "../ask/AskPanel";
+import { study } from "../study/api";
+import type { AskEnvelope } from "../study/types";
 
 /*
  * Home is a stage (MASTER §02, §11):
@@ -30,24 +34,6 @@ const RANGES: { id: RangeId; label: string }[] = [
   { id: "3m", label: "3 months" },
   { id: "full", label: "Full semester" },
 ];
-
-const DAY_MS = 86_400_000;
-
-function nextTicks(surface: SemesterSurface, todayMs: number, n: number): SemesterTick[] {
-  return surface.courses
-    .flatMap((c) => c.ticks)
-    .filter((t) => t.due_at && !t.completed && Date.parse(t.due_at) >= todayMs - DAY_MS)
-    .sort((a, b) => Date.parse(a.due_at as string) - Date.parse(b.due_at as string))
-    .slice(0, n);
-}
-
-function relativeDue(dueAt: string, todayMs: number): string {
-  const days = Math.round((Date.parse(dueAt) - todayMs) / DAY_MS);
-  if (days < 0) return `${-days}d overdue`;
-  if (days === 0) return "today";
-  if (days === 1) return "tomorrow";
-  return `in ${days} days`;
-}
 
 function shortDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
@@ -75,6 +61,8 @@ export function HomeView({
   const [map, setMap] = useState<CourseMap | null>(mapProp ?? null);
   const [grades, setGrades] = useState<GradeTruth | null>(gradesProp ?? null);
   const [changes, setChanges] = useState<FreshnessChange[]>([]);
+  const [activeAsk, setActiveAsk] = useState<AskEnvelope | null>(null);
+  const [askActive, setAskActive] = useState(false);
   const axis = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(640);
 
@@ -124,6 +112,23 @@ export function HomeView({
     void readGradeTruth(id).then(setGrades);
   }, [courseId, loaded, health, mapProp]);
 
+  useEffect(() => {
+    if (surfaceProp) return;
+    let alive = true;
+    void (async () => {
+      try {
+        const promoted = await study.askPending();
+        const current = promoted.ask ? promoted : await study.askCurrent();
+        if (alive && current.ask) setActiveAsk(current);
+      } catch {
+        /* The ranked due item still shows when the study bridge is down. */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [surfaceProp]);
+
   useLayoutEffect(() => {
     const el = axis.current;
     if (!el) return;
@@ -135,9 +140,12 @@ export function HomeView({
 
   const surface = surfaceProp ?? loaded;
   const todayMs = Date.parse(surface?.today || new Date().toISOString());
-  const upcoming = surface ? nextTicks(surface, todayMs, 3) : [];
-  const lead = upcoming[0];
+  const today = new Date(todayMs);
+  const ranked = surface ? rankOpenWork(surface.courses.flatMap((c) => c.ticks)) : { recommendation: null, alternatives: [] };
+  const lead = ranked.recommendation;
+  const rail = lead ? [lead, ...ranked.alternatives] : [];
   const hasCourses = Boolean(surface && surface.courses.length > 0);
+  const askOpen = askActive || Boolean(activeAsk?.response);
 
   const openTick = (tick: SemesterTick) => {
     if (!mapProp && tick.course_id !== courseId) setCourseId(tick.course_id);
@@ -166,39 +174,40 @@ export function HomeView({
       <div className="home-stage">
         <div className="home-subject">
           {!surface && <p className="muted">Loading…</p>}
-          {surface && !hasCourses && (
+          {!askOpen && surface && !hasCourses && (
             <p className="home-statement display">
               No courses yet.
             </p>
           )}
-          {hasCourses && lead && lead.due_at && (
+          {!askOpen && hasCourses && lead && lead.due_at && (
             <>
               <p className="mono home-kicker">
                 <span style={{ ["--course" as string]: lead.color }} className="course-dot" aria-hidden="true" />
-                {lead.course_label} · {kindLabel(lead.kind)} · {relativeDue(lead.due_at, todayMs)}
+                {lead.course_label} · {kindLabel(lead.kind)} · {dueWithZone(lead.due_at, today)}
               </p>
               <button type="button" className="home-statement display" onClick={() => openTick(lead)}>
                 {lead.title}
               </button>
             </>
           )}
-          {hasCourses && !lead && (
+          {!askOpen && hasCourses && !lead && (
             <p className="home-statement display">Nothing due in this window.</p>
           )}
+          <AskPanel initial={activeAsk} onResult={setActiveAsk} onActive={setAskActive} />
         </div>
 
-        {upcoming.length > 0 && (
+        {!askOpen && rail.length > 0 && (
           <aside className="next-rail" aria-label="Next up">
             <span className="index-label">Next</span>
             <ol>
-              {upcoming.map((t, i) => (
+              {rail.map((t, i) => (
                 <li key={t.id} style={{ ["--course" as string]: t.color }}>
                   <button type="button" onClick={() => openTick(t)}>
                     <span className="mono idx">{String(i + 1).padStart(2, "0")}</span>
                     <span className="rail-body">
                       <strong>{t.title}</strong>
                       <span className="mono">
-                        {t.course_label} · {t.due_at ? shortDate(t.due_at) : "no date"}
+                        {t.course_label} · {t.due_at ? `${shortDate(t.due_at)} · ${dueWithZone(t.due_at, today)}` : "no date"}
                       </span>
                     </span>
                   </button>
@@ -421,7 +430,7 @@ function TickBubble({ tick, x, y }: { tick: SemesterTick; x: number; y: number }
       <span className="kind-badge">{kindLabel(tick.kind)}</span>
       <strong>{tick.title}</strong>
       <span className="mono">{tick.course_label}</span>
-      <span className="mono">{tick.due_at ? new Date(tick.due_at).toLocaleString() : "No due date"}</span>
+      <span className="mono">{tick.due_at ? dueWithZone(tick.due_at) : "No due date"}</span>
       <span className="mono">
         {tick.points_possible ?? 0} pts · {weightPct}% of course
       </span>
@@ -464,7 +473,7 @@ function ItemSheet({
           {tick.title}
         </h2>
         <p className="mono">
-          {tick.course_label} · {tick.due_at ? new Date(tick.due_at).toLocaleString() : "No due date"}
+          {tick.course_label} · {tick.due_at ? dueWithZone(tick.due_at) : "No due date"}
         </p>
         {tick.description && <p className="cover">{tick.description.slice(0, 600)}</p>}
         <div className="sheet-actions">

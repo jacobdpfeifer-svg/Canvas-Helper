@@ -745,7 +745,7 @@ def due_reviews(
     return picked[:limit]
 
 
-REST_LINE = "Nothing due — the gap is the practice."
+REST_LINE = "No learning review due — deadline work still comes from week.md."
 UNEXTRACTED_LINE = (
     "A quiz is on the week list and no claims are extracted yet. That is not rest."
 )
@@ -1230,7 +1230,7 @@ def review_budget(
     elif now_count:
         line = f"{_count_word(now_count)} due {checks} now."
     elif later and later_due:
-        line = f"Nothing due now; one claim before {later_due}."
+        line = f"No learning review due now; one claim before {later_due}. Deadline work still comes from week.md."
     else:
         line = ""
 

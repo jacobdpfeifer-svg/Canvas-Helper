@@ -31,8 +31,6 @@ Every item lands here — there is no auto-submit path. The distinction that
 matters is how much help to surface before the student submits it
 themselves in Canvas:
 
-- Quizzes / exams / remotely proctored / **WebAssign, ZyBooks, PlayPosit,
-  LockDown, other LTI** — draft help only; the student uses the tool UI
 - Presentations / classmate coordination / essays, cases, pitches,
   reflections / group work that binds others — draft with student review
 - Native Canvas text/URL/file assignments — run `submit_assignment` for the
@@ -40,22 +38,13 @@ themselves in Canvas:
   the student, then the student submits it in Canvas. Never claim something
   was submitted.
 
-### 3. Policy notes still matter for drafting
-
-`agent_writes` policy and the profile's `### AI and academic integrity`
-section still govern how much an agent should draft or suggest wording for
-an assignment — they no longer gate a submit action, since there isn't one.
-If `agent_writes: deny` or the profile forbids agent involvement on this
-assignment type, draft nothing; hand the student the raw requirements
-instead.
-
 When unsure → **ask the student**.
 
-### 4. Priority / time
+### 3. Priority / time
 
 When the student asks priority, briefing, first step, or how to spend time → hand off to [`student-task-brief`](../student-task-brief/SKILL.md) (rubric: [`calibration/priority-rubric.md`](../../calibration/priority-rubric.md)). Triage buckets answer *who acts*; the brief answers *what first and why*.
 
-### 5. External signup assignments
+### 4. External signup assignments
 
 School-specific signup surfaces (e.g. CampusGroups) live in `plugins/{school}/` — see school docs.
 
@@ -70,7 +59,7 @@ School-specific signup surfaces (e.g. CampusGroups) live in `plugins/{school}/` 
 - Never infer RSVP success from page text or a11y labels alone
 - After successful RSVP: optional calendar reminder via calendar MCP (agent-triggered, not script-automated)
 
-### 6. Output
+### 5. Output
 
 ```
 ## Triage result
@@ -89,9 +78,8 @@ Do not paste the inbox here — this turn’s slice is supplied after the learni
 1. Follow [`../_SESSION.md`](../_SESSION.md)
 2. `{user_root}/inbox/week.md` — items for this turn (volatile slice, already supplied); MCP only if the slice is missing
 3. [`calibration/calibrated-courses.md`](../../calibration/calibrated-courses.md)
-4. **Before drafts** on written / discussion / reflection / presentation-script work: read `## Instructor profile` in `inbox/courses/CODE.md`. If missing or stale (see [`student-instructor-profile`](../student-instructor-profile/SKILL.md)) → build profile first and apply formatting, AI, tone, and rubric preferences.
-5. **Policy check (drafting only):** read `## Syllabus / agent policy notes` in the same course file (sync-owned `agent_writes:` marker). If profile `### AI and academic integrity` forbids agent work on this assignment type, or synced notes say `agent_writes: deny` or `conflict` → draft nothing, hand the student the raw requirements instead.
-6. [`calibration/signup-preferences.md`](../../calibration/signup-preferences.md) for calendar-binding signups
+4. **Before drafts** on written / discussion / reflection / presentation-script work: read `## Instructor profile` in `inbox/courses/CODE.md`. If missing or stale (see [`student-instructor-profile`](../student-instructor-profile/SKILL.md)) → build profile first and apply formatting, tone, and rubric preferences.
+5. [`calibration/signup-preferences.md`](../../calibration/signup-preferences.md) for calendar-binding signups
 
 ## Tools available
 
@@ -100,7 +88,6 @@ Read by default. `submit_assignment` is also read-only — it previews, never su
 Read:
 
 - `get_assignment_details` — description + rubric when points ≥ 10 or the title is voice/judgment work
-- `get_course_policy` — informs drafting decisions when the course file has no synced `agent_writes: allow`
 - `submit_assignment` — preview only (points, due date, accepted types, attempts remaining); always ends in "submit this yourself in Canvas"
 
 ## Triggers

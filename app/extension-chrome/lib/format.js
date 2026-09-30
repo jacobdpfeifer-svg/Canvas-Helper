@@ -18,13 +18,17 @@ export function relTime(iso, now = Date.now()) {
 export function formatDue(iso) {
   const t = Date.parse(iso || "");
   if (!Number.isFinite(t)) return "";
-  return new Intl.DateTimeFormat(undefined, {
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const formatted = new Intl.DateTimeFormat(undefined, {
     weekday: "short",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    timeZone: zone,
+    timeZoneName: "short",
   }).format(new Date(t));
+  return `${formatted} (${zone})`;
 }
 
 function pct(v) {

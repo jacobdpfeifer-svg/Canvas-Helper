@@ -59,6 +59,7 @@ fn main() {
             commands::read_freshness,
             commands::read_work_surface,
             commands::read_course_map,
+            commands::read_course_colors,
             commands::read_grade_truth,
             commands::add_calendar_event,
             commands::dismiss_calendar_suggestion,

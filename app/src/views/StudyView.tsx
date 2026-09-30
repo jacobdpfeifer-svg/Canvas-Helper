@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { StudyRequestError, aiStudy, study, type AiFeedback } from "../study/api";
+import { AskPanel } from "../ask/AskPanel";
 import { EVIDENCE_LABEL, OUTCOME_LABEL, STABILITY_LABEL, fmtSeconds, fmtWhen } from "../study/format";
 import { LetterFlip } from "../components/LetterFlip";
 import { IconLearn, IconPause, IconPractice, IconQuiz, IconStop } from "../components/Icons";
@@ -308,6 +309,10 @@ function EligibleOffer({
         <button type="button" className="primary" onClick={() => onStart(item, mode)}>
           {mode === "learn" ? "Start with the example" : "Answer now"}
         </button>
+        <AskPanel
+          label="Ask about this item"
+          seed={{ content: item.stem, courseHint: item.course, assignmentHint: item.objective_label }}
+        />
         {mode !== "learn" && item.has_example && (
           <button type="button" onClick={() => onStart(item, "learn")}>
             Show an example first

@@ -13,6 +13,7 @@ The host only moves data between the extension and ``{user_root}``:
   canvas_delta / canvas_signed_out  → queue for the freshness tick
   get_dashboard / get_assignment_context → read the brain's view model
   queue_calendar_suggestion         → the app's suggestion list (student approves there)
+  queue_ask                         → a private Ask intake the app classifies later
   ping                              → beta funnel markers
 It never talks to Canvas and never writes anywhere a student didn't ask for.
 """
@@ -297,6 +298,43 @@ def handle_calendar_suggestion(root: Path, msg: dict) -> dict:
     return {"ok": True, "queued": True}
 
 
+def handle_queue_ask(root: Path, msg: dict) -> dict:
+    """Stage an Ask intake for the app. The host does not classify or call a model."""
+    content = str(msg.get("content") or "").strip()
+    if not content or len(content) > 8000:
+        return {"ok": False, "error": "empty_ask"}
+    kind = str(msg.get("content_kind") or "source_ref")
+    if kind not in ("text", "image", "audio", "selection", "source_ref", "mixed"):
+        return {"ok": False, "error": "invalid_ask"}
+    canvas = msg.get("canvas") if isinstance(msg.get("canvas"), dict) else {}
+    types = canvas.get("submission_types") if isinstance(canvas.get("submission_types"), list) else []
+    record = {
+        "schema": 1,
+        "content_kind": kind,
+        "content": content,
+        "course_hint": str(msg.get("course_hint") or "")[:200],
+        "assignment_hint": str(msg.get("assignment_hint") or "")[:300],
+        "session_goal": "unknown",
+        "canvas": {
+            "kind": str(canvas.get("kind") or canvas.get("type") or "")[:64],
+            "submission_types": [str(item)[:64] for item in types[:8]],
+            "title": str(canvas.get("title") or "")[:300],
+            "due_at": str(canvas.get("due_at") or "")[:64],
+            "points": canvas.get("points") if isinstance(canvas.get("points"), (int, float)) else 0,
+            "lti": bool(canvas.get("lti")),
+            "proctored": bool(canvas.get("proctored")),
+            "course_label": str(canvas.get("course_label") or "")[:200],
+        },
+        "privacy_scope": "private",
+        "origin": "extension",
+    }
+    directory = root / "study" / "ask-inbox"
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"ext-{uuid.uuid4()}.json"
+    _write_private(path, record)
+    return {"ok": True, "queued": True}
+
+
 def handle_ping(root: Path, msg: dict) -> dict:
     funnel = msg.get("funnel")
     snapshot = None
@@ -327,6 +365,7 @@ HANDLERS = {
     "get_dashboard": handle_get_dashboard,
     "get_assignment_context": handle_assignment_context,
     "queue_calendar_suggestion": handle_calendar_suggestion,
+    "queue_ask": handle_queue_ask,
     "ping": handle_ping,
     "canvas_focus": handle_legacy_sensor,
     "canvas_visible": handle_legacy_sensor,
