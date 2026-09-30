@@ -1,0 +1,297 @@
+/**
+ * Content script. On every Canvas page: tell the worker which Canvas this is.
+ * On the Canvas dashboard: mount the ProductName stage above Canvas's own
+ * dashboard (shadow DOM, so neither side's styles leak).
+ *
+ * Canvas-authored text (titles, announcement lines) is inserted with
+ * textContent only — never as HTML.
+ */
+(async () => {
+  const send = (message) =>
+    new Promise((resolve) => {
+      try {
+        chrome.runtime.sendMessage(message, (reply) => resolve(chrome.runtime.lastError ? null : reply));
+      } catch {
+        resolve(null);
+      }
+    });
+
+  send({ type: "hello" });
+  if (location.pathname !== "/" || document.getElementById("productname-stage")) return;
+
+  const fmt = await import(chrome.runtime.getURL("lib/format.js"));
+
+  // @font-face does not apply inside shadow roots; declare unique families on the document.
+  if (!document.getElementById("productname-fonts")) {
+    const faces = [
+      ["PN IBM Plex Sans", "ibm-plex-sans-latin-400-normal.woff2", 400],
+      ["PN IBM Plex Sans", "ibm-plex-sans-latin-500-normal.woff2", 500],
+      ["PN IBM Plex Sans", "ibm-plex-sans-latin-600-normal.woff2", 600],
+      ["PN IBM Plex Mono", "ibm-plex-mono-latin-500-normal.woff2", 500],
+      ["PN Source Serif 4", "source-serif-4-latin-opsz-normal.woff2", "200 900"],
+    ];
+    const style = document.createElement("style");
+    style.id = "productname-fonts";
+    style.textContent = faces
+      .map(([family, file, weight]) => `@font-face{font-family:"${family}";src:url("${chrome.runtime.getURL(`fonts/${file}`)}") format("woff2");font-weight:${weight};font-style:normal;font-display:swap;}`)
+      .join("");
+    document.head.appendChild(style);
+  }
+
+  const host = document.createElement("div");
+  host.id = "productname-stage";
+  const root = host.attachShadow({ mode: "open" });
+  const css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = chrome.runtime.getURL("ui/dashboard.css");
+  root.appendChild(css);
+  const anchor = document.getElementById("dashboard") || document.getElementById("content") || document.body;
+  anchor.prepend(host);
+
+  function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "text") node.textContent = v;
+      else if (k === "class") node.className = v;
+      else node.setAttribute(k, v === true ? "" : String(v));
+    }
+    for (const child of children.flat()) if (child) node.append(child);
+    return node;
+  }
+
+  function safeHref(url) {
+    try {
+      const u = new URL(url, location.origin);
+      return u.protocol === "https:" ? u.toString() : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function link(text, url, cls) {
+    const href = safeHref(url);
+    return href ? el("a", { class: cls, href, text }) : el("span", { class: cls, text });
+  }
+
+  const { collapsed = false } = await chrome.storage.local.get("collapsed").catch(() => ({}));
+  let isCollapsed = Boolean(collapsed);
+  const stage = el("section", { class: "pn-stage", "aria-label": "ProductName", "data-collapsed": String(isCollapsed) });
+  root.appendChild(stage);
+
+  function meta(view) {
+    const status = view?.status || {};
+    const state = status.signedIn === false ? "signed-out" : status.signedIn ? "ok" : "unknown";
+    const liveText =
+      state === "signed-out"
+        ? "Signed out · sign in to refresh"
+        : status.lastPollAt
+          ? `Live · checked ${fmt.relTime(status.lastPollAt)}`
+          : "Checking Canvas";
+    const refresh = el("button", { class: "pn-quiet", type: "button", text: "Refresh" });
+    refresh.addEventListener("click", async () => {
+      refresh.disabled = true;
+      await send({ type: "poll_now" });
+      await render();
+    });
+    const toggle = el("button", { class: "pn-quiet", type: "button", "aria-expanded": String(!isCollapsed), text: isCollapsed ? "Show" : "Hide" });
+    toggle.addEventListener("click", () => {
+      isCollapsed = !isCollapsed;
+      stage.dataset.collapsed = String(isCollapsed);
+      toggle.textContent = isCollapsed ? "Show" : "Hide";
+      toggle.setAttribute("aria-expanded", String(!isCollapsed));
+      chrome.storage.local.set({ collapsed: isCollapsed }).catch(() => {});
+    });
+    return el(
+      "header",
+      { class: "pn-meta" },
+      el("span", { class: "pn-mark", text: "ProductName" }),
+      el("span", { class: "pn-live", "data-state": state, text: liveText }),
+      el("span", { class: "pn-spacer" }),
+      refresh,
+      toggle
+    );
+  }
+
+  function queueButton(label, suggestion, row) {
+    const button = el("button", { class: "pn-secondary", type: "button", text: label });
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      const reply = await send({ type: "queue_suggestion", suggestion });
+      if (reply?.ok) {
+        button.textContent = reply.queued ? "Queued · approve in the app" : "Already queued";
+        if (row) row.dataset.state = "queued";
+      } else {
+        button.disabled = false;
+        button.textContent = "Couldn't queue — is the app installed?";
+      }
+    });
+    return button;
+  }
+
+  function subject(view) {
+    const next = view.dashboard?.next_step;
+    if (view.mode === "pending") {
+      return el(
+        "div",
+        { class: "pn-subject" },
+        el("p", { class: "pn-label", text: "Next" }),
+        el("h2", { class: "pn-title", text: "Syncing your semester" })
+      );
+    }
+    if (view.mode === "local") {
+      return el(
+        "div",
+        { class: "pn-subject" },
+        el("p", { class: "pn-label", text: "Next" }),
+        el("h2", { class: "pn-title", text: "Connect the ProductName app" }),
+        el("p", { class: "pn-note", text: "It adds your next step and what skipping costs. Changes below still update here." })
+      );
+    }
+    if (!next) {
+      return el(
+        "div",
+        { class: "pn-subject" },
+        el("p", { class: "pn-label", text: "Next" }),
+        el("h2", { class: "pn-title", text: "Nothing due this week" })
+      );
+    }
+    const sub = [next.course, next.due_at ? `due ${fmt.formatDue(next.due_at)}` : null, next.points_possible ? `${next.points_possible} pts` : null]
+      .filter(Boolean)
+      .join(" · ");
+    const cost = fmt.costLine(next.skip_cost);
+    const slot = fmt.blockBefore(next.due_at);
+    const actions = el("div", { class: "pn-actions" });
+    if (safeHref(next.url)) actions.append(el("a", { class: "pn-primary", href: safeHref(next.url), text: "Open in Canvas" }));
+    if (slot) {
+      actions.append(
+        queueButton("Block 90 min", {
+          key: `${next.course_id}:${next.assignment_id}`,
+          title: `Work on ${next.title}`,
+          start: slot.start,
+          end: slot.end,
+          why: `Due ${fmt.formatDue(next.due_at)}`,
+        })
+      );
+    }
+    return el(
+      "div",
+      { class: "pn-subject" },
+      el("p", { class: "pn-label", text: next.why === "missing" ? "Missing" : "Next" }),
+      el("h2", { class: "pn-title" }, link(next.title, next.url)),
+      el("p", { class: "pn-sub", text: sub }),
+      next.moved?.from ? el("p", { class: "pn-signal", text: `Due date moved — was ${fmt.formatDue(next.moved.from)}` }) : null,
+      cost
+        ? el(
+            "p",
+            { class: "pn-cost" },
+            cost.share ? `Worth ${cost.share} of your grade · ` : "",
+            "Skip it: ",
+            el("strong", { text: cost.skip }),
+            " · Full marks: ",
+            el("strong", { text: cost.full }),
+            cost.estimate ? " · estimate" : ""
+          )
+        : null,
+      actions
+    );
+  }
+
+  function ledger(view) {
+    const changes = view.dashboard?.changes || [];
+    const section = el("section", { class: "pn-ledger", "aria-label": "What changed" });
+    section.append(el("p", { class: "pn-label", text: changes.length ? `What changed · ${changes.length}` : "What changed" }));
+    if (!changes.length) {
+      section.append(el("p", { class: "pn-empty", text: "Nothing new since you last looked." }));
+      return section;
+    }
+    const list = el("ol");
+    changes.forEach((c, i) => {
+      const detail =
+        c.kind === "due_changed" && c.detail?.to
+          ? `now ${fmt.formatDue(c.detail.to)}`
+          : c.kind === "graded" && c.detail?.score != null
+            ? `${c.detail.score}${c.detail.points_possible ? ` / ${c.detail.points_possible}` : ""}`
+            : null;
+      list.append(
+        el(
+          "li",
+          {},
+          el("span", { class: "pn-idx", text: String(i + 1).padStart(2, "0") }),
+          el(
+            "span",
+            { class: "pn-row-main" },
+            el("span", { class: "pn-kind", text: c.label }),
+            link(c.title || c.label, c.url, "pn-row-title"),
+            el("span", { class: "pn-row-meta", text: [c.course, detail].filter(Boolean).join(" · ") })
+          ),
+          el("span", { class: "pn-when", text: fmt.relTime(c.at || c.detected_at) })
+        )
+      );
+    });
+    section.append(list);
+    return section;
+  }
+
+  function rail(view) {
+    const digest = view.dashboard?.digest || { items: [], announcements_7d: 0, with_actions: 0 };
+    const agent = view.dashboard?.agent_can_do || [];
+    const railEl = el("div", { class: "pn-rail" });
+    const d = el("section", { class: "pn-digest", "aria-label": "What your professors said" });
+    d.append(
+      el("p", {
+        class: "pn-label",
+        text: digest.announcements_7d ? `Professors said · ${digest.with_actions} of ${digest.announcements_7d} need you` : "Professors said",
+      })
+    );
+    if (!digest.items.length) d.append(el("p", { class: "pn-empty", text: "No announcements with action items this week." }));
+    for (const item of digest.items.slice(0, 4)) {
+      d.append(
+        el(
+          "article",
+          {},
+          link(item.title, item.url, "pn-row-title"),
+          el("span", { class: "pn-row-meta", text: [item.course, fmt.relTime(item.at)].filter(Boolean).join(" · ") }),
+          el("ul", {}, (item.actions || []).map((a) => el("li", { "data-kind": a.kind, text: a.text })))
+        )
+      );
+    }
+    railEl.append(d);
+    if (agent.length) {
+      const a = el("section", { class: "pn-agent", "aria-label": "What the agent can do" });
+      a.append(el("p", { class: "pn-label", text: "Agent can do" }));
+      for (const item of agent) {
+        const row = el("div", { class: "pn-agent-row" }, el("span", { text: item.label }));
+        row.append(queueButton("Queue", item.suggestion, row));
+        a.append(row);
+      }
+      railEl.append(a);
+    }
+    return railEl;
+  }
+
+  let rendering = false;
+  async function render() {
+    if (rendering) return;
+    rendering = true;
+    try {
+      const view = await send({ type: "get_view" });
+      if (!view || !view.dashboard) {
+        stage.replaceChildren(meta(null), el("div", { class: "pn-body" }, el("p", { class: "pn-empty", text: "Checking Canvas…" })));
+        return;
+      }
+      stage.replaceChildren(meta(view), el("div", { class: "pn-body" }, subject(view), ledger(view), rail(view)));
+    } finally {
+      rendering = false;
+    }
+  }
+
+  await render();
+  send({ type: "funnel", event: "dashboard_view" });
+  let timer = null;
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local" || !changes.viewStamp) return;
+    clearTimeout(timer);
+    timer = setTimeout(render, 300);
+  });
+})();

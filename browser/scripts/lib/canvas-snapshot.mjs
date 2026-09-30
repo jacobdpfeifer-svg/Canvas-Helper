@@ -84,6 +84,11 @@ function endpointResult(res, name) {
   };
 }
 
+/** Canvas permission 403 (JSON `status: "unauthorized"`), not a throttle 403. */
+function isPermissionDenied(res) {
+  return res?.status === 403 && res?.error?.status === "unauthorized";
+}
+
 async function fetchPlannerChunks(page, startIso, endIso, apiAllPages) {
   const start = Date.parse(startIso);
   const end = Date.parse(endIso);
@@ -124,6 +129,7 @@ export async function fetchCanonicalGeneration(page, {
   const requested = [...FETCH_MATRIX.global, ...FETCH_MATRIX.course];
   const completed = [];
   const failed_endpoints = [];
+  const unavailable_endpoints = [];
   const pagination = [];
   const advisory_pagination = [];
   const named_courses_failed = [];
@@ -216,6 +222,14 @@ export async function fetchCanonicalGeneration(page, {
         // A 404 on a per-course sub-resource (e.g. Classic Quizzes disabled/migrated
         // to New Quizzes) means the feature is off for this course, not a fetch
         // failure — don't fail the whole course sync over it.
+        ep.ok = true;
+        ep.items = [];
+      } else if (!ep.ok && isPermissionDenied(res)) {
+        // Same for a tab the course hides from students (Canvas answers 403
+        // {"status":"unauthorized"}). Recorded, not failed, so one community
+        // course can't keep every sync partial. Throttle 403s are plain text
+        // ("Rate Limit Exceeded") and still fail below.
+        unavailable_endpoints.push({ endpoint: `${name}:${id}`, status: ep.status });
         ep.ok = true;
         ep.items = [];
       }
@@ -330,6 +344,7 @@ export async function fetchCanonicalGeneration(page, {
       requested_endpoints: requested,
       completed_endpoints: [...new Set(completed)],
       failed_endpoints,
+      unavailable_endpoints,
       named_courses_failed,
       pagination,
       advisory_pagination,

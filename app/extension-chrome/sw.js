@@ -1,0 +1,285 @@
+/**
+ * ProductName for Canvas — background worker.
+ *
+ * Every 5 minutes: one cheap activity-stream summary GET with the student's
+ * own Canvas session (cost ~0.04 of Canvas's 700-point budget). When the
+ * summary moves, fetch the changed slice (recent stream + planner window),
+ * classify it here for the extension-only view, and hand it to the local
+ * brain through the native host. A 401 means "sign in to Canvas".
+ *
+ * Reads Canvas only (lib/canvas-read.js). Writes go to the student's own
+ * machine: chrome.storage and, via the native host, {user_root}.
+ */
+import { SUMMARY_PATH, canvasGet, isAllowedBase, trimPlannerItem, trimStreamItem } from "./lib/canvas-read.js";
+import { callHost } from "./lib/native.js";
+import { classifyDelta, summarySignature } from "./shared/classify.js";
+import { buildDigest, recentChanges } from "./shared/view.js";
+
+const DEFAULT_BASE = "https://canvas.colorado.edu/";
+const POLL_MINUTES = 5;
+const LOCAL_EVENT_CAP = 60;
+const MAX_DELTA_BYTES = 900_000;
+const PING_EVERY_MS = 24 * 60 * 60 * 1000;
+const DAY = 24 * 60 * 60 * 1000;
+
+const get = (keys) => chrome.storage.local.get(keys);
+const set = (values) => chrome.storage.local.set(values);
+
+async function canvasBase() {
+  const { base } = await get("base");
+  return isAllowedBase(base) ? base : DEFAULT_BASE;
+}
+
+function ensureSetup() {
+  chrome.alarms.create("poll", { periodInMinutes: POLL_MINUTES, delayInMinutes: 0.1 });
+  chrome.sidePanel?.setPanelBehavior?.({ openPanelOnActionClick: true })?.catch?.(() => {});
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  ensureSetup();
+  bumpFunnel({ mark: "installed_at" });
+});
+chrome.runtime.onStartup.addListener(ensureSetup);
+chrome.alarms.get("poll").then((alarm) => {
+  if (!alarm) ensureSetup();
+});
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "poll") poll("alarm");
+});
+
+// ------------------------------------------------------------ beta funnel (Phase C)
+
+/** Timestamps and counts only — no Canvas content ever lands here. */
+async function bumpFunnel({ mark, count }) {
+  const { funnel = {} } = await get("funnel");
+  if (mark && !funnel[mark]) funnel[mark] = new Date().toISOString();
+  if (count) funnel[count] = (funnel[count] || 0) + 1;
+  await set({ funnel });
+  return funnel;
+}
+
+/** "ok" whenever the host answered — an app-level error (e.g. no dashboard yet) still means it is installed. */
+async function noteHost(reply) {
+  const hostState = reply?.error === "host_missing" ? "missing" : ["host_error", "empty_reply"].includes(reply?.error) ? "error" : "ok";
+  await set({ hostState });
+  if (hostState === "ok") await bumpFunnel({ mark: "native_ok_at" });
+  if (hostState === "missing") await bumpFunnel({ count: "native_missing" });
+  return hostState;
+}
+
+async function maybePing() {
+  const { lastPingAt = 0 } = await get("lastPingAt");
+  if (Date.now() - lastPingAt < PING_EVERY_MS) return;
+  const { funnel = {} } = await get("funnel");
+  const reply = await callHost({ type: "ping", funnel });
+  await noteHost(reply);
+  if (reply.ok) await set({ lastPingAt: Date.now() });
+}
+
+// ------------------------------------------------------------ polling
+
+function setBadge(signedIn) {
+  chrome.action.setBadgeText({ text: signedIn ? "" : "!" });
+  chrome.action.setBadgeBackgroundColor({ color: "#f35b57" });
+  chrome.action.setTitle({
+    title: signedIn ? "ProductName — open the side panel" : "ProductName — sign in to Canvas to keep this fresh",
+  });
+}
+
+async function fetchDelta(base, summary, now) {
+  const start = encodeURIComponent(new Date(now - 7 * DAY).toISOString());
+  const end = encodeURIComponent(new Date(now + 21 * DAY).toISOString());
+  const [stream, planner] = await Promise.all([
+    canvasGet(base, "/api/v1/users/self/activity_stream?per_page=30&only_active_courses=true"),
+    canvasGet(base, `/api/v1/planner/items?start_date=${start}&end_date=${end}&per_page=100`),
+  ]);
+  const delta = {
+    v: 1,
+    ts: new Date(now).toISOString(),
+    summary,
+    stream: (Array.isArray(stream.json) ? stream.json : []).slice(0, 100).map(trimStreamItem),
+    planner: (Array.isArray(planner.json) ? planner.json : []).slice(0, 200).map(trimPlannerItem),
+  };
+  if (JSON.stringify(delta).length > MAX_DELTA_BYTES) {
+    for (const item of delta.stream) if (item.message) item.message = item.message.slice(0, 800);
+  }
+  return delta;
+}
+
+async function classifyLocally(delta) {
+  const { classifier = {}, localEvents = [], courseNames = {} } = await get(["classifier", "localEvents", "courseNames"]);
+  const result = classifyDelta(delta, classifier, { now: Date.parse(delta.ts) });
+  const keys = new Set(localEvents.map((e) => e.key));
+  const merged = [...localEvents, ...result.events.filter((e) => !keys.has(e.key))].slice(-LOCAL_EVENT_CAP);
+  for (const p of delta.planner) if (p.course_id && p.context_name) courseNames[p.course_id] = p.context_name;
+  await set({ classifier: result.state, localEvents: merged, courseNames });
+}
+
+let inFlight = null;
+
+async function poll(trigger) {
+  if (inFlight) return inFlight;
+  inFlight = (async () => {
+    const base = await canvasBase();
+    const now = Date.now();
+    const res = await canvasGet(base, SUMMARY_PATH);
+    const { last = {} } = await get("last");
+    const status = { lastPollAt: new Date(now).toISOString(), lastStatus: res.status, trigger };
+    if (res.status === 401 || (res.ok && !Array.isArray(res.json))) {
+      await bumpFunnel({ count: "signed_out_polls" });
+      if (last.signedIn !== false) await callHost({ type: "canvas_signed_out", ts: status.lastPollAt });
+      await set({ last: { ...last, ...status, signedIn: false }, viewStamp: now });
+      setBadge(false);
+      return { ...status, signedIn: false };
+    }
+    if (!res.ok) {
+      await set({ last: { ...last, ...status } });
+      return status;
+    }
+    await bumpFunnel({ mark: "first_signed_in_at", count: "polls" });
+    const sig = summarySignature(res.json);
+    const changed = sig !== last.sig;
+    if (changed) {
+      const delta = await fetchDelta(base, res.json, now);
+      await classifyLocally(delta);
+      const reply = await callHost({ type: "canvas_delta", delta });
+      await noteHost(reply);
+      if (reply.ok) await bumpFunnel({ mark: "first_delta_at" });
+    }
+    await set({ last: { ...last, ...status, signedIn: true, sig, summary: res.json }, viewStamp: now });
+    setBadge(true);
+    await maybePing();
+    return { ...status, signedIn: true, changed };
+  })().finally(() => {
+    inFlight = null;
+  });
+  return inFlight;
+}
+
+// ------------------------------------------------------------ views
+
+async function buildView() {
+  const now = Date.now();
+  const { localEvents = [], courseNames = {}, last = {} } = await get(["localEvents", "courseNames", "last"]);
+  const host = await callHost({ type: "get_dashboard" });
+  const hostState = await noteHost(host);
+  const status = { signedIn: last.signedIn ?? null, lastPollAt: last.lastPollAt || null, host: hostState };
+  if (hostState === "ok" && host.ok) {
+    const d = host.dashboard;
+    // The brain processes deltas on its own tick; show anything newer right away.
+    const known = new Set((d.changes || []).map((c) => c.key));
+    const early = recentChanges(localEvents.filter((e) => !known.has(e.key)), { now, courseNames });
+    const changes = [...early, ...(d.changes || [])]
+      .sort((a, b) => Date.parse(b.detected_at || 0) - Date.parse(a.detected_at || 0))
+      .slice(0, 12);
+    return { mode: "full", status, dashboard: { ...d, changes } };
+  }
+  return {
+    // "pending": the app is installed but its first sync has not produced a dashboard yet.
+    mode: hostState === "ok" ? "pending" : "local",
+    status,
+    dashboard: {
+      next_step: null,
+      changes: recentChanges(localEvents, { now, courseNames }),
+      digest: buildDigest(localEvents, { now, courseNames }),
+      agent_can_do: [],
+    },
+  };
+}
+
+function pickAssignment(a) {
+  return {
+    id: a.id,
+    course_id: a.course_id,
+    name: a.name,
+    due_at: a.due_at,
+    points_possible: a.points_possible,
+    html_url: a.html_url,
+    description: typeof a.description === "string" ? a.description.slice(0, 20000) : "",
+    rubric: (Array.isArray(a.rubric) ? a.rubric : []).slice(0, 40).map((c) => ({
+      id: c.id,
+      description: c.description,
+      long_description: c.long_description,
+      points: c.points,
+    })),
+  };
+}
+
+async function assignmentContext({ courseId, assignmentId }) {
+  if (!/^\d+$/.test(String(courseId)) || !/^\d+$/.test(String(assignmentId))) return { ok: false, error: "invalid_ids" };
+  const base = await canvasBase();
+  const res = await canvasGet(base, `/api/v1/courses/${courseId}/assignments/${assignmentId}`);
+  if (!res.ok || !res.json) return { ok: false, status: res.status, error: res.status === 401 ? "signed_out" : "not_found" };
+  const assignment = pickAssignment(res.json);
+  const host = await callHost({
+    type: "get_assignment_context",
+    course_id: String(courseId),
+    assignment_id: String(assignmentId),
+    title: assignment.name,
+  });
+  const hostState = await noteHost(host);
+  const { localEvents = [] } = await get("localEvents");
+  const title = String(assignment.name || "").toLowerCase();
+  const localMentions = localEvents.filter(
+    (e) => e.kind === "announcement" && String(e.course_id) === String(courseId) && title && `${e.title} ${e.detail?.preview || ""}`.toLowerCase().includes(title)
+  );
+  return {
+    ok: true,
+    assignment,
+    hostState,
+    skip_cost: host.ok ? host.skip_cost : null,
+    mentions: host.ok ? host.mentions : localMentions.map((e) => ({ key: e.key, title: e.title, at: e.at, url: e.url, actions: e.actions })),
+    changes: host.ok ? host.changes : [],
+  };
+}
+
+function validSuggestion(s) {
+  return (
+    s &&
+    typeof s.key === "string" &&
+    typeof s.title === "string" &&
+    typeof s.start === "string" &&
+    typeof s.end === "string" &&
+    s.title.length <= 200 &&
+    s.key.length <= 300
+  );
+}
+
+async function handleMessage(msg, sender) {
+  switch (msg?.type) {
+    case "hello": {
+      const origin = sender.url ? new URL(sender.url).origin + "/" : null;
+      if (origin && isAllowedBase(origin)) await set({ base: origin });
+      return { ok: true };
+    }
+    case "get_view":
+      return buildView();
+    case "poll_now":
+      return poll("manual");
+    case "queue_suggestion": {
+      if (!validSuggestion(msg.suggestion)) return { ok: false, error: "invalid_suggestion" };
+      const reply = await callHost({ type: "queue_calendar_suggestion", suggestion: msg.suggestion });
+      await noteHost(reply);
+      if (reply.ok && reply.queued) await bumpFunnel({ count: "suggestions_queued" });
+      return reply;
+    }
+    case "assignment_context":
+      return assignmentContext(msg);
+    case "funnel":
+      if (msg.event === "dashboard_view") await bumpFunnel({ mark: "first_dashboard_view_at", count: "dashboard_views" });
+      if (msg.event === "panel_open") await bumpFunnel({ mark: "first_panel_open_at", count: "panel_opens" });
+      return { ok: true };
+    case "beta_readout": {
+      const { funnel = {}, hostState = null } = await get(["funnel", "hostState"]);
+      return { ok: true, readout: { extension_version: chrome.runtime.getManifest().version, host: hostState, ...funnel } };
+    }
+    default:
+      return { ok: false, error: "unknown_type" };
+  }
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (sender.id !== chrome.runtime.id) return false;
+  handleMessage(msg, sender).then(sendResponse, (e) => sendResponse({ ok: false, error: String(e?.message || e) }));
+  return true;
+});

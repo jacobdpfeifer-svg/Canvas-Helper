@@ -1302,6 +1302,60 @@ button.home-statement:hover:not(:disabled) {
   color: var(--muted);
 }
 
+/* Changed ledger: what moved in Canvas, beneath the semester line */
+.changes-ledger {
+  margin-top: 28px;
+  max-width: 72ch;
+}
+.changes-ledger .index-label {
+  display: block;
+  margin: 0 0 8px;
+}
+.changes-ledger ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: var(--hairline-width) solid var(--divider);
+}
+.changes-ledger li {
+  display: grid;
+  grid-template-columns: 2.5em minmax(0, 1fr) auto;
+  gap: 0 8px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: var(--hairline-width) solid var(--divider);
+}
+.changes-ledger .idx,
+.changes-ledger .changes-kind {
+  color: var(--muted);
+}
+.changes-ledger .changes-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.changes-ledger .changes-title {
+  font-weight: 500;
+  font-size: 15px;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  min-height: 0;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.changes-ledger button.changes-title {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--motion-chrome) var(--ease-out);
+}
+.changes-ledger button.changes-title:hover {
+  text-decoration-color: var(--accent);
+}
+
 /* Semester line: the subject's instrument, bleeding to the stage edge */
 .semester {
   position: relative;

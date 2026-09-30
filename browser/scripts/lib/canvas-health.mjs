@@ -69,6 +69,7 @@ export function summarize_sync_health({
     truncated,
     advisory_truncated,
     failed_endpoints: failed,
+    unavailable_endpoints: manifest.unavailable_endpoints || [],
     named_courses_failed: named,
     duplicate_conflicts: generation.duplicate_conflicts || [],
     inspect_in_canvas: true,

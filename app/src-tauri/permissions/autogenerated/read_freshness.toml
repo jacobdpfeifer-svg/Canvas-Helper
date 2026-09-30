@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-read-freshness"
+description = "Enables the read_freshness command without any pre-configured scope."
+commands.allow = ["read_freshness"]
+
+[[permission]]
+identifier = "deny-read-freshness"
+description = "Denies the read_freshness command without any pre-configured scope."
+commands.deny = ["read_freshness"]

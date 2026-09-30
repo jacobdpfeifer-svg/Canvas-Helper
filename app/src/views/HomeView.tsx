@@ -1,6 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { SemesterSurface, SemesterTick, CourseMap, GradeTruth, SyncHealth } from "../ipc";
-import { openExternalUrl, readCourseMap, readGradeTruth, readSemester, readSyncHealth } from "../ipc";
+import type { SemesterSurface, SemesterTick, CourseMap, FreshnessChange, GradeTruth, SyncHealth } from "../ipc";
+import {
+  onFreshnessUpdated,
+  openExternalUrl,
+  readCourseMap,
+  readFreshness,
+  readGradeTruth,
+  readSemester,
+  readSyncHealth,
+} from "../ipc";
+import { ChangesLedger } from "../components/ChangesLedger";
 import { SyncHealthBanner } from "../components/SyncHealthBanner";
 import { clusterTicks, kindLabel, loadRange, saveRange, tickHeightPx, type RangeId } from "../semesterTicks";
 
@@ -9,7 +18,8 @@ import { clusterTicks, kindLabel, loadRange, saveRange, tickHeightPx, type Range
  *   field   — paper (`.scene-paper`)
  *   subject — the next meaningful tick as a display statement, and the semester
  *             line at full bleed beneath it
- *   orbit   — NEXT rail: a vertical mono index of the next three ticks
+ *   orbit   — NEXT rail: a vertical mono index of the next three ticks;
+ *             CHANGED ledger beneath the line (what moved in Canvas)
  *   signal  — the today-rule in the scene accent
  * The old Start/Learn/Do/Check 4-up lives inside the tick sheet now.
  */
@@ -64,6 +74,7 @@ export function HomeView({
   const [courseId, setCourseId] = useState<string>("");
   const [map, setMap] = useState<CourseMap | null>(mapProp ?? null);
   const [grades, setGrades] = useState<GradeTruth | null>(gradesProp ?? null);
+  const [changes, setChanges] = useState<FreshnessChange[]>([]);
   const axis = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(640);
 
@@ -88,6 +99,19 @@ export function HomeView({
     if (surfaceProp) return;
     void readSyncHealth().then(setHealth);
   }, [healthProp, surfaceProp]);
+
+  // What changed in Canvas: refreshed whenever the daemon's freshness tick finds news.
+  useEffect(() => {
+    if (surfaceProp) return;
+    let alive = true;
+    const load = () => void readFreshness().then((d) => alive && setChanges(d?.changes ?? []));
+    load();
+    const unlisten = onFreshnessUpdated(load);
+    return () => {
+      alive = false;
+      void unlisten.then((fn) => fn());
+    };
+  }, [surfaceProp]);
 
   // The course map follows whichever tick the student opened.
   useEffect(() => {
@@ -206,6 +230,8 @@ export function HomeView({
           ))}
         </div>
       )}
+
+      <ChangesLedger changes={changes} />
 
       {hover && <TickBubble tick={hover.tick} x={hover.x} y={hover.y} />}
       {popup && (

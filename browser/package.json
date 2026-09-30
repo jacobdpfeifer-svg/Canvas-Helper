@@ -8,6 +8,7 @@
     "open-campusgroups": "node scripts/open-campusgroups.mjs",
     "sync": "node scripts/sync-week.mjs",
     "sync-canonical": "node scripts/sync-canvas-canonical.mjs",
+    "freshness": "node scripts/freshness-tick.mjs",
     "pull-todo": "node scripts/sync-week.mjs",
     "validate-profiles": "node scripts/validate-profiles.mjs",
     "refresh-profiles": "node scripts/refresh-instructor-profiles.mjs",
