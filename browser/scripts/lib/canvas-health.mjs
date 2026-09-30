@@ -29,12 +29,21 @@ export function summarize_sync_health({
   }
   const failed = manifest.failed_endpoints || [];
   const named = manifest.named_courses_failed || [];
-  const truncated = (manifest.pagination || []).filter((p) => p.truncated).map((p) => p.endpoint);
+  const legacyPlanner = (manifest.advisory_pagination ? [] : manifest.pagination || [])
+    .filter((p) => p.truncated && p.endpoint === "planner");
+  const requiredPagination = (manifest.pagination || []).filter(
+    (p) => !legacyPlanner.includes(p)
+  );
+  const truncated = requiredPagination.filter((p) => p.truncated).map((p) => p.endpoint);
+  const advisory_truncated = [...legacyPlanner, ...(manifest.advisory_pagination || [])]
+    .filter((p) => p.truncated)
+    .map((p) => p.endpoint);
   const state = classifyFreshness({
     complete: Boolean(manifest.complete),
     failed_endpoints: failed,
     named_courses_failed: named,
     truncated,
+    advisory_truncated,
     finished_at: manifest.finished_at,
     now,
     soft_ms: SOFT_STALE_MS,
@@ -58,6 +67,7 @@ export function summarize_sync_health({
       completed: manifest.completed_endpoints || [],
     },
     truncated,
+    advisory_truncated,
     failed_endpoints: failed,
     named_courses_failed: named,
     duplicate_conflicts: generation.duplicate_conflicts || [],

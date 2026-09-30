@@ -23,6 +23,8 @@ export function itemsToWeekRows(items, courses) {
       source: (it.seen_in || [])[0] || "assignment",
       course: c.name || c.course_code || it.course_name || it.course_id,
       title: it.title,
+      description: it.description || "",
+      submission_types: it.submission_types || [],
       due: it.effective_due_at || "",
       points: it.points_possible ?? "",
       type: it.object_type,
@@ -52,6 +54,9 @@ export function generateWeekMarkdown({ items, courses, health, daysAhead = 14, t
   });
   if (truncationWarnings.length) {
     notes.push(`**TRUNCATION WARNING:** ${truncationWarnings.join("; ")}`);
+  }
+  if (health?.advisory_truncated?.includes("planner")) {
+    notes.push("Planner coverage is advisory and incomplete; assignments/calendar remain the due-date sources.");
   }
   const table =
     openRows.length > 0
@@ -88,7 +93,7 @@ ${notes.map((n) => `- ${n}`).join("\n")}
 1. Read \`USER.md\` and triage this table (Worth / Agent / Ask).
 2. For rows marked external/LTI or assessment (Bucket B) — process help only; the student does the tool UI.
 3. Review \`inbox/tool-gaps.md\` for Bucket-A tools without a registry connector — flag only; never auto-build.
-4. Native Canvas text/file submits: only if auto bar + calibrated course; prefer MCP when PAT exists.
+4. Native Canvas text/file work is preview-only: review the preview, then submit it yourself in Canvas.
 `;
 }
 

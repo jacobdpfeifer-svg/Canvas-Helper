@@ -3,6 +3,10 @@
  */
 import { SCHEMA_VERSION, hashProfileId, sanitizeForLog } from "./canvas-model.mjs";
 import { getSchoolConfig } from "./school-config.mjs";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 export const FETCH_MATRIX = {
   global: ["courses", "planner", "todo", "missing_submissions", "calendar_assignments", "calendar_events"],
@@ -10,6 +14,51 @@ export const FETCH_MATRIX = {
 };
 
 const CONCURRENCY = 3;
+
+async function fetchModuleSyllabusPdf(page, courseId, modules, api) {
+  const candidates = (modules || []).flatMap((mod) => mod.items || []).filter((item) => {
+    const text = `${item.title || ""} ${item.content_details?.filename || ""}`;
+    return /syllabus/i.test(text) && (String(item.type || "").toLowerCase() === "file" || /\.pdf\b/i.test(text));
+  });
+  let discovered = null;
+  for (const item of candidates) {
+    const fileId = item.content_id || item.content_details?.id;
+    if (!fileId || !api) continue;
+    const meta = await api(page, `/api/v1/files/${fileId}`, {});
+    const file = meta.ok ? meta.json || {} : {};
+    const url = file.url || item.html_url || "";
+    if (!url) continue;
+    try {
+      const response = await page.context().request.get(url);
+      if (!response.ok()) continue;
+      const body = await response.body();
+      discovered = {
+        file_id: String(file.id || fileId),
+        name: file.display_name || file.filename || item.title || "Syllabus PDF",
+        url,
+        text: "",
+        extraction: "unavailable",
+      };
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "canvas-syllabus-"));
+      const pdfPath = path.join(dir, "syllabus.pdf");
+      fs.writeFileSync(pdfPath, body);
+      const extracted = spawnSync("pdftotext", ["-layout", pdfPath, "-"], { encoding: "utf8" });
+      fs.rmSync(dir, { recursive: true, force: true });
+      if (extracted.status === 0 && extracted.stdout.trim()) {
+        return {
+          file_id: String(file.id || fileId),
+          name: file.display_name || file.filename || item.title || "Syllabus PDF",
+          url,
+          text: extracted.stdout.trim(),
+          extraction: "pdftotext",
+        };
+      }
+    } catch {
+      // A published PDF is useful evidence even when the local extractor is unavailable.
+    }
+  }
+  return discovered;
+}
 
 async function poolMap(items, limit, fn) {
   const out = new Array(items.length);
@@ -35,6 +84,31 @@ function endpointResult(res, name) {
   };
 }
 
+async function fetchPlannerChunks(page, startIso, endIso, apiAllPages) {
+  const start = Date.parse(startIso);
+  const end = Date.parse(endIso);
+  const items = [];
+  let truncated = false;
+  let status = 200;
+  for (let cursor = start; cursor < end; cursor += 7 * 86400000) {
+    const chunkEnd = Math.min(cursor + 7 * 86400000, end);
+    const result = await apiAllPages(page, "/api/v1/planner/items", {
+      start_date: new Date(cursor).toISOString(),
+      end_date: new Date(chunkEnd).toISOString(),
+      per_page: "100",
+    });
+    status = result.status;
+    if (!result.ok) {
+      if (!items.length) return result;
+      truncated = true;
+      break;
+    }
+    items.push(...(result.items || []));
+    truncated ||= Boolean(result.truncated);
+  }
+  return { ok: true, items, truncated, status };
+}
+
 export async function fetchCanonicalGeneration(page, {
   apiAllPages,
   api,
@@ -51,6 +125,7 @@ export async function fetchCanonicalGeneration(page, {
   const completed = [];
   const failed_endpoints = [];
   const pagination = [];
+  const advisory_pagination = [];
   const named_courses_failed = [];
 
   const coursesRes = await apiAllPages(page, "/api/v1/courses", {
@@ -73,11 +148,13 @@ export async function fetchCanonicalGeneration(page, {
   const startDay = startIso.slice(0, 10);
   const endDay = endIso.slice(0, 10);
 
-  const plannerRes = await apiAllPages(page, "/api/v1/planner/items", { start_date: startIso, end_date: endIso });
+  const plannerDaysAhead = Math.min(Number(daysAhead || 150), Number(process.env.PLANNER_DAYS_AHEAD || 45));
+  const plannerEndIso = new Date(now.getTime() + plannerDaysAhead * 86400000).toISOString();
+  const plannerRes = await fetchPlannerChunks(page, startIso, plannerEndIso, apiAllPages);
   const plannerEp = endpointResult(plannerRes, "planner");
   if (plannerEp.ok) completed.push("planner");
   else failed_endpoints.push({ endpoint: "planner", status: plannerEp.status });
-  if (plannerEp.truncated) pagination.push({ endpoint: "planner", truncated: true });
+  if (plannerEp.truncated) advisory_pagination.push({ endpoint: "planner", truncated: true });
 
   const todoRes = await apiAllPages(page, "/api/v1/users/self/todo", {});
   const todoEp = endpointResult(todoRes, "todo");
@@ -124,6 +201,14 @@ export async function fetchCanonicalGeneration(page, {
   const packs = await poolMap(courses, CONCURRENCY, async (course) => {
     const id = course.id;
     const courseErrors = [];
+    let courseDetail = course;
+    if (api) {
+      const detail = await api(
+        page,
+        `/api/v1/courses/${id}?include%5B%5D=syllabus_body&include%5B%5D=teachers`
+      );
+      if (detail.ok && detail.json) courseDetail = { ...course, ...detail.json };
+    }
     async function grab(name, pathBase, params) {
       const res = await apiAllPages(page, pathBase, params);
       const ep = endpointResult(res, `${name}:${id}`);
@@ -195,8 +280,19 @@ export async function fetchCanonicalGeneration(page, {
     } catch {
       /* pages optional */
     }
+    const syllabusPdf = await fetchModuleSyllabusPdf(page, id, modules.items, api);
+    if (syllabusPdf && syllabusPdf.text && (!courseDetail.syllabus_body || /uploading a doc|under construction/i.test(String(courseDetail.syllabus_body)))) {
+      courseDetail = {
+        ...courseDetail,
+        syllabus_body: syllabusPdf.text,
+        syllabus_source: "module_pdf",
+        syllabus_file: syllabusPdf,
+      };
+    } else if (syllabusPdf) {
+      courseDetail = { ...courseDetail, syllabus_file: syllabusPdf };
+    }
     return {
-      course,
+      course: courseDetail,
       assignments: assignments.items,
       "assignment-groups": (groups.items || []).map((g) => ({
         ...g,
@@ -236,10 +332,12 @@ export async function fetchCanonicalGeneration(page, {
       failed_endpoints,
       named_courses_failed,
       pagination,
+      advisory_pagination,
       file_hashes: {},
       complete,
       usable_partial: !complete && packs.length > 0,
       calendar_window: { start: startDay, end: endDay },
+      planner_window: { start: startIso, end: plannerEndIso, days: plannerDaysAhead },
     },
   };
 }

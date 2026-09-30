@@ -13,11 +13,18 @@ during onboarding" but only "## Learning profile" and a flat
 from __future__ import annotations
 
 import re
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _USER_MD_TEMPLATE = _REPO_ROOT / "templates" / "USER.md"
+_CALIBRATION_TEMPLATES = (
+    "priority-rubric.md",
+    "credit-hours.yaml",
+    "completed-terms.yaml",
+    "courses-of-interest.md",
+)
 
 _MIN_RANKED_LINES = 3
 _YEARS_AT_SCHOOL_RE = re.compile(
@@ -54,6 +61,18 @@ def _seed_user_md_if_missing(user_md: Path) -> None:
         user_md.write_text(_USER_MD_TEMPLATE.read_text(encoding="utf-8"), encoding="utf-8")
     else:
         user_md.write_text("# USER.md\n\n## Identity\n\n", encoding="utf-8")
+
+
+def _seed_calibration_files(user_root: Path) -> None:
+    """Create missing student-owned calibration files without overwriting edits."""
+    calibration = Path(user_root) / "calibration"
+    calibration.mkdir(parents=True, exist_ok=True)
+    for name in _CALIBRATION_TEMPLATES:
+        target = calibration / name
+        source = _REPO_ROOT / "templates" / "calibration" / name
+        if target.exists() or not source.is_file():
+            continue
+        shutil.copyfile(source, target)
 
 
 def _replace_section(text: str, heading: str, block: str) -> str:
@@ -109,6 +128,7 @@ def apply_onboarding_identity(user_root: Path, identity: OnboardingIdentity) -> 
     alone instead of overwriting with a multi-select placeholder."""
     user_md = Path(user_root) / "USER.md"
     _seed_user_md_if_missing(user_md)
+    _seed_calibration_files(user_root)
     text = user_md.read_text(encoding="utf-8")
     years_at_school = _existing_years_at_school(text)
     institution = _institution_for(identity)

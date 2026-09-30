@@ -15,6 +15,7 @@ import {
   hasCampusGroupsLink,
   hasUploadAfterEventHint,
   isCheckpoint,
+  outcomeLabel,
   schoolLocalDay,
   schoolMidnightUtc,
   filterDatedInWindow,
@@ -25,6 +26,7 @@ import {
   formatPrereqSection,
   writeGradesYaml,
   resolveCourseFile,
+  fromAssignments,
   shouldIncludeInWeekTable,
   stripHtmlTags,
   syllabusHash,
@@ -165,6 +167,38 @@ describe("classifyOutcomeHint", () => {
   it("tags AI lab workshop as external two-step", () => {
     const hint = classifyOutcomeHint("AI Lab Workshop Sign Up", "assignment", "");
     assert.match(hint, /outcome:signup-external\+upload-after-event/);
+  });
+
+  it("uses assignment descriptions and submission types for LTI inventory", () => {
+    const [row] = fromAssignments("Intro", 1, [
+      {
+        id: 9,
+        name: "Functions 1: Pre Reading",
+        submission_types: ["external_tool"],
+        description: "Launch at https://lti1-3.zybooks.com/course",
+      },
+    ]);
+    assert.match(buildWeekNoteParts(row).join(" "), /outcome:lti/);
+    assert.match(buildWeekNoteParts(row).join(" "), /tool:ZyBooks/);
+  });
+
+  it("names Gradescope as a Bucket-B escape hatch", () => {
+    const hint = classifyOutcomeHint(
+      "Written HW 5",
+      "external_tool",
+      "Launch at https://lti-gradescope.int.turnitin.com/course"
+    );
+    assert.match(hint, /outcome:lti/);
+    assert.match(hint, /tool:Gradescope/);
+    assert.match(hint, /bucket:B/);
+  });
+
+  it("does not mislabel a final presentation or an untyped Advocate wrapper", () => {
+    assert.equal(
+      outcomeLabel("Phone Experiment and Final Presentation", "assignment"),
+      "presentation"
+    );
+    assert.notEqual(outcomeLabel("Advocate wrapper", "assignment"), "discussion");
   });
 });
 describe("extractLinksFromHtml", () => {
