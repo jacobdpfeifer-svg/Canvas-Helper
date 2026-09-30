@@ -433,6 +433,14 @@ describe("dashboard", () => {
     assert.equal(fallback.why, "missing");
   });
 
+  it("prefers a meaningful-point item over a sooner low-point item", () => {
+    const ranked = [
+      { title: "Tiny", course_id: "12", canvas_id: "1", course_code: "APPM 1235", effective_due_at: isoAt(NOW + DAY), submission_state: "unsubmitted", actionable: true, points_possible: 5, object_type: "assignment" },
+      ...items,
+    ];
+    assert.equal(pickNextStep(ranked, { now: NOW }).title, "HW 2");
+  });
+
   it("builds changes, a digest and logistics-only agent suggestions", () => {
     const events = [
       { key: "announcement:55", kind: "announcement", title: "Exam moved", course_id: "12", at: isoAt(NOW - DAY), detected_at: isoAt(NOW - DAY), actions: [{ kind: "change", text: "Midterm moved to Tuesday." }] },

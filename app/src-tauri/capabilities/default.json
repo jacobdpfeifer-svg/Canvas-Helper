@@ -39,6 +39,7 @@
     "allow-read-freshness",
     "allow-read-work-surface",
     "allow-read-course-map",
+    "allow-read-course-colors",
     "allow-read-grade-truth",
     "allow-add-calendar-event",
     "allow-dismiss-calendar-suggestion",

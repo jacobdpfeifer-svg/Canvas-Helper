@@ -368,6 +368,11 @@ pub fn read_work_surface(rt: Rt<'_>, filters: Option<serde_json::Value>) -> serd
 }
 
 #[tauri::command]
+pub fn read_course_colors(rt: Rt<'_>) -> serde_json::Value {
+    canvas::read_course_colors(&rt.user_root)
+}
+
+#[tauri::command]
 pub fn read_course_map(rt: Rt<'_>, course_id: String) -> serde_json::Value {
     canvas::read_course_map(&rt.user_root, &course_id)
 }

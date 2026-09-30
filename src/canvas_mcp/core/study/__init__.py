@@ -12,5 +12,6 @@ Layout:
     reducer    pure fold: events -> projection (eligibility, evidence, schedule)
     select     next offer without mutating history
     service    the commands the app calls; the only writer
+    ask        question intake, context broker, and answer plans
     cli        ``python -m canvas_mcp.core.study --json <cmd>``
 """

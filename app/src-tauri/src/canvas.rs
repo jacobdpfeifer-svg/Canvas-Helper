@@ -26,6 +26,26 @@ pub fn read_freshness(user_root: &Path) -> Value {
     read_json(&user_root.join("inbox").join("freshness").join("dashboard.json")).unwrap_or(Value::Null)
 }
 
+/// Course card colours (`inbox/courses/colors.json`, written by sync from
+/// `users/self/colors`) as `{ course_id: "#rrggbb" }`. Only hex values pass.
+pub fn read_course_colors(user_root: &Path) -> Value {
+    let raw = read_json(&user_root.join("inbox").join("courses").join("colors.json"));
+    let mut out = serde_json::Map::new();
+    if let Some(Value::Object(map)) = raw {
+        for (id, v) in map {
+            let ok_id = !id.is_empty() && id.chars().all(|c| c.is_ascii_digit());
+            if let Some(hex) = v.as_str() {
+                let body = hex.strip_prefix('#').unwrap_or("");
+                let ok_hex = (body.len() == 3 || body.len() == 6) && body.chars().all(|c| c.is_ascii_hexdigit());
+                if ok_id && ok_hex {
+                    out.insert(id, json!(hex.to_ascii_lowercase()));
+                }
+            }
+        }
+    }
+    Value::Object(out)
+}
+
 fn pointer(user_root: &Path) -> Option<Value> {
     read_json(&canvas_root(user_root).join("projections").join("current.json"))
 }
@@ -202,6 +222,21 @@ pub fn canvas_calendar_items(user_root: &Path) -> Vec<Value> {
 mod tests {
     use super::*;
     use std::env;
+
+    #[test]
+    fn course_colors_keep_only_hex_by_numeric_id() {
+        let dir = env::temp_dir().join(format!("pn-cc-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        assert_eq!(read_course_colors(&dir), json!({}));
+        fs::create_dir_all(dir.join("inbox/courses")).unwrap();
+        fs::write(
+            dir.join("inbox/courses/colors.json"),
+            r##"{"101":"#E1AD49","202":"#f60","x":"#111111","303":"red","404":"#12345g"}"##,
+        )
+        .unwrap();
+        assert_eq!(read_course_colors(&dir), json!({"101":"#e1ad49","202":"#f60"}));
+        let _ = fs::remove_dir_all(&dir);
+    }
 
     #[test]
     fn empty_unverified_without_pointer() {

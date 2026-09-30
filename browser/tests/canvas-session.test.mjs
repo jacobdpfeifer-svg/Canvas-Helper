@@ -24,6 +24,7 @@ import {
   formatAgentPolicyNotes,
   extractPrereqLanguage,
   formatPrereqSection,
+  formatDueForDisplay,
   writeGradesYaml,
   resolveCourseFile,
   fromAssignments,
@@ -48,6 +49,15 @@ describe("schoolMidnightUtc", () => {
     const m = schoolMidnightUtc("2026-01-15");
     assert.equal(m.toISOString(), "2026-01-15T07:00:00.000Z");
     assert.equal(schoolLocalDay(m), "2026-01-15");
+  });
+});
+
+describe("formatDueForDisplay", () => {
+  it("renders Canvas UTC due times in the school timezone", () => {
+    assert.equal(
+      formatDueForDisplay("2026-09-23T05:59:59Z", "America/Denver"),
+      "Sep 22, 11:59 PM MDT"
+    );
   });
 });
 
@@ -336,6 +346,13 @@ describe("detectExternalTool and buckets", () => {
     assert.equal(inventory[0].count, 2);
     assert.equal(inventory[0].firstSeen, "2026-08-01");
     assert.match(formatToolsSection(inventory), /PlayPosit/);
+  });
+
+  it("does not treat ordinary prose as Calendar feed or Gradebook", () => {
+    assert.equal(detectExternalTool("Picture of physical print", "assignment"), null);
+    assert.equal(detectExternalTool("Homework upload", "online_upload", "Submit your PDF by the due date."), null);
+    assert.equal(detectExternalTool("Financial reflection", "assignment"), null);
+    assert.equal(detectExternalTool("Exam instructions mention the gradebook", "assignment"), null);
   });
 });
 

@@ -129,7 +129,7 @@ def test_teaching_skill_injects_hint_without_busting_prefix(tmp_path: Path) -> N
     root = _root(tmp_path)
     skill = _skill("student-task-brief")
     turn = assemble_turn(skill, root, "what should I do first", week_md=WEEK)
-    assert "do_first: MATH 1300 — Chain rule set" in turn.volatile
+    assert "do_first: CSCI 1300 — Quiz 1" in turn.volatile
     assert "<!-- cache:profile -->" in turn.prefix
     assert "do_first:" not in turn.prefix
     rendered = turn.rendered()
@@ -140,7 +140,11 @@ def test_teaching_skill_injects_hint_without_busting_prefix(tmp_path: Path) -> N
 def test_diagram_only_for_spatial_title(tmp_path: Path) -> None:
     root = _root(tmp_path)
     hint = render_teach_hint(root, "what should I do first", WEEK, now=NOW)
-    assert "chain_rule_composition" in hint
+    spatial_week = """| Course | Assignment | Due | Type | Notes |
+|--------|------------|-----|------|-------|
+| MATH 1300 | Chain rule set | 2026-09-20 | assignment | |
+"""
+    assert "chain_rule_composition" in render_teach_hint(root, "what should I do first", spatial_week, now=NOW)
     reading = """| Course | Assignment | Due | Type | Notes |
 |--------|------------|-----|------|-------|
 | ENGL | Pre-reading chapter 2 | 2026-09-09 | assignment | reading |

@@ -36,7 +36,8 @@ The student attaches a photo (whiteboard, slide, handout, event selfie, homework
 | `syllabus_delta` | `## Syllabus / agent policy notes` or instructor profile gap | `update_course_md` | `done` |
 | `homework_problem` | `## Lecture captures` + note to check `week.md` | `update_course_md` | `done` |
 | `event_selfie` | optional one-line in the course named in capture / USER signup prefs | `canvas_upload` | `pending_mac` |
-| `quiz`, `graded_work`, `unknown` | none until the student confirms | `needs_review` | `needs_review` |
+| `quiz`, `graded_work` | `## Lecture captures` bullet | `update_course_md` | `done` |
+| `unknown` | none until the student confirms | `needs_review` | `needs_review` |
 
 **Course MD bullet** (under `## Lecture captures`; create section if missing):
 
@@ -54,8 +55,6 @@ For `canvas_upload`, set queue `notes` to include: **Original on phone camera ro
 
 ### Hard stops (never from photo intake alone)
 
-- Auto-submit quizzes, exams, proctored, WebAssign, ZyBooks, PlayPosit, LTI
-- Auto-submit essays, reflections, thought projects, presentations
 - Any live Canvas upload/submit from `process-capture-queue` (hard-blocked; `CONFIRM=1` ignored)
 - Commit photo binaries to git
 

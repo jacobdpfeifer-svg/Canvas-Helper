@@ -160,6 +160,34 @@ def test_active_profile_comes_from_the_apps_current_profile_file(tmp_path):
     assert list((support / "dev" / "inbox" / "freshness" / "deltas").glob("*.json"))
 
 
+def test_queue_ask_stages_a_private_intake_without_canvas_urls(tmp_path):
+    [reply] = _run(
+        [
+            {
+                "type": "queue_ask",
+                "content_kind": "selection",
+                "content": "Find the derivative of x^2",
+                "assignment_hint": "Written HW",
+                "html_url": "https://canvas.example/secret",
+                "course_id": "4242",
+                "canvas": {"kind": "assignment", "title": "Written HW", "submission_types": ["online_upload"], "html_url": "https://canvas.example/secret"},
+            }
+        ],
+        {"DEV_USER_ROOT": str(tmp_path)},
+    )
+    assert reply == {"ok": True, "queued": True}
+    files = list((tmp_path / "study" / "ask-inbox").glob("*.json"))
+    assert len(files) == 1
+    stored = json.loads(files[0].read_text(encoding="utf-8"))
+    assert stored["content"] == "Find the derivative of x^2"
+    assert stored["canvas"]["submission_types"] == ["online_upload"]
+    assert "html_url" not in stored and "course_id" not in stored
+    assert "https://" not in json.dumps(stored["canvas"])
+    assert files[0].stat().st_mode & 0o777 == 0o600
+    [empty] = _run([{"type": "queue_ask", "content": ""}], {"DEV_USER_ROOT": str(tmp_path)})
+    assert empty["error"] == "empty_ask"
+
+
 def test_unknown_and_malformed_messages_get_errors(tmp_path):
     unknown, notdict = _run([{"type": "submit_assignment"}, ["x"]], {"DEV_USER_ROOT": str(tmp_path)})
     assert unknown["error"] == "unknown_type"

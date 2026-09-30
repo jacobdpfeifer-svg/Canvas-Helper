@@ -59,6 +59,7 @@ class CourseGrade:
     letter: str
     credits: float | None = None
     name: str = ""
+    percent: float | None = None
 
 
 @dataclass
@@ -115,7 +116,11 @@ def missing_credits(
 
 
 def _norm_code(code: str) -> str:
-    return re.sub(r"\s+", "", str(code or "").upper())
+    raw = str(code or "").upper()
+    match = re.search(r"[A-Z]{2,8}\s*[-_ ]?\s*\d{3,5}", raw)
+    if match:
+        return re.sub(r"[^A-Z0-9]", "", match.group(0))
+    return re.sub(r"[^A-Z0-9]", "", raw)
 
 
 def resolve_credits(
@@ -153,7 +158,11 @@ def term_gpa(
     for course in courses:
         letter = normalize_letter(course.letter)
         if letter in EXCLUDED_LETTERS:
-            skipped.append((course, f"non-quality grade {letter or '(empty)'}"))
+            if not letter and course.percent is not None:
+                reason = f"letter grade unavailable (percent {course.percent:g})"
+            else:
+                reason = f"non-quality grade {letter or '(empty)'}"
+            skipped.append((course, reason))
             continue
         points = scale_table.get(letter)
         if points is None:
@@ -175,6 +184,7 @@ def term_gpa(
                 letter=letter,
                 credits=credits,
                 name=course.name,
+                percent=course.percent,
             )
         )
         qp += points * credits
@@ -292,6 +302,7 @@ def load_completed_terms(path: Path) -> list[list[CourseGrade]]:
                     letter=str(row.get("letter") or ""),
                     credits=credits_f,
                     name=str(row.get("name") or ""),
+                    percent=float(row["percent"]) if row.get("percent") is not None else None,
                 )
             )
         if courses:
@@ -317,6 +328,7 @@ def load_grades_yaml(path: Path) -> list[CourseGrade]:
                 code=str(row["code"]),
                 letter=str(row.get("letter") or ""),
                 name=str(row.get("name") or ""),
+                percent=float(row["percent"]) if row.get("percent") is not None else None,
             )
         )
     return courses
@@ -377,11 +389,11 @@ def _result_dict(result: GpaResult | None) -> dict[str, Any] | None:
         "quality_points": result.quality_points,
         "quality_hours": result.quality_hours,
         "included": [
-            {"code": c.code, "letter": c.letter, "credits": c.credits}
+            {"code": c.code, "letter": c.letter, "credits": c.credits, "percent": c.percent}
             for c in result.included
         ],
         "skipped": [
-            {"code": c.code, "letter": c.letter, "reason": reason}
+            {"code": c.code, "letter": c.letter, "percent": c.percent, "reason": reason}
             for c, reason in result.skipped
         ],
     }

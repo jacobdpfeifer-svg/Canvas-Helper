@@ -237,18 +237,6 @@ class Config:
             for name in os.getenv("STUDENT_WRITE_TOOLS", "").replace(",", " ").split()
             if name.strip()
         )
-        # Per-course instructor policy. Can further restrict (never expand) the
-        # operator ceiling above.
-        self.course_agent_policy_enabled = _bool_env("COURSE_AGENT_POLICY_ENABLED", True)
-        # Multi-tenant product default: deny until syllabus/calibration allows.
-        # A syllabus marker can still grant; operator may set allow for personal forks.
-        self.course_agent_policy_default = os.getenv(
-            "COURSE_AGENT_POLICY_DEFAULT", "deny"
-        ).strip().lower()
-        # Denials cache longer than grants. A stale grant is a revocation window on
-        # an attempt-consuming action, so it is deliberately short.
-        self.course_agent_policy_allow_ttl = _int_env("COURSE_AGENT_POLICY_ALLOW_TTL", 30)
-        self.course_agent_policy_deny_ttl = _int_env("COURSE_AGENT_POLICY_DENY_TTL", 300)
 
 
 # Global configuration instance
@@ -357,15 +345,6 @@ def validate_config() -> bool:
             f"CANVAS_ROLE={config.canvas_role} ignored; this fork is student-only"
         )
         config.canvas_role = "student"
-
-    # Student write policy: unrecognized posture fails closed to deny.
-    valid_postures = ("allow", "deny")
-    if config.course_agent_policy_default not in valid_postures:
-        log_warning(
-            f"COURSE_AGENT_POLICY_DEFAULT should be one of {', '.join(valid_postures)}; "
-            f"defaulting to 'deny' (got '{config.course_agent_policy_default}')"
-        )
-        config.course_agent_policy_default = "deny"
 
     unknown_write_tools = config.student_write_tools - STUDENT_WRITE_TOOL_NAMES
     if unknown_write_tools:

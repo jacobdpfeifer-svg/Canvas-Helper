@@ -1230,6 +1230,44 @@ ul.ledger > li:first-child {
   color: var(--muted);
   margin: 0 0 12px;
 }
+.ask-panel {
+  margin-top: 28px;
+  max-width: 62ch;
+}
+.ask-panel textarea {
+  width: 100%;
+  margin: 8px 0 12px;
+}
+.ask-result h2 {
+  max-width: 62ch;
+  font-size: 1.35rem;
+}
+.ask-chip {
+  color: var(--muted);
+}
+.ask-chip-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: end;
+  margin: 8px 0 16px;
+}
+.ask-chip-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 10rem;
+}
+.ask-chip-fields input,
+.ask-chip-fields select,
+.ask-chip-fields button {
+  min-height: 44px;
+  border-radius: var(--radius-control);
+}
+.ask-conflicts {
+  margin: 0 0 12px;
+  padding-left: 1.2rem;
+}
 .home-statement {
   display: block;
   text-align: left;
@@ -1993,4 +2031,125 @@ button.home-statement:hover:not(:disabled) {
     padding-left: 0;
     border-left: 0;
   }
+}
+
+/* Voice sheet + Blot (docs/design/blot-animation-plan-2026-09-30.md).
+   Temporary chrome: glass, no backdrop, the workspace stays usable. Blot is the
+   only moving thing; the answer text writes itself and then holds still. */
+.voice-sheet {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  translate: -50% 0; /* not transform: rise-in animates transform */
+  width: min(560px, calc(100vw - 32px));
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 14px 18px 14px 10px;
+  z-index: 30;
+  animation: rise-in var(--motion-sheet) var(--ease-out);
+}
+@media (max-width: 520px) {
+  .voice-sheet {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 12px 16px 16px;
+  }
+}
+.workspace .voice-sheet button.blot,
+.voice-sheet button.blot {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-control, 10px);
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+}
+.blot canvas {
+  display: block;
+}
+.voice-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 10px;
+}
+.voice-label {
+  margin: 0;
+  font: 500 var(--type-label) / 1.2 var(--font-mono);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.voice-caption {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--fg);
+}
+.voice-sheet[data-state="thinking"] .voice-caption,
+.voice-sheet[data-state="idle"] .voice-caption {
+  color: var(--muted);
+}
+.voice-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.voice-actions:empty {
+  display: none;
+}
+
+.blot-answer {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.blot-answer li {
+  --ink: var(--accent);
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: baseline;
+}
+.blot-bullet {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink);
+  align-self: center;
+  justify-self: center;
+}
+.blot-line {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.blot-line span {
+  transition: color var(--motion-reveal) var(--ease-out);
+}
+.blot-line span.wet {
+  color: var(--ink);
+}
+.blot-due {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity var(--motion-settle) var(--ease-out);
+}
+.blot-due[data-shown] {
+  opacity: 1;
+}
+:root[data-theme="contrast"] .blot-line span.wet {
+  color: var(--fg);
 }

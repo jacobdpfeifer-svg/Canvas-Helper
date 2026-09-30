@@ -52,7 +52,7 @@ When the student shares graded work with instructor comments:
 1. Syllabus beats external for grade weights and integrity
 2. Assignment rubric beats syllabus for that task
 3. Announcements override stale syllabus when professor explicitly clarifies
-4. External never justifies violating integrity or AI policy
+4. External never contradicts syllabus-stated integrity expectations
 5. Tag bullets: `(syllabus)`, `(assignment: Title)`, `(announcement)`, `(inferred)`, `(external, unverified)`
 6. Multiple teachers → list all; note section/TA uncertainty
 

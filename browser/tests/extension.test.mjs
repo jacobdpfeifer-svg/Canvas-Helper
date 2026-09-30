@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { canvasGet, isAllowedBase, isAllowedPath, trimPlannerItem, trimStreamItem } from "../../app/extension-chrome/lib/canvas-read.js";
 import { assignmentFromUrl, blockBefore, costLine } from "../../app/extension-chrome/lib/format.js";
 import { checklistItems, honestPath } from "../../app/extension-chrome/lib/assignment-plan.js";
-import { MODULES, TARGET_DIR, vendoredText } from "../../app/extension-chrome/tools/vendor-shared.mjs";
+import { BLOT_MODULES, BLOT_SOURCE_DIR, BLOT_TARGET_DIR, MODULES, TARGET_DIR, vendoredBlotText, vendoredText } from "../../app/extension-chrome/tools/vendor-shared.mjs";
 
 const EXT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "app", "extension-chrome");
 
@@ -97,6 +97,19 @@ describe("extension: shared modules", () => {
       const have = fs.readFileSync(path.join(TARGET_DIR, `${name}.js`), "utf8");
       assert.equal(have, vendoredText(name), `shared/${name}.js drifted — run node app/extension-chrome/tools/vendor-shared.mjs`);
     }
+  });
+
+  it("vendored Blot engine matches app/src/blot/core and covers every runtime module", () => {
+    for (const name of BLOT_MODULES) {
+      const have = fs.readFileSync(path.join(BLOT_TARGET_DIR, `${name}.js`), "utf8");
+      assert.equal(have, vendoredBlotText(name), `shared/blot/${name}.js drifted — run node app/extension-chrome/tools/vendor-shared.mjs`);
+    }
+    const runtime = fs
+      .readdirSync(BLOT_SOURCE_DIR)
+      .filter((f) => f.endsWith(".js") && !f.includes(".test."))
+      .map((f) => f.replace(/\.js$/, ""))
+      .sort();
+    assert.deepEqual(runtime, [...BLOT_MODULES].sort());
   });
 });
 

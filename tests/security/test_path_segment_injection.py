@@ -175,7 +175,6 @@ class TestSelfScopedToolsRejectSmuggledIds:
     async def test_comment_on_my_submission_rejects_smuggled_id(self):
         tools = self._tools(
             STUDENT_WRITE_TOOLS="comment_on_my_submission",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         if "comment_on_my_submission" not in tools:
             pytest.skip("comment_on_my_submission not registered in this configuration")

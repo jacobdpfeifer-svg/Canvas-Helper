@@ -16,6 +16,7 @@ import {
   ensureInboxReady,
   schoolLocalDay,
   escCell,
+  formatDueForDisplay,
   fetchDueUniverse,
   filterDatedInWindow,
   keyOf,
@@ -121,7 +122,7 @@ const missList =
         .map((r) => {
           const hint = classifyOutcomeHint(r.title, r.type);
           return `- **${escCell(r.title)}** (${escCell(r.course)}) — due ${escCell(
-            String(r.due).replace("T", " ").slice(0, 16)
+            formatDueForDisplay(r.due)
           )} — ${escCell(r.type)}${hint ? ` — ${escCell(hint)}` : ""}`;
         })
         .join("\n")

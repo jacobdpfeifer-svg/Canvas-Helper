@@ -191,6 +191,54 @@ export type Status = {
 
 export type Template = { packet_id: string; title: string; course: string; provenance: string; items: number; path: string };
 
+export type AskAction = {
+  title: string;
+  why_now: string;
+  value: string;
+  urgency: string;
+  consequence: string | number;
+  estimated_effort: string;
+  dependencies: string[];
+  risk: string;
+  can_prepare_privately: boolean;
+  student_confirmation_needed: boolean;
+  source_refs: string[];
+};
+
+export type AskResponse = {
+  question_type: string;
+  context_chip: string;
+  one_sentence: string;
+  explanation: string;
+  assumptions: string;
+  check_status: "checked" | "abstained" | "blocked" | string;
+  next_action: AskAction;
+  modes: string[];
+  prose: string;
+  response_mode: string;
+};
+
+export type AskEnvelope = {
+  input_id?: string;
+  status?: string;
+  ask: { input_id: string; content: string; session_goal: string; status: string } | null;
+  classification?: { job: string; boundary: string; signals: string[]; blocked_reason?: string | null };
+  context?: {
+    chip?: string;
+    course_label?: string;
+    assignment_label?: string;
+    due?: string;
+    conflicts?: { field: string; canvas?: string; note?: string }[];
+  };
+  response?: AskResponse;
+  promoted_from?: string;
+};
+
+export type AskRank = {
+  recommendation: { id?: string; title: string; why_now?: string; due_at?: string } | null;
+  alternatives: { id?: string; title: string; why_now?: string }[];
+};
+
 export type RuntimeInfo = {
   mode: "bundled" | "dev";
   core_dir: string;

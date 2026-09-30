@@ -29,6 +29,7 @@ export function summarize_sync_health({
   }
   const failed = manifest.failed_endpoints || [];
   const named = manifest.named_courses_failed || [];
+  const coursesById = new Map((generation.courses || []).map((p) => [String(p.course?.id), p.course?.course_code || p.course?.name || String(p.course?.id)]));
   const legacyPlanner = (manifest.advisory_pagination ? [] : manifest.pagination || [])
     .filter((p) => p.truncated && p.endpoint === "planner");
   const requiredPagination = (manifest.pagination || []).filter(
@@ -69,6 +70,13 @@ export function summarize_sync_health({
     truncated,
     advisory_truncated,
     failed_endpoints: failed,
+    partial_reasons: failed.map((entry) => {
+      const endpoint = String(entry.endpoint || entry);
+      const match = endpoint.match(/:(\d+)$/);
+      return match
+        ? `${endpoint.split(":")[0]} unavailable for ${coursesById.get(match[1]) || `course ${match[1]}`}`
+        : `${endpoint} unavailable`;
+    }),
     unavailable_endpoints: manifest.unavailable_endpoints || [],
     named_courses_failed: named,
     duplicate_conflicts: generation.duplicate_conflicts || [],

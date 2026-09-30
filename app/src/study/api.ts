@@ -5,7 +5,7 @@
  */
 import { invoke } from "@tauri-apps/api/core";
 import { isTauri } from "../ipc";
-import type { Assessed, Envelope, Offer, PacketSummary, Revealed, RuntimeInfo, Started, Status, Template } from "./types";
+import type { AskEnvelope, AskRank, Assessed, Envelope, Offer, PacketSummary, Revealed, RuntimeInfo, Started, Status, Template } from "./types";
 
 const BRIDGE = "http://127.0.0.1:1421/study";
 
@@ -81,6 +81,14 @@ export const study = {
     call<{ source: { id: string; locator: string; text: string } }>("source", { packet_id: packetId, source_id: sourceId, attempt_id: attemptId ?? null }),
   history: (itemId: string) => call<{ attempts: unknown[] }>("history", { item_id: itemId }),
   session: (fresh: boolean) => call<{ session: unknown }>("session", { new: fresh }),
+  askCreate: (params: Record<string, unknown>) => call<AskEnvelope>("ask-create", params),
+  askGet: (inputId: string) => call<AskEnvelope>("ask-get", { input_id: inputId }),
+  askCurrent: () => call<AskEnvelope>("ask-current"),
+  askCorrect: (inputId: string, params: Record<string, unknown>) => call<AskEnvelope>("ask-correct", { input_id: inputId, ...params }),
+  askMode: (inputId: string, sessionGoal: string) => call<AskEnvelope>("ask-mode", { input_id: inputId, session_goal: sessionGoal }),
+  askRank: (openWork: Record<string, unknown>[], preferAsk = false) =>
+    call<AskRank>("ask-rank", { open_work: openWork, prefer_ask: preferAsk }),
+  askPending: () => call<AskEnvelope>("ask-pending"),
 };
 
 export type CanvasSources = {

@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { transport } from "../study/api";
 import { HomeView } from "./HomeView";
 import type { SemesterSurface } from "../ipc";
 
@@ -59,6 +60,9 @@ describe("HomeView", () => {
     expect(screen.getAllByText("MATH 1300").length).toBeGreaterThan(0);
     // subject statement is the next due tick; orbit rail indexes the next three
     expect(screen.getByRole("button", { name: "Homework 1" })).toBeInTheDocument();
+    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    expect(screen.getAllByText(new RegExp(zone.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "Ask" })).toBeInTheDocument();
     expect(screen.getByRole("complementary", { name: "Next up" })).toHaveTextContent("01");
     const ticks = screen.getAllByRole("option");
     expect(ticks.length).toBeGreaterThanOrEqual(2);
@@ -138,5 +142,47 @@ describe("HomeView", () => {
     expect(screen.getByRole("heading", { name: "Check" })).toBeInTheDocument();
     expect(screen.getByText(/Canvas says 88/)).toBeInTheDocument();
     expect(screen.getByText(/No published modules found/)).toBeInTheDocument();
+  });
+
+  it("replaces the ranked subject while an Ask is open", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(transport, "send").mockResolvedValue({
+      ok: true,
+      input_id: "ask-1",
+      ask: { input_id: "ask-1", content: "Find the derivative of x^2", session_goal: "answer_now", status: "answered" },
+      response: {
+        question_type: "solve",
+        context_chip: "open homework",
+        one_sentence: "The derivative is 2x.",
+        explanation: "Local plan.",
+        assumptions: "Synthetic.",
+        check_status: "checked",
+        next_action: {
+          title: "Use this result",
+          why_now: "now",
+          value: "",
+          urgency: "now",
+          consequence: "",
+          estimated_effort: "a few minutes",
+          dependencies: [],
+          risk: "low",
+          can_prepare_privately: true,
+          student_confirmation_needed: false,
+          source_refs: [],
+        },
+        modes: ["answer_now", "walkthrough", "mastery", "make_handle"],
+        prose: "not_generated",
+        response_mode: "answer_now",
+      },
+    });
+    render(<HomeView surface={surface} onExamPrep={() => undefined} />);
+    expect(screen.getByRole("button", { name: "Homework 1" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Ask" }));
+    expect(screen.queryByRole("button", { name: "Homework 1" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("complementary", { name: "Next up" })).not.toBeInTheDocument();
+    await user.type(screen.getByRole("textbox"), "Find the derivative of x^2");
+    await user.click(screen.getByRole("button", { name: "Get a next step" }));
+    expect(await screen.findByRole("heading", { name: "The derivative is 2x." })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Homework 1" })).not.toBeInTheDocument();
   });
 });

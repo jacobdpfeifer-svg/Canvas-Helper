@@ -33,8 +33,18 @@
   "side_panel": {
     "default_path": "panel.html"
   },
+  "icons": {
+    "16": "icons/blot-16.png",
+    "32": "icons/blot-32.png",
+    "48": "icons/blot-48.png",
+    "128": "icons/blot-128.png"
+  },
   "action": {
-    "default_title": "ProductName \u2014 open the side panel"
+    "default_title": "ProductName \u2014 open the side panel",
+    "default_icon": {
+      "16": "icons/blot-16.png",
+      "32": "icons/blot-32.png"
+    }
   },
   "web_accessible_resources": [
     {

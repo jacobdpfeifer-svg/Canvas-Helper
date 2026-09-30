@@ -827,6 +827,13 @@ export async function readCourseMap(courseId: string): Promise<CourseMap> {
   return invoke<CourseMap>("read_course_map", { courseId });
 }
 
+/** Canvas course card colours by course id, e.g. { "101": "#e1ad49" }. Empty outside Tauri or before a sync. */
+export async function readCourseColors(): Promise<Record<string, string>> {
+  if (!isTauri()) return {};
+  const raw = await invoke<Record<string, string> | null>("read_course_colors");
+  return raw && typeof raw === "object" ? raw : {};
+}
+
 export async function readGradeTruth(courseId: string): Promise<GradeTruth> {
   if (!isTauri()) return { course_id: courseId };
   return invoke<GradeTruth>("read_grade_truth", { courseId });

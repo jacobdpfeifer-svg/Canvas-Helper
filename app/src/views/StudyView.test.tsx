@@ -154,4 +154,18 @@ describe("draft persistence edge cases", () => {
     await screen.findByLabelText("Inner function");
     expect(screen.getByLabelText("10 min")).toBeDisabled();
   });
+
+  it("asks about the offered item through the shared ask command", async () => {
+    const fake = makeFakeStudy();
+    vi.spyOn(transport, "send").mockImplementation(fake.send);
+    const user = userEvent.setup();
+    render(<StudyView onGoToSources={() => undefined} />);
+    await screen.findByRole("heading", { name: "One check" });
+    await user.click(screen.getByRole("button", { name: "Ask about this item" }));
+    await user.click(screen.getByRole("button", { name: "Get a next step" }));
+    const created = fake.calls.find((call) => call.cmd === "ask-create");
+    expect(created?.params.content).toMatch(/Differentiate y/);
+    expect(created?.params.course_hint).toMatch(/MATH 1300/);
+    expect(await screen.findByRole("heading", { name: "The derivative is 2x." })).toBeInTheDocument();
+  });
 });

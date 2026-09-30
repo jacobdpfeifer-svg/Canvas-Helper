@@ -465,6 +465,26 @@ def _row_label(row: dict[str, str]) -> str:
     return assignment or course or "(none)"
 
 
+def _do_first_row(rows: list[dict[str, str]]) -> dict[str, str] | None:
+    """Choose the soonest meaningful open item, independent of table order."""
+    dated: list[tuple[date, int, dict[str, str]]] = []
+    for index, row in enumerate(rows):
+        due = _parse_date(row.get("due"))
+        if due is None:
+            continue
+        try:
+            points = int(float(str(row.get("points") or "0").replace(",", "")))
+        except ValueError:
+            points = 0
+        dated.append((due, -points, row))
+    meaningful = [item for item in dated if item[1] <= -10]
+    candidates = meaningful or dated
+    if candidates:
+        candidates.sort(key=lambda item: (item[0], item[1]))
+        return candidates[0][2]
+    return rows[0] if rows else None
+
+
 def _is_quiz(row: dict[str, str]) -> bool:
     blob = " ".join(
         (
@@ -572,7 +592,7 @@ def build_teach_hint(
     fmt, because = resolve_format(profile.practice_format, prior, reply=reply)
 
     rows = _parse_md_table(week_md)
-    do_row = rows[0] if rows else None
+    do_row = _do_first_row(rows)
     do_first = _row_label(do_row) if do_row else "(none)"
     from .learn_loop import due_reviews, why_due
 

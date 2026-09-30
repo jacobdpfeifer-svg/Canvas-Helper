@@ -2,14 +2,21 @@ export function fmtWhen(iso: string | null | undefined, now: Date = new Date()):
   if (!iso) return "";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const time = new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: zone,
+    timeZoneName: "short",
+  }).format(date);
+  const labeled = `${time} (${zone})`;
   const sameDay = date.toDateString() === now.toDateString();
-  const time = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(date);
-  if (sameDay) return `today ${time}`;
+  if (sameDay) return `today ${labeled}`;
   const tomorrow = new Date(now);
   tomorrow.setDate(now.getDate() + 1);
-  if (date.toDateString() === tomorrow.toDateString()) return `tomorrow ${time}`;
-  const day = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(date);
-  return `${day} ${time}`;
+  if (date.toDateString() === tomorrow.toDateString()) return `tomorrow ${labeled}`;
+  const day = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric", timeZone: zone }).format(date);
+  return `${day} ${labeled}`;
 }
 
 export function fmtSeconds(total: number): string {

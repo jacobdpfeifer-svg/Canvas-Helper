@@ -91,7 +91,7 @@ const ADMIN_TOOL_NAMES = [
     slug: "gradebook",
   },
   {
-    re: /calendar\s*feed|ical|subscribe.{0,24}calendar/i,
+    re: /\bcalendar\s*feed\b|\bical\b|\.ics\b|subscribe.{0,24}\bcalendar\b/i,
     name: "Calendar feed",
     slug: "calendar-feed",
   },
@@ -537,7 +537,7 @@ export function formatCatalogTable(rows) {
   return [
     header,
     ...rows.map((r) => {
-      const due = r.due ? String(r.due).replace("T", " ").slice(0, 16) : "";
+      const due = formatDueForDisplay(r.due);
       const status = r.complete ? "complete" : "open";
       return `| ${escCell(r.title)} | ${escCell(due)} | ${escCell(r.points)} | ${escCell(
         r.type
@@ -555,9 +555,7 @@ export function formatCheckpoints(rows) {
   }
   return cps
     .map((r) => {
-      const due = r.due
-        ? String(r.due).replace("T", " ").slice(0, 16)
-        : "undated";
+      const due = r.due ? formatDueForDisplay(r.due) : "undated";
       const pts = r.points != null && r.points !== "" ? `${r.points} pts` : "points TBD";
       return `- **${r.title}** — due ${due}; ${pts} (${r.type})`;
     })
@@ -602,8 +600,24 @@ function parseMetaField(existing, label) {
   if (!m) return "";
   const value = m[1].trim();
   if (!value || value.startsWith("##")) return "";
-  if (label === "Sections" && /^Canvas URL:?$/i.test(value)) return "";
+  if (/^(?:Sections|Canvas URL|Primary instructor\(s\)|TA\(s\)|Syllabus hash):?$/i.test(value)) return "";
+  if (/(?:Canvas URL|Primary instructor\(s\)|TA\(s\)|Syllabus hash):/i.test(value)) return "";
   return value;
+}
+
+/** Render an ISO instant in the school's local timezone, never as raw UTC. */
+export function formatDueForDisplay(value, timeZone = school().timezone) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(date);
 }
 
 function cleanSectionBody(body, heading) {
@@ -1069,10 +1083,10 @@ export function mergeCourseFileContent({
   const primaryInstructors =
     syncMeta.primaryInstructors || parseMetaField(existing, "Primary instructor(s)");
   const tas = syncMeta.tas || parseMetaField(existing, "TA(s)");
-  const syllabusHashValue =
-    syncMeta.syllabusHash ||
-    (syncMeta.syllabusSynced && !syncMeta.syllabusPlain ? "(none)" : "") ||
-    parseMetaField(existing, "Syllabus hash");
+  const syllabusHashValue = Object.prototype.hasOwnProperty.call(syncMeta, "syllabusHash")
+    ? syncMeta.syllabusHash
+    : (syncMeta.syllabusSynced && !syncMeta.syllabusPlain ? "(none)" : "") ||
+      parseMetaField(existing, "Syllabus hash");
   const policyPages = syncMeta.policyPages ?? null;
   const agentPolicyBlock =
     syncMeta.syllabusPlain != null
@@ -1268,8 +1282,11 @@ export function detectExternalTool(title, type, description = "", points = "") {
     };
   }
 
+  const externalSurface =
+    typeStr === "external_tool" ||
+    /https?:\/\/[^\s<]*(?:calendar|\.ics|cglink|campusgroups|gradebook)/i.test(blob);
   for (const entry of ADMIN_TOOL_NAMES) {
-    if (entry.re.test(blob)) {
+    if (externalSurface && entry.re.test(blob)) {
       return { name: entry.name, slug: entry.slug, bucket: "A" };
     }
   }

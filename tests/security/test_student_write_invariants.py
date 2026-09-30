@@ -12,13 +12,7 @@ import pytest
 from fastmcp import FastMCP
 
 from canvas_mcp.core.config import get_config, reset_config
-from canvas_mcp.core.course_policy import (
-    assert_no_identity_override,
-    check_student_write_allowed,
-    get_course_policy,
-    parse_policy_body,
-    reset_policy_cache,
-)
+from canvas_mcp.core.course_policy import assert_no_identity_override
 from canvas_mcp.tools.student_write import register_student_write_tools
 
 ALL_WRITE_TOOLS = "submit_assignment,comment_on_my_submission,mark_module_item_done"
@@ -54,10 +48,8 @@ def get_tools(**env):
 @pytest.fixture(autouse=True)
 def _clean_state():
     reset_config()
-    reset_policy_cache()
     yield
     reset_config()
-    reset_policy_cache()
 
 
 class TestNoIdentityOverride:
@@ -108,7 +100,7 @@ class TestNoIdentityOverride:
         See docs/handoff/canvas-focus-pivot-2026-09-11.md.
         """
         tools = get_tools(
-            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS, COURSE_AGENT_POLICY_ENABLED="false"
+            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS
         )
         assignment = {
             "id": 42, "name": "Essay", "submission_types": ["online_text_entry"],
@@ -145,7 +137,7 @@ class TestNoIdentityOverride:
         the next Bucket-A connector write that needs it.
         """
         tools = get_tools(
-            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS, COURSE_AGENT_POLICY_ENABLED="false"
+            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS
         )
 
         async def responder(method, endpoint, **kwargs):
@@ -340,7 +332,7 @@ class TestHostedFileIngress:
         their own Canvas submission.
         """
         tools = get_tools(
-            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS, COURSE_AGENT_POLICY_ENABLED="false"
+            STUDENT_WRITE_TOOLS=ALL_WRITE_TOOLS
         )
         assignment = {
             "id": 42, "name": "E", "submission_types": ["online_upload"],
@@ -364,375 +356,6 @@ class TestHostedFileIngress:
         assert not [c for c in request.call_args_list if c.args[0] == "post"]
 
 
-class TestPolicyParsing:
-    """A policy only grants when it definitively says so."""
-
-    def test_deny_is_parsed(self):
-        assert parse_policy_body("agent_writes: deny").allow_writes is False
-
-    def test_allow_is_parsed(self):
-        policy = parse_policy_body("agent_writes: allow")
-        assert policy.allow_writes is True
-        assert policy.allow_tools is None
-
-    def test_allow_can_narrow_to_named_tools(self):
-        policy = parse_policy_body(
-            "agent_writes: allow\nallow_tools: submit_assignment"
-        )
-        assert policy.allow_tools == frozenset({"submit_assignment"})
-
-    def test_survives_canvas_rich_text_markup(self):
-        policy = parse_policy_body("<p>agent_writes: allow</p><p>note: go ahead</p>")
-        assert policy.allow_writes is True
-        assert policy.note == "go ahead"
-
-    def test_a_later_deny_is_never_discarded(self):
-        """An appended revocation must not be swallowed by an earlier allow.
-
-        Keeping only the first occurrence of a key would let an instructor who
-        adds "agent_writes: deny" below an existing "agent_writes: allow" have
-        their revocation silently ignored, which is the worst direction for this
-        to fail.
-        """
-        policy = parse_policy_body("agent_writes: allow\nagent_writes: deny")
-        assert policy.allow_writes is False
-        assert policy.source == "course_artifact_conflict"
-
-    def test_conflict_denies_in_either_order(self):
-        assert parse_policy_body(
-            "agent_writes: deny\nagent_writes: allow"
-        ).allow_writes is False
-
-    def test_repeating_the_same_directive_is_not_a_conflict(self):
-        policy = parse_policy_body("agent_writes: allow\nagent_writes: allow")
-        assert policy.allow_writes is True
-
-    def test_conflicting_allow_tools_denies(self):
-        policy = parse_policy_body(
-            "agent_writes: allow\n"
-            "allow_tools: submit_assignment\n"
-            "allow_tools: mark_module_item_done"
-        )
-        assert policy.allow_writes is False
-        assert policy.source == "course_artifact_conflict"
-
-    def test_present_but_empty_allow_tools_denies(self):
-        """The most restrictive directive must not become the least restrictive.
-
-        `tools or None` collapsed an empty allowlist into "no narrowing", i.e.
-        every operator-enabled tool. An instructor who wrote `allow_tools:` and
-        stopped, or deliberately named nothing, would have been granting
-        everything.
-        """
-        policy = parse_policy_body("agent_writes: allow\nallow_tools:")
-        assert policy.allow_writes is False
-        assert policy.source == "course_artifact_empty_allowlist"
-
-    def test_omitted_allow_tools_means_no_narrowing(self):
-        """Absent is different from present-but-empty."""
-        policy = parse_policy_body("agent_writes: allow")
-        assert policy.allow_writes is True
-        assert policy.allow_tools is None
-
-    def test_malformed_policy_denies(self):
-        """A typo must never become a grant."""
-        assert parse_policy_body("agent_writes: yes please").allow_writes is False
-        assert parse_policy_body("total gibberish").allow_writes is False
-        assert parse_policy_body("").allow_writes is False
-
-
-class TestPolicyResolution:
-    """Failure modes must all fail closed, except a definitively absent policy."""
-
-    @pytest.mark.asyncio
-    async def test_read_error_denies_even_when_default_is_allow(self):
-        """A Canvas outage must not silently grant writes everywhere."""
-        with patch.dict(
-            "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": "allow"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"error": "HTTP error: 500"}),
-            ):
-                policy = await get_course_policy("123")
-        assert policy.allow_writes is False
-        assert policy.source == "read_error"
-
-    @pytest.mark.asyncio
-    async def test_absent_policy_uses_configured_default(self):
-        for posture, expected in (("allow", True), ("deny", False)):
-            reset_policy_cache()
-            with patch.dict(
-                "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": posture}, clear=False
-            ):
-                reset_config()
-                with patch(
-                    "canvas_mcp.core.course_policy.make_canvas_request",
-                    new=AsyncMock(return_value={"syllabus_body": "<p>Welcome!</p>"}),
-                ):
-                    policy = await get_course_policy("123")
-            assert policy.allow_writes is expected
-            assert policy.source == "default"
-
-    @pytest.mark.asyncio
-    async def test_default_posture_is_deny(self):
-        reset_config()
-        assert get_config().course_agent_policy_default == "deny"
-
-    @pytest.mark.asyncio
-    async def test_the_syllabus_is_the_only_carrier(self):
-        """There is deliberately no way to select a weaker policy carrier.
-
-        A course-page carrier was implemented and then removed: editing_roles
-        describes who may edit a page NOW, not who wrote it, so a student who
-        can create pages could author the policy and lock it teacher-only
-        afterwards. Authorship cannot be established from a student's own token,
-        so a page can never be trustworthy here however it is screened. This
-        test exists to keep that option from being reintroduced as a config knob.
-        """
-        reset_config()
-        config = get_config()
-        assert not hasattr(config, "course_agent_policy_source")
-        assert not hasattr(config, "course_agent_policy_page")
-
-    @pytest.mark.asyncio
-    async def test_policy_is_read_from_the_course_syllabus(self):
-        reset_policy_cache()
-        seen = {}
-
-        async def recorder(method, endpoint, **kwargs):
-            seen["endpoint"] = endpoint
-            seen["params"] = kwargs.get("params")
-            return {"syllabus_body": "agent_writes: allow"}
-
-        with patch.dict(
-            "os.environ", {"STUDENT_WRITE_TOOLS": ALL_WRITE_TOOLS}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request", new=recorder
-            ):
-                policy = await get_course_policy("123")
-
-        assert policy.allow_writes is True
-        assert seen["endpoint"] == "/courses/123"
-        assert "syllabus_body" in seen["params"]["include[]"]
-        assert "pages" not in seen["endpoint"]
-
-
-class TestErrorClassification:
-    """Only a real 404 may be read as "no policy artifact"."""
-
-    @pytest.mark.parametrize(
-        "error_message",
-        [
-            "HTTP error: 500, Details: {'message': 'upstream 404 from origin'}",
-            "HTTP error: 403",
-            "HTTP error: 429",
-            "Request failed: connection reset after 404 retries",
-            "Max retries exceeded",
-        ],
-    )
-    @pytest.mark.asyncio
-    async def test_non_404_failures_still_deny_under_permissive_default(
-        self, error_message
-    ):
-        """A substring test for "404" would turn a 500 into a grant."""
-        reset_policy_cache()
-        with patch.dict(
-            "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": "allow"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"error": error_message}),
-            ):
-                policy = await get_course_policy("123")
-        assert policy.allow_writes is False
-        assert policy.source == "read_error"
-
-    @pytest.mark.asyncio
-    async def test_read_errors_are_never_cached(self):
-        """One bad caller must not deny writes for a whole course.
-
-        A read error reflects the caller's request (expired token, not enrolled,
-        transient failure), not a property of the course. Caching it under the
-        course id alone would let any caller block every legitimate student in
-        that course for a full deny TTL.
-        """
-        from canvas_mcp.core.course_policy import _policy_cache
-
-        reset_policy_cache()
-        with patch.dict(
-            "os.environ", {"STUDENT_WRITE_TOOLS": ALL_WRITE_TOOLS}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"error": "HTTP error: 401"}),
-            ):
-                denied = await get_course_policy("123")
-            assert denied.allow_writes is False
-            assert "123" not in _policy_cache, "read error poisoned the cache"
-
-            # A legitimate caller immediately afterwards sees the real policy.
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(
-                    return_value={"syllabus_body": "agent_writes: allow"}
-                ),
-            ):
-                policy = await get_course_policy("123")
-        assert policy.allow_writes is True
-
-    @pytest.mark.asyncio
-    async def test_inaccessible_course_denies_and_is_not_cached(self):
-        """A 404 on the course means this caller cannot see it, not "no policy".
-
-        Caching that as an absence would let one caller without access install a
-        global verdict, and under a permissive default that verdict would
-        override an instructor's explicit denial.
-        """
-        from canvas_mcp.core.course_policy import _policy_cache
-
-        reset_policy_cache()
-        with patch.dict(
-            "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": "allow"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"error": "HTTP error: 404"}),
-            ):
-                policy = await get_course_policy("999")
-            assert policy.allow_writes is False
-            assert "999" not in _policy_cache
-
-            # An instructor's actual denial is what a real student then sees.
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(
-                    return_value={"syllabus_body": "agent_writes: deny"}
-                ),
-            ):
-                real = await get_course_policy("999")
-        assert real.allow_writes is False
-        assert real.source == "course_artifact"
-
-    @pytest.mark.asyncio
-    async def test_unmarked_syllabus_is_a_cacheable_absence(self):
-        """A successful course read with no marker IS caller-independent."""
-        from canvas_mcp.core.course_policy import _policy_cache
-
-        reset_policy_cache()
-        with patch.dict(
-            "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": "deny"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"syllabus_body": "<p>Welcome</p>"}),
-            ):
-                policy = await get_course_policy("555")
-        assert policy.allow_writes is False
-        assert policy.source == "default"
-        assert "555" in _policy_cache
-
-    @pytest.mark.asyncio
-    async def test_syllabus_mode_404_denies_rather_than_assuming_absence(self):
-        """Deliberately stricter than an earlier version of this test.
-
-        In syllabus mode the request is for the COURSE, so a 404 means this
-        caller cannot see the course — not that the course states no policy.
-        Reading it as an absence would, under a permissive default, hand a
-        caller without access an allow (and cache it for everyone).
-        """
-        reset_policy_cache()
-        with patch.dict(
-            "os.environ", {"COURSE_AGENT_POLICY_DEFAULT": "allow"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(return_value={"error": "HTTP error: 404"}),
-            ):
-                policy = await get_course_policy("123")
-        assert policy.allow_writes is False
-        assert policy.source == "read_error"
-
-
-class TestLayering:
-    """A course artifact can restrict within the operator ceiling, never past it."""
-
-    @pytest.mark.asyncio
-    async def test_course_cannot_enable_a_tool_the_operator_disabled(self):
-        with patch.dict(
-            "os.environ", {"STUDENT_WRITE_TOOLS": "comment_on_my_submission"}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(
-                    return_value={
-                        "syllabus_body": "agent_writes: allow\n"
-                                         "allow_tools: submit_assignment"
-                    }
-                ),
-            ):
-                allowed, reason = await check_student_write_allowed(
-                    "123", "submit_assignment"
-                )
-        assert allowed is False
-        assert "STUDENT_WRITE_TOOLS" in reason
-
-    @pytest.mark.asyncio
-    async def test_course_can_restrict_within_the_ceiling(self):
-        with patch.dict(
-            "os.environ", {"STUDENT_WRITE_TOOLS": ALL_WRITE_TOOLS}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(
-                    return_value={
-                        "syllabus_body": "agent_writes: allow\n"
-                                         "allow_tools: comment_on_my_submission"
-                    }
-                ),
-            ):
-                allowed_comment, _ = await check_student_write_allowed(
-                    "123", "comment_on_my_submission"
-                )
-                allowed_submit, reason = await check_student_write_allowed(
-                    "123", "submit_assignment"
-                )
-        assert allowed_comment is True
-        assert allowed_submit is False
-        assert "not 'submit_assignment'" in reason
-
-    @pytest.mark.asyncio
-    async def test_course_deny_blocks_an_operator_enabled_tool(self):
-        with patch.dict(
-            "os.environ", {"STUDENT_WRITE_TOOLS": ALL_WRITE_TOOLS}, clear=False
-        ):
-            reset_config()
-            with patch(
-                "canvas_mcp.core.course_policy.make_canvas_request",
-                new=AsyncMock(
-                    return_value={
-                        "syllabus_body": "agent_writes: deny\n"
-                                         "note: Please submit in Canvas directly."
-                    }
-                ),
-            ):
-                allowed, reason = await check_student_write_allowed(
-                    "123", "submit_assignment"
-                )
-        assert allowed is False
-        assert "Please submit in Canvas directly." in reason
-
-
 class TestModuleDoneConfirmationGuard:
     """mark_module_item_done must not PUT without a redeemed confirmation token."""
 
@@ -743,7 +366,6 @@ class TestModuleDoneConfirmationGuard:
         _MODULE_DONE_GUARD.reset()
         tools = get_tools(
             STUDENT_WRITE_TOOLS="mark_module_item_done",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         calls = []
 

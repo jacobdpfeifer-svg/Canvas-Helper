@@ -17,6 +17,11 @@
     });
 
   send({ type: "hello" });
+  chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    if (msg?.type !== "get_selection") return false;
+    sendResponse({ ok: true, text: (window.getSelection()?.toString() || "").trim().slice(0, 8000) });
+    return true;
+  });
   if (location.pathname !== "/" || document.getElementById("productname-stage")) return;
 
   const fmt = await import(chrome.runtime.getURL("lib/format.js"));

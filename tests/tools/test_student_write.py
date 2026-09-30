@@ -18,7 +18,6 @@ import pytest
 from fastmcp import FastMCP
 
 from canvas_mcp.core.config import reset_config
-from canvas_mcp.core.course_policy import reset_policy_cache
 from canvas_mcp.tools.student_write import (
     _MODULE_DONE_GUARD,
     register_student_write_tools,
@@ -57,11 +56,9 @@ def get_tools(**env):
 @pytest.fixture(autouse=True)
 def _clean_state():
     reset_config()
-    reset_policy_cache()
     _MODULE_DONE_GUARD.reset()
     yield
     reset_config()
-    reset_policy_cache()
     _MODULE_DONE_GUARD.reset()
 
 
@@ -114,7 +111,6 @@ class TestSubmitAssignment:
     async def test_preview_never_submits(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -150,7 +146,6 @@ class TestSubmitAssignment:
     async def test_preview_includes_points_possible(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -174,7 +169,6 @@ class TestSubmitAssignment:
     async def test_quiz_assignment_blocked(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -199,7 +193,6 @@ class TestSubmitAssignment:
     async def test_group_assignment_refused_even_for_preview(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -219,7 +212,6 @@ class TestSubmitAssignment:
     async def test_rejects_type_the_assignment_does_not_accept(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -239,7 +231,6 @@ class TestSubmitAssignment:
     async def test_unsupported_submission_type_rejected(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         result = await tools["submit_assignment"](
             course_identifier="TEST", assignment_id=42,
@@ -251,7 +242,6 @@ class TestSubmitAssignment:
     async def test_long_essay_is_not_truncated_in_the_preview(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         essay = "Paragraph. " * 300  # well past any excerpt limit
         with patch(
@@ -273,7 +263,6 @@ class TestSubmitAssignment:
     async def test_invalid_base64_rejected(self):
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -299,7 +288,6 @@ class TestSubmitAssignment:
 
         tools = get_tools(
             STUDENT_WRITE_TOOLS="submit_assignment",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
         with patch(
             "canvas_mcp.tools.student_write.get_course_id",
@@ -335,7 +323,6 @@ class TestMarkModuleItemDone:
     def _tools(self):
         return get_tools(
             STUDENT_WRITE_TOOLS="mark_module_item_done",
-            COURSE_AGENT_POLICY_ENABLED="false",
         )
 
     @staticmethod

@@ -29,21 +29,41 @@ function courseLabel(item) {
   return item.course_code || item.course_name || null;
 }
 
-/** Next meaningful action: soonest open item due in the next 7 days, else newest missing. */
+const MEANINGFUL_POINTS = 10;
+
+function pointsOf(item) {
+  const raw = item.points_possible ?? item.points ?? 0;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : 0;
+}
+
+/** Same order as study ask ranking: meaningful points, then soonest due, then higher points. */
+function rankPool(pool) {
+  const meaningful = pool.filter((item) => pointsOf(item) >= MEANINGFUL_POINTS);
+  const chosen = (meaningful.length ? meaningful : pool).slice();
+  chosen.sort((a, b) => {
+    const due = t(a.effective_due_at) - t(b.effective_due_at);
+    if (due !== 0) return due;
+    return pointsOf(b) - pointsOf(a);
+  });
+  return chosen;
+}
+
+/** Next meaningful action: open items due in the next 7 days, else recent missing work. */
 export function pickNextStep(items, { now, skipCosts = {}, events = [] }) {
   const open = (items || []).filter((i) => i.object_type !== "calendar_event" && isOpen(i));
-  const upcoming = open
-    .filter((i) => {
+  const upcoming = rankPool(
+    open.filter((i) => {
       const due = t(i.effective_due_at);
       return due != null && due >= now && due <= now + 7 * DAY;
     })
-    .sort((a, b) => t(a.effective_due_at) - t(b.effective_due_at));
+  );
   let pick = upcoming[0];
   let why = pick ? "due_soon" : null;
   if (!pick) {
-    const missing = open
-      .filter((i) => i.submission_state === "missing" || (t(i.effective_due_at) != null && t(i.effective_due_at) < now && t(i.effective_due_at) > now - 14 * DAY))
-      .sort((a, b) => t(b.effective_due_at) - t(a.effective_due_at));
+    const missing = rankPool(
+      open.filter((i) => i.submission_state === "missing" || (t(i.effective_due_at) != null && t(i.effective_due_at) < now && t(i.effective_due_at) > now - 14 * DAY))
+    );
     pick = missing[0];
     why = pick ? "missing" : null;
   }

@@ -188,6 +188,8 @@ async function buildView() {
 }
 
 function pickAssignment(a) {
+  const types = Array.isArray(a.submission_types) ? a.submission_types.map((t) => String(t)).slice(0, 8) : [];
+  const courseCode = typeof a.course_code === "string" && !/^\d+$/.test(a.course_code) ? a.course_code.slice(0, 40) : "";
   return {
     id: a.id,
     course_id: a.course_id,
@@ -196,6 +198,11 @@ function pickAssignment(a) {
     points_possible: a.points_possible,
     html_url: a.html_url,
     description: typeof a.description === "string" ? a.description.slice(0, 20000) : "",
+    submission_types: types,
+    is_quiz_assignment: Boolean(a.is_quiz_assignment) || types.includes("online_quiz"),
+    external_tool: types.includes("external_tool") || Boolean(a.external_tool_tag_attributes),
+    proctored: Boolean(a.proctored || a.require_lockdown_browser),
+    course_code: courseCode,
     rubric: (Array.isArray(a.rubric) ? a.rubric : []).slice(0, 40).map((c) => ({
       id: c.id,
       description: c.description,
@@ -256,6 +263,39 @@ async function handleMessage(msg, sender) {
       return buildView();
     case "poll_now":
       return poll("manual");
+    case "queue_ask": {
+      let selection = "";
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        if (tab?.id) {
+          const picked = await chrome.tabs.sendMessage(tab.id, { type: "get_selection" });
+          if (typeof picked?.text === "string") selection = picked.text.trim();
+        }
+      } catch {
+        selection = "";
+      }
+      const content = (selection || String(msg.content || "")).trim().slice(0, 8000);
+      if (!content) return { ok: false, error: "empty_ask" };
+      const canvas = msg.canvas && typeof msg.canvas === "object" ? msg.canvas : {};
+      const reply = await callHost({
+        type: "queue_ask",
+        content_kind: selection ? "selection" : "source_ref",
+        content,
+        course_hint: String(msg.course_hint || "").slice(0, 200),
+        assignment_hint: String(msg.assignment_hint || canvas.title || "").slice(0, 300),
+        canvas: {
+          kind: String(canvas.kind || canvas.type || "assignment").slice(0, 64),
+          submission_types: Array.isArray(canvas.submission_types) ? canvas.submission_types.map(String).slice(0, 8) : [],
+          title: String(canvas.title || msg.assignment_hint || "").slice(0, 300),
+          due_at: typeof canvas.due_at === "string" ? canvas.due_at.slice(0, 64) : "",
+          points: Number(canvas.points || canvas.points_possible) || 0,
+          lti: Boolean(canvas.lti),
+          proctored: Boolean(canvas.proctored),
+        },
+      });
+      await noteHost(reply);
+      return reply || { ok: false, error: "host_missing" };
+    }
     case "queue_suggestion": {
       if (!validSuggestion(msg.suggestion)) return { ok: false, error: "invalid_suggestion" };
       const reply = await callHost({ type: "queue_calendar_suggestion", suggestion: msg.suggestion });

@@ -30,6 +30,7 @@ fn main() {
             "read_freshness",
             "read_work_surface",
             "read_course_map",
+            "read_course_colors",
             "read_grade_truth",
             "add_calendar_event",
             "dismiss_calendar_suggestion",

@@ -13,14 +13,10 @@ only, with no execution path and no confirmation-token flow to redeem:
 ``mark_module_item_done`` still executes for real — it is a private,
 self-only completion toggle with no visibility to anyone else, so it was not
 in scope of that pivot — but it uses ``ConfirmationGuard`` (preview →
-token → confirm) like other student-private writes. Two properties remain
-load-bearing across this file:
+token → confirm) like other student-private writes.
 
-1. **Operator ceiling.** A tool absent from ``STUDENT_WRITE_TOOLS`` is never
-   registered, so it never enters the MCP tool list. The default is empty.
-2. **Instructor agency.** Within that ceiling, a per-course policy can further
-   restrict even previewing, re-checked on every call. See
-   ``core/course_policy.py``.
+**Operator ceiling.** A tool absent from ``STUDENT_WRITE_TOOLS`` is never
+registered, so it never enters the MCP tool list. The default is empty.
 
 ``assert_no_identity_override`` (identity-override denylist for outbound
 write bodies) has no live call site left in this file — neither remaining
@@ -47,7 +43,6 @@ from mcp.types import ToolAnnotations
 from ..core.cache import get_course_id
 from ..core.client import make_canvas_request
 from ..core.config import get_config
-from ..core.course_policy import check_student_write_allowed
 from ..core.credentials import is_http_request_active
 from ..core.dates import format_date
 from ..core.file_validation import (
@@ -427,12 +422,6 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if not course_id:
                 return f"Error: Could not find course {course_identifier}"
 
-            allowed, reason = await check_student_write_allowed(
-                course_id, "submit_assignment"
-            )
-            if not allowed:
-                return f"❌ Submission blocked. {reason}"
-
             # Backstop for issue 239: never publish our provenance markers into
             # a submission body or its comment.
             if contains_fence_markers(body or "") or contains_fence_markers(comment or ""):
@@ -572,12 +561,6 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             if not course_id:
                 return f"Error: Could not find course {course_identifier}"
 
-            allowed, reason = await check_student_write_allowed(
-                course_id, "comment_on_my_submission"
-            )
-            if not allowed:
-                return f"❌ Comment blocked. {reason}"
-
             return (
                 "📋 Comment preview — this tool never posts it.\n\n"
                 f"Comment ({len(comment)} chars):\n{comment}\n\n"
@@ -606,12 +589,6 @@ def register_student_write_tools(mcp: FastMCP) -> None:
             course_id = await get_course_id(course_identifier)
             if not course_id:
                 return f"Error: Could not find course {course_identifier}"
-
-            allowed, reason = await check_student_write_allowed(
-                course_id, "mark_module_item_done"
-            )
-            if not allowed:
-                return f"❌ Update blocked. {reason}"
 
             item_endpoint = (
                 f"/courses/{course_id}/modules/{module_id}/items/{item_id}"

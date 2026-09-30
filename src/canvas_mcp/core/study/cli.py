@@ -113,6 +113,20 @@ def run_command(service: StudyService, cmd: str, params: dict[str, Any]) -> dict
         return service.ai_disconnect()
     if cmd == "ai-feedback":
         return service.ai_feedback(str(params["attempt_id"]), purpose=str(params.get("purpose") or "feedback"), regenerate=bool(params.get("regenerate")))
+    if cmd == "ask-create":
+        return service.ask_create(params)
+    if cmd == "ask-get":
+        return service.ask_get(str(params.get("input_id") or ""))
+    if cmd == "ask-current":
+        return service.ask_current()
+    if cmd == "ask-correct":
+        return service.ask_correct(str(params.get("input_id") or ""), params)
+    if cmd == "ask-mode":
+        return service.ask_mode(str(params.get("input_id") or ""), str(params.get("session_goal") or ""))
+    if cmd == "ask-rank":
+        return service.ask_rank(params)
+    if cmd == "ask-pending":
+        return service.ask_pending()
     if cmd.startswith("connectors-") or cmd.startswith("outlook-") or cmd.startswith("gcal-") or cmd == "context":
         return _connector_command(service, cmd, params)
     if cmd == "create-item":

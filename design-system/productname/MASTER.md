@@ -18,7 +18,7 @@ The interface should feel like a cross between:
 - **Nike:** decisive scale, compression, speed, crop, and a willingness to let one gesture or phrase dominate the frame.
 - **Abetka UA:** typographic identity with cultural specificity; letters are objects with history, not anonymous UI labels.
 - **Ellipsus:** human authorship, collaboration, and an open-ended creative surface rather than an AI transcript.
-- **Siri:** a responsive presence that appears as a field of light and motion, not a chatbot mascot.
+- **Siri:** a responsive presence that appears as a field of light and motion, not a chatbot mascot. Exception: **Blot** (§08), the one character, scoped to voice chrome and brand surfaces.
 - **Lusion / Depo Studio:** art-directed scenes, 3D or spatial cues, precise transitions, and a portfolio-like sense of reveal.
 
 The result is **quiet at rest, expressive in transition**. It should be recognizable in a still screenshot and unforgettable in use.
@@ -241,6 +241,17 @@ Use index language where it helps: `01 / 05`, `TODAY`, `NEXT`, `RETURN`, `PAUSED
 - Keep the underlying workspace usable while the signal is live.
 - Provide non-audio equivalents: live text, focus ring, visible status, and cancel action.
 
+### Blot — the voice character (amendment, 2026-09-30)
+
+Blot is a drop of the scene's ink with a fountain-pen nib tuft. It is the one exception to "not a mascot", within these limits:
+
+- **Where:** the voice sheet (temporary chrome), the extension side-panel header, onboarding and brand surfaces (icon, landing, merch). Never over or beside study prose, never on Home as a resident.
+- **Color:** one ink, `--accent`. Eyes, mouth, and nib are cut out of the ink so the surface shows through. Canvas course colours may fill it only while it works on that course, and they drain out after.
+- **Motion:** only for real voice state and audio level (the Pulse and Commit verbs). At rest it breathes and blinks; left alone it settles into a puddle. The done-hop and ink-ring stamp are the Commit beat, never confetti.
+- **Feelings:** curious, pleased, sleepy. Never sad, needy, or disappointed. No losable state (CLAUDE.md gamification rule).
+- **Access:** decorative to assistive tech; the sheet carries a text label, caption, and Stop/Close for every state. Reduced motion shows one still pose per state.
+- Engine and rules: `app/src/blot/`, [`docs/design/blot-animation-plan-2026-09-30.md`](../../docs/design/blot-animation-plan-2026-09-30.md).
+
 ## 09 — Motion grammar
 
 Motion communicates state, material, and attention.
@@ -333,6 +344,7 @@ These are design failures, not aesthetic preferences:
 - Celebration mechanics that feel like a game streak system.
 - Glass, blur, or animated texture behind 17px study prose.
 - Voice represented only by a microphone glyph or orb.
+- A second character, or Blot with limbs, pupils, gradients, glow, or a guilt-trip state.
 
 ## 13 — Accessibility and engineering
 

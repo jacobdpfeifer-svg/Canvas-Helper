@@ -248,6 +248,16 @@ button {
   outline-offset: 2px;
 }
 
+.pn-head {
+  display: flex;
+  align-items: flex-end;
+  padding: 8px 12px 0;
+}
+.pn-blot {
+  display: block;
+  cursor: pointer;
+}
+
 .pn-footer {
   display: flex;
   align-items: center;
