@@ -18,6 +18,10 @@ import { getSchoolConfig } from "./school-config.mjs";
  * @property {"A"} bucket           Only Bucket A may appear here (Bucket B forbidden)
  * @property {string} pluginDir     Repo-relative plugin directory
  * @property {string} [shim]        Optional browser/scripts/lib/*.mjs re-export path
+ * @property {"web"} surface        Transport. Only "web" (Playwright on the shared
+ *   browser/.auth profile). Device-automation harnesses (cell-use, Appium/
+ *   WebDriverAgent, mobile-mcp, agent-device, …) are not a registrable surface —
+ *   see plugins/README.md rule 7 and docs/handoff/device-automation-scope-2026-09-29.md.
  * @property {boolean} writeCapable Whether any action mutates the student account
  * @property {string} confirmationGuard
  *   `required-on-mcp-write` — MCP writes must use ConfirmationGuard
@@ -34,10 +38,32 @@ export const CONNECTOR_REGISTRY = Object.freeze([
     bucket: "A",
     pluginDir: "plugins/cu-boulder-campusgroups",
     shim: "browser/scripts/lib/campusgroups-session.mjs",
+    surface: "web",
     writeCapable: true,
     confirmationGuard: "required-on-mcp-write",
   },
 ]);
+
+/**
+ * Refuse registry entries the contract does not allow. Runs at module load so a
+ * bad entry fails every sync, not just the one that reaches it.
+ * @param {readonly ConnectorEntry[]} registry
+ */
+export function assertRegistryShape(registry) {
+  for (const c of registry) {
+    if (c.bucket !== "A") {
+      throw new Error(`connector ${c.id}: only Bucket A may be registered (got ${c.bucket})`);
+    }
+    if (c.surface !== "web") {
+      throw new Error(
+        `connector ${c.id}: surface "${c.surface}" is not allowed — only "web" (Playwright). ` +
+          "Device-automation harnesses are out of scope (plugins/README.md rule 7)."
+      );
+    }
+  }
+}
+
+assertRegistryShape(CONNECTOR_REGISTRY);
 
 /** @param {string} [schoolSlug] */
 export function listConnectorsForSchool(schoolSlug) {

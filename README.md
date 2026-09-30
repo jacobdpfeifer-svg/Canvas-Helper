@@ -42,6 +42,7 @@ When your school grants a PAT: same REST truth; MCP (`canvas-mcp-server`) is a n
 | `student-degree-progress` | Transfers + semester from USER.md + enrollments |
 | `student-instructor-profile` | How the professor grades |
 | `student-photo-intake` | Class photo capture intake |
+| `student-screen-coach` | Screenshot-guided next step in tools the student operates (never taps) |
 | `canvas-discussion-facilitator` | Draft discussions (never posts) |
 
 Enrollment lists come from `list_courses` / inbox sync — not hard-coded in skills.
