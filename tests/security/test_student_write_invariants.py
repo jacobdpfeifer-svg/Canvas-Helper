@@ -11,7 +11,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastmcp import FastMCP
 
-from canvas_mcp.core.config import get_config, reset_config
+from canvas_mcp.core.config import reset_config
 from canvas_mcp.core.course_policy import assert_no_identity_override
 from canvas_mcp.tools.student_write import register_student_write_tools
 

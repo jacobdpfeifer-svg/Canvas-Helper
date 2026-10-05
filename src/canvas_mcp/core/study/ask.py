@@ -136,7 +136,7 @@ def _canvas_meta(raw: Any) -> dict[str, Any]:
         types = []
     points = raw.get("points") if raw.get("points") is not None else raw.get("points_possible")
     try:
-        points_n = float(points) if points not in (None, "") else 0.0
+        points_n = float(points) if points is not None and points != "" else 0.0
     except (TypeError, ValueError):
         points_n = 0.0
     return {

@@ -1,0 +1,23 @@
+# Synced from Canvas enrollments (computed_* scores). Local GPA estimate only.
+synced_at: "2026-10-05"
+courses:
+  - code: "APPM2360"
+    name: "APPM 2360 Intro Diff Equations w/ Linear Algebra"
+    canvas_course_id: 7101
+    letter: "A-"
+    percent: 91.2
+  - code: "ASEN2401"
+    name: "ASEN 2401 Statics"
+    canvas_course_id: 7102
+    letter: "A"
+    percent: 95.0
+  - code: "ASEN2402"
+    name: "ASEN 2402 Thermodynamics"
+    canvas_course_id: 7103
+    letter: "B+"
+    percent: 88.1
+  - code: "ASEN2501"
+    name: "ASEN 2501 Introduction to Astronautics"
+    canvas_course_id: 7104
+    letter: ""
+    percent: 90.5

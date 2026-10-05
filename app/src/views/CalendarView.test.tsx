@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CalendarView } from "./CalendarView";
 
 const addCalendarEvent = vi.fn();
@@ -15,6 +15,16 @@ vi.mock("../ipc", () => ({
 }));
 
 describe("CalendarView", () => {
+  // Pin "now" to the morning of 2026-09-22: Homework 1 (16:00Z) is upcoming
+  // and the 2026-09-21 study block is past, independent of the wall clock.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-22T12:00:00Z"));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("loads the surface with a single IPC and writes a local event", async () => {
     readCalendarSurface.mockResolvedValue({
       events: [],

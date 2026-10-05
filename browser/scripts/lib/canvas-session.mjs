@@ -537,7 +537,7 @@ export function formatCatalogTable(rows) {
   return [
     header,
     ...rows.map((r) => {
-      const due = formatDueForDisplay(r.due);
+      const due = formatDueForSync(r.due);
       const status = r.complete ? "complete" : "open";
       return `| ${escCell(r.title)} | ${escCell(due)} | ${escCell(r.points)} | ${escCell(
         r.type
@@ -555,7 +555,7 @@ export function formatCheckpoints(rows) {
   }
   return cps
     .map((r) => {
-      const due = r.due ? formatDueForDisplay(r.due) : "undated";
+      const due = r.due ? formatDueForSync(r.due) : "undated";
       const pts = r.points != null && r.points !== "" ? `${r.points} pts` : "points TBD";
       return `- **${r.title}** — due ${due}; ${pts} (${r.type})`;
     })
@@ -618,6 +618,27 @@ export function formatDueForDisplay(value, timeZone = school().timezone) {
     minute: "2-digit",
     timeZoneName: "short",
   }).format(date);
+}
+
+/** Machine-readable local day carried invisibly beside the human display. */
+export function formatDueMachineToken(value, timeZone = school().timezone) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const byType = Object.fromEntries(parts.map(({ type, value: part }) => [type, part]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
+export function formatDueForSync(value, timeZone = school().timezone) {
+  const display = formatDueForDisplay(value, timeZone);
+  const day = formatDueMachineToken(value, timeZone);
+  return day ? `${display} <!-- due:${day} -->` : display;
 }
 
 function cleanSectionBody(body, heading) {

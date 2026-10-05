@@ -1,0 +1,82 @@
+{
+  "packet_id": "AVERY-ODE",
+  "version": 1,
+  "title": "Linear systems check (synthetic, Avery)",
+  "course": "APPM 2360 (synthetic)",
+  "provenance": "synthetic",
+  "zone": "America/Denver",
+  "sources": [
+    {
+      "id": "A-rule",
+      "locator": "AVERY-ODE \u00a7rule",
+      "text": "For x' = Ax with A = [[a, 0], [0, d]], the eigenvalues are a and d. The origin is a saddle when the eigenvalues have opposite signs."
+    },
+    {
+      "id": "A-scope",
+      "locator": "AVERY-ODE \u00a7scope",
+      "text": "Midterm 1 covers first-order linear systems and classifying the equilibrium at the origin."
+    }
+  ],
+  "objectives": [
+    {
+      "id": "classify-origin",
+      "label": "Classify the origin of a diagonal linear system"
+    }
+  ],
+  "items": [
+    {
+      "id": "AV-1",
+      "objective_id": "classify-origin",
+      "source_refs": [
+        "A-rule",
+        "A-scope"
+      ],
+      "kind": "procedural",
+      "stem": "For x' = Ax with A = [[3, 0], [0, -2]], give the product of the eigenvalues.",
+      "neutral_locator": "AVERY-ODE \u00a7rule",
+      "why": "Midterm 1 scope (AVERY-ODE \u00a7scope); one application of the rule.",
+      "fields": [
+        {
+          "id": "product",
+          "label": "Product of eigenvalues",
+          "checker": {
+            "type": "expression",
+            "accept": [
+              "-6"
+            ]
+          }
+        }
+      ],
+      "example": {
+        "title": "Rule from AVERY-ODE \u00a7rule",
+        "text": "A diagonal matrix's eigenvalues are its diagonal entries."
+      },
+      "hint": "Read the diagonal.",
+      "key": {
+        "product": "-6",
+        "explanation": "Eigenvalues 3 and -2; product -6 (opposite signs \u2192 saddle).",
+        "support_refs": [
+          "AVERY-ODE \u00a7rule"
+        ]
+      },
+      "feedback": {
+        "correct": "Correct \u2014 3 \u00d7 (\u22122).",
+        "partial": "Check the signs.",
+        "incorrect": "The eigenvalues are the diagonal entries 3 and \u22122."
+      },
+      "predicted_seconds": 90
+    }
+  ],
+  "exams": [
+    {
+      "id": "AV-exam",
+      "label": "APPM 2360 Midterm 1 (synthetic)",
+      "value": "known_instant",
+      "at": "2026-10-21T19:00:00",
+      "zone": "America/Denver",
+      "objective_scope": [
+        "classify-origin"
+      ]
+    }
+  ]
+}

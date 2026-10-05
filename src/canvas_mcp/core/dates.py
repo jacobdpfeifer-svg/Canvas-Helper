@@ -15,11 +15,40 @@ following conventions:
 """
 
 import datetime
+import re
 import sys
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 _tz_cache: dict[str, datetime.tzinfo] = {}
 _tz_warned: set[str] = set()
+_ISO_DAY_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+_HUMAN_DAY_RE = re.compile(
+    r"\b([A-Za-z]{3,9})\s+(\d{1,2})(?:,\s*(\d{4}))?\b"
+)
+
+
+def parse_day(value: str | None, *, default_year: int | None = None) -> datetime.date | None:
+    """Parse canonical sync due tokens and legacy human-readable due values."""
+    if not value or not str(value).strip():
+        return None
+    text = str(value).strip()
+    iso = _ISO_DAY_RE.search(text)
+    if iso:
+        try:
+            return datetime.date.fromisoformat(iso.group(1))
+        except ValueError:
+            pass
+    match = _HUMAN_DAY_RE.search(text)
+    if not match:
+        return None
+    year = int(match.group(3)) if match.group(3) else default_year
+    if year is None:
+        return None
+    try:
+        month = datetime.datetime.strptime(match.group(1)[:3], "%b").month
+        return datetime.date(year, month, int(match.group(2)))
+    except ValueError:
+        return None
 
 
 def _output_tz() -> datetime.tzinfo:

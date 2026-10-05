@@ -932,6 +932,21 @@ def test_reconcile_from_inbox_unambiguous_remap(tmp_path: Path) -> None:
     assert load_items(root)[0].checkpoint_due == "2026-10-05"
 
 
+def test_reconcile_from_inbox_reads_sync_display_token(tmp_path: Path) -> None:
+    root = _root(tmp_path)
+    courses = root / "inbox" / "courses"
+    courses.mkdir(parents=True, exist_ok=True)
+    (courses / "MATH.md").write_text(
+        "# MATH\n\nUpdated: 2026-10-05\n\n## Checkpoints\n\n"
+        "- **Midterm** — due Oct 14, 7:00 PM MDT <!-- due:2026-10-14 -->; 100 pts (quiz)\n",
+        encoding="utf-8",
+    )
+    add_item(root, course="MATH", claim="state the chain rule for composites", kind="declarative", checkpoint_due="2026-10-13", now=NOW)
+    result = reconcile_from_inbox(root, now=NOW)
+    assert result["updated"] == 1
+    assert load_items(root)[0].checkpoint_due == "2026-10-14"
+
+
 def test_reconcile_from_inbox_ambiguous_noop(tmp_path: Path) -> None:
     root = _root(tmp_path)
     courses = root / "inbox" / "courses"

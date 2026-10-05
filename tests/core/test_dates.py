@@ -76,3 +76,8 @@ def test_parse_date_preserves_explicit_offset():
     dt = dates.parse_date("2026-05-28T18:59:00-0500")
     assert dt is not None
     assert dt.utcoffset() == datetime.timedelta(hours=-5)
+
+
+def test_parse_day_reads_sync_token_and_legacy_display():
+    assert dates.parse_day("Oct 6, 11:59 PM MDT <!-- due:2026-10-06 -->") == datetime.date(2026, 10, 6)
+    assert dates.parse_day("Oct 6, 11:59 PM MDT", default_year=2026) == datetime.date(2026, 10, 6)

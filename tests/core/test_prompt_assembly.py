@@ -12,6 +12,7 @@ from canvas_mcp.core.prompt_assembly import (
     ToolListChanged,
     ToolSession,
     assemble_turn,
+    select_inbox_slice,
     tools_for_skill,
 )
 from canvas_mcp.core.skill_router import bundled_skills_dir, execute_intent, load_skill
@@ -263,3 +264,32 @@ def test_no_hand_assembled_chat_outside_prompt_assembly() -> None:
             if "ChatMessage(" in line or ".chat([" in line:
                 hits.append(f"{path}:{lineno}:{line.strip()}")
     assert hits == []
+
+
+def test_inbox_slice_carries_week_updated_line() -> None:
+    """_SESSION.md's >2-day staleness rule needs the Updated: date in the slice."""
+    week = (
+        "# Week ahead\n\nUpdated: 2026-09-30\n\n"
+        "| Course | Assignment | Due | Points | Type | Notes |\n"
+        "|--------|------------|-----|--------|------|-------|\n"
+        "| APPM 2360 | Problem Set 6 | Oct 6, 11:59 PM MDT | 30 | assignment | |\n"
+    )
+    volatile, _ = select_inbox_slice(week, "what should I do first")
+    assert "Updated: 2026-09-30" in volatile
+    assert "Problem Set 6" in volatile
+    empty, _ = select_inbox_slice("", "what should I do first")
+    assert "Updated:" not in empty
+
+
+def test_inbox_slice_filters_legacy_display_due_dates() -> None:
+    week = (
+        "# Week ahead\n\nUpdated: 2026-10-05\n\n"
+        "| Course | Assignment | Due | Points | Type | Notes |\n"
+        "|--------|------------|-----|--------|------|-------|\n"
+        "| APPM 2360 | Problem Set 6 | Oct 6, 11:59 PM MDT | 30 | assignment | |\n"
+        "| APPM 2360 | Midterm | Oct 14, 7:00 PM MDT | 100 | quiz | |\n"
+    )
+    volatile, method = select_inbox_slice(week, "what is due by 2026-10-06")
+    assert method == "metadata"
+    assert "Problem Set 6" in volatile
+    assert "Midterm" not in volatile

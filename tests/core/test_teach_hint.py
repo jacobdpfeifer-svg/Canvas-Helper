@@ -140,6 +140,7 @@ def test_teaching_skill_injects_hint_without_busting_prefix(tmp_path: Path) -> N
 def test_diagram_only_for_spatial_title(tmp_path: Path) -> None:
     root = _root(tmp_path)
     hint = render_teach_hint(root, "what should I do first", WEEK, now=NOW)
+    assert "chain_rule_composition" not in hint
     spatial_week = """| Course | Assignment | Due | Type | Notes |
 |--------|------------|-----|------|-------|
 | MATH 1300 | Chain rule set | 2026-09-20 | assignment | |
