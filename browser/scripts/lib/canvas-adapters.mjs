@@ -9,7 +9,7 @@ import {
   collectTruncationWarnings,
   escCell,
   filterDatedInWindow,
-  formatDueForDisplay,
+  formatDueForSync,
   resolveCourseFile,
   schoolLocalDay,
   shouldIncludeInWeekTable,
@@ -66,7 +66,7 @@ export function generateWeekMarkdown({ items, courses, health, daysAhead = 14, t
       ? openRows
           .map((r) => {
             const noteParts = buildWeekNoteParts(r);
-            return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(formatDueForDisplay(r.due, timezone))} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(noteParts.join("; "))} |`;
+            return `| ${escCell(r.course)} | ${escCell(r.title)} | ${escCell(formatDueForSync(r.due, timezone))} | ${escCell(r.points)} | ${escCell(r.type)} | ${escCell(noteParts.join("; "))} |`;
           })
           .join("\n")
       : "| | | | | | |";

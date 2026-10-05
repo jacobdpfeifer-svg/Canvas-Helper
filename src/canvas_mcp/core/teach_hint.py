@@ -18,6 +18,7 @@ from typing import Any
 
 import yaml
 
+from .dates import parse_day
 from .learning_profile import load_learning_profile, record_signal
 from .topics import match_concept_key
 
@@ -249,14 +250,8 @@ def _parse_iso(value: str | None) -> datetime | None:
     return parsed.astimezone(timezone.utc)
 
 
-def _parse_date(value: str | None) -> date | None:
-    if not value:
-        return None
-    token = str(value).strip()[:10]
-    try:
-        return date.fromisoformat(token)
-    except ValueError:
-        return None
+def _parse_date(value: str | None, default_year: int | None = None) -> date | None:
+    return parse_day(value, default_year=default_year)
 
 
 def _utcnow() -> datetime:
@@ -465,11 +460,11 @@ def _row_label(row: dict[str, str]) -> str:
     return assignment or course or "(none)"
 
 
-def _do_first_row(rows: list[dict[str, str]]) -> dict[str, str] | None:
+def _do_first_row(rows: list[dict[str, str]], default_year: int | None = None) -> dict[str, str] | None:
     """Choose the soonest meaningful open item, independent of table order."""
     dated: list[tuple[date, int, dict[str, str]]] = []
-    for index, row in enumerate(rows):
-        due = _parse_date(row.get("due"))
+    for row in rows:
+        due = _parse_date(row.get("due"), default_year)
         if due is None:
             continue
         try:
@@ -520,13 +515,13 @@ def _interleave(row: dict[str, str] | None) -> str:
     return "no"
 
 
-def _soonest_quiz(rows: list[dict[str, str]]) -> dict[str, str] | None:
+def _soonest_quiz(rows: list[dict[str, str]], default_year: int | None = None) -> dict[str, str] | None:
     dated: list[tuple[date, dict[str, str]]] = []
     undated: list[dict[str, str]] = []
     for row in rows:
         if not _is_quiz(row):
             continue
-        due = _parse_date(row.get("due"))
+        due = _parse_date(row.get("due"), default_year)
         if due is None:
             undated.append(row)
         else:
@@ -542,6 +537,7 @@ def _spacing_line(
     nudge: Nudge | None,
     *,
     now: datetime,
+    default_year: int | None = None,
     due_claims: list[str] | None = None,
 ) -> tuple[str, str | None]:
     if due_claims:
@@ -549,10 +545,10 @@ def _spacing_line(
         return f'surface due review "{first}" before the new Top-3', first
     if nudge is not None:
         return f'surface nudge "{nudge.prompt}" before the new Top-3', nudge.prompt
-    quiz = _soonest_quiz(rows)
+    quiz = _soonest_quiz(rows, default_year)
     if quiz is None:
         return "none", None
-    due = _parse_date(quiz.get("due"))
+    due = _parse_date(quiz.get("due"), default_year)
     if due is None:
         return "none", None
     gap = (due - now.date()).days
@@ -592,7 +588,9 @@ def build_teach_hint(
     fmt, because = resolve_format(profile.practice_format, prior, reply=reply)
 
     rows = _parse_md_table(week_md)
-    do_row = _do_first_row(rows)
+    updated = re.search(r"(?m)^Updated:\s*(\d{4})-", week_md or "")
+    default_year = int(updated.group(1)) if updated else None
+    do_row = _do_first_row(rows, default_year)
     do_first = _row_label(do_row) if do_row else "(none)"
     from .learn_loop import due_reviews, why_due
 
@@ -605,6 +603,7 @@ def build_teach_hint(
         rows,
         nudge,
         now=moment,
+        default_year=default_year,
         due_claims=[item.claim for item in due],
     )
 

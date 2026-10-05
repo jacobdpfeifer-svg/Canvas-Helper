@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
+from .dates import parse_day
 from .habit import streak_payload
 from .learn_loop import (
     render_coverage_clock,
@@ -239,7 +240,7 @@ def _row_text(row: dict[str, str]) -> str:
     )
 
 
-def _metadata_hits(row: dict[str, str], query: MetaQuery) -> int:
+def _metadata_hits(row: dict[str, str], query: MetaQuery, default_year: int | None = None) -> int:
     if not query.has_constraint:
         return 0
     hits = 0
@@ -253,8 +254,8 @@ def _metadata_hits(row: dict[str, str], query: MetaQuery) -> int:
     if query.course and _norm_course(query.course) in course:
         hits += 1
     if query.due_on_or_before:
-        due = (row.get("due") or "")[:10]
-        if due and due <= query.due_on_or_before:
+        due = parse_day(row.get("due"), default_year=default_year)
+        if due and due.isoformat() <= query.due_on_or_before:
             hits += 1
     if query.assignment_type:
         typ = (row.get("type") or "").lower()
@@ -265,13 +266,20 @@ def _metadata_hits(row: dict[str, str], query: MetaQuery) -> int:
     return hits
 
 
-def _render_rows(rows: list[dict[str, str]], *, title: str) -> str:
+_UPDATED_RE = re.compile(r"^Updated:\s*(\S.*?)\s*$", re.M)
+
+
+def _render_rows(
+    rows: list[dict[str, str]], *, title: str, updated: str | None = None
+) -> str:
+    # The week's Updated: line rides with the slice so the _SESSION.md
+    # "older than 2 days → sync" rule is checkable without the full file.
+    head = [f"## {title}", ""] + ([f"Updated: {updated}", ""] if updated else [])
     if not rows:
-        return f"## {title}\n\n(none)\n"
+        return "\n".join(head) + "\n(none)\n"
     headers = list(rows[0].keys())
     lines = [
-        f"## {title}",
-        "",
+        *head,
         "| " + " | ".join(headers) + " |",
         "| " + " | ".join("---" for _ in headers) + " |",
     ]
@@ -301,9 +309,20 @@ def select_inbox_slice(
             assignment_type=query.assignment_type,
             outcome=query.outcome,
         )
+    updated = _UPDATED_RE.search(week_md or "")
+    default_year = None
+    if updated:
+        year_match = re.match(r"(\d{4})", updated.group(1))
+        default_year = int(year_match.group(1)) if year_match else None
     week_rows = _parse_md_table(week_md)
-    picked, method = _narrow_rows(week_rows, trigger, query, embedder=embedder)
-    parts = [_render_rows(picked, title="Inbox slice")]
+    picked, method = _narrow_rows(
+        week_rows, trigger, query, embedder=embedder, default_year=default_year
+    )
+    parts = [
+        _render_rows(
+            picked, title="Inbox slice", updated=updated.group(1) if updated else None
+        )
+    ]
     if catalog_md:
         catalog_rows = _parse_md_table(catalog_md)
         if query.course:
@@ -322,11 +341,12 @@ def _narrow_rows(
     query: MetaQuery,
     *,
     embedder: EmbedFn | None,
+    default_year: int | None = None,
 ) -> tuple[list[dict[str, str]], str]:
     scores = [
         (hits, row)
         for row in rows
-        if (hits := _metadata_hits(row, query))
+        if (hits := _metadata_hits(row, query, default_year))
     ]
     winner, pool = structured_narrow(rows, scores)
     narrowed = bool(scores) and (winner is not None or len(pool) < len(rows))

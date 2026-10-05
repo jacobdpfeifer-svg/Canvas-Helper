@@ -108,7 +108,7 @@ def test_calendar_suggestion_goes_to_the_apps_list_once(tmp_path):
     assert first == {"ok": True, "queued": True}
     assert dup["duplicate"] is True
     assert bad["error"] == "invalid_window"
-    rows = [json.loads(l) for l in (tmp_path / "inbox" / "calendar-suggestions.jsonl").read_text(encoding="utf-8").splitlines()]
+    rows = [json.loads(line) for line in (tmp_path / "inbox" / "calendar-suggestions.jsonl").read_text(encoding="utf-8").splitlines()]
     assert len(rows) == 1
     assert rows[0]["source_message_id"].startswith("pn-fresh-")
     # Same contract app/src-tauri/src/calendar.rs reads.

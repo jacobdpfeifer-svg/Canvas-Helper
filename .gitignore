@@ -168,3 +168,6 @@ browser/node_modules/
 !docs/build/spatial-instrument/
 !docs/build/spatial-instrument/**
 /_candidate-b-integration/
+
+# Audit-time synthetic student roots (fake inbox data; never commit)
+var/

@@ -25,6 +25,7 @@ import {
   extractPrereqLanguage,
   formatPrereqSection,
   formatDueForDisplay,
+  formatDueForSync,
   writeGradesYaml,
   resolveCourseFile,
   fromAssignments,
@@ -57,6 +58,13 @@ describe("formatDueForDisplay", () => {
     assert.equal(
       formatDueForDisplay("2026-09-23T05:59:59Z", "America/Denver"),
       "Sep 22, 11:59 PM MDT"
+    );
+  });
+
+  it("carries an invisible canonical local day for sync consumers", () => {
+    assert.equal(
+      formatDueForSync("2026-09-23T05:59:59Z", "America/Denver"),
+      "Sep 22, 11:59 PM MDT <!-- due:2026-09-22 -->"
     );
   });
 });

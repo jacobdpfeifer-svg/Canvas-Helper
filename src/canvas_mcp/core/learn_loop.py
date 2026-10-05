@@ -23,6 +23,8 @@ from typing import Any
 
 import yaml
 
+from .dates import parse_day
+
 KIND_VALUES = ("declarative", "confusable", "procedural", "list", "workflow")
 TEACHABLE_KINDS = ("declarative", "confusable", "procedural", "list")
 OUTCOME_VALUES = ("miss", "partial", "hit", "skipped")
@@ -156,13 +158,7 @@ def _parse_iso(value: str | None) -> datetime | None:
 
 
 def _parse_date(value: str | None) -> date | None:
-    if not value:
-        return None
-    token = str(value).strip()[:10]
-    try:
-        return date.fromisoformat(token)
-    except ValueError:
-        return None
+    return parse_day(value)
 
 
 def _item_id(course: str, claim: str, assignment_id: str) -> str:
@@ -461,12 +457,11 @@ def reconcile_checkpoints(
     return updated
 
 
-_CHECKPOINT_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
-
-
 def _parse_checkpoint_dates(course_md: str) -> set[str]:
-    """YYYY-MM-DD tokens under ``## Checkpoints`` only."""
+    """Canonical checkpoint days under ``## Checkpoints`` only."""
     text = course_md or ""
+    updated = re.search(r"(?m)^Updated:\s*(\d{4})-", text)
+    default_year = int(updated.group(1)) if updated else None
     marker = "## Checkpoints"
     idx = text.find(marker)
     if idx < 0:
@@ -474,7 +469,11 @@ def _parse_checkpoint_dates(course_md: str) -> set[str]:
     after = text[idx + len(marker) :]
     next_heading = re.search(r"\n##\s+", after)
     body = after[: next_heading.start()] if next_heading else after
-    return {m.group(1) for m in _CHECKPOINT_DATE_RE.finditer(body)}
+    return {
+        parsed.isoformat()
+        for line in body.splitlines()
+        if (parsed := parse_day(line, default_year=default_year)) is not None
+    }
 
 
 def reconcile_from_inbox(

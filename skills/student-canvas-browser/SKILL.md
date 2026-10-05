@@ -85,6 +85,7 @@ Read only for Canvas MCP. No `submit_assignment` from this skill.
 
 - sync Canvas
 - canvas sync
+- SSO sync
 - update my canvas sync
 - sync my canvas
 - pull todo
