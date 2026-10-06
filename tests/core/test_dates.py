@@ -81,3 +81,10 @@ def test_parse_date_preserves_explicit_offset():
 def test_parse_day_reads_sync_token_and_legacy_display():
     assert dates.parse_day("Oct 6, 11:59 PM MDT <!-- due:2026-10-06 -->") == datetime.date(2026, 10, 6)
     assert dates.parse_day("Oct 6, 11:59 PM MDT", default_year=2026) == datetime.date(2026, 10, 6)
+
+
+def test_parse_day_skips_numbered_titles_before_the_due_day():
+    line = "- **Midterm 1** — due Oct 16, 7:00 PM MDT; 100 pts (quiz)"
+    assert dates.parse_day(line, default_year=2026) == datetime.date(2026, 10, 16)
+    assert dates.parse_day("Marathon 3 recap — due Sept 9", default_year=2026) == datetime.date(2026, 9, 9)
+    assert dates.parse_day("Quiz 3 — undated", default_year=2026) is None

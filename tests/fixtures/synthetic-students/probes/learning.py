@@ -63,11 +63,17 @@ def main() -> int:
     check("ambiguous exam move is skipped, not guessed", res["updated"] == 0 and any(s["reason"] == "ambiguous checkpoint move" for s in res["skipped"]),
           json.dumps(res["skipped"]))
 
-    # --- exam move in the format sync actually writes (formatCheckpoints → formatDueForDisplay)
+    # --- exam move in a legacy course file (display only, written before the due token existed)
     learn_loop.reconcile_checkpoints(root, [{"course": "ASEN 2402", "from_due": "2026-10-13", "to_due": "2026-10-14"}], now=NOW)
     set_checkpoints(root, "- **Midterm 1** — due Oct 16, 7:00 PM MDT; 100 pts (quiz)")
     res = learn_loop.reconcile_from_inbox(root, now=NOW)
-    check("[sync format] reconcile sees a moved exam written as 'Oct 16, 7:00 PM MDT'", res["updated"] >= 1,
+    check("[legacy format] reconcile sees a moved exam written as 'Oct 16, 7:00 PM MDT'", res["updated"] >= 1,
+          f"updated={res['updated']} remaps={res['remaps']} skipped={res['skipped']}")
+
+    # --- exam move in the format sync writes today (formatCheckpoints → formatDueForSync)
+    set_checkpoints(root, "- **Midterm 1** — due Oct 18, 7:00 PM MDT <!-- due:2026-10-18 -->; 100 pts (quiz)")
+    res = learn_loop.reconcile_from_inbox(root, now=NOW)
+    check("[sync format] reconcile sees a moved exam carrying the due token", res["updated"] >= 1,
           f"updated={res['updated']} remaps={res['remaps']} skipped={res['skipped']}")
 
     # --- habit: continuity is exposure only

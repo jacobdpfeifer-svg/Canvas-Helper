@@ -65,11 +65,15 @@ The implementation is in `core/dates.py`, `teach_hint.py`, `learn_loop.py`, `pro
 
 **D2 — RESOLVED.** The exam-move remap now honors the documented contract on real sync-shaped checkpoint text. The synthetic learning probe passes after the fix.
 
+*Re-verified 2026-10-06: only half resolved at commit `60d350b`.* Lines that carry the sync token remapped. The legacy fallback did not. `dates.parse_day` took the first `Word N` pair on the line, so in `**Midterm 1** — due Oct 16, …` it read "Midterm 1", rejected "Mid" as a month, and returned `None`. A numbered exam title in an untokened course file still remapped nothing, silently (`probes/learning.py` failed `updated=0, skipped=[]`). The committed unit test missed it because its title was a bare "Midterm" and its line also carried the token. Fixed: `parse_day` now scans every match and accepts exact month names only (`january`…`december`, three-letter forms, `sept`). New tests: `test_parse_day_skips_numbered_titles_before_the_due_day` and `test_reconcile_from_inbox_reads_legacy_display_with_numbered_title`. The probe now checks the legacy and token formats separately, and both pass (RUN-LOG R.3).
+
 `docs/architecture.md` says reconcile "remaps `checkpoint_due`/schedule when a synced exam/quiz date moves." The parser now recognizes the sync token and the legacy display fallback, and the reconciliation test covers a moved display-form checkpoint.
 
 **D3 — `python -m canvas_mcp…` fails in this checkout outside pytest.** *Medium for the next agent and for daemon calls from an iCloud checkout. Not a student-machine issue if the app ships its own interpreter.*
 
 iCloud sets `UF_HIDDEN` on `.venv/lib/python3.12/site-packages/_editable_impl_canvas_mcp.pth`, and Python 3.12 skips hidden `.pth` files. So `uv run python -m canvas_mcp.core.study …` raises `ModuleNotFoundError` even though pytest works (pytest goes through `conftest.py`). Every audit CLI here ran with `PYTHONPATH=src`. This is a sibling of the native-build EPERM issue documented for `scripts/native-mirror.sh`. Proposal: have `CLAUDE.md` Commands and any Tauri dev-mode spawn set `PYTHONPATH=src`, or run from the mirror.
+
+*Re-verified 2026-10-06: confirmed iCloud-only.* In the checkout the `.pth` file still shows `hidden` (`ls -lO`) and `python -m canvas_mcp.core.study --help` exits 1. In the native mirror (`scripts/native-mirror.sh`, `~/.cache/productname-build`), a fresh `uv venv` + `uv pip install -e .` leaves the same `.pth` file unflagged, and the same command exits 0 with no `PYTHONPATH` (RUN-LOG R.6). A student's Mac hits this only if the brain runs from an iCloud-synced folder. Still open for this checkout.
 
 **D4 — CI `mypy src/` cannot run once the `diagrams` extra is installed.** *Low.*
 
