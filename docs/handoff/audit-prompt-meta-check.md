@@ -22,7 +22,7 @@ Every audit pass so far in this repo has been run by an agent grading its own ho
    and, if changed in the audited range, the Tauri build:
    ```bash
    source "$HOME/.cargo/env"
-   cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
+   cd app/src-tauri && CARGO_TARGET_DIR=/tmp/kairos-tauri-target cargo check
    ```
    Compare against whatever counts the audited briefs claimed. Any regression is a finding against that pass, full stop — "the refactor was structurally right but broke three tests" is not a pass.
 5. **Check for scope violations.** Did any prior pass touch something on its own Escalate-only list instead of leaving it for a human? Did it restore anything from the permanently-out-of-scope list in `CLAUDE.md` (educator tools, hosted Azure, quiz-taking automation), even partially, even as scaffolding? That's a severity-max finding regardless of how it's framed in the brief.

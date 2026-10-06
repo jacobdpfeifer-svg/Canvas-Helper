@@ -145,7 +145,7 @@ async function assignmentView(ids) {
           )
         : el("p", {
             class: "pn-note",
-            text: ctx.hostState === "ok" ? "Not enough graded work to say yet." : "Connect the ProductName app on this Mac to see this.",
+            text: ctx.hostState === "ok" ? "Not enough graded work to say yet." : "Connect the Kairos app on this Mac to see this.",
           })
     )
   );
@@ -172,8 +172,8 @@ async function assignmentView(ids) {
         proctored: Boolean(a.proctored),
       },
     });
-    if (reply?.ok) ask.textContent = "Saved · open ProductName";
-    else if (!reply || reply.error === "host_missing") ask.textContent = "Connect the ProductName app, then try again";
+    if (reply?.ok) ask.textContent = "Saved · open Kairos";
+    else if (!reply || reply.error === "host_missing") ask.textContent = "Connect the Kairos app, then try again";
     else ask.textContent = "Couldn't save the question";
     if (!reply?.ok) ask.disabled = false;
   });
@@ -203,7 +203,7 @@ async function homeView() {
     out.push(el("h1", { class: "pn-title" }, link(next.title, next.url)));
     out.push(el("p", { class: "pn-sub", text: [next.course, next.due_at ? `due ${formatDue(next.due_at)}` : null].filter(Boolean).join(" · ") }));
   } else {
-    const title = view?.mode === "local" ? "Connect the ProductName app" : view?.mode === "pending" ? "Syncing your semester" : "Nothing due this week";
+    const title = view?.mode === "local" ? "Connect the Kairos app" : view?.mode === "pending" ? "Syncing your semester" : "Nothing due this week";
     out.push(el("h1", { class: "pn-title", text: title }));
   }
   out.push(el("p", { class: "pn-note", text: "Open an assignment in Canvas to see its checklist, what changed, and the cost of skipping." }));

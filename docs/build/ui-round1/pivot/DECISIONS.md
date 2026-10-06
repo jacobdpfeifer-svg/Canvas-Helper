@@ -10,7 +10,7 @@ Rejected UI-only polling of course files. Sync writes `inbox/study-sources/progr
 
 ## D-03 Stub Canvas for native/dev
 
-`PRODUCTNAME_STUB_CANVAS=1` makes check-session true, skips the SSO window, and emits progress from existing schema-2 JSON. Never used Jacob’s real inbox.
+`KAIROS_STUB_CANVAS=1` makes check-session true, skips the SSO window, and emits progress from existing schema-2 JSON. Never used Jacob’s real inbox.
 
 ## D-04 Course palette
 

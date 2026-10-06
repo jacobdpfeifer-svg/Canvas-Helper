@@ -1,6 +1,6 @@
 # Canvas SSO sync (browser)
 
-**Role:** authenticate with school SSO (cookies), then call the **same Canvas REST API** a personal access token would use. Write results into `{user_root}/inbox/` for the agent — same path as Python (`canvas_mcp.core.user_root`) and the Tauri shell: `DEV_USER_ROOT` if set, else OS app-support `ProductName/{PRODUCT_USER_ID||dev}/inbox/`. Sync prints the active path on every run.
+**Role:** authenticate with school SSO (cookies), then call the **same Canvas REST API** a personal access token would use. Write results into `{user_root}/inbox/` for the agent — same path as Python (`canvas_mcp.core.user_root`) and the Tauri shell: `DEV_USER_ROOT` if set, else OS app-support `Kairos/{PRODUCT_USER_ID||dev}/inbox/`. Sync prints the active path on every run.
 
 This is **not** a second product and not primarily a DOM scraper.
 

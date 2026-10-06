@@ -1,4 +1,4 @@
-# Workflows (ProductName student platform)
+# Workflows (Kairos student platform)
 
 Kept for local/CI hygiene:
 

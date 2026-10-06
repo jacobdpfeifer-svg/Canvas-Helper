@@ -1,6 +1,6 @@
 # Spatial Instrument: visual-language build
 
-> **Historical (executed 2026-09-18 as `be0eb3c`).** Visual direction has since moved to **Living Instrument** — [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) is the source of truth and its §14 migration order is the current work list. Do not re-run this prompt's token values.
+> **Historical (executed 2026-09-18 as `be0eb3c`).** Visual direction has since moved to **Living Instrument** — [`design-system/kairos/MASTER.md`](../../design-system/kairos/MASTER.md) is the source of truth and its §14 migration order is the current work list. Do not re-run this prompt's token values.
 
 Prepared September 18, 2026 from the owner brief [`docs/design/spatial-instrument-brief.md`](../design/spatial-instrument-brief.md). This is a **build execution prompt** for a coding agent with repository access — the same shape as [`ui-rebuild-round1-build-prompt.md`](./ui-rebuild-round1-build-prompt.md). Product/privacy boundaries in that prompt’s parent ([`student-beta-agent-build-prompt.md`](./student-beta-agent-build-prompt.md) §3 and §8) still apply and are not repeated here.
 
@@ -18,7 +18,7 @@ If he wants a visual pause after the tile: add “tile only, then stop.” If he
 
 1. **Worktree, always.** The iCloud checkout is dirty with student-beta work and two agents have already clobbered each other in it. Before any edit:
    ```bash
-   git worktree add ~/.cache/productname-cand-e -b candidate-e phase1-productname-pivot
+   git worktree add ~/.cache/kairos-cand-e -b candidate-e phase1-productname-pivot
    # or -f / candidate-f
    ```
    Work only inside your worktree. Native builds (`cargo`, `tauri build`) go through `scripts/native-mirror.sh` (iCloud paths break them). Tooling lives in `/opt/homebrew/bin`.
@@ -38,7 +38,7 @@ You are implementing the owner visual language for the student-beta **workspace*
 
 North star (brief §4), one paragraph:
 
-> ProductName should feel like a physical glass instrument sitting on a Mac desktop, not a website and not a sticky-note mock. Chrome is visionOS material. Structure is iOS + Raktor. Learning is the only place type and diagrams move. Paper is Solare-warm. Night is visionOS dark gray, not OLED black. One cobalt accent, used like iOS blue.
+> Kairos should feel like a physical glass instrument sitting on a Mac desktop, not a website and not a sticky-note mock. Chrome is visionOS material. Structure is iOS + Raktor. Learning is the only place type and diagrams move. Paper is Solare-warm. Night is visionOS dark gray, not OLED black. One cobalt accent, used like iOS blue.
 
 Named mix, for when you drift:
 
@@ -97,7 +97,7 @@ Observed on `phase1-productname-pivot` at prompt time. Re-inspect; do not restyl
 
 | Current | Required |
 |---|---|
-| `App.tsx` tabs: Study / Plan / Sources / Settings; brand “PN”; landing tab = last `pn_tab` or Study | Chrome from brief §7.9. If round-1 has not landed, **keep the four existing tabs and their routes** — only the chrome changes. Landing-tab / Sources-removal is round-1. Replace “PN” with a squircle mark or the ProductName wordmark (serif). |
+| `App.tsx` tabs: Study / Plan / Sources / Settings; brand “PN”; landing tab = last `pn_tab` or Study | Chrome from brief §7.9. If round-1 has not landed, **keep the four existing tabs and their routes** — only the chrome changes. Landing-tab / Sources-removal is round-1. Replace “PN” with a squircle mark or the Kairos wordmark (serif). |
 | `.workspace { grid-template-columns: 168px 1fr }` + `.workspace-main { max-width: 920px }` | Desktop: glass sidebar **240px**, active = lighter glass + accent glyph, not a bordered rectangle. Compact `<900px`: **tab bar only** (50px, icon 10 + caption 10). Do not ship both. Home/timeline (or Plan, until round-1) is full width minus sidebar; study prose may max 70ch. |
 | `:root` `--radius-inner: 8px`, `--radius-outer: 18px`, `font-size: 13.5px` | Workspace tokens from brief §6. Scope **dock** exceptions under `.dock` so Peek keeps 18/14 radii and 6/14/22 spacing. |
 | `button` padding `0.4rem 0.75rem`; `.ghost` 0.82rem; `.commitment-actions button` 0.72rem / `0.15rem 0.4rem` | Kill micro-buttons in the workspace. Primary/secondary/destructive = height 44, padding 12×18, radius 12. Pills are search / segmented / tags / tool chips only. |
@@ -110,7 +110,7 @@ Observed on `phase1-productname-pivot` at prompt time. Re-inspect; do not restyl
 | `.segmented` height ~undersized, selected = accent fill | Track 36, thumb inner capsule (material, not accent) except 5/10 min which *may* use accent thumb. |
 | Study mode via `<select>` / accent chips; no now-playing | Vertical icon rail or segmented for recall/work/quiz; now-playing glass card while `phase.kind === "attempt"`. |
 | MASTER + `ui-craft.mdc` still say “never a normal app window” and “never full Liquid Glass” | After the tile matches the app, rewrite both so they describe **workspace glass chrome + opaque study prose + parked dock**. Do not leave the running app contradicting MASTER. |
-| FirstRun: paragraphs, optional Canvas skip, “PN”/ProductName lockup, no Solare timing | Visual restyle + Solare timing on whatever screens exist. **Do not** delete Skip or invent the three-screen round-1 flow unless that code is already present. |
+| FirstRun: paragraphs, optional Canvas skip, “PN”/Kairos lockup, no Solare timing | Visual restyle + Solare timing on whatever screens exist. **Do not** delete Skip or invent the three-screen round-1 flow unless that code is already present. |
 
 ---
 
@@ -129,7 +129,7 @@ Read in this order; do not rely on this prompt’s tables:
    - `docs/design/references/06b-natural-search-listening.png`
 3. Live references only if you need to confirm a motion (do not hotlink fonts or scrape assets): [Casa di Solare](https://casadisolare.com/), [Nexusmag](https://www.nexusmag.eu/), [Brik](https://brik.space/showcase-video), [Gleb Kuznetsov natural search](https://dribbble.com/shots/26722789-Voice-interaction-for-Natural-search-UI-by-Gleb-Kuznetsov).
 4. `app/src/{App.tsx,styles.css,theme.ts,components/FirstRun.tsx,components/CommandPalette.tsx,views/StudyView.tsx,views/SettingsView.tsx,views/PlanView.tsx,views/SourcesView.tsx,components/Icons.tsx}`.
-5. `design-system/productname/MASTER.md` and `.cursor/rules/ui-craft.mdc` (you will rewrite these last).
+5. `design-system/kairos/MASTER.md` and `.cursor/rules/ui-craft.mdc` (you will rewrite these last).
 6. `docs/handoff/ui-rebuild-round1-build-prompt.md` §1.5 / §3 / §7 so you know which IA you must not invent.
 7. `docs/build/student-beta/STATUS.md` + `DECISIONS.md` D-11 (workspace is the real window; dock is optional).
 
@@ -239,7 +239,7 @@ Existing tests in `StudyView.test.tsx` / `StudyView.realcore.test.tsx` / `FirstR
 
 Only after the tile and the app share tokens:
 
-1. `design-system/productname/MASTER.md` — Spatial Instrument for the **workspace**; parked dock keeps the sticky-note geometry. Glass **allowed on chrome**; still forbidden on 17px study prose. Dual density table. Four themes. Anti-examples from brief §12. Kill “never a normal app window” for student-beta (D-11). Kill Forest mint. Kill 8px default control radius.
+1. `design-system/kairos/MASTER.md` — Spatial Instrument for the **workspace**; parked dock keeps the sticky-note geometry. Glass **allowed on chrome**; still forbidden on 17px study prose. Dual density table. Four themes. Anti-examples from brief §12. Kill “never a normal app window” for student-beta (D-11). Kill Forest mint. Kill 8px default control radius.
 2. `.cursor/rules/ui-craft.mdc` — same. Point at the brief + MASTER. Workspace is a real window; Peek is still not a dashboard.
 
 ### Phase 7 — parked dock
@@ -318,7 +318,7 @@ Produce `docs/build/spatial-instrument/COMPARISON.md`. Per subsystem (tile fidel
 - **Q1 Tile pause:** this prompt’s default is tile + product in one run, because Jacob asked to build the brief into the program. Recommendation: keep going; he reviews from the tile and the app. If he says “tile only,” stop after Phase 0.
 - **Q2 Tab set:** if round-1 has not landed, keep Study / Plan / Sources / Settings as destinations; only the chrome changes. Do not rename Plan → Calendar here.
 - **Q3 Forest:** restyle, do not drop. Cream highlight on pine glass.
-- **Q4 Wordmark:** squircle mark in the sidebar (32–36, cobalt or cream), “ProductName” as serif Large Title on FirstRun. No “PN”.
+- **Q4 Wordmark:** squircle mark in the sidebar (32–36, cobalt or cream), “Kairos” as serif Large Title on FirstRun. No “PN”.
 
 ---
 
@@ -331,7 +331,7 @@ Produce `docs/build/spatial-instrument/COMPARISON.md`. Per subsystem (tile fidel
 5. Course color is categorical data, not a theme.
 6. Reduced-motion is a ship gate, not polish.
 7. Do not restore educator tools, hosted Azure, quiz-taking, or Canvas execute paths.
-8. `ProductName` is still a placeholder. Do not invent a brand.
+8. The product name is `Kairos` (chosen 2026-10-06). Do not invent a different brand.
 
 9. After restyle, run brief §12 as an audit. Four AI-slop ticks, instant-death combo, or vibecoded cluster = fail the surface and fix it. Do not ship and explain.
 

@@ -14,7 +14,7 @@
 # The command runs with cwd = <mirror>/app/src-tauri for cargo, <mirror>/app otherwise.
 set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-MIRROR="${PRODUCTNAME_NATIVE_MIRROR:-$HOME/.cache/productname-build}"
+MIRROR="${KAIROS_NATIVE_MIRROR:-$HOME/.cache/kairos-build}"
 export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
 mkdir -p "$MIRROR"
 rsync -a --delete \

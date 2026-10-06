@@ -169,8 +169,8 @@ const wrapper = path.join(OUT, "host.sh");
 const python = fs.existsSync("/usr/bin/python3") ? "/usr/bin/python3" : "python3";
 fs.writeFileSync(wrapper, `#!/bin/sh\nexport DEV_USER_ROOT="${userRoot}"\nexec ${python} "${hostCopy}"\n`, { mode: 0o755 });
 fs.writeFileSync(
-  path.join(profile, "NativeMessagingHosts", "com.productname.daemon.json"),
-  JSON.stringify({ name: "com.productname.daemon", description: "e2e", path: wrapper, type: "stdio", allowed_origins: ["chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/"] })
+  path.join(profile, "NativeMessagingHosts", "com.kairosstudy.daemon.json"),
+  JSON.stringify({ name: "com.kairosstudy.daemon", description: "e2e", path: wrapper, type: "stdio", allowed_origins: ["chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/"] })
 );
 
 const tick = () =>
@@ -241,23 +241,23 @@ try {
 
   const dash = await context.newPage();
   await dash.goto("https://canvas.colorado.edu/");
-  await dash.waitForFunction(() => document.querySelector("#productname-stage")?.shadowRoot?.querySelector(".pn-title"), null, { timeout: 15000 });
+  await dash.waitForFunction(() => document.querySelector("#kairos-stage")?.shadowRoot?.querySelector(".pn-title"), null, { timeout: 15000 });
   await dash.waitForTimeout(600);
-  const stageText = await dash.evaluate(() => document.querySelector("#productname-stage").shadowRoot.textContent);
+  const stageText = await dash.evaluate(() => document.querySelector("#kairos-stage").shadowRoot.textContent);
   check("stage_renders", stageText.includes(nextTitle) && /Homework 2/.test(stageText) && /What changed/.test(stageText) && /Professors said/.test(stageText));
   const fonts = await dash.evaluate(async () => {
     await document.fonts.ready;
     return ["PN Source Serif 4", "PN IBM Plex Sans", "PN IBM Plex Mono"].map((f) => document.fonts.check(`16px "${f}"`));
   });
   check("self_hosted_fonts_load", fonts.every(Boolean), fonts);
-  await dash.locator("#productname-stage").screenshot({ path: path.join(OUT, "dashboard.png") });
+  await dash.locator("#kairos-stage").screenshot({ path: path.join(OUT, "dashboard.png") });
   await dash.setViewportSize({ width: 640, height: 1100 });
   await dash.waitForTimeout(300);
-  await dash.locator("#productname-stage").screenshot({ path: path.join(OUT, "dashboard-narrow.png") });
+  await dash.locator("#kairos-stage").screenshot({ path: path.join(OUT, "dashboard-narrow.png") });
   await dash.setViewportSize({ width: 1280, height: 900 });
 
   const clicked = await dash.evaluate(() => {
-    const button = [...document.querySelector("#productname-stage").shadowRoot.querySelectorAll("button")].find((b) => b.textContent === "Block 90 min");
+    const button = [...document.querySelector("#kairos-stage").shadowRoot.querySelectorAll("button")].find((b) => b.textContent === "Block 90 min");
     button?.click();
     return Boolean(button);
   });

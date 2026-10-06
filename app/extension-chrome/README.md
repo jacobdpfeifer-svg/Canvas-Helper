@@ -1,4 +1,4 @@
-# ProductName for Canvas (Chrome extension, MV3)
+# Kairos for Canvas (Chrome extension, MV3)
 
 Keeps an eye on Canvas for the student and shows it where they already are.
 Decision record: [`docs/handoff/freshness-extension-spike-2026-09-29.md`](../../docs/handoff/freshness-extension-spike-2026-09-29.md) (signed 2026-09-29).
@@ -41,7 +41,7 @@ Decision record: [`docs/handoff/freshness-extension-spike-2026-09-29.md`](../../
 |---|---|
 | `sw.js` | background worker: poll, delta, native bridge, views, funnel |
 | `lib/canvas-read.js` | the only Canvas access (GET allowlist) |
-| `lib/native.js` | promise wrapper for `com.productname.daemon` |
+| `lib/native.js` | promise wrapper for `com.kairosstudy.daemon` |
 | `lib/format.js`, `lib/assignment-plan.js` | display helpers, checklist + path builders |
 | `shared/*.js` | **generated** from `browser/scripts/lib/freshness/*.mjs` — edit the source, then run `node app/extension-chrome/tools/vendor-shared.mjs` |
 | `ui/dashboard.js`, `ui/dashboard.css` | Canvas dashboard stage (Living Instrument, ink) |

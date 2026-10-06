@@ -4,11 +4,11 @@ globs: app/src/**/*.{tsx,ts,css},app/index.html,landing/**/*,docs/design/ambient
 alwaysApply: false
 ---
 
-# UI craft — ProductName Living Instrument
+# UI craft — Kairos Living Instrument
 
 When changing workspace, landing, or dock UI, read and obey:
 
-1. [`design-system/productname/MASTER.md`](design-system/productname/MASTER.md) — source of truth: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test
+1. [`design-system/kairos/MASTER.md`](design-system/kairos/MASTER.md) — source of truth: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test
 2. [`docs/design/spatial-instrument-brief.md`](docs/design/spatial-instrument-brief.md) — product behavior and anatomy (visual direction superseded by MASTER)
 3. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — Peek geometry only
 

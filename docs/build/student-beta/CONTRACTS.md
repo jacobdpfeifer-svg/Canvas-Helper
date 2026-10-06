@@ -2,7 +2,7 @@
 
 ## C-01 Profile / root resolution (all three runtimes)
 - `DEV_USER_ROOT` (absolute) overrides everything.
-- Else `{app_support}/ProductName/{PRODUCT_USER_ID}`; `PRODUCT_USER_ID` defaults to `dev` in Python/JS today. **Target:** Rust owns identity — it reads `{app_support}/ProductName/current_profile` (a single line, the profile id; validated `[A-Za-z0-9._-]{1,64}`, not `.`/`..`) and passes `PRODUCT_USER_ID` (and `DEV_USER_ROOT` if set) to every child process. Python/JS never invent an id.
+- Else `{app_support}/Kairos/{PRODUCT_USER_ID}`; `PRODUCT_USER_ID` defaults to `dev` in Python/JS today. **Target:** Rust owns identity — it reads `{app_support}/Kairos/current_profile` (a single line, the profile id; validated `[A-Za-z0-9._-]{1,64}`, not `.`/`..`) and passes `PRODUCT_USER_ID` (and `DEV_USER_ROOT` if set) to every child process. Python/JS never invent an id.
 - `user_root/` layout: `inbox/`, `calibration/`, `study/` (new), `auth/`, `ledger.jsonl`.
 
 ## C-02 Study command surface (Python CLI, JSON on stdout, one object per invocation)

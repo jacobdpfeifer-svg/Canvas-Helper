@@ -6,7 +6,7 @@ Hand this whole file to the architect agent (Cursor or otherwise) as its task pr
 
 ## Your mandate
 
-The last few passes over `TheUltimateStudent:TeacherWorkflow` (shipping identity `ProductName`, `com.productname.student`) were line-level: grep for a hardcode, confirm a token check, close a specific must-fix. That work is done and is not what this pass is for.
+The last few passes over `TheUltimateStudent:TeacherWorkflow` (shipping identity `Kairos`, `com.kairosstudy.student`) were line-level: grep for a hardcode, confirm a token check, close a specific must-fix. That work is done and is not what this pass is for.
 
 This pass is **macroscopic**. Stop checking whether individual claims are true and start asking whether the *system as a whole* — its architecture, module boundaries, subsystem count, and complexity budget — is the right shape for what this product is actually trying to be. You are looking for:
 

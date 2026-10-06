@@ -28,7 +28,7 @@ Scope: independently re-derive every material claim in `architect-brief.md`, `ar
 | 6 | Gate1 `or True` noop removed | architect-brief §2 row 5 | **confirmed** | `test_gate1_manifests_renamed` in `tests/core/test_verification_w5.py` has no `or True`; asserts real string checks |
 | 7 | `send_email` hard-blocked, JSON not string | architect-brief punch list #2 | **confirmed** | `mcp-servers/gmail/server.py:219-224` returns `{"blocked": True, ...}` |
 | 8 | Cloud key optional at onboarding (UI + backend) | architect-brief punch list #6 | **confirmed** | `Onboarding.tsx` has "Skip cloud key & finish"; `commands.rs::save_onboarding` only calls `save_cloud_key` when non-empty, no error on blank |
-| 9 | NM template `allowed_origins` filled with stable extension ID | architect-brief punch list #3 | **confirmed** | `com.productname.daemon.json` has `chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/` |
+| 9 | NM template `allowed_origins` filled with stable extension ID | architect-brief punch list #3 | **confirmed** | `com.kairosstudy.daemon.json` has `chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/` |
 | 10 | Working-tree Jacob-identifier grep clean | architect-brief §5 | **confirmed** | Re-ran exact grep across all listed paths → zero matches |
 | 11 | Jacob corpus still recoverable from branch history (`37f38b3:dev/JACOB.md`) | history-purge.md, architect-brief §5/§2 row 1 | **confirmed** | `git show 37f38b3:dev/JACOB.md` returns the Jacob profile; `git rev-list --objects` shows 10 objects still reachable for `dev/`/`.jacob/`/`inbox/` paths. Correctly labeled **not resolved** / escalate, not falsely claimed fixed |
 | 12 | Tauri `cargo check` passes | architect-brief §7, §10 | **confirmed** | Re-ran; `Finished dev profile` in 2.2s |

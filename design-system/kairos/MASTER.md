@@ -1,4 +1,4 @@
-# ProductName — Living Instrument design system
+# Kairos — Living Instrument design system
 
 **Source of truth for visual craft.** This is a deliberate break from the previous "Spatial Instrument" look: less generic glass UI, less dashboard sameness, more authored composition, material contrast, kinetic typography, and memorable states.
 
@@ -377,7 +377,7 @@ A screen passes only if:
 - the type system feels authored and not interchangeable with a template;
 - motion is tied to an actual state;
 - the screen remains calm and legible when motion and texture are disabled;
-- one screenshot would be recognizable as ProductName without the logo.
+- one screenshot would be recognizable as Kairos without the logo.
 
 ## Research notes
 

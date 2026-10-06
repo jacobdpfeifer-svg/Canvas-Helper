@@ -4,7 +4,7 @@
 # Builds from the non-iCloud mirror (see native-mirror.sh) but points the core
 # at THIS checkout so browser/node_modules, templates and the repo venv are the
 # ones you edit. Profile: PRODUCT_USER_ID (default "dev" — your existing
-# ~/Library/Application Support/ProductName/dev). Canvas sign-in happens from
+# ~/Library/Application Support/Kairos/dev). Canvas sign-in happens from
 # the app's Settings/First-run buttons (Playwright window), never from here.
 #
 #   scripts/dev-app.sh                # profile "dev"
@@ -12,13 +12,13 @@
 set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
-export PRODUCTNAME_CORE_DIR="$REPO"
-export PRODUCTNAME_PYTHON="$REPO/.venv/bin/python"
-export PRODUCTNAME_NODE="$(command -v node)"
+export KAIROS_CORE_DIR="$REPO"
+export KAIROS_PYTHON="$REPO/.venv/bin/python"
+export KAIROS_NODE="$(command -v node)"
 export PRODUCT_USER_ID="${PRODUCT_USER_ID:-dev}"
 export PLAYWRIGHT_CHANNEL="${PLAYWRIGHT_CHANNEL:-}"
 unset DEV_USER_ROOT
-[ -x "$PRODUCTNAME_PYTHON" ] || { echo "missing $PRODUCTNAME_PYTHON (run: uv sync)"; exit 1; }
+[ -x "$KAIROS_PYTHON" ] || { echo "missing $KAIROS_PYTHON (run: uv sync)"; exit 1; }
 
 # Tauri dev needs Vite on 1420 (strictPort). A stale Vite/study-bridge from an
 # earlier run (ours) is stopped; anything else on the port is reported instead.
@@ -35,7 +35,7 @@ for port in 1420 1421; do
 done
 # Exact process name only: a -f pattern would match unrelated shells whose
 # command line merely mentions the binary.
-pkill -x productname 2>/dev/null || true
+pkill -x kairos 2>/dev/null || true
 sleep 1
 [ -d "$REPO/browser/node_modules/playwright" ] || { echo "missing browser deps (run: cd browser && npm ci)"; exit 1; }
 exec "$REPO/scripts/native-mirror.sh" npm run tauri -- dev "$@"

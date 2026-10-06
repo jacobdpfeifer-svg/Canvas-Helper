@@ -18,9 +18,9 @@ from canvas_mcp.core.skill_router import bundled_skills_dir, load_skill
 
 
 def test_missing_key_does_not_call_network(monkeypatch):
-    monkeypatch.delenv("PRODUCTNAME_LLM_API_KEY", raising=False)
-    monkeypatch.delenv("PRODUCTNAME_LLM_WRITE_API_KEY", raising=False)
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "gemini")
+    monkeypatch.delenv("KAIROS_LLM_API_KEY", raising=False)
+    monkeypatch.delenv("KAIROS_LLM_WRITE_API_KEY", raising=False)
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "gemini")
 
     def _boom(*_args, **_kwargs):
         raise AssertionError("network client must not be constructed")
@@ -35,16 +35,16 @@ def test_missing_key_does_not_call_network(monkeypatch):
 
 
 def test_factory_selects_vendor_by_tier(monkeypatch):
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "gemini")
-    monkeypatch.setenv("PRODUCTNAME_LLM_MODEL", "gemini-3.5-flash-lite")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_PROVIDER", "anthropic")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_MODEL", "claude-haiku-4-5")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_API_KEY", "sk-test")
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("KAIROS_LLM_MODEL", "gemini-3.5-flash-lite")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_PROVIDER", "anthropic")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_MODEL", "claude-haiku-4-5")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_API_KEY", "sk-test")
     assert get_provider("fast").name == "gemini"
     write = get_provider("reliable")
     assert write.name == "anthropic"
     assert write.model == "claude-haiku-4-5"
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "nope")
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "nope")
     with pytest.raises(ValueError, match="unknown LLM provider"):
         get_provider("fast")
     with pytest.raises(ValueError, match="unknown model tier"):
@@ -52,9 +52,9 @@ def test_factory_selects_vendor_by_tier(monkeypatch):
 
 
 def test_gemini_chat_and_embed_are_mocked(monkeypatch):
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "gemini")
-    monkeypatch.setenv("PRODUCTNAME_LLM_API_KEY", "test-key")
-    monkeypatch.setenv("PRODUCTNAME_LLM_MODEL", "gemini-3.5-flash-lite")
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("KAIROS_LLM_API_KEY", "test-key")
+    monkeypatch.setenv("KAIROS_LLM_MODEL", "gemini-3.5-flash-lite")
     calls: list[tuple[str, dict]] = []
 
     class _Response:
@@ -115,9 +115,9 @@ def test_gemini_chat_and_embed_are_mocked(monkeypatch):
 
 
 def test_anthropic_chat_is_mocked(monkeypatch):
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_PROVIDER", "anthropic")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_API_KEY", "sk-test")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_MODEL", "claude-haiku-4-5")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_PROVIDER", "anthropic")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_API_KEY", "sk-test")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_MODEL", "claude-haiku-4-5")
 
     class _Block:
         type = "text"
@@ -219,18 +219,18 @@ def test_live_eval_stays_structural_and_skips_without_network(tmp_path, monkeypa
     import anthropic
 
     monkeypatch.setattr(anthropic, "Anthropic", _boom)
-    monkeypatch.delenv("PRODUCTNAME_LIVE_SKILL_EVAL", raising=False)
+    monkeypatch.delenv("KAIROS_LIVE_SKILL_EVAL", raising=False)
     structural = eval_skill(skill_md)
     assert structural.passed
     assert not structural.skipped
     assert structural.reason.startswith("structural ok")
 
-    monkeypatch.setenv("PRODUCTNAME_LIVE_SKILL_EVAL", "1")
+    monkeypatch.setenv("KAIROS_LIVE_SKILL_EVAL", "1")
     monkeypatch.setenv("DEV_USER_ROOT", str(tmp_path / "user"))
-    monkeypatch.delenv("PRODUCTNAME_LLM_API_KEY", raising=False)
-    monkeypatch.delenv("PRODUCTNAME_LLM_WRITE_API_KEY", raising=False)
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "gemini")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_PROVIDER", "anthropic")
+    monkeypatch.delenv("KAIROS_LLM_API_KEY", raising=False)
+    monkeypatch.delenv("KAIROS_LLM_WRITE_API_KEY", raising=False)
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_PROVIDER", "anthropic")
     skipped = eval_skill(skill_md)
     assert skipped.skipped
     assert skipped.reason == "live eval skipped — provider unreachable"
@@ -240,8 +240,8 @@ def test_live_eval_stays_structural_and_skips_without_network(tmp_path, monkeypa
 
 
 def test_anthropic_cache_breakpoint_is_on_last_stable_block(monkeypatch):
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_PROVIDER", "anthropic")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_API_KEY", "sk-test")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_PROVIDER", "anthropic")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_API_KEY", "sk-test")
     seen: dict = {}
 
     class _Block:
@@ -284,10 +284,10 @@ def test_anthropic_cache_breakpoint_is_on_last_stable_block(monkeypatch):
 
 
 def test_provider_for_skill_uses_tier_once(monkeypatch):
-    monkeypatch.setenv("PRODUCTNAME_LLM_PROVIDER", "gemini")
-    monkeypatch.setenv("PRODUCTNAME_LLM_WRITE_PROVIDER", "anthropic")
-    monkeypatch.delenv("PRODUCTNAME_LLM_API_KEY", raising=False)
-    monkeypatch.delenv("PRODUCTNAME_LLM_WRITE_API_KEY", raising=False)
+    monkeypatch.setenv("KAIROS_LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("KAIROS_LLM_WRITE_PROVIDER", "anthropic")
+    monkeypatch.delenv("KAIROS_LLM_API_KEY", raising=False)
+    monkeypatch.delenv("KAIROS_LLM_WRITE_API_KEY", raising=False)
     fast = SimpleNamespace(model_tier="fast", is_write_skill=False)
     reliable = SimpleNamespace(model_tier="reliable", is_write_skill=False)
     write = SimpleNamespace(model_tier="fast", is_write_skill=True)

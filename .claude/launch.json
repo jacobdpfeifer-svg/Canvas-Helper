@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "productname-app",
+      "name": "kairos-app",
       "runtimeExecutable": "/opt/homebrew/bin/node",
       "runtimeArgs": [
         "app/node_modules/vite/bin/vite.js",

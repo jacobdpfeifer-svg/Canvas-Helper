@@ -1,4 +1,4 @@
-"""Tool-annotation contract for the student-only ProductName Canvas MCP."""
+"""Tool-annotation contract for the student-only Kairos Canvas MCP."""
 
 import json
 from pathlib import Path

@@ -1,7 +1,7 @@
 # Run log — student production stress test, 2026-10-05
 
 Repo root = `Canvas Competition/` (iCloud checkout). Branch `phase1-productname-pivot`.
-All Python runs had `PRODUCTNAME_LLM_API_KEY=` and `PRODUCTNAME_LLM_WRITE_API_KEY=`
+All Python runs had `KAIROS_LLM_API_KEY=` and `KAIROS_LLM_WRITE_API_KEY=`
 exported empty (no live model). An audit start marker was touched in the session
 scratchpad before any run. The final isolation check compares the real
 app-support tree against it.
@@ -15,7 +15,7 @@ Format: `command` — cwd — DEV_USER_ROOT — exit — result.
 | 0.1 | `git branch --show-current` | root | — | 0 | `phase1-productname-pivot` |
 | 0.2 | `git check-ignore -v var/audit-user-roots/x` (before) | root | — | 1 | not ignored → appended `var/` to `.gitignore` |
 | 0.3 | `git check-ignore -v var/audit-user-roots` (after) | root | — | 0 | `.gitignore:173:var/` |
-| 0.4 | `grep -oE '^[A-Z_]+=' .env` + count of non-empty `PRODUCTNAME_LLM_API_KEY` | root | — | 0 | key names only; LLM key blank (count 0). Values not read |
+| 0.4 | `grep -oE '^[A-Z_]+=' .env` + count of non-empty `KAIROS_LLM_API_KEY` | root | — | 0 | key names only; LLM key blank (count 0). Values not read |
 
 ## Phase 1 — environments and suites (Part 1)
 
@@ -56,7 +56,7 @@ REPORT as a finding. Fixing it needs a config choice.
 | 2.4 | `uv run python …/make_root.py avery-chen` | root | — | **1** | `ModuleNotFoundError: canvas_mcp.core`. The `.venv` is in iCloud. iCloud sets `UF_HIDDEN` on `_editable_impl_canvas_mcp.pth`, and Python 3.12 skips hidden `.pth` files. pytest still works through `conftest.py`. **From here on every CLI runs with `PYTHONPATH=src .venv/bin/python`** |
 | 2.5 | `PYTHONPATH=src .venv/bin/python …/make_root.py avery-chen` | root | — | 0 | `var/audit-user-roots/avery-chen` |
 | 2.6 | `… make_root.py blake-okonkwo` | root | — | 0 | `var/audit-user-roots/blake-okonkwo` (USER.md + empty ledger + standard subdirs) |
-| 2.7 | `… make_root.py blake-okonkwo --out "$HOME/Library/Application Support/ProductName/x"` | root | — | 1 | refused: `refusing to write under the real app-support root` |
+| 2.7 | `… make_root.py blake-okonkwo --out "$HOME/Library/Application Support/Kairos/x"` | root | — | 1 | refused: `refusing to write under the real app-support root` |
 | 2.8 | `… make_root.py avery-chen --week stale --out var/audit-user-roots/avery-stale` and `--week dense --out …/avery-dense` | root | — | 0 | stale and dense roots built |
 | 2.9 | `git status --short` | root | — | 0 | `var/` absent; `tests/fixtures/synthetic-students/` untracked (committable) |
 
@@ -67,7 +67,7 @@ REPORT as a finding. Fixing it needs a config choice.
 | P2.1 | `study import --path …/study-packet.json`, `offer`, `start`, `submit` (seed Avery study events) | root | `--user-root var/audit-user-roots/avery-chen` | 0 | 13 events in `study/events.jsonl` |
 | P2.2 | `probes/isolation.py var/audit-user-roots/avery-chen var/audit-user-roots/blake-okonkwo` (sets `DEV_USER_ROOT` to each in turn; appends one Avery ledger row) | root | avery → blake | 0 | Avery markers present in turn, week, ledger, and study. **Blake: 0 markers in all five views.** PASS |
 | P2.3 | `study status` | root | `--user-root …/blake-okonkwo` | 0 | packets `[]`, courses `[]`, 0 items, 0 open attempts |
-| P2.4 | `find "$HOME/Library/Application Support/ProductName" -newer <audit-start-marker> \| wc -l` | root | — | 0 | **0**: nothing written to the real profile |
+| P2.4 | `find "$HOME/Library/Application Support/Kairos" -newer <audit-start-marker> \| wc -l` | root | — | 0 | **0**: nothing written to the real profile |
 
 Part 2: **pass**.
 
@@ -213,7 +213,7 @@ It builds `var/audit-user-roots/e2e-{avery,blake}` with the factory (`--week den
 | C.4 | `ruff check src/ tests/` | root | — | 0 | All checks passed (includes the new probes) |
 | C.5 | `mypy --python-version 3.12 src/` | root | — | 0 | no issues in 68 files |
 | C.6 | `pytest services/relay/tests -q` | root | — | 0 | 19 passed |
-| C.7 | `find "$HOME/Library/Application Support/ProductName" -newer <marker> \| wc -l` | root | — | 0 | **0** |
+| C.7 | `find "$HOME/Library/Application Support/Kairos" -newer <marker> \| wc -l` | root | — | 0 | **0** |
 | C.8 | `git status --short` | root | — | 0 | no `var/` paths. Changes listed in REPORT §3 |
 
 ## Re-verification — 2026-10-06

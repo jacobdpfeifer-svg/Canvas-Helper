@@ -87,7 +87,7 @@ node_modules/
 smithery-wrapper/node_modules/
 smithery-wrapper/.smithery/
 
-# Cursor local skill packs / scratch (not ProductName product surface)
+# Cursor local skill packs / scratch (not Kairos product surface)
 .cursor/skills/
 
 # Cloudflare Wrangler local cache and state

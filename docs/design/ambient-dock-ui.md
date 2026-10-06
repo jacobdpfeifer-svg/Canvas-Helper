@@ -2,7 +2,7 @@
 
 **Status (2026-09-12):** **Parked** (signed product decision). Peek/expanded/onboarding + tray are as-built in the Tauri shell. Visual language remains Selective Instrument Glass. **Not building in this phase:** true Hidden resting default, narrate-auto-peek, or a shell replacement. Alternatives: [`docs/handoff/ui-shell-alternatives.md`](../handoff/ui-shell-alternatives.md).
 
-What the ProductName desktop shell is supposed to be, distilled from the
+What the Kairos desktop shell is supposed to be, distilled from the
 Phase 1 design discussion. This is the reference for anyone (human or agent)
 touching `app/src/App.tsx`, `app/src/styles.css`, or `app/src-tauri/src/dock.rs`.
 
@@ -58,7 +58,7 @@ process is the tray menu's "Quit" item only.
 ## Visual craft — Selective Instrument Glass
 
 Tokens, type, anti-patterns, and component craft rules live in
-[`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md)
+[`design-system/kairos/MASTER.md`](../../design-system/kairos/MASTER.md)
 (Living Instrument). Agents touching the dock UI must follow MASTER; this section
 is the short map. Peek keeps its own 18/14 radii and 6/14/22 spacing — MASTER §06
 calls the dock a specialized object, not the global geometry.
@@ -66,7 +66,7 @@ calls the dock a specialized object, not the global geometry.
 - **Direction:** physical sticky note + Raycast-grade chrome. Frosted shell,
   opaque-enough content. Not a SaaS dashboard, cream/terracotta editorial,
   full Apple Liquid Glass, or purple glass pack.
-- **Type:** Source Serif 4 (display: “Today”, ProductName) + IBM Plex Sans
+- **Type:** Source Serif 4 (display: “Today”, Kairos) + IBM Plex Sans
   (UI) + IBM Plex Mono (due times / ledger). Fonts must load for real.
 - **Accent:** ink cobalt (`--accent` / `#6B8CFF`), surgical — not mint/teal AI-HUD.
 - **Surfaces:** shell ladder (`--surface-0` peek → `--surface-1` expanded)

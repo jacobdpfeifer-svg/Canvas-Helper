@@ -1,5 +1,5 @@
 /**
- * ProductName for Canvas — background worker.
+ * Kairos for Canvas — background worker.
  *
  * Every 5 minutes: one cheap activity-stream summary GET with the student's
  * own Canvas session (cost ~0.04 of Canvas's 700-point budget). When the
@@ -82,7 +82,7 @@ function setBadge(signedIn) {
   chrome.action.setBadgeText({ text: signedIn ? "" : "!" });
   chrome.action.setBadgeBackgroundColor({ color: "#f35b57" });
   chrome.action.setTitle({
-    title: signedIn ? "ProductName — open the side panel" : "ProductName — sign in to Canvas to keep this fresh",
+    title: signedIn ? "Kairos — open the side panel" : "Kairos — sign in to Canvas to keep this fresh",
   });
 }
 

@@ -566,7 +566,7 @@ Shipped after the v2 design draft above (code, not research-only):
 
 - **Verify checklist**
   - Browser: `cd app && npm run dev` → clear `pn_onboarded` → step 4 → Continue writes `localStorage.pn_learning_profile`.
-  - Persistence: `python -m canvas_mcp.core.learning_profile --json save …` (same path Tauri invokes) writes YAML + `USER.md`. Tauri: `CARGO_TARGET_DIR=/tmp/productname-tauri-target npm run tauri -- dev`.
+  - Persistence: `python -m canvas_mcp.core.learning_profile --json save …` (same path Tauri invokes) writes YAML + `USER.md`. Tauri: `CARGO_TARGET_DIR=/tmp/kairos-tauri-target npm run tauri -- dev`.
 - **Richer games:** `app/src/components/learningProfile/*` — Game 1 try→confidence→reveal→react; Game 3 Top-3 cadence chips; autonomy forced choice unchanged.
 - **`record_signal` producer:** CLI `signal` subcommand + `canvas-week-plan` format-feedback step (not RequestLog).
 - **`check_depth`:** fourth schema field (`light`|`thorough`), onboarding confidence probe, week-plan shaping rule.

@@ -1,8 +1,8 @@
 [package]
-name = "productname"
+name = "kairos"
 version = "0.1.0"
-description = "ProductName student automation"
-authors = ["ProductName"]
+description = "Kairos student automation"
+authors = ["Kairos"]
 edition = "2021"
 
 [build-dependencies]

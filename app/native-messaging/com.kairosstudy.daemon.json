@@ -1,6 +1,6 @@
 {
-  "name": "com.productname.daemon",
-  "description": "ProductName Canvas sensor host (Chrome Native Messaging)",
+  "name": "com.kairosstudy.daemon",
+  "description": "Kairos Canvas sensor host (Chrome Native Messaging)",
   "path": "HOST_PATH_PLACEHOLDER",
   "type": "stdio",
   "allowed_origins": [

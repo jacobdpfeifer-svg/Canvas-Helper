@@ -1,6 +1,6 @@
 """The privacy default must agree across every distribution channel.
 
-ProductName student defaults: ENABLE_DATA_ANONYMIZATION defaults to false (self-only local use).
+Kairos student defaults: ENABLE_DATA_ANONYMIZATION defaults to false (self-only local use).
 """
 
 import json
@@ -89,7 +89,7 @@ class TestPrivacyDefaultConsistency:
 
     def test_the_agreed_default_is_self_only_student_fork(self):
         assert _code_default() is False, (
-            f"{SETTING} defaults to off for ProductName student local use."
+            f"{SETTING} defaults to off for Kairos student local use."
         )
 
     @pytest.mark.parametrize(

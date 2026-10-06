@@ -18,12 +18,12 @@ from canvas_mcp.core.user_root import (
 @pytest.fixture
 def app_support(tmp_path, monkeypatch):
     """Isolate app-support under tmp so two real user_ids do not share DEV_USER_ROOT."""
-    support = tmp_path / "ProductName"
+    support = tmp_path / "Kairos"
     support.mkdir()
     monkeypatch.delenv("DEV_USER_ROOT", raising=False)
     monkeypatch.setattr(
         "canvas_mcp.core.user_root.default_app_support_root",
-        lambda product="ProductName": support,
+        lambda product="Kairos": support,
     )
     return support
 
@@ -72,9 +72,9 @@ def test_user_path_escape_rejected_per_user(app_support):
 
 
 def test_default_app_support_unchanged_shape():
-    # Sanity: helper still returns a ProductName leaf (platform-specific parent).
+    # Sanity: helper still returns a Kairos leaf (platform-specific parent).
     root = default_app_support_root()
-    assert root.name == "ProductName"
+    assert root.name == "Kairos"
     assert isinstance(root, Path)
 
 

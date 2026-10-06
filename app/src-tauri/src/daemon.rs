@@ -1,4 +1,4 @@
-//! ProductName local daemon — sync cadence, sensors, ledger.
+//! Kairos local daemon — sync cadence, sensors, ledger.
 //!
 //! Canvas sync: every 2h on term weekdays, 6h weekends, plus event-driven when
 //! the Chrome extension reports Canvas tab focus. Never sub-5-minute polling.
@@ -67,7 +67,7 @@ pub fn next_sync_interval(is_weekend: bool) -> Duration {
 
 /// Log a daemon tick (cadence / sync / boot).
 pub fn tick_log(reason: &str) {
-    eprintln!("[productname-daemon] tick: {reason}");
+    eprintln!("[kairos-daemon] tick: {reason}");
 }
 
 fn run_status(mut cmd: Command, label: &str) -> Result<(), String> {
@@ -119,7 +119,7 @@ pub fn run_bootstrap_sync(rt: &Runtime) -> Result<(), String> {
 
 pub fn canvas_stub() -> bool {
     matches!(
-        env::var("PRODUCTNAME_STUB_CANVAS").ok().as_deref(),
+        env::var("KAIROS_STUB_CANVAS").ok().as_deref(),
         Some("1") | Some("true")
     )
 }
@@ -537,7 +537,7 @@ where
                     tick_log("freshness");
                     on_update(n);
                 }
-                Err(e) => eprintln!("[productname-daemon] freshness: {e}"),
+                Err(e) => eprintln!("[kairos-daemon] freshness: {e}"),
             }
         }
         thread::sleep(FRESHNESS_TICK);
@@ -557,7 +557,7 @@ pub fn spawn_cadence_loop(rt: Arc<Runtime>) {
                 "cadence-weekday"
             });
             if let Err(e) = run_canvas_sync(&rt) {
-                eprintln!("[productname-daemon] sync error: {e}");
+                eprintln!("[kairos-daemon] sync error: {e}");
             }
         }
     });
@@ -633,7 +633,7 @@ pub fn run_study(rt: &Runtime, request: &Value) -> Result<Value, String> {
             // never hand it to the webview.
             let err = String::from_utf8_lossy(&output.stderr);
             for l in err.lines().rev().take(3) {
-                eprintln!("[productname-daemon] study core: {l}");
+                eprintln!("[kairos-daemon] study core: {l}");
             }
             format!("study core produced no reply (exit {})", output.status)
         })?;

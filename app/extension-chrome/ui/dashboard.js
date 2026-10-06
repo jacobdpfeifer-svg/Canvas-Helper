@@ -1,6 +1,6 @@
 /**
  * Content script. On every Canvas page: tell the worker which Canvas this is.
- * On the Canvas dashboard: mount the ProductName stage above Canvas's own
+ * On the Canvas dashboard: mount the Kairos stage above Canvas's own
  * dashboard (shadow DOM, so neither side's styles leak).
  *
  * Canvas-authored text (titles, announcement lines) is inserted with
@@ -22,12 +22,12 @@
     sendResponse({ ok: true, text: (window.getSelection()?.toString() || "").trim().slice(0, 8000) });
     return true;
   });
-  if (location.pathname !== "/" || document.getElementById("productname-stage")) return;
+  if (location.pathname !== "/" || document.getElementById("kairos-stage")) return;
 
   const fmt = await import(chrome.runtime.getURL("lib/format.js"));
 
   // @font-face does not apply inside shadow roots; declare unique families on the document.
-  if (!document.getElementById("productname-fonts")) {
+  if (!document.getElementById("kairos-fonts")) {
     const faces = [
       ["PN IBM Plex Sans", "ibm-plex-sans-latin-400-normal.woff2", 400],
       ["PN IBM Plex Sans", "ibm-plex-sans-latin-500-normal.woff2", 500],
@@ -36,7 +36,7 @@
       ["PN Source Serif 4", "source-serif-4-latin-opsz-normal.woff2", "200 900"],
     ];
     const style = document.createElement("style");
-    style.id = "productname-fonts";
+    style.id = "kairos-fonts";
     style.textContent = faces
       .map(([family, file, weight]) => `@font-face{font-family:"${family}";src:url("${chrome.runtime.getURL(`fonts/${file}`)}") format("woff2");font-weight:${weight};font-style:normal;font-display:swap;}`)
       .join("");
@@ -44,7 +44,7 @@
   }
 
   const host = document.createElement("div");
-  host.id = "productname-stage";
+  host.id = "kairos-stage";
   const root = host.attachShadow({ mode: "open" });
   const css = document.createElement("link");
   css.rel = "stylesheet";
@@ -81,7 +81,7 @@
 
   const { collapsed = false } = await chrome.storage.local.get("collapsed").catch(() => ({}));
   let isCollapsed = Boolean(collapsed);
-  const stage = el("section", { class: "pn-stage", "aria-label": "ProductName", "data-collapsed": String(isCollapsed) });
+  const stage = el("section", { class: "pn-stage", "aria-label": "Kairos", "data-collapsed": String(isCollapsed) });
   root.appendChild(stage);
 
   function meta(view) {
@@ -110,7 +110,7 @@
     return el(
       "header",
       { class: "pn-meta" },
-      el("span", { class: "pn-mark", text: "ProductName" }),
+      el("span", { class: "pn-mark", text: "Kairos" }),
       el("span", { class: "pn-live", "data-state": state, text: liveText }),
       el("span", { class: "pn-spacer" }),
       refresh,
@@ -149,7 +149,7 @@
         "div",
         { class: "pn-subject" },
         el("p", { class: "pn-label", text: "Next" }),
-        el("h2", { class: "pn-title", text: "Connect the ProductName app" }),
+        el("h2", { class: "pn-title", text: "Connect the Kairos app" }),
         el("p", { class: "pn-note", text: "It adds your next step and what skipping costs. Changes below still update here." })
       );
     }

@@ -19,7 +19,7 @@ _REPO_SCHOOLS_DIR = _REPO_ROOT / "schools"
 # Wheel installs copy schools → canvas_mcp/schools via hatch force-include.
 _PKG_SCHOOLS_DIR = Path(__file__).resolve().parents[1] / "schools"
 
-PRODUCT_NAME = "ProductName"
+PRODUCT_NAME = "Kairos"
 
 
 @dataclass(frozen=True)

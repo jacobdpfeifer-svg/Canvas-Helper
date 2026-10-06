@@ -1,4 +1,4 @@
-"""Tests for student-only tool registration (ProductName student platform)."""
+"""Tests for student-only tool registration (Kairos student platform)."""
 
 import pytest
 from fastmcp import FastMCP

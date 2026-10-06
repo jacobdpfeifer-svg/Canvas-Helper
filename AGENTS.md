@@ -1,4 +1,4 @@
-# Canvas MCP — Agent guide (ProductName student platform)
+# Canvas MCP — Agent guide (Kairos student platform)
 
 Personal local-first Canvas companion (read + plan + study). Context: `{user_root}/USER.md`. Architecture: [`docs/architecture.md`](docs/architecture.md). Canvas-focus pivot: [`docs/handoff/canvas-focus-pivot-2026-09-11.md`](docs/handoff/canvas-focus-pivot-2026-09-11.md).
 

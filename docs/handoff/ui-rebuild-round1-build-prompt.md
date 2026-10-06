@@ -12,7 +12,7 @@ Prepared September 18, 2026 from Jacob's unfiltered walkthrough of the current a
 
 1. **Separate worktrees, always.** Last round two agents edited the same iCloud checkout and clobbered each other. Before any edit:
    ```bash
-   git worktree add ~/.cache/productname-cand-c -b candidate-c phase1-productname-pivot   # or -d / candidate-d
+   git worktree add ~/.cache/kairos-cand-c -b candidate-c phase1-productname-pivot   # or -d / candidate-d
    ```
    Work only inside your worktree. Native builds (`cargo`, `tauri build`) must go through `scripts/native-mirror.sh` because iCloud paths break them (see `docs/build/` and memory note "iCloud checkout blocks native builds"). Tooling lives in `/opt/homebrew/bin`.
 2. **Branch discipline:** commit to your candidate branch only. Never touch `main` or `origin/main`. Do not push unless Jacob asks.
@@ -42,7 +42,7 @@ The onboarding theme: **college students will not read.** Every screen is visual
 
 **Screen 2 — Connect Canvas**
 - Everything centered; **rule-of-thirds layout**: title in the top third, animation in the middle third, buttons pinned in the bottom third.
-- Delete the paragraph ("Signing in lets the app pull your course pages…"). Replace with a **CSS/SVG animation** built in code (no video, no Lottie, no external assets, theme-aware, honors `prefers-reduced-motion` with a static final frame): a stylized Canvas window → a cursor moves to and clicks "Sign in" → course cards fly out of the Canvas window into a stylized ProductName window. Loop it gently.
+- Delete the paragraph ("Signing in lets the app pull your course pages…"). Replace with a **CSS/SVG animation** built in code (no video, no Lottie, no external assets, theme-aware, honors `prefers-reduced-motion` with a static final frame): a stylized Canvas window → a cursor moves to and clicks "Sign in" → course cards fly out of the Canvas window into a stylized Kairos window. Loop it gently.
 - **Sign-in is mandatory. No "Skip for now."** The only button is **Sign in to Canvas**.
 - Failure/abandon path: stay on this screen, keep the animation, show a **Try again** button and *one* short line of what went wrong (login window closed, no session found, network). There is no way past this screen without a session.
 - If a session already exists (returning device), auto-advance to Screen 3 after a brief "Already signed in" state so the student sees why they skipped a step.
@@ -120,7 +120,7 @@ Fix these, with a reproducible before/after in your build record:
 
 ### 1.7 Legal text
 
-Write a **complete first-draft Terms of Service and Privacy Policy** and replace `docs/legal/terms.md`, `docs/legal/privacy.md`, and the strings in `app/src/legal.ts` (which should now load from a single source, not duplicate prose). Not lawyer-reviewed; label the draft with a date and "beta draft." It must accurately describe: local-first storage under the user profile; what is read from Canvas via the student's own SSO session; that nothing is submitted/posted to Canvas on the student's behalf; Gmail send / Google Calendar writes only after per-action confirmation; optional opt-in usage counts only; no persistence of study/email content by any ProductName service; provider (Claude/Gemini) processing and retention disclosed as separate; FERPA/academic-integrity responsibility stays with the student; no affiliation with CU Boulder or Instructure; beta, as-is, no warranty; contact and revocation/deletion (delete the profile folder = delete the data). Keep the per-school variation (`LEGAL_BY_SCHOOL`) as a short preamble, with the full text shared.
+Write a **complete first-draft Terms of Service and Privacy Policy** and replace `docs/legal/terms.md`, `docs/legal/privacy.md`, and the strings in `app/src/legal.ts` (which should now load from a single source, not duplicate prose). Not lawyer-reviewed; label the draft with a date and "beta draft." It must accurately describe: local-first storage under the user profile; what is read from Canvas via the student's own SSO session; that nothing is submitted/posted to Canvas on the student's behalf; Gmail send / Google Calendar writes only after per-action confirmation; optional opt-in usage counts only; no persistence of study/email content by any Kairos service; provider (Claude/Gemini) processing and retention disclosed as separate; FERPA/academic-integrity responsibility stays with the student; no affiliation with CU Boulder or Instructure; beta, as-is, no warranty; contact and revocation/deletion (delete the profile folder = delete the data). Keep the per-school variation (`LEGAL_BY_SCHOOL`) as a short preamble, with the full text shared.
 
 ---
 
@@ -141,7 +141,7 @@ Put the tick-weight and term-inference logic in a pure, unit-tested module (JS i
 - **Motion**: purposeful, short (≤ 240 ms for UI, the onboarding animation can loop longer), all gated by `prefers-reduced-motion` with a meaningful static state.
 - **No subtext on onboarding screens.** A title and controls. If you believe a screen genuinely needs one line, argue it in DECISIONS.md — the default is zero.
 - **Course palette**: 8 colors minimum, deterministic assignment, verified distinguishable on light and dark surfaces and under deuteranopia simulation. Record the hexes and the check you ran.
-- Keep the existing brand-mark placeholder; `ProductName` is still not a brand.
+- Keep the existing brand mark; the product name is `Kairos` (chosen 2026-10-06).
 
 ---
 

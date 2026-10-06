@@ -10,7 +10,7 @@ Repo path contains `:` which breaks the default DYLD library path on macOS. Work
 
 ```bash
 source "$HOME/.cargo/env"
-cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/kairos-tauri-target cargo check
 ```
 
 See also [`architect-brief.md`](./architect-brief.md) W4 gate.

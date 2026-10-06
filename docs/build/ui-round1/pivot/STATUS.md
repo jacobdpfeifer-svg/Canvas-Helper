@@ -15,7 +15,7 @@ Re-entry: this checkout, not a competing candidate worktree.
 
 ## Not done / blocked
 
-- Live Tauri onboarding against stubbed SSO on a fresh synthetic profile (needs `DEV_USER_ROOT` + `PRODUCTNAME_STUB_CANVAS=1` and copying `tests/fixtures/study/ui-round1/*.json`)
+- Live Tauri onboarding against stubbed SSO on a fresh synthetic profile (needs `DEV_USER_ROOT` + `KAIROS_STUB_CANVAS=1` and copying `tests/fixtures/study/ui-round1/*.json`)
 - Screenshots under `screens/` (no GUI capture this session)
 - Gmail suggestion **producer** (contract + fixture only)
 - Google Calendar writes (seam only)
@@ -26,7 +26,7 @@ Re-entry: this checkout, not a competing candidate worktree.
 ```bash
 export PATH="/opt/homebrew/bin:$PATH"
 export DEV_USER_ROOT=/tmp/pn-ui-round1
-export PRODUCTNAME_STUB_CANVAS=1
+export KAIROS_STUB_CANVAS=1
 mkdir -p "$DEV_USER_ROOT/inbox/study-sources"
 cp tests/fixtures/study/ui-round1/*.json "$DEV_USER_ROOT/inbox/study-sources/"
 cp tests/fixtures/study/ui-round1/calendar-suggestions.jsonl "$DEV_USER_ROOT/inbox/"

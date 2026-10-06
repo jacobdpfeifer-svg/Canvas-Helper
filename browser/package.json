@@ -1,5 +1,5 @@
 {
-  "name": "productname-canvas-browser",
+  "name": "kairos-canvas-browser",
   "private": true,
   "description": "SSO session → Canvas /api/v1 → inbox/ (no developer PAT required)",
   "scripts": {

@@ -1,23 +1,23 @@
-# Privacy Policy — ProductName (beta draft)
+# Privacy Policy — Kairos (beta draft)
 
-**Status:** beta draft, not lawyer-reviewed. Placeholder brand **ProductName**.  
+**Status:** beta draft, not lawyer-reviewed. Product name **Kairos** (chosen 2026-10-06; trademark search pending).  
 **Date:** 2026-09-20
 
 This describes what the current beta actually does. It is not legal advice.
 
 ## Local-first storage
 
-Course lists, assignment metadata, study history, local calendar rows, preferences, and SSO cookies for Canvas live **on this device** under your ProductName profile folder (`{user_root}`). Deleting that folder deletes that copy of the data.
+Course lists, assignment metadata, study history, local calendar rows, preferences, and SSO cookies for Canvas live **on this device** under your Kairos profile folder (`{user_root}`). Deleting that folder deletes that copy of the data.
 
-Nothing here is a hosted student-information system. ProductName does not claim FERPA “school official” status.
+Nothing here is a hosted student-information system. Kairos does not claim FERPA “school official” status.
 
 ## What is read from Canvas
 
 With your school SSO session (cookies in this profile, not a stored password), the app may read Canvas REST resources you can already see: courses, syllabus/pages, assignments, quizzes metadata, assignment groups, due dates, and submission *presence* when the API returns it. It does not fetch live quiz questions to auto-take assessments. It does not post or submit on your behalf.
 
-## What we do not persist as a ProductName service
+## What we do not persist as a Kairos service
 
-ProductName does not run a cloud database of your study answers, email bodies, or course content. Optional crash telemetry is off unless you opt in. Optional usage counts (session started/finished) are off by default and never include content.
+Kairos does not run a cloud database of your study answers, email bodies, or course content. Optional crash telemetry is off unless you opt in. Optional usage counts (session started/finished) are off by default and never include content.
 
 Local connector records and OAuth tokens for **your** Google account may be stored in the profile folder.
 
@@ -35,7 +35,7 @@ Not affiliated with CU Boulder or Instructure.
 
 ## Contact and deletion
 
-Delete the profile folder to delete local ProductName data. Revoke OAuth at Google and your school IdP. Contact the beta operator who invited you.
+Delete the profile folder to delete local Kairos data. Revoke OAuth at Google and your school IdP. Contact the beta operator who invited you.
 
 ## Changes
 

@@ -1,7 +1,7 @@
 # UI/UX audit against Living Instrument (MASTER.md) — 2026-09-22
 
 Scope: `app/src` (all views, tokens, chrome) and `landing/`, audited against
-`design-system/productname/MASTER.md`. Live inspection at `localhost:1422`
+`design-system/kairos/MASTER.md`. Live inspection at `localhost:1422`
 (night + paper themes, 375px, keyboard). Outside Tauri every IPC returns empty,
 so populated Home/Plan/Study were audited from source — there is no browser
 fixture mode.

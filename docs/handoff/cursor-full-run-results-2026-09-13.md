@@ -6,7 +6,7 @@ Synthetic-data pass only (brief: [`cursor-full-run-audit-2026-09-13.md`](./curso
 No real SSO, OAuth, Canvas PAT, or Jacob personal data was used.
 
 **Scratch `DEV_USER_ROOT` (leave for second review; delete after):**  
-`/tmp/productname-qa-fixture-2026-09-13/`
+`/tmp/kairos-qa-fixture-2026-09-13/`
 
 **Screenshots:** [`audit-screenshots-2026-09-13/`](./audit-screenshots-2026-09-13/)
 
@@ -39,7 +39,7 @@ No flaky failures found in baseline suites.
 | pytest suite | Works | `714→721 passed` commands above |
 | browser npm test | Works | `89 pass, 0 fail` |
 | app `tsc --noEmit` | Works | exit 0 |
-| Synthetic fixture `DEV_USER_ROOT` | Works | `/tmp/productname-qa-fixture-2026-09-13` built via `ensure_user_root` + templates |
+| Synthetic fixture `DEV_USER_ROOT` | Works | `/tmp/kairos-qa-fixture-2026-09-13` built via `ensure_user_root` + templates |
 | `canvas-week-plan` route + assemble | Works | `skill_router --json "plan my week"` → `canvas-week-plan`; `assemble_turn` includes FAKE week rows |
 | `student-task-brief` | Works | routes structured; assemble includes fixture |
 | `student-course-arc` | Works | `"brief me on FAKE220"` → `student-course-arc` |
@@ -78,7 +78,7 @@ No flaky failures found in baseline suites.
 
 - **Preview → confirm → execute, no first-write exemption:** `get_connector_guard` docs + `tests/core/test_connector_guards.py`, `test_actuator_common.py`, `test_send_email_and_create_event_preview_before_write`.
 - **ALWAYS_GATED for `email_send` / `calendar`:** `test_email_send_and_calendar_never_escalate_to_automatic` — YAML cannot force `automatic`.
-- **Ledger after confirm:** synthetic run under `/tmp/productname-qa-ledger-check` wrote success rows for `send_email` and `create_event`; test file now asserts the same.
+- **Ledger after confirm:** synthetic run under `/tmp/kairos-qa-ledger-check` wrote success rows for `send_email` and `create_event`; test file now asserts the same.
 - **Canvas-visible tools stay preview-only:** `submit_assignment` / `comment_on_my_submission` / discussion post+reply — `readOnlyHint`, security + metadata tests green.
 - **Apple Calendar:** `mcp-servers/apple-cal/server.py` hard-blocks writes; **no** `EventKitHelper` binary on disk.
 - **Degree planning:** `python -m canvas_mcp.core.degree_audit` / `load_degree_audit` require dated paste; GPA is local estimate only (`skills/student-gpa/SKILL.md` L12–55).
@@ -145,13 +145,13 @@ Onboarding collects: school, legal accept, SSO, one priorities textarea, learnin
 
 ## 5. New paths taken
 
-1. **No seed script for fake `user_root`** — built `/tmp/productname-qa-fixture-2026-09-13` by hand from templates + pytest shapes; invented `calibration/priority-rubric.md` (no repo template).
+1. **No seed script for fake `user_root`** — built `/tmp/kairos-qa-fixture-2026-09-13` by hand from templates + pytest shapes; invented `calibration/priority-rubric.md` (no repo template).
 2. **Initial `grades.yaml` used `current_grade`** — product schema is `letter` (`writeGradesYaml` / `load_grades_yaml`). Fixed fixture; not a product bug.
 3. **`skill_router --execute` needs API key** — fell back to `--json` route + `assemble_turn` for all 14 skills.
 4. **AGENTS triage phrasing** — `"triage my assignments priority"` failed routing; exact skill triggers work.
 5. **Disk full (`ENOSPC`, ~123 Mi free)** mid-UI pass — cleared `~/.npm/_cacache`, incomplete Playwright cache, repo `.mypy_cache`/`.pytest_cache` to free ~2.7 Gi so screenshots could run. Recorded here; not a product defect.
 6. **Report filename** — prompt already occupies `cursor-full-run-audit-2026-09-13.md`; results written to **this** file (`cursor-full-run-results-2026-09-13.md`).
-7. **Ad-hoc ledger proof** under `/tmp/productname-qa-ledger-check` before promoting assertions into the test file.
+7. **Ad-hoc ledger proof** under `/tmp/kairos-qa-ledger-check` before promoting assertions into the test file.
 
 ---
 
@@ -195,6 +195,6 @@ Onboarding collects: school, legal accept, SSO, one priorities textarea, learnin
 
 ## Scratch paths to delete after second review
 
-- `/tmp/productname-qa-fixture-2026-09-13/` — primary audit fixture
-- `/tmp/productname-qa-ledger-check/` — ledger proof scratch
+- `/tmp/kairos-qa-fixture-2026-09-13/` — primary audit fixture
+- `/tmp/kairos-qa-ledger-check/` — ledger proof scratch
 - `/tmp/pn-shot/` — temporary puppeteer-core install used for screenshots

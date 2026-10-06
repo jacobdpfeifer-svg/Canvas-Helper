@@ -73,7 +73,7 @@ The implementation is in `core/dates.py`, `teach_hint.py`, `learn_loop.py`, `pro
 
 iCloud sets `UF_HIDDEN` on `.venv/lib/python3.12/site-packages/_editable_impl_canvas_mcp.pth`, and Python 3.12 skips hidden `.pth` files. So `uv run python -m canvas_mcp.core.study …` raises `ModuleNotFoundError` even though pytest works (pytest goes through `conftest.py`). Every audit CLI here ran with `PYTHONPATH=src`. This is a sibling of the native-build EPERM issue documented for `scripts/native-mirror.sh`. Proposal: have `CLAUDE.md` Commands and any Tauri dev-mode spawn set `PYTHONPATH=src`, or run from the mirror.
 
-*Re-verified 2026-10-06: confirmed iCloud-only.* In the checkout the `.pth` file still shows `hidden` (`ls -lO`) and `python -m canvas_mcp.core.study --help` exits 1. In the native mirror (`scripts/native-mirror.sh`, `~/.cache/productname-build`), a fresh `uv venv` + `uv pip install -e .` leaves the same `.pth` file unflagged, and the same command exits 0 with no `PYTHONPATH` (RUN-LOG R.6). A student's Mac hits this only if the brain runs from an iCloud-synced folder. Still open for this checkout.
+*Re-verified 2026-10-06: confirmed iCloud-only.* In the checkout the `.pth` file still shows `hidden` (`ls -lO`) and `python -m canvas_mcp.core.study --help` exits 1. In the native mirror (`scripts/native-mirror.sh`, `~/.cache/kairos-build`), a fresh `uv venv` + `uv pip install -e .` leaves the same `.pth` file unflagged, and the same command exits 0 with no `PYTHONPATH` (RUN-LOG R.6). A student's Mac hits this only if the brain runs from an iCloud-synced folder. Still open for this checkout.
 
 **D4 — CI `mypy src/` cannot run once the `diagrams` extra is installed.** *Low.*
 

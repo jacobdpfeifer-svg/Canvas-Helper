@@ -73,10 +73,10 @@ fn main() {
             let resource_dir = app.path().resource_dir().ok();
             let rt = Arc::new(runtime::resolve(resource_dir.as_deref()));
             for note in &rt.diagnostics {
-                eprintln!("[productname-daemon] runtime: {note}");
+                eprintln!("[kairos-daemon] runtime: {note}");
             }
             eprintln!(
-                "[productname-daemon] runtime {:?} profile={} root={}",
+                "[kairos-daemon] runtime {:?} profile={} root={}",
                 rt.mode,
                 rt.profile_id,
                 rt.user_root.display()
@@ -89,7 +89,7 @@ fn main() {
 
             let mut tray = TrayIconBuilder::new()
                 .menu(&menu)
-                .tooltip("ProductName (private beta)")
+                .tooltip("Kairos (private beta)")
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "sync_now" => {
@@ -100,7 +100,7 @@ fn main() {
                                 let _ = app.emit("inbox-updated", ());
                             }
                             Err(e) => {
-                                eprintln!("[productname-daemon] Sync now failed: {e}");
+                                eprintln!("[kairos-daemon] Sync now failed: {e}");
                                 let _ = app.emit("sync-failed", e.to_string());
                             }
                         }
@@ -119,7 +119,7 @@ fn main() {
                     {
                         let app = tray.app_handle();
                         if let Err(e) = dock::toggle(app) {
-                            eprintln!("[productname-daemon] dock toggle failed: {e}");
+                            eprintln!("[kairos-daemon] dock toggle failed: {e}");
                         }
                     }
                 });
@@ -140,7 +140,7 @@ fn main() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running ProductName");
+        .expect("error while running Kairos");
 }
 
 #[cfg(test)]

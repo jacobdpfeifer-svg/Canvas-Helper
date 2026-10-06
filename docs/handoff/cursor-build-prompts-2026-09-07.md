@@ -26,7 +26,7 @@ model per skill category directly, don't build a router.
 ## Prompt A: Provider abstraction + kill the Ollama-chat path
 
 ```
-This app (ProductName, a Tauri desktop student assistant) currently has scattered
+This app (Kairos, a Tauri desktop student assistant) currently has scattered
 references to a "local Ollama" path that we are abandoning in favor of a hosted API
 model. We need a thin provider abstraction — NOT a full LLM framework — because every
 model we evaluated has near-term deprecation risk, so swapping providers must be a
@@ -40,7 +40,7 @@ Create `src/canvas_mcp/core/llm_provider.py`:
 - One concrete implementation to start: a Gemini-family provider (use the current
   Flash-Lite tier model name — check the Gemini API docs for whichever Flash-Lite model
   is current, not "2.5", since that line is being deprecated October 2026) reading its
-  API key from an env var (`PRODUCTNAME_LLM_API_KEY` or similar — match existing env
+  API key from an env var (`KAIROS_LLM_API_KEY` or similar — match existing env
   var naming conventions in this repo).
 - A second implementation for Claude Haiku (current generation) for use in
   reliability-critical write paths (anything gated by ConfirmationGuard, e.g.
@@ -97,7 +97,7 @@ reliable for small models on data this structured.
 ## 4. Migrate or gate the live skill-eval harness
 
 `src/canvas_mcp/core/skill_eval.py` has `_ollama_chat()` — a live tool-call probe
-gated behind `PRODUCTNAME_LIVE_SKILL_EVAL=1`, currently hitting local Ollama at
+gated behind `KAIROS_LIVE_SKILL_EVAL=1`, currently hitting local Ollama at
 `OLLAMA_HOST` (default `http://127.0.0.1:11434`). This is a dev/CI quality-check tool,
 not production runtime — keep it, but repoint it at the new `LLMProvider` abstraction
 so it validates skills against whatever model production actually uses instead of a

@@ -106,9 +106,9 @@ export function FirstRun({
     <div className="onboarding first-run thirds">
       <p className="brand-lockup">
         <span className="brand-echo" aria-hidden="true">
-          ProductName
+          Kairos
         </span>
-        <span>ProductName</span>
+        <span>Kairos</span>
       </p>
 
       {step === "school" && (

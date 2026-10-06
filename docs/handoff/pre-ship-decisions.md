@@ -6,7 +6,7 @@ Product calls and credentialed checks. Jacob signs a row by editing its Status t
 
 | # | Decision | Choice (signed) | Status |
 |---|----------|-----------------|--------|
-| 1 | `src/canvas_mcp/` identity | **Vendored** upstream [vishalsachdev/canvas-mcp](https://github.com/vishalsachdev/canvas-mcp). Keep upstream `CHANGELOG.md`; do not rewrite it as ProductName history. Prefer ProductName features outside the vendored MCP tree (`app/`, `browser/`, `skills/`, `plugins/`, `mcp-servers/`). Document the boundary in [`vendor/README.md`](../../vendor/README.md) and the banner atop `CHANGELOG.md`. | **signed — vendored** |
+| 1 | `src/canvas_mcp/` identity | **Vendored** upstream [vishalsachdev/canvas-mcp](https://github.com/vishalsachdev/canvas-mcp). Keep upstream `CHANGELOG.md`; do not rewrite it as Kairos history. Prefer Kairos features outside the vendored MCP tree (`app/`, `browser/`, `skills/`, `plugins/`, `mcp-servers/`). Document the boundary in [`vendor/README.md`](../../vendor/README.md) and the banner atop `CHANGELOG.md`. | **signed — vendored** |
 | 2 | `app/billing/` and `app/mobile/` | **Delete.** No monetization this phase. Scrub Stripe/Twilio/billing stubs from the product tree. Revisit only if a later product call reopens charging. | **signed — delete** |
 | 3 | Tauri ambient-dock model | **Park.** Keep peek/expanded/onboarding as built; do not finish Hidden/auto-peek or replace the shell in this pass. UI quality is acknowledged as not ship-ready; alternatives compared in [`ui-shell-alternatives.md`](./ui-shell-alternatives.md). Stay on Tauri until a later signed replace. | **signed — park** |
 | 4 | Packaging trigger | **Not yet.** Needs more product/UI work before “worth installing.” No notarized `.dmg`; local `cargo`/unsigned build only for dev. | **signed — not yet** |
@@ -33,7 +33,7 @@ Order is privacy first, then “can we claim this works.”
 - Do not reopen rows 1–4 without a new Jacob signature.
 - Do not re-add `app/billing/` / `app/mobile/` or Stripe/Twilio wiring.
 - Do not replace the Tauri shell or start notarization while decisions 3–4 remain park / not yet.
-- Do not rewrite upstream `CHANGELOG.md` to look like a ProductName product history.
+- Do not rewrite upstream `CHANGELOG.md` to look like a Kairos product history.
 - Do not add `llm_provider_cli.py` or a chat call site besides `prompt_assembly.chat_assembled` / `chat_skill`.
 
 ## Addendum — 2026-09-17: beta preparation reopened

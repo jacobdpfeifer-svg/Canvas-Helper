@@ -7,7 +7,7 @@ student workflow audit and discovery conversation on 2026-09-30.
 
 ## Mission
 
-Build the next core of ProductName: a local-first, context-aware student
+Build the next core of Kairos: a local-first, context-aware student
 workflow system that helps a student with the exact thing in front of them,
 answers in the right mode, uses their actual course context, verifies what can
 be verified, and leaves behind one useful next action.
@@ -20,7 +20,7 @@ encounter friction → ask/capture it → get a trustworthy next step
 → act in the right tool → preserve the useful residue → continue
 ```
 
-The student should feel that ProductName knows their courses, department,
+The student should feel that Kairos knows their courses, department,
 school workflows, deadlines, instructor conventions, prior mistakes, and
 current goal better than a generic AI app—without pretending to know facts that
 are not supported by evidence.
@@ -453,7 +453,7 @@ Recording requirements:
 ## UI requirements
 
 The main experience should feel like a workspace, not a dashboard of equal
-cards. Follow `design-system/productname/MASTER.md`:
+cards. Follow `design-system/kairos/MASTER.md`:
 
 - one dominant current subject;
 - supporting context orbit/rail;

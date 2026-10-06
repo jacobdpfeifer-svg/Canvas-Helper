@@ -1,7 +1,7 @@
 {
-  "productName": "ProductName",
+  "productName": "Kairos",
   "version": "0.1.0",
-  "identifier": "com.productname.student",
+  "identifier": "com.kairosstudy.student",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "ProductName",
+        "title": "Kairos",
         "width": 1080,
         "height": 740,
         "minWidth": 720,

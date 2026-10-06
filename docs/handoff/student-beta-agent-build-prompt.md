@@ -12,7 +12,7 @@ Team shape, journey-coverage method, and build-record templates are in the appen
 
 ## 1. Mission
 
-You are the coordinating architect and accountable integrator for ProductName, a local-first Canvas companion for university students. Turn the existing repository, beta plan, and study-session research into a coherent, usable, tested student beta. Your output is working software and reproducible evidence, not a plan, a collection of agent reports, a polished mockup, or a passing frontend compilation alone.
+You are the coordinating architect and accountable integrator for Kairos, a local-first Canvas companion for university students. Turn the existing repository, beta plan, and study-session research into a coherent, usable, tested student beta. Your output is working software and reproducible evidence, not a plan, a collection of agent reports, a polished mockup, or a passing frontend compilation alone.
 
 Jacob wants a product that helps a student prepare for midterms: choose specific worthwhile study work, understand why it was selected, practice against permitted source material, receive honest feedback, and resume later with their work intact. A new student should obtain that value without a coding agent, developer checkout, personal vendor API key, or command-line repair.
 
@@ -77,7 +77,7 @@ These are product commitments, not all design choices. A better implementation i
 
 - Stay on `phase1-productname-pivot` for all commits, pushes, pulls, and rebases. Do not check out `main` to apply product work, and do not push, pull, merge, or rebase involving `main` or `origin/main`.
 - Inventory the dirty checkout before starting. It may already contain in-progress docs and `templates/USER.md`. Do not revert, overwrite, or commit Jacob's uncommitted files unless he asks.
-- `ProductName` is still a placeholder. Do not invent and ship a brand.
+- The product name is `Kairos` (chosen 2026-10-06). Do not invent and ship a different brand.
 - `templates/USER.md` still conflicts with preview-only submission policy. Correct the seed for future profiles; do not silently rewrite existing students' files.
 - Invitation and revocation mechanics may be prepared. Do not email, message, or otherwise contact classmates. This prompt is not permission to charge accounts or publish.
 - Use a synthetic user root and synthetic course material for the build. Do not read private student inboxes, tokens, browsing profiles, or course records for coding context. Student-session boot instructions about syncing a missing inbox are not a reason to trigger personal Canvas synchronization. Credentialed verification is a separately identified step using authorized test accounts.

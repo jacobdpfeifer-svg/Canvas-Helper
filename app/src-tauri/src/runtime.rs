@@ -3,14 +3,14 @@
 //! The app never assumes a repository checkout, a system `python3`, or `npm`.
 //! Resolution order for each resource:
 //!
-//! 1. `PRODUCTNAME_CORE_DIR` / `PRODUCTNAME_PYTHON` / `PRODUCTNAME_NODE` env overrides
+//! 1. `KAIROS_CORE_DIR` / `KAIROS_PYTHON` / `KAIROS_NODE` env overrides
 //!    (developer + test harness).
 //! 2. Bundled resources next to the binary: `<resources>/core/{src,browser,templates,
 //!    schools,skills}` and `<resources>/runtime/{python,node}/bin/...`.
 //! 3. Dev fallback: the repository around `CARGO_MANIFEST_DIR` with `python3` and
 //!    `node` from `PATH` — labeled `dev`, never presented as an installed run.
 //!
-//! Profile identity: `<app_support>/ProductName/current_profile` holds the active
+//! Profile identity: `<app_support>/Kairos/current_profile` holds the active
 //! profile id (validated). Every child process receives `PRODUCT_USER_ID`, so the
 //! Rust, Python and JS resolvers agree on `{user_root}`.
 
@@ -21,7 +21,7 @@ use std::process::Command;
 
 use serde::Serialize;
 
-pub const PRODUCT_DIR: &str = "ProductName";
+pub const PRODUCT_DIR: &str = "Kairos";
 pub const DEFAULT_PROFILE: &str = "dev";
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -160,7 +160,7 @@ pub fn resolve(resource_dir: Option<&Path>) -> Runtime {
     let profile_id = current_profile_id();
     let user_root = user_root_for(&profile_id);
 
-    let env_core = env::var_os("PRODUCTNAME_CORE_DIR").map(PathBuf::from);
+    let env_core = env::var_os("KAIROS_CORE_DIR").map(PathBuf::from);
     let bundled_core = resource_dir.map(|r| r.join("core"));
     let (mode, core_dir) = match (env_core, bundled_core) {
         (Some(dir), _) if dir.join("src").is_dir() => (RuntimeMode::Bundled, dir),
@@ -178,7 +178,7 @@ pub fn resolve(resource_dir: Option<&Path>) -> Runtime {
     };
 
     let mut mode = mode;
-    let python = env::var_os("PRODUCTNAME_PYTHON")
+    let python = env::var_os("KAIROS_PYTHON")
         .map(PathBuf::from)
         .filter(|p| p.is_file())
         .or_else(|| {
@@ -216,7 +216,7 @@ pub fn resolve(resource_dir: Option<&Path>) -> Runtime {
             PathBuf::new()
         });
 
-    let node = env::var_os("PRODUCTNAME_NODE")
+    let node = env::var_os("KAIROS_NODE")
         .map(PathBuf::from)
         .filter(|p| p.is_file())
         .or_else(|| {
@@ -266,7 +266,7 @@ impl Runtime {
         }
         cmd.env("AUTH_DIR", self.user_root.join("auth").join("browser"));
         cmd.env(
-            "PRODUCTNAME_TEMPLATES_DIR",
+            "KAIROS_TEMPLATES_DIR",
             self.core_dir.join("templates").join("study-packets"),
         );
         let src = self.core_dir.join("src");
@@ -291,7 +291,7 @@ impl Runtime {
     /// command targets an empty path and fails to spawn with a clear message.
     pub fn python_module(&self, module: &str, args: &[&str]) -> Command {
         let mut cmd = Command::new(if self.python.as_os_str().is_empty() {
-            Path::new("/nonexistent/productname-python-missing")
+            Path::new("/nonexistent/kairos-python-missing")
         } else {
             self.python.as_path()
         });
@@ -313,7 +313,7 @@ impl Runtime {
     /// resolve identity itself on this path.
     pub fn study_command(&self, args: &[&str]) -> Command {
         let mut cmd = Command::new(if self.python.as_os_str().is_empty() {
-            Path::new("/nonexistent/productname-python-missing")
+            Path::new("/nonexistent/kairos-python-missing")
         } else {
             self.python.as_path()
         });

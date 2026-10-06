@@ -1,4 +1,4 @@
-"""Tool modules for Canvas MCP server (student-only ProductName)."""
+"""Tool modules for Canvas MCP server (student-only Kairos)."""
 
 from .assignments import register_shared_assignment_tools
 from .courses import register_course_tools, register_shared_content_tools

@@ -1,8 +1,8 @@
 """Per-user data directory resolution (local-first).
 
-macOS:  ~/Library/Application Support/{ProductName}/{user_id}/
-Windows: %APPDATA%\\{ProductName}\\{user_id}\\
-Linux:  ~/.local/share/{ProductName}/{user_id}/
+macOS:  ~/Library/Application Support/{Kairos}/{user_id}/
+Windows: %APPDATA%\\{Kairos}\\{user_id}\\
+Linux:  ~/.local/share/{Kairos}/{user_id}/
 
 ``DEV_USER_ROOT`` overrides the entire user root (useful for local development
 and tests without writing under the OS app-support path).

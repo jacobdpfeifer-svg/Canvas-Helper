@@ -14,7 +14,7 @@ Copy everything under **The prompt** into a fresh agent session on this repo.
 
 ## The prompt
 
-You are judging whether ProductName, on branch `phase1-productname-pivot`, is ready for production-level use. The deliverable is a verdict a student, a classmate, or a stranger could be held to. Jacob is not in the loop except for the hard stops listed below.
+You are judging whether Kairos, on branch `phase1-productname-pivot`, is ready for production-level use. The deliverable is a verdict a student, a classmate, or a stranger could be held to. Jacob is not in the loop except for the hard stops listed below.
 
 "Production" is not "the tests are green" and it is not "the architecture doc sounds finished." It is: a person who is not the author can use the product for a real school week, on a machine that is not this checkout, without the product acting on Canvas for them, leaking another student's data, or inventing a degree claim.
 
@@ -52,7 +52,7 @@ Read these before you run anything. They override this prompt where they conflic
 - [`docs/handoff/student-beta-2026-09-17.md`](./student-beta-2026-09-17.md)
 - [`docs/handoff/hosting-decision-criteria-2026-09-30.md`](./hosting-decision-criteria-2026-09-30.md)
 - [`docs/audits/production-student-2026-10-05/REPORT.md`](../audits/production-student-2026-10-05/REPORT.md)
-- [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) before any UI judgment
+- [`design-system/kairos/MASTER.md`](../../design-system/kairos/MASTER.md) before any UI judgment
 
 The stress-test report is a lead, not a certificate. Re-open every defect and "resolved" row against the current tree. A claim in that report that the code no longer matches is itself a finding. Do not treat a prior agent's "pass" as your pass.
 
@@ -172,6 +172,6 @@ Do not commit. In the chat, lead with the headline sentence, then the three alti
 - **D2 was only half fixed at `60d350b`.** Synced lines that carry the `<!-- due:… -->` token remapped, but legacy display lines with a numbered title ("Midterm 1") did not. That was fixed on 2026-10-06 in `dates.parse_day`, and `REPORT.md` D2 says so. The agent should re-check it in step 2 like any other row. The fix is uncommitted until Jacob commits it, and a fix from that same session doesn't count as a pass.
 - **The end-to-end probe already exists:** `tests/fixtures/synthetic-students/probes/e2e_day.sh`, alongside `isolation.py`, `write_guards.py`, `learning.py`, `router.py`, `freshness.mjs`, and `plugins.mjs`. Step 2 should re-run these rather than build new ones.
 - **`var/` is already gitignored** (`.gitignore:173`). The agent does not need to edit `.gitignore` unless that line is gone.
-- **Run it from a worktree or a throwaway copy if you can.** The fix policy allows small mechanical diffs, and a clean tree makes it obvious what the session touched. For step 4, use the native mirror. `scripts/native-mirror.sh cargo check --locked` builds the Tauri shell at `~/.cache/productname-build`. A `uv venv` + `uv pip install -e .` there runs `python -m canvas_mcp…` with no `PYTHONPATH` (exit 0), while the iCloud checkout exits 1 on the hidden `.pth`. That is D3, confirmed iCloud-only on 2026-10-06. The mirror does not copy `tests/`, so run the probes from the checkout with `PYTHONPATH=src`, as `e2e_day.sh` already does.
+- **Run it from a worktree or a throwaway copy if you can.** The fix policy allows small mechanical diffs, and a clean tree makes it obvious what the session touched. For step 4, use the native mirror. `scripts/native-mirror.sh cargo check --locked` builds the Tauri shell at `~/.cache/kairos-build`. A `uv venv` + `uv pip install -e .` there runs `python -m canvas_mcp…` with no `PYTHONPATH` (exit 0), while the iCloud checkout exits 1 on the hidden `.pth`. That is D3, confirmed iCloud-only on 2026-10-06. The mirror does not copy `tests/`, so run the probes from the checkout with `PYTHONPATH=src`, as `e2e_day.sh` already does.
 - **Expect the answer to be "No".** As of this prompt, pre-ship decision 4 is **not yet** and the human walk is open, so C cannot be **Yes**. The useful output is which of A and B holds, and how short the flip list in `VERDICT.md` §3 is. A run that comes back "Yes" at C should be treated as a defect in the run.
 - **Re-run after any change to packaging, the Ask/relay path, or the write guards.** One verdict covers one tree. Date the next copy of this prompt rather than editing this one.

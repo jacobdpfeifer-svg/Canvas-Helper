@@ -1,6 +1,6 @@
-# CLAUDE.md — ProductName student Canvas platform
+# CLAUDE.md — Kairos student Canvas platform
 
-Load [`AGENTS.md`](./AGENTS.md) and `{user_root}/USER.md` (template: [`templates/USER.md`](./templates/USER.md)). Architecture: [`docs/architecture.md`](./docs/architecture.md). Visual craft (any `app/src`, `landing/`, dock UI change): [`design-system/productname/MASTER.md`](./design-system/productname/MASTER.md) — **Living Instrument**, source of truth; supersedes the Spatial Instrument brief and style tile on visuals.
+Load [`AGENTS.md`](./AGENTS.md) and `{user_root}/USER.md` (template: [`templates/USER.md`](./templates/USER.md)). Architecture: [`docs/architecture.md`](./docs/architecture.md). Visual craft (any `app/src`, `landing/`, dock UI change): [`design-system/kairos/MASTER.md`](./design-system/kairos/MASTER.md) — **Living Instrument**, source of truth; supersedes the Spatial Instrument brief and style tile on visuals.
 
 **Default: no Canvas PAT.** Useful via SSO → `/api/v1` → inbox.
 
@@ -22,7 +22,7 @@ schools/               # tenant yaml (e.g. cu-boulder)
 browser/               # SSO auth + sync scripts (not DOM-primary)
 src/canvas_mcp/       # vendored optional PAT MCP (upstream canvas-mcp)
 skills/                # student-* + canvas-week-plan + discussion
-app/                   # ProductName Tauri shell + daemon; extension-chrome/ + native-messaging/ (Canvas-page surface)
+app/                   # Kairos Tauri shell + daemon; extension-chrome/ + native-messaging/ (Canvas-page surface)
 plugins/               # school-conditional Bucket-A connectors (see plugins/README.md)
 vendor/                # upstream CHANGELOG boundary + archived articles/examples/internal
 ```
