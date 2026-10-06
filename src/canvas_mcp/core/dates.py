@@ -25,6 +25,13 @@ _ISO_DAY_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
 _HUMAN_DAY_RE = re.compile(
     r"\b([A-Za-z]{3,9})\s+(\d{1,2})(?:,\s*(\d{4}))?\b"
 )
+# Exact month words only, so a title like "Midterm 1" or "Marathon 3" is not read as a date.
+_MONTH_NAMES = (
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december",
+)
+_MONTHS = {name: i for i, full in enumerate(_MONTH_NAMES, 1) for name in (full, full[:3])}
+_MONTHS["sept"] = 9
 
 
 def parse_day(value: str | None, *, default_year: int | None = None) -> datetime.date | None:
@@ -38,17 +45,18 @@ def parse_day(value: str | None, *, default_year: int | None = None) -> datetime
             return datetime.date.fromisoformat(iso.group(1))
         except ValueError:
             pass
-    match = _HUMAN_DAY_RE.search(text)
-    if not match:
-        return None
-    year = int(match.group(3)) if match.group(3) else default_year
-    if year is None:
-        return None
-    try:
-        month = datetime.datetime.strptime(match.group(1)[:3], "%b").month
-        return datetime.date(year, month, int(match.group(2)))
-    except ValueError:
-        return None
+    for match in _HUMAN_DAY_RE.finditer(text):
+        month = _MONTHS.get(match.group(1).lower())
+        if month is None:
+            continue
+        year = int(match.group(3)) if match.group(3) else default_year
+        if year is None:
+            return None
+        try:
+            return datetime.date(year, month, int(match.group(2)))
+        except ValueError:
+            return None
+    return None
 
 
 def _output_tz() -> datetime.tzinfo:

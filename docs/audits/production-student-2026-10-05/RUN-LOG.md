@@ -215,3 +215,17 @@ It builds `var/audit-user-roots/e2e-{avery,blake}` with the factory (`--week den
 | C.6 | `pytest services/relay/tests -q` | root | — | 0 | 19 passed |
 | C.7 | `find "$HOME/Library/Application Support/ProductName" -newer <marker> \| wc -l` | root | — | 0 | **0** |
 | C.8 | `git status --short` | root | — | 0 | no `var/` paths. Changes listed in REPORT §3 |
+
+## Re-verification — 2026-10-06
+
+The working tree had an uncommitted 17:34 rewrite of all four audit files. It said the learning probe still failed and the end-to-end day never ran, contradicting `60d350b`. It also had untracked `avery/` and `blake/` persona folders that `make_root.py` would discover as extra personas. All of that was moved to `git stash` ("stale 2026-10-05 17:34 rewrite …") so the committed record is the one in the tree. Recover it with `git stash pop` if needed.
+
+| # | Command | cwd | DEV_USER_ROOT | Exit | Result |
+|---|---|---|---|---|---|
+| R.1 | `bash …/probes/e2e_day.sh` | root | e2e-avery / e2e-blake | 0 | 6/6. do_first is now `APPM 2360 — Problem Set 6` due Oct 6, chosen by date, not table order |
+| R.2 | `probes/learning.py var/audit-user-roots/avery-chen` (before fix) | root | avery-chen | 1 | **FAIL** `[sync format] … 'Oct 16, 7:00 PM MDT'`: `updated=0, remaps=[], skipped=[]`. D2 was only half fixed; see REPORT D2 |
+| R.3 | same, after the `parse_day` fix | root | avery-chen | 0 | PASS. Legacy `Oct 16` remaps 10-14→10-16, and token `<!-- due:2026-10-18 -->` remaps 10-16→10-18 |
+| R.4 | `isolation.py`, `router.py`, `write_guards.py`, `freshness.mjs`, `plugins.mjs` | root | avery-chen / blake-okonkwo | 0 | all PASS |
+| R.5 | `pytest tests/ -q`; browser `npm test`; app `npm test`; `ruff check src tests`; `mypy --python-version 3.12 src/` | root | unset | 0 | **840 passed**, 19 skipped; 220/220; 64/64; clean; no issues in 68 files |
+| R.6 | `.venv/bin/python -m canvas_mcp.core.study --help` (checkout) vs the same in the `native-mirror.sh` mirror venv | root / mirror | — | 1 / 0 | D3 confirmed iCloud-only: checkout `.pth` is `hidden`; the mirror's is not |
+| R.7 | `scripts/native-mirror.sh cargo check --locked` | mirror app/src-tauri | — | 0 | Tauri shell builds (2 warnings) |
