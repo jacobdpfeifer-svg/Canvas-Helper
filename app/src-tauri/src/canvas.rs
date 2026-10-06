@@ -5,7 +5,7 @@ use std::fs;
 use std::path::Path;
 
 fn reliability_enabled() -> bool {
-    match std::env::var("PRODUCTNAME_CANVAS_RELIABILITY").ok().as_deref() {
+    match std::env::var("KAIROS_CANVAS_RELIABILITY").ok().as_deref() {
         Some("0") | Some("false") => false,
         _ => true,
     }

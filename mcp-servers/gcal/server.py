@@ -29,7 +29,7 @@ from common.stop_rewind import engage_global_stop, rewind_last  # noqa: E402
 
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 
-mcp = FastMCP("productname-gcal")
+mcp = FastMCP("kairos-gcal")
 
 
 @mcp.tool()

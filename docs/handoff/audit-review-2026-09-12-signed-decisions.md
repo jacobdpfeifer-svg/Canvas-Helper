@@ -15,7 +15,7 @@ Recorded in [`pre-ship-decisions.md`](./pre-ship-decisions.md).
 
 ### Vendored MCP (row 1)
 
-- Banner atop root [`CHANGELOG.md`](../../CHANGELOG.md): this is **upstream** release history, not ProductName’s product log.
+- Banner atop root [`CHANGELOG.md`](../../CHANGELOG.md): this is **upstream** release history, not Kairos’s product log.
 - [`vendor/README.md`](../../vendor/README.md) explains the boundary; archived `articles/`, `examples/`, `internal/` under `vendor/`.
 - README / CLAUDE / architecture / pyproject updated so outside testers are not confused by canvas-mcp issue numbers.
 
@@ -42,7 +42,7 @@ Recorded in [`pre-ship-decisions.md`](./pre-ship-decisions.md).
 ### Housekeeping
 
 - Committed signed-decision work (`92ad6bd`) after earlier pre-ship honesty commit (`7ce2ad2`).
-- Left `.cursor/skills/*` **uncommitted** on purpose (4.6MB Cursor design skill packs) — added to `.gitignore`. Committed `design-system/productname/MASTER.md` + `.cursor/rules/ui-craft.mdc` (product dock craft).
+- Left `.cursor/skills/*` **uncommitted** on purpose (4.6MB Cursor design skill packs) — added to `.gitignore`. Committed `design-system/kairos/MASTER.md` + `.cursor/rules/ui-craft.mdc` (product dock craft).
 
 ## What Jacob still owns
 

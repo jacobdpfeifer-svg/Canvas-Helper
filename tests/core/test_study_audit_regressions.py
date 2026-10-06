@@ -220,7 +220,7 @@ def test_interior_corruption_is_never_truncated(tmp_path: Path) -> None:
 def test_ipc_clock_override_is_gated(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from canvas_mcp.core.study.cli import _bridge_now
 
-    monkeypatch.delenv("PRODUCTNAME_ALLOW_TEST_CLOCK", raising=False)
+    monkeypatch.delenv("KAIROS_ALLOW_TEST_CLOCK", raising=False)
     assert _bridge_now({"now": "2030-01-01T00:00:00+00:00"}) is None
-    monkeypatch.setenv("PRODUCTNAME_ALLOW_TEST_CLOCK", "1")
+    monkeypatch.setenv("KAIROS_ALLOW_TEST_CLOCK", "1")
     assert _bridge_now({"now": "2030-01-01T00:00:00+00:00"}) == T("2030-01-01T00:00:00+00:00")

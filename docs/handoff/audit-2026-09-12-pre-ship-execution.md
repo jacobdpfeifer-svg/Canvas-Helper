@@ -41,7 +41,7 @@ the same time as this session**, unprompted by this conversation. Effects:
 - `tools/TOOL_MANIFEST.json` / `TOOL_INPUT_SCHEMAS.json` were **not** moved —
   `src/canvas_mcp/core/prompt_assembly.py` loads them by path at runtime.
 - `CHANGELOG.md` got a banner clarifying it's upstream's release log, not
-  ProductName's, pointing to `vendor/README.md` and `docs/architecture.md`.
+  Kairos's, pointing to `vendor/README.md` and `docs/architecture.md`.
 - Verified after the move: full test suite still green, no dangling
   `internal/`, `examples/`, or `articles/` path references anywhere in code or
   docs (one hit was fixture text in a test docstring, not a real path).

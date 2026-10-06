@@ -1,4 +1,4 @@
-// ProductName landing page — no build step, no framework, no backend.
+// Kairos landing page — no build step, no framework, no backend.
 (function () {
   "use strict";
 
@@ -57,9 +57,9 @@
         input.focus();
         return;
       }
-      var subject = encodeURIComponent("ProductName beta — notify me");
+      var subject = encodeURIComponent("Kairos beta — notify me");
       var body = encodeURIComponent(
-        "Please notify me when the ProductName macOS build is ready for testing.\n\nMy email: " + email + "\n"
+        "Please notify me when the Kairos macOS build is ready for testing.\n\nMy email: " + email + "\n"
       );
       var mailto = "mailto:jacobdpfeifer@gmail.com?subject=" + subject + "&body=" + body;
       status.textContent = "Opening your email app to send this to jacobdpfeifer@gmail.com — nothing was sent automatically.";

@@ -1,16 +1,16 @@
-# ProductName visual language — Spatial Instrument
+# Kairos visual language — Spatial Instrument
 
-> **Superseded on visual direction (2026-09-21).** [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) — *Living Instrument* — is now the source of truth for tokens, material, type, geometry, motion, and anti-patterns, and wins over this file and the style tile wherever they conflict. Keep using this brief for product behavior, screen anatomy, and the owner reference crops.
+> **Superseded on visual direction (2026-09-21).** [`design-system/kairos/MASTER.md`](../../design-system/kairos/MASTER.md) — *Living Instrument* — is now the source of truth for tokens, material, type, geometry, motion, and anti-patterns, and wins over this file and the style tile wherever they conflict. Keep using this brief for product behavior, screen anatomy, and the owner reference crops.
 
 **Status:** owner-sourced brief, 2026-09-18. Landed as Spatial Instrument in commit `be0eb3c`, then re-tokened to Living Instrument on 2026-09-21.
 
 **Build prompt:** [`docs/handoff/spatial-instrument-build-prompt.md`](../handoff/spatial-instrument-build-prompt.md) — execute that file to put this brief into the Tauri workspace (style tile first, then tokens/chrome).
 
-**How an agent should use this file:** this is the look-alike spec. Read it before touching `app/src/**/*.{tsx,css}`, `design-system/productname/MASTER.md`, or `.cursor/rules/ui-craft.mdc`. Copy the *named* thing in each crop/app, not the whole screenshot. If a later instruction says “make it clean / modern / minimal / cozy,” ignore those words and use the numbers in §6.
+**How an agent should use this file:** this is the look-alike spec. Read it before touching `app/src/**/*.{tsx,css}`, `design-system/kairos/MASTER.md`, or `.cursor/rules/ui-craft.mdc`. Copy the *named* thing in each crop/app, not the whole screenshot. If a later instruction says “make it clean / modern / minimal / cozy,” ignore those words and use the numbers in §6.
 
 **Product this has to fit:** a Mac-first student study workspace (Tauri + React) that prepares for exams. Home is a semester number-line. Study is a 5–10 minute session. Calendar and Settings are supporting. The old ambient dock still exists as parked chrome; the student-beta workspace is the surface this brief is for. Product boundaries in `CLAUDE.md` / `AGENTS.md` are unchanged (no streaks, no leaderboards, Canvas writes stay preview-only, reduced-motion is mandatory).
 
-**What this brief replaces in spirit:** `design-system/productname/MASTER.md` still forbids *marketing* glassmorphism (purple packs, glow orbs, Liquid Glass on paragraph text). It does **not** win against the owner references below. The new direction is **visionOS spatial glass for chrome + iOS HIG density for controls + Gleb Kuznetsov sequencing for search/palette + Solare/Nexusmag/Brik kinetic type only inside learning**. After Jacob signs the style tile, MASTER and `ui-craft.mdc` get rewritten to match this file.
+**What this brief replaces in spirit:** `design-system/kairos/MASTER.md` still forbids *marketing* glassmorphism (purple packs, glow orbs, Liquid Glass on paragraph text). It does **not** win against the owner references below. The new direction is **visionOS spatial glass for chrome + iOS HIG density for controls + Gleb Kuznetsov sequencing for search/palette + Solare/Nexusmag/Brik kinetic type only inside learning**. After Jacob signs the style tile, MASTER and `ui-craft.mdc` get rewritten to match this file.
 
 ---
 
@@ -42,7 +42,7 @@ Format: **source → steal this, leave that.** More information than three parag
 | **Fractiona** ([Dribbble 27655966](https://dribbble.com/shots/27655966-Fractiona-Fractional-Investing-Mobile-App)) | One hero visual per object (course / exam); progress as a bar or ring, not a paragraph; layered data (title, weight, due, status) on a quiet field; trust through photography-scale imagery and sparse type | Luxury purple; fintech token-price chrome; treating homework like a marketplace card grid |
 | **Raktor drone dashboard** ([Dribbble 26864675](https://dribbble.com/shots/26864675-Raktor-Drone-Mission-Web-Dashboard)) | Home as mission control: one shared time axis, tracks (courses), ticks (items), a detail inspector on hover/click; scan for what changed, don’t read a dashboard | Militaristic HUD, cyan grid, corner brackets, radar sweep, threat-red alarms, operator cockpits |
 | **Gleb Kuznetsov — Natural search / voice** ([Dribbble 26722789](https://dribbble.com/shots/26722789-Voice-interaction-for-Natural-search-UI-by-Gleb-Kuznetsov), crops `06a` / `06b`) | Command palette and AI-help: vast empty field; query as large type; results as **real objects** (cards, rows), not a chat transcript; listening/thinking as a **bottom glass capsule** that shares the screen with results instead of covering them; tiny iridescent mark (not a Siri orb); “tap anywhere to type”; Paper warmth (taupe / gold / charcoal, not purple AI) | Always-on microphone; speech recognition this round; ChatGPT bubble stack; full-screen waveform; rainbow as a brand accent; rotating every heading; replacing Home’s semester line with an empty greeting; building a generative OS that invents screens |
-| **Existing ProductName (keep)** | Source Serif 4 display + IBM Plex Sans UI + IBM Plex Mono numbers; ink cobalt as the *one* chrome accent; sentence-case titles; thin SVG icons; reduced-motion; blur not on paragraph text | 8px-radius monoculture on controls; 13.5px body everywhere; Forest mint HUD; true-black High Contrast; “PN” lettermark as branding |
+| **Existing Kairos (keep)** | Source Serif 4 display + IBM Plex Sans UI + IBM Plex Mono numbers; ink cobalt as the *one* chrome accent; sentence-case titles; thin SVG icons; reduced-motion; blur not on paragraph text | 8px-radius monoculture on controls; 13.5px body everywhere; Forest mint HUD; true-black High Contrast; “PN” lettermark as branding |
 
 Named mental-model mix, in one line:
 
@@ -78,7 +78,7 @@ Whole-kit screenshots are in `docs/design/references/`. Copy the sentence, not t
 
 | Crop | Copy this |
 |---|---|
-| Large Title | 34px, weight **700**, tracking tight (−0.4 to −0.8px), flush left, 8px above the first grouped list. Serif allowed here for ProductName; SF metrics otherwise. |
+| Large Title | 34px, weight **700**, tracking tight (−0.4 to −0.8px), flush left, 8px above the first grouped list. Serif allowed here for Kairos; SF metrics otherwise. |
 | Grouped list | Inset 12–16px from screen; **radius 12** on the *group*, 0 on inner rows; 0.5px separators; row height 44. Background of group is one step up from window (`--surface-grouped`). |
 | Calendar selected day | **Filled circle** in accent, white numeral, not a rounded-rect highlight behind the whole cell. |
 | Destructive vs default | Delete = `#FF453A` fill or label. Continue = accent fill. Cancel = no fill, 17px. Never outline-all-three. |
@@ -169,7 +169,7 @@ The semester number-line **is** the mission map. Courses = tracks. Ticks = units
 
 ## 4. North-star (one paragraph)
 
-ProductName should feel like a **physical glass instrument sitting on a Mac desktop**, not a website and not a sticky-note mock. Chrome (window, nav, sheets, bubbles, segmented controls, now-playing study card) is visionOS material: translucent, large radius, hairline specular, almost no shadow. Structure (Home timeline, lists, calendar) is iOS + Raktor: a grid, grouped lists, one axis. Search and AI-help follow Gleb Kuznetsov: large query, results as objects, a quiet capsule for listening/thinking that does not cover the work. Learning (the 5–10 minute session) is the only place type and diagrams *move*, in the Solare/Brik sense — motion that explains, never motion that rewards. Paper is Solare-warm (cream, taupe, a little gold). Night is visionOS dark gray, not OLED black. One cobalt accent, used like iOS blue: focus, selected segment, the single primary CTA.
+Kairos should feel like a **physical glass instrument sitting on a Mac desktop**, not a website and not a sticky-note mock. Chrome (window, nav, sheets, bubbles, segmented controls, now-playing study card) is visionOS material: translucent, large radius, hairline specular, almost no shadow. Structure (Home timeline, lists, calendar) is iOS + Raktor: a grid, grouped lists, one axis. Search and AI-help follow Gleb Kuznetsov: large query, results as objects, a quiet capsule for listening/thinking that does not cover the work. Learning (the 5–10 minute session) is the only place type and diagrams *move*, in the Solare/Brik sense — motion that explains, never motion that rewards. Paper is Solare-warm (cream, taupe, a little gold). Night is visionOS dark gray, not OLED black. One cobalt accent, used like iOS blue: focus, selected segment, the single primary CTA.
 
 ---
 
@@ -538,7 +538,7 @@ Concrete diffs. This is the anti-example that matters.
 
 ## 12. Anti-examples — fail the screen (harsh, locked)
 
-This section is an **audit**, not taste. Walk every surface (tile, FirstRun, Home/Plan, Study offer/attempt/feedback, Calendar, Settings, palette). Tick what you see. **Four or more ticks in 12.A on one screen = it reads as AI-generated even if a human built it. Ship is forbidden until those ticks are gone.** The inconsistency cluster in 12.C is how vibecoded SaaS looks: unique palette, still amateur. ProductName already has opinions in §1–§7; if a screen does not match them, it is a fail even with zero purple.
+This section is an **audit**, not taste. Walk every surface (tile, FirstRun, Home/Plan, Study offer/attempt/feedback, Calendar, Settings, palette). Tick what you see. **Four or more ticks in 12.A on one screen = it reads as AI-generated even if a human built it. Ship is forbidden until those ticks are gone.** The inconsistency cluster in 12.C is how vibecoded SaaS looks: unique palette, still amateur. Kairos already has opinions in §1–§7; if a screen does not match them, it is a fail even with zero purple.
 
 Do not “fix” a fail by adding more glass, more motion, or a second accent. Remove the tell.
 
@@ -647,7 +647,7 @@ If you can tick **this cluster** (even with a unique palette), it reads as vibec
 - **Stale data with no “updated”** on anything that looks live.
 - **Confirm dialog for a non-destructive action**; no confirm for a destructive one.
 
-### 12.F ProductName-specific bans (in addition to CLAUDE.md)
+### 12.F Kairos-specific bans (in addition to CLAUDE.md)
 
 - No Duolingo: streaks, XP, guilt mascot, celebration on a right answer, losable state, leaderboards, “exam-ready %.”
 - No ChatGPT costume: transcript as the main IA; voice overlay that hides results.
@@ -748,6 +748,6 @@ Live:
 - [Raktor](https://dribbble.com/shots/26864675-Raktor-Drone-Mission-Web-Dashboard)
 - [Gleb Kuznetsov — Voice interaction for Natural search UI](https://dribbble.com/shots/26722789-Voice-interaction-for-Natural-search-UI-by-Gleb-Kuznetsov)
 
-Related product docs: `docs/handoff/spatial-instrument-build-prompt.md`, `docs/handoff/ui-rebuild-round1-build-prompt.md`, `design-system/productname/MASTER.md`, `docs/design/ambient-dock-ui.md`.
+Related product docs: `docs/handoff/spatial-instrument-build-prompt.md`, `docs/handoff/ui-rebuild-round1-build-prompt.md`, `design-system/kairos/MASTER.md`, `docs/design/ambient-dock-ui.md`.
 
 Slop / audit sources (for §12, not to copy visually): [Booplex Pixelslop](https://booplex.com/projects/pixelslop), [DEV purple gradient](https://dev.to/james_anderson_h/the-purple-gradient-problem-why-ai-ui-all-looks-alike-and-how-to-fix-it-3j65), [Setproduct](https://www.setproduct.com/blog/why-every-ai-startup-looks-the-same), [Sailop 7 dimensions](https://sailop.com/blog/what-is-ai-slop-7-dimensions-of-generic-design), [21st.dev](https://21st.dev/blog/website-not-look-ai-generated), [DesignPixil vibecoded](https://designpixil.com/blog/why-your-saas-looks-vibecoded), [NN/g top 10 app mistakes](https://www.nngroup.com/articles/top-10-application-design-mistakes/).

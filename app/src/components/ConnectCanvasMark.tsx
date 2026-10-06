@@ -1,10 +1,10 @@
 import { useEffect, useId, useState } from "react";
 
-/** Stylized Canvas window → click Sign in → cards fly into ProductName. CSS/SVG only. */
+/** Stylized Canvas window → click Sign in → cards fly into Kairos. CSS/SVG only. */
 export function ConnectCanvasMark({ reduced }: { reduced: boolean }) {
   const uid = useId().replace(/:/g, "");
   return (
-    <svg className={`connect-mark${reduced ? " reduced" : ""}`} viewBox="0 0 320 180" role="img" aria-label="Canvas sign-in flowing into ProductName">
+    <svg className={`connect-mark${reduced ? " reduced" : ""}`} viewBox="0 0 320 180" role="img" aria-label="Canvas sign-in flowing into Kairos">
       <defs>
         <linearGradient id={`g${uid}`} x1="0" x2="1">
           <stop offset="0" stopColor="var(--accent)" stopOpacity="0.9" />
@@ -24,7 +24,7 @@ export function ConnectCanvasMark({ reduced }: { reduced: boolean }) {
       <rect className="win pn-win" x="172" y="28" width="130" height="96" rx="12" />
       <rect className="win-bar" x="172" y="28" width="130" height="18" rx="12" />
       <text className="win-label" x="198" y="41">
-        ProductName
+        Kairos
       </text>
       <rect className="card c1" x="186" y="56" width="46" height="28" rx="6" />
       <rect className="card c2" x="238" y="56" width="46" height="28" rx="6" />

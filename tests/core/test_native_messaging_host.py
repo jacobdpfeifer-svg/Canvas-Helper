@@ -149,7 +149,7 @@ def test_ping_keeps_only_timestamps_and_counts(tmp_path):
 def test_active_profile_comes_from_the_apps_current_profile_file(tmp_path):
     if sys.platform != "darwin":
         return
-    support = tmp_path / "Library" / "Application Support" / "ProductName"
+    support = tmp_path / "Library" / "Application Support" / "Kairos"
     support.mkdir(parents=True)
     (support / "current_profile").write_text("student-a\n", encoding="utf-8")
     [reply] = _run([{"type": "canvas_signed_out"}], {"HOME": str(tmp_path)})

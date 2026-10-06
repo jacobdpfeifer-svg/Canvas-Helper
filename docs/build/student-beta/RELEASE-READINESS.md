@@ -2,7 +2,7 @@
 
 **Status: locally verified build. Not a distribution candidate.**
 
-Tested revision: working tree on `phase1-productname-pivot` @ `7c73fb8` + uncommitted changes (this session; see `git status`). Native artifact: `~/.cache/productname-build/app/src-tauri/target/release/bundle/macos/ProductName.app` (arm64, unsigned, ad-hoc identifier, **no runtime staged** → reports `broken` by design).
+Tested revision: working tree on `phase1-productname-pivot` @ `7c73fb8` + uncommitted changes (this session; see `git status`). Native artifact: `~/.cache/kairos-build/app/src-tauri/target/release/bundle/macos/Kairos.app` (arm64, unsigned, ad-hoc identifier, **no runtime staged** → reports `broken` by design).
 
 | Check | Result |
 |---|---|

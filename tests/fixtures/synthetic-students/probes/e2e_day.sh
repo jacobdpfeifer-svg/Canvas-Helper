@@ -5,7 +5,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/../../../.."
 
-export PYTHONPATH=src PRODUCTNAME_LLM_API_KEY= PRODUCTNAME_LLM_WRITE_API_KEY=
+export PYTHONPATH=src KAIROS_LLM_API_KEY= KAIROS_LLM_WRITE_API_KEY=
 unset SCHOOL_SLUG
 PY=.venv/bin/python
 F=tests/fixtures/synthetic-students

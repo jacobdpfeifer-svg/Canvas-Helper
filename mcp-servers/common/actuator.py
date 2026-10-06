@@ -1,4 +1,4 @@
-"""Shared bootstrap + write gate for ProductName MCP actuators.
+"""Shared bootstrap + write gate for Kairos MCP actuators.
 
 Every actuator (gcal / gmail / apple-cal) should import from here instead of
 re-implementing ``sys.path`` inserts, ``PRODUCT_USER_ID`` → user_root, and the

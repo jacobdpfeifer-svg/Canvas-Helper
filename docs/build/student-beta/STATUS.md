@@ -16,8 +16,8 @@ native bridge, offline relay prototype), ran an auditor over both, and began
 copying B into the checkout (deleting A's frontend/tests) but did not finish.
 
 Preserved, committed, diffable:
-- `git worktree` `~/.cache/productname-cand-a` → branch `candidate-a` (this build at 11:39)
-- `git worktree` `~/.cache/productname-cand-b` → branch `candidate-b` (B, plus `docs/build/student-beta/{audit-a,audit-b}.md`, logs)
+- `git worktree` `~/.cache/kairos-cand-a` → branch `candidate-a` (this build at 11:39)
+- `git worktree` `~/.cache/kairos-cand-b` → branch `candidate-b` (B, plus `docs/build/student-beta/{audit-a,audit-b}.md`, logs)
 - `_candidate-b-integration/` (gitignored) — the exact files B had placed in this checkout
 
 The checkout was restored to candidate A (this build) at 16:15 so work could

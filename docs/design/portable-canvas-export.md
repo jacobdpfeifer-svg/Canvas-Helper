@@ -1,6 +1,6 @@
 # Portable Canvas export
 
-ProductName exports the last atomically committed canonical Canvas generation;
+Kairos exports the last atomically committed canonical Canvas generation;
 it does not start a second Canvas fetch. The desktop action is Settings → Canvas
 → **Export my Canvas data**.
 

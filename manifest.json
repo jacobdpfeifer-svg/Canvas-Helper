@@ -1,17 +1,17 @@
 {
   "manifest_version": "0.2",
-  "name": "productname-canvas-mcp",
-  "display_name": "ProductName Canvas MCP",
+  "name": "kairos-canvas-mcp",
+  "display_name": "Kairos Canvas MCP",
   "version": "1.4.0",
   "description": "Local-first student Canvas automation — organize and complete academic fluff.",
-  "long_description": "ProductName Canvas MCP is a local-first, student-only server (~40 tools) for Canvas LMS: courses, assignments, submissions (preview→confirm), discussions, modules, files, and messaging. It runs as a stdio MCP server using your Canvas API token and/or SSO sync — every action runs under your own Canvas role and audit trail. Exams, proctored tools, and LTI submits stay human-only.",
+  "long_description": "Kairos Canvas MCP is a local-first, student-only server (~40 tools) for Canvas LMS: courses, assignments, submissions (preview→confirm), discussions, modules, files, and messaging. It runs as a stdio MCP server using your Canvas API token and/or SSO sync — every action runs under your own Canvas role and audit trail. Exams, proctored tools, and LTI submits stay human-only.",
   "author": {
-    "name": "ProductName",
+    "name": "Kairos",
     "url": "https://github.com/"
   },
-  "homepage": "https://github.com/productname/canvas-mcp",
-  "documentation": "https://github.com/productname/canvas-mcp/blob/phase1-productname-pivot/README.md",
-  "support": "https://github.com/productname/canvas-mcp/issues",
+  "homepage": "https://github.com/kairos/canvas-mcp",
+  "documentation": "https://github.com/kairos/canvas-mcp/blob/phase1-productname-pivot/README.md",
+  "support": "https://github.com/kairos/canvas-mcp/issues",
   "license": "MIT",
   "keywords": [
     "canvas",

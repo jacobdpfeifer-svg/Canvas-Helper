@@ -164,7 +164,7 @@ After edits, that set must be green, and any test you added must fail if you rev
 
 ```bash
 source "$HOME/.cargo/env"
-cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/kairos-tauri-target cargo check
 ```
 
 Do not claim a frontend fix is verified by Python tests alone.

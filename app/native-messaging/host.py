@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chrome Native Messaging host for the ProductName extension.
+"""Chrome Native Messaging host for the Kairos extension.
 
 Protocol: 4-byte little-endian length + UTF-8 JSON on stdin/stdout.
 
@@ -32,7 +32,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 HOST_VERSION = 1
-PRODUCT_DIR = "ProductName"
+PRODUCT_DIR = "Kairos"
 DEFAULT_PROFILE = "dev"
 MAX_MESSAGE_BYTES = 1_000_000
 MAX_DELTA_ITEMS = 200

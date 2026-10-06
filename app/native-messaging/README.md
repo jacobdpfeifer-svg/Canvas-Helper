@@ -1,4 +1,4 @@
-# Native Messaging host — `com.productname.daemon`
+# Native Messaging host — `com.kairosstudy.daemon`
 
 Moves data between the Chrome extension (`app/extension-chrome/`) and the
 student's `{user_root}`. It never talks to Canvas.
@@ -6,7 +6,7 @@ student's `{user_root}`. It never talks to Canvas.
 `host.py` is **standard library only** and runs under the system
 `python3` (3.9 on macOS), because that is what Chrome launches. It mirrors
 the user-root rule from `app/src-tauri/src/runtime.rs`: `DEV_USER_ROOT`, else
-`<app support>/ProductName/<profile>` where the profile comes from
+`<app support>/Kairos/<profile>` where the profile comes from
 `PRODUCT_USER_ID`, then the app's `current_profile` file, then `dev`.
 
 ## Messages
@@ -31,16 +31,16 @@ bash app/native-messaging/install-macos.sh
 ```
 
 The installer copies `host.py` to
-`~/Library/Application Support/ProductName/native-host/` and points the
+`~/Library/Application Support/Kairos/native-host/` and points the
 Chrome, Chromium, and Canary manifests at the copy. Chrome-launched
 processes cannot read files in iCloud Drive ("Operation not permitted"), so
 the host is never run from the checkout. Re-run the installer after editing
-`host.py`. Set `PRODUCTNAME_EXTENSION_ID` only for a differently keyed build.
+`host.py`. Set `KAIROS_EXTENSION_ID` only for a differently keyed build.
 
 ## Files
 
 | Path | Role |
 |------|------|
 | `host.py` | stdio NM host (length-prefixed JSON) |
-| `com.productname.daemon.json` | manifest template (`path` + `allowed_origins` filled by the installer) |
+| `com.kairosstudy.daemon.json` | manifest template (`path` + `allowed_origins` filled by the installer) |
 | `install-macos.sh` | copies the host and writes the manifests |

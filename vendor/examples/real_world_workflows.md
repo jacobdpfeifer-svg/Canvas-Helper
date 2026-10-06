@@ -1,6 +1,6 @@
 # Real-World Workflows (student)
 
-Practical examples for the ProductName student Canvas path. Educator grading
+Practical examples for the Kairos student Canvas path. Educator grading
 workflows are permanently out of scope — do not restore them here.
 
 ## Weekly Assignment Planning

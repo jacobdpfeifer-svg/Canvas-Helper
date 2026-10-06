@@ -14,7 +14,7 @@ Jacob’s call: skeptical of Tauri, UI is not where it needs to be, but OK to co
 
 ## Comparison (this pass)
 
-| Option | Pros | Cons for ProductName right now |
+| Option | Pros | Cons for Kairos right now |
 |--------|------|--------------------------------|
 | **Tauri 2 (current)** | Already wired (tray, dock geometry, IPC, daemon spawn); small binary; Rust + webview UI we already have | Dock/glass UX still rough; webview styling fights native feel; path-with-`:` packaging friction on this machine |
 | **Electron** | Huge ecosystem, easy React; familiar for web-first UI polish | Heavier RAM/disk; another rewrite of `app/src-tauri` IPC/daemon; no clear win over finishing Tauri peek |

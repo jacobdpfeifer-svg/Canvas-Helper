@@ -14,7 +14,7 @@ from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("productname-apple-cal")
+mcp = FastMCP("kairos-apple-cal")
 SWIFT_HELPER = Path(__file__).parent / "EventKitHelper"
 
 _BLOCKED_REASON = (

@@ -10,7 +10,7 @@ Copy everything under **The prompt** into a fresh agent session on this repo.
 
 ## The prompt
 
-You are stress-testing ProductName on branch `phase1-productname-pivot` as if you were a CU Boulder student using it for a real week. Jacob wants as little input from himself as possible. Go until there is no honest way to continue. Do not stop to ask a question you can answer with a fixture, a public syllabus fact, an existing test, or a written skip.
+You are stress-testing Kairos on branch `phase1-productname-pivot` as if you were a CU Boulder student using it for a real week. Jacob wants as little input from himself as possible. Go until there is no honest way to continue. Do not stop to ask a question you can answer with a fixture, a public syllabus fact, an existing test, or a written skip.
 
 ### Read this first
 
@@ -25,7 +25,7 @@ Read these before you run anything. They override this prompt where they conflic
 - [`docs/handoff/freshness-extension-spike-2026-09-29.md`](./freshness-extension-spike-2026-09-29.md)
 - [`docs/handoff/student-workflow-product-audit-2026-09-30.md`](./student-workflow-product-audit-2026-09-30.md)
 - [`docs/handoff/pre-ship-human-walk.md`](./pre-ship-human-walk.md)
-- [`design-system/productname/MASTER.md`](../../design-system/productname/MASTER.md) before any UI judgment
+- [`design-system/kairos/MASTER.md`](../../design-system/kairos/MASTER.md) before any UI judgment
 - [`templates/USER.md`](../../templates/USER.md) before you invent a student profile
 
 Recent product work to re-audit against the tree, not against the docs' claims: the study workspace, the freshness extension, the student-workflow loop, Living Instrument visual rules, and the canvas-focus write boundaries. A doc that contradicts the code is a finding.
@@ -48,7 +48,7 @@ These are product decisions. If the code matches them, log **confirmed intention
 
 - Stay on `phase1-productname-pivot`. If you are not on it, switch there before any git write. Never checkout `main`. Never push, pull, merge, or rebase involving `main` or `origin/main`.
 - Do not commit. Do not push. Do not amend. Do not skip hooks. Do not commit `.env`, `browser/.auth/`, credentials, or any user root.
-- Do not read or write Jacob's real profile. The default user root is under `~/Library/Application Support/{ProductName}/`. Leave it alone. Every test uses `DEV_USER_ROOT` pointed at a path you created for this audit.
+- Do not read or write Jacob's real profile. The default user root is under `~/Library/Application Support/{Kairos}/`. Leave it alone. Every test uses `DEV_USER_ROOT` pointed at a path you created for this audit.
 - Runtime profiles go in `var/audit-user-roots/` inside the repo. That tree holds fake inbox data and must not be committed. If `var/` is not gitignored, add `var/` to `.gitignore` before you create the roots. Confirm with `git check-ignore -v var/audit-user-roots` that Git will not see them.
 - `.gitignore` contains `**/inbox/`. A fixture committed under a directory named `inbox/` will never show up in git. Committed source fixtures live in `tests/fixtures/synthetic-students/<student-id>/` with names like `USER.md`, `week.md`, `courses/`, `degree-audit.md`, `credit-hours.yaml`. A small factory copies those files into `{DEV_USER_ROOT}/inbox/` and `{DEV_USER_ROOT}/calibration/` at run time.
 - Do not use `git add -A`. If you later are asked to commit, stage only the prompt artifacts and synthetic fixture sources, never `var/`.

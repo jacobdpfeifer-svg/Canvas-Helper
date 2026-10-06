@@ -174,8 +174,8 @@ def _connector_command(service: StudyService, cmd: str, params: dict[str, Any]) 
 
 
 def templates_dir() -> Path:
-    """Bundled synthetic packets. ``PRODUCTNAME_TEMPLATES_DIR`` points at the installed copy."""
-    override = os.environ.get("PRODUCTNAME_TEMPLATES_DIR", "").strip()
+    """Bundled synthetic packets. ``KAIROS_TEMPLATES_DIR`` points at the installed copy."""
+    override = os.environ.get("KAIROS_TEMPLATES_DIR", "").strip()
     if override:
         return Path(override)
     return Path(__file__).resolve().parents[4] / "templates" / "study-packets"
@@ -219,7 +219,7 @@ def _serve(root: Path, port: int, zone: str | None) -> int:
     import secrets
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
-    token = os.environ.get("PRODUCTNAME_BRIDGE_TOKEN") or secrets.token_urlsafe(24)
+    token = os.environ.get("KAIROS_BRIDGE_TOKEN") or secrets.token_urlsafe(24)
     token_path = root / "study" / "bridge-token"
     token_path.parent.mkdir(parents=True, exist_ok=True)
     token_path.write_text(token, encoding="utf-8")
@@ -282,9 +282,9 @@ def _serve(root: Path, port: int, zone: str | None) -> int:
 
 def _bridge_now(body: dict[str, Any]) -> datetime | None:
     """A request-supplied clock is honored only in an explicit test harness
-    (``PRODUCTNAME_ALLOW_TEST_CLOCK=1``); production IPC cannot move time."""
+    (``KAIROS_ALLOW_TEST_CLOCK=1``); production IPC cannot move time."""
     raw = body.get("now")
-    if not raw or os.environ.get("PRODUCTNAME_ALLOW_TEST_CLOCK") != "1":
+    if not raw or os.environ.get("KAIROS_ALLOW_TEST_CLOCK") != "1":
         return None
     from .model import parse_instant
 

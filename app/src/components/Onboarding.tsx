@@ -165,7 +165,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           <>
             <p className="onboarding-step-label">Waitlist</p>
             <p>
-              ProductName only syncs Canvas for CU Boulder today. Leave your
+              Kairos only syncs Canvas for CU Boulder today. Leave your
               email and we will notify you when your school is supported — no
               Canvas sign-in on this path.
             </p>

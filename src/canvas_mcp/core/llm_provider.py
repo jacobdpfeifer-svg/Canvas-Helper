@@ -182,15 +182,15 @@ def get_provider(tier: str = "fast") -> LLMProvider:
     """Construct the configured provider for a skill tier. Only factory of clients."""
     normalized = (tier or "fast").strip().lower()
     if normalized == "reliable":
-        name = os.environ.get("PRODUCTNAME_LLM_WRITE_PROVIDER", DEFAULT_WRITE_PROVIDER)
-        key = os.environ.get("PRODUCTNAME_LLM_WRITE_API_KEY") or os.environ.get(
-            "PRODUCTNAME_LLM_API_KEY", ""
+        name = os.environ.get("KAIROS_LLM_WRITE_PROVIDER", DEFAULT_WRITE_PROVIDER)
+        key = os.environ.get("KAIROS_LLM_WRITE_API_KEY") or os.environ.get(
+            "KAIROS_LLM_API_KEY", ""
         )
-        model = os.environ.get("PRODUCTNAME_LLM_WRITE_MODEL", DEFAULT_WRITE_MODEL)
+        model = os.environ.get("KAIROS_LLM_WRITE_MODEL", DEFAULT_WRITE_MODEL)
     elif normalized == "fast":
-        name = os.environ.get("PRODUCTNAME_LLM_PROVIDER", DEFAULT_FAST_PROVIDER)
-        key = os.environ.get("PRODUCTNAME_LLM_API_KEY", "")
-        model = os.environ.get("PRODUCTNAME_LLM_MODEL", DEFAULT_FAST_MODEL)
+        name = os.environ.get("KAIROS_LLM_PROVIDER", DEFAULT_FAST_PROVIDER)
+        key = os.environ.get("KAIROS_LLM_API_KEY", "")
+        model = os.environ.get("KAIROS_LLM_MODEL", DEFAULT_FAST_MODEL)
     else:
         raise ValueError(f"unknown model tier {tier!r}")
 
@@ -199,7 +199,7 @@ def get_provider(tier: str = "fast") -> LLMProvider:
         return GeminiProvider(
             api_key=key or "",
             model=model or DEFAULT_FAST_MODEL,
-            embed_model=os.environ.get("PRODUCTNAME_LLM_EMBED_MODEL", DEFAULT_EMBED_MODEL),
+            embed_model=os.environ.get("KAIROS_LLM_EMBED_MODEL", DEFAULT_EMBED_MODEL),
         )
     if vendor in ("anthropic", "claude"):
         return AnthropicProvider(api_key=key or "", model=model or DEFAULT_WRITE_MODEL)

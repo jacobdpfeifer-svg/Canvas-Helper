@@ -1,5 +1,5 @@
 """
-Tool discovery for Canvas MCP (ProductName student platform).
+Tool discovery for Canvas MCP (Kairos student platform).
 
 Searches the live registry of registered MCP tools.
 """

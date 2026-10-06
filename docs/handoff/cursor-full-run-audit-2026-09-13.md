@@ -4,7 +4,7 @@
 
 Functional QA pass against the brief in this file’s prior revision. **No live SSO, OAuth, or real personal data.** Scratch fixture left for the second agent pass.
 
-**Scratch `DEV_USER_ROOT` (delete later):** `/tmp/productname-audit-fixture-2026-09-13`
+**Scratch `DEV_USER_ROOT` (delete later):** `/tmp/kairos-audit-fixture-2026-09-13`
 
 ---
 
@@ -132,7 +132,7 @@ Collected in UI: school slug, legal accept, Canvas SSO (Tauri), free-text priori
 4. **P1 — Learning-profile Skip vs Continue:** Skip jumps to finish without saving profile; Continue stays disabled until games complete — OK, but empty dock after skip-heavy path feels abandoned. Default a written profile or stronger empty-state copy.
 5. **P1 — LedgerViewer unwired:** “Live ledger IPC is not wired yet” — either wire read of `ledger.jsonl` or hide the entry until ready.
 6. **P2 — Dead components:** `ApprovalSheet.tsx` / `NarrateAfter.tsx` unused by `App.tsx` — wire for gated writes or remove from the polish surface.
-7. **P2 — Brand / polish:** “Private beta · codename” under ProductName weakens brand-first; dock empty state is a sparse card with little atmosphere — design pass input only (no reskin this audit).
+7. **P2 — Brand / polish:** “Private beta · codename” under Kairos weakens brand-first; dock empty state is a sparse card with little atmosphere — design pass input only (no reskin this audit).
 8. **P2 — Step indicator vs density:** 6 steps on CU path is long for a dock-sized surface; consider consolidating policy+SSO or priorities+profile after USER.md fields are structured.
 
 ---
@@ -141,9 +141,9 @@ Collected in UI: school slug, legal accept, Canvas SSO (Tauri), free-text priori
 
 | Path | Why | Finding |
 |------|-----|---------|
-| Built scratch fixture under `/tmp/productname-audit-fixture-2026-09-13` (no repo seed script) | Brief required synthetic user_root | Full fake Avery Synthetic / FAKE 1100–3300 week+grades+audit+tool-gaps. |
+| Built scratch fixture under `/tmp/kairos-audit-fixture-2026-09-13` (no repo seed script) | Brief required synthetic user_root | Full fake Avery Synthetic / FAKE 1100–3300 week+grades+audit+tool-gaps. |
 | `uv pip install -e '.[diagrams]'` | Concept-visual skill requires it | Unlocks tangent PNG + likely +7 pytest passes. |
-| Freed disk (`/tmp/productname-tauri-target`, Cursor ShipIt cache) | Host was at 100% — Playwright/heredocs failed | Regenerable caches only; audit fixture preserved. |
+| Freed disk (`/tmp/kairos-tauri-target`, Cursor ShipIt cache) | Host was at 100% — Playwright/heredocs failed | Regenerable caches only; audit fixture preserved. |
 | Vite already on :1420; restarted after mid-pass death | Screenshot capture | Port conflict then connection refused — restarted `npm run dev`. |
 | Playwright Chromium install (~270MB) | Screenshot harness | Needed for headless capture. |
 | Retried skill triggers beyond first AGENTS phrase | Misroutes on paraphrases | Documented Broken router collisions. |
@@ -202,7 +202,7 @@ Collected in UI: school slug, legal accept, Canvas SSO (Tauri), free-text priori
 Leave for second agent pass, then delete:
 
 ```text
-/tmp/productname-audit-fixture-2026-09-13
+/tmp/kairos-audit-fixture-2026-09-13
 ```
 
 Contains only synthetic Avery / FAKE* data and one synthetic ledger success row — no real credentials.

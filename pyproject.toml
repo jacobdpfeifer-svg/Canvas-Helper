@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "canvas-mcp"
 version = "1.11.0"
-description = "Vendored student-trimmed fork of vishalsachdev/canvas-mcp + ProductName local companion"
+description = "Vendored student-trimmed fork of vishalsachdev/canvas-mcp + Kairos local companion"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 authors = [
-    { name = "ProductName" },
+    { name = "Kairos" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -49,8 +49,8 @@ diagrams = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/productname/canvas-mcp"
-Repository = "https://github.com/productname/canvas-mcp"
+Homepage = "https://github.com/kairos/canvas-mcp"
+Repository = "https://github.com/kairos/canvas-mcp"
 
 [project.scripts]
 canvas-mcp-server = "canvas_mcp.server:main"

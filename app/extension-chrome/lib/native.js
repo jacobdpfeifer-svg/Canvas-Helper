@@ -1,6 +1,6 @@
-/** Promise wrapper for the local ProductName native host (`com.productname.daemon`). */
+/** Promise wrapper for the local Kairos native host (`com.kairosstudy.daemon`). */
 
-export const NATIVE_HOST = "com.productname.daemon";
+export const NATIVE_HOST = "com.kairosstudy.daemon";
 
 /**
  * @returns {Promise<{ ok: boolean, error?: string, [k: string]: any }>}

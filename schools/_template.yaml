@@ -45,7 +45,7 @@ policy_links:
   advising: ""
 # Shown in onboarding before SSO (multiline string)
 legal_notice: |
-  ProductName is local-first. Data stays on this device. You are responsible for
+  Kairos is local-first. Data stays on this device. You are responsible for
   following your school's academic integrity and acceptable-use policies.
 # Example:
 # course_file_map:

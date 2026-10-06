@@ -1,10 +1,10 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "local.productname/canvas-mcp",
-  "description": "Local-first student Canvas MCP (ProductName). SSO + REST + preview\u2192confirm writes.",
+  "name": "local.kairos/canvas-mcp",
+  "description": "Local-first student Canvas MCP (Kairos). SSO + REST + preview\u2192confirm writes.",
   "version": "1.11.0",
   "repository": {
-    "url": "https://github.com/productname/canvas-mcp",
+    "url": "https://github.com/kairos/canvas-mcp",
     "source": "github"
   },
   "tags": [
@@ -30,7 +30,7 @@
         "required": true
       },
       "ENABLE_DATA_ANONYMIZATION": {
-        "description": "Student identity anonymization (off by default for local-first ProductName).",
+        "description": "Student identity anonymization (off by default for local-first Kairos).",
         "required": false,
         "default": "false"
       },

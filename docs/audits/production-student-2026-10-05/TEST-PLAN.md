@@ -6,8 +6,8 @@ Branch: `phase1-productname-pivot`. No commits. No PAT. No live SSO, OAuth, or e
 Written after reading the tree, before any suite ran. Every run below uses
 `DEV_USER_ROOT=var/audit-user-roots/<id>` (gitignored, confirmed with
 `git check-ignore -v var/audit-user-roots` → `.gitignore:173:var/`).
-Every Python CLI runs with `PRODUCTNAME_LLM_API_KEY=` and
-`PRODUCTNAME_LLM_WRITE_API_KEY=` set empty in the environment. `config.py`
+Every Python CLI runs with `KAIROS_LLM_API_KEY=` and
+`KAIROS_LLM_WRITE_API_KEY=` set empty in the environment. `config.py`
 calls `load_dotenv()`, and that does not override existing variables, so no
 run can reach a live model. The `.env` LLM keys are already blank. Only the key
 names were checked, not the values.
@@ -39,7 +39,7 @@ Legend for "Blocks E2E": **yes** = the end-to-end day does not start while this 
 ### 2. Two-student isolation
 1. **Student goal:** Avery's data is never shown to Blake, and neither touches Jacob's real profile.
 2. **Stress:** the same process reads under two `DEV_USER_ROOT` values. Avery has ledger lines and study events. Blake has only `USER.md`.
-3. **Fixture:** the factory builds `var/audit-user-roots/{avery,blake}`. A Python script reads the week, the inbox slice (`prompt_assembly.assemble_turn`), the study status, and the ledger under each root. `find "$HOME/Library/Application Support/ProductName" -newer <marker>` runs before and after.
+3. **Fixture:** the factory builds `var/audit-user-roots/{avery,blake}`. A Python script reads the week, the inbox slice (`prompt_assembly.assemble_turn`), the study status, and the ledger under each root. `find "$HOME/Library/Application Support/Kairos" -newer <marker>` runs before and after.
 4. **Pass bar:** Blake's assembled turn and study status contain none of Avery's course codes, titles, or study item IDs. Avery's turn does contain them. No file in the real app-support path is newer than the audit start marker.
 5. **Blocks E2E:** yes.
 

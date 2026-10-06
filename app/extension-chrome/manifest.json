@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ProductName for Canvas",
+  "name": "Kairos for Canvas",
   "version": "1.0.0",
   "description": "Keeps an eye on Canvas for you: what changed, what's next, and what it costs to skip. Reads Canvas only; never submits or posts.",
   "minimum_chrome_version": "116",
@@ -40,7 +40,7 @@
     "128": "icons/blot-128.png"
   },
   "action": {
-    "default_title": "ProductName \u2014 open the side panel",
+    "default_title": "Kairos \u2014 open the side panel",
     "default_icon": {
       "16": "icons/blot-16.png",
       "32": "icons/blot-32.png"

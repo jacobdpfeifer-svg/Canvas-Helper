@@ -26,7 +26,7 @@ from common.stop_rewind import rewind_last  # noqa: E402
 
 from canvas_mcp.core.ledger import UndoPtr, append_ledger  # noqa: E402
 
-mcp = FastMCP("productname-gmail")
+mcp = FastMCP("kairos-gmail")
 _DRAFTS: dict[str, dict[str, Any]] = {}
 _LABELS: dict[str, list[str]] = {}
 

@@ -14,7 +14,7 @@ const REPO = resolve(__dirname, "../../..");
 const CORE_DIR = join(REPO, "src", "canvas_mcp", "core");
 
 export function pythonPath(): string | null {
-  for (const candidate of [process.env.PRODUCTNAME_TEST_PYTHON, join(REPO, ".venv", "bin", "python"), "/usr/bin/python3"]) {
+  for (const candidate of [process.env.KAIROS_TEST_PYTHON, join(REPO, ".venv", "bin", "python"), "/usr/bin/python3"]) {
     if (candidate && existsSync(candidate)) return candidate;
   }
   return null;
@@ -27,7 +27,7 @@ export function makeRealCore(python: string) {
       cwd: CORE_DIR,
       input: JSON.stringify({ cmd, params }),
       encoding: "utf8",
-      env: { PATH: process.env.PATH ?? "", PRODUCTNAME_TEMPLATES_DIR: join(REPO, "templates", "study-packets"), PYTHONDONTWRITEBYTECODE: "1" },
+      env: { PATH: process.env.PATH ?? "", KAIROS_TEMPLATES_DIR: join(REPO, "templates", "study-packets"), PYTHONDONTWRITEBYTECODE: "1" },
     });
     const line = (child.stdout || "").trim().split("\n").reverse().find((l) => l.trim().startsWith("{"));
     if (!line) throw new Error(`no reply (exit ${child.status})`);

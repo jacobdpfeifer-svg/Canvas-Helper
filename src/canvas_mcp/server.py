@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Canvas MCP Server — ProductName student platform.
+Canvas MCP Server — Kairos student platform.
 
 Student-only tools over stdio. School from schools/{slug}.yaml.
 """
@@ -97,7 +97,7 @@ def test_connection() -> bool:
 def main() -> None:
     """Main entry point for the Canvas MCP server (stdio only)."""
     parser = argparse.ArgumentParser(
-        description="ProductName Canvas MCP Server (student-only, stdio)"
+        description="Kairos Canvas MCP Server (student-only, stdio)"
     )
     parser.add_argument("--test", action="store_true", help="Test Canvas API connection and exit")
     parser.add_argument("--config", action="store_true", help="Show current configuration and exit")

@@ -1,1 +1,1 @@
-# ProductName MCP actuator servers
+# Kairos MCP actuator servers

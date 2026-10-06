@@ -16,15 +16,15 @@ import {
 describe("user-root resolver", () => {
   it("honors DEV_USER_ROOT for inbox", () => {
     const prev = process.env.DEV_USER_ROOT;
-    process.env.DEV_USER_ROOT = "/tmp/productname-parity-test";
+    process.env.DEV_USER_ROOT = "/tmp/kairos-parity-test";
     try {
       assert.equal(
         resolveUserRoot(),
-        path.resolve("/tmp/productname-parity-test")
+        path.resolve("/tmp/kairos-parity-test")
       );
       assert.equal(
         resolveInboxDir(),
-        path.join(path.resolve("/tmp/productname-parity-test"), "inbox")
+        path.join(path.resolve("/tmp/kairos-parity-test"), "inbox")
       );
     } finally {
       if (prev === undefined) delete process.env.DEV_USER_ROOT;
@@ -32,20 +32,20 @@ describe("user-root resolver", () => {
     }
   });
 
-  it("defaults to OS app-support / ProductName / dev (matches Python + Tauri)", () => {
+  it("defaults to OS app-support / Kairos / dev (matches Python + Tauri)", () => {
     const prevRoot = process.env.DEV_USER_ROOT;
     const prevUser = process.env.PRODUCT_USER_ID;
     delete process.env.DEV_USER_ROOT;
     delete process.env.PRODUCT_USER_ID;
     try {
       assert.equal(resolveProductUserId(), "dev");
-      assert.equal(PRODUCT_NAME, "ProductName");
+      assert.equal(PRODUCT_NAME, "Kairos");
       const expected = path.join(defaultAppSupportRoot(), "dev");
       assert.equal(resolveUserRoot(), expected);
       if (process.platform === "darwin") {
         assert.equal(
           expected,
-          path.join(os.homedir(), "Library", "Application Support", "ProductName", "dev")
+          path.join(os.homedir(), "Library", "Application Support", "Kairos", "dev")
         );
       }
     } finally {

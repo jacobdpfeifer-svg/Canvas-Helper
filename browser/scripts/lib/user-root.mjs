@@ -4,7 +4,7 @@
  *
  * Priority:
  *   1. ``DEV_USER_ROOT`` (absolute override)
- *   2. OS app-support / ProductName / {PRODUCT_USER_ID || "dev"}
+ *   2. OS app-support / Kairos / {PRODUCT_USER_ID || "dev"}
  *
  * Never falls back to ``{repo}/inbox`` — that silent split broke the
  * SSO → API → inbox truth path.
@@ -13,7 +13,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-export const PRODUCT_NAME = process.env.PRODUCT_NAME?.trim() || "ProductName";
+export const PRODUCT_NAME = process.env.PRODUCT_NAME?.trim() || "Kairos";
 
 export function resolveProductUserId() {
   const fromEnv = process.env.PRODUCT_USER_ID?.trim();

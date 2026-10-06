@@ -11,7 +11,7 @@
 **Date:** 2026-09-06 (post must-fix-close re-verification; superseded prior brief claims)  
 **Repo:** TheUltimateStudent:TeacherWorkflow  
 **Branch:** `phase1-productname-pivot` @ working tree (base tip `d0f1ef1` + local WIP)  
-**Shipping name:** placeholder `ProductName` (`com.productname.student`)  
+**Shipping name:** `Kairos` (chosen 2026-10-06; `com.kairosstudy.student`)  
 **Verdict:** Prior brief over-claimed several “Done” items. This pass re-derived truth from commands, fixed reachable gaps, and left only escalate-only blockers.
 
 ---
@@ -26,7 +26,7 @@
 | W1 de-Jacobize (git history) | **NOT resolved** | `git show 37f38b3:dev/JACOB.md` still returns Jacob profile — see Escalate |
 | W2 brain + self-improve | **Shipped (structural)** | Write-skill ban: `tests/core/test_brain_w2.py::test_ban_write_skill_shadow_and_promote` passed |
 | W3 actuators | **Dry-run proven; live unproven** | `describe_mode` now MCP-exposed; live checklist never run |
-| W4 app shell | **Builder + release binary + tray boot** | `cargo build --release` OK; binary prints `[productname-daemon] tick: boot` |
+| W4 app shell | **Builder + release binary + tray boot** | `cargo build --release` OK; binary prints `[kairos-daemon] tick: boot` |
 | W5 verification | **Partial** | Full suite **612 passed, 19 skipped**; Chrome E2E / live OAuth / history purge not done |
 
 **Security suite (re-run):**  
@@ -131,7 +131,7 @@ grep -rn "Jacob\|IBE\|Fall 2026\|APPM 1235\|CSCI1200" skills/ src/ app/src schoo
 
 **RSVP:** `plugins/cu-boulder-campusgroups/rsvp-*.mjs` require `--name`; no Jacob default in call path.
 
-**Product identity:** `tauri.conf.json` `com.productname.student`; Cargo `productname`; package `productname-app`; UA `canvas-mcp/... (https://github.com/productname/canvas-mcp)`.
+**Product identity:** `tauri.conf.json` `com.kairosstudy.student`; Cargo `kairos`; package `kairos-app`; UA `canvas-mcp/... (https://github.com/kairos/canvas-mcp)`.
 
 **Still recoverable on this branch:**
 
@@ -163,7 +163,7 @@ Personal source of truth for this fork. ...
 11/11 structural pass (llama3.1:8b-instruct-q4_K_M structural harness)
 ```
 
-Live Ollama tool-call eval not run (`PRODUCTNAME_LIVE_SKILL_EVAL` unset). Write skills never auto-promoted (code + test).
+Live Ollama tool-call eval not run (`KAIROS_LIVE_SKILL_EVAL` unset). Write skills never auto-promoted (code + test).
 
 ---
 
@@ -171,8 +171,8 @@ Live Ollama tool-call eval not run (`PRODUCTNAME_LIVE_SKILL_EVAL` unset). Write 
 
 **Exists & verified this pass:**
 
-- Tauri `cargo check` + `cargo build --release` with `CARGO_TARGET_DIR=/tmp/productname-tauri-target`
-- Release binary launches: log `[productname-daemon] tick: boot`
+- Tauri `cargo check` + `cargo build --release` with `CARGO_TARGET_DIR=/tmp/kairos-tauri-target`
+- Release binary launches: log `[kairos-daemon] tick: boot`
 - Tray menu wired to `daemon::run_canvas_sync` / Quit; left-click → `dock::toggle`
 - `commands.rs` / `dock.rs` / `inbox.rs` wired (not orphaned)
 - Frontend IPC consolidated in `app/src/ipc.ts` (former `dockWindow.ts` removed)
@@ -232,8 +232,8 @@ PYTHONPATH=src:mcp-servers .venv/bin/python -m pytest \
 
 # Tauri
 source "$HOME/.cargo/env"
-cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo check
-cd app/src-tauri && CARGO_TARGET_DIR=/tmp/productname-tauri-target cargo build --release
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/kairos-tauri-target cargo check
+cd app/src-tauri && CARGO_TARGET_DIR=/tmp/kairos-tauri-target cargo build --release
 
 # Structural skills
 PYTHONPATH=src .venv/bin/python -c "from canvas_mcp.core.skill_eval import eval_all_bundled; \
@@ -251,7 +251,7 @@ PYTHONPATH=src .venv/bin/python -c "from canvas_mcp.core.skill_eval import eval_
 2. **`send_email` soft string-only block** → now JSON `{blocked:true}` with test.  
    Receipt: `tests/core/test_google_oauth_helpers.py` (3 passed incl. new test).
 3. **NM template empty `allowed_origins` / no stable extension ID** → fixed key + default ID + template origin.  
-   Receipt: `com.productname.daemon.json` origins `chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/`.
+   Receipt: `com.kairosstudy.daemon.json` origins `chrome-extension://jkjkbgcbpakeenemjgkfohbcfbghmall/`.
 4. **`COURSE_AGENT_POLICY_DEFAULT` missing from baseline overlay** → added `deny` to `config/overlays/baseline.env`.
 5. **Gate1 noop `or True`** → removed; manifests must not contain `jacob`.
 6. **Cloud key forced at onboarding** (contradicted local-first) → optional skip restored in UI + `save_onboarding`.

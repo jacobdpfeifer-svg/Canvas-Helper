@@ -2,7 +2,7 @@
 
 Marks ``requires_cloud: true`` skills as skipped for local eval.
 
-Set ``PRODUCTNAME_LIVE_SKILL_EVAL=1`` to probe the provider that production
+Set ``KAIROS_LIVE_SKILL_EVAL=1`` to probe the provider that production
 would use for that skill's tier. CI stays structural and offline.
 """
 
@@ -24,7 +24,7 @@ class EvalResult:
 
 
 def _live_eval_enabled() -> bool:
-    return os.environ.get("PRODUCTNAME_LIVE_SKILL_EVAL", "").strip().lower() in (
+    return os.environ.get("KAIROS_LIVE_SKILL_EVAL", "").strip().lower() in (
         "1",
         "true",
         "yes",

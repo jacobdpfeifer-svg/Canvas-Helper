@@ -23,7 +23,7 @@ Gitignore rules:
 - `var/` is ignored (added 2026-10-05). Verify with `git check-ignore -v var/audit-user-roots`.
 - `**/inbox/` is already ignored. That is why persona sources must never contain an `inbox/` directory. A file there would silently drop out of git. The factory maps persona files into the `inbox/` layout at run time.
 - `/_**` ignores root-level underscore paths, so don't name harness directories `_something` at the repo root.
-- Never commit `.env`, `browser/.auth/`, `auth/`, or anything under `~/Library/Application Support/ProductName/`.
+- Never commit `.env`, `browser/.auth/`, `auth/`, or anything under `~/Library/Application Support/Kairos/`.
 
 ## 2. Synthetic-student factory
 
@@ -105,7 +105,7 @@ Each appears in the run log as `SKIP human-only: <item> → docs/handoff/pre-shi
 git switch phase1-productname-pivot
 uv sync --group dev --all-extras --inexact          # or: uv pip install -e ".[google,diagrams]"
 (cd browser && npm install) && (cd app && npm install)
-export PYTHONPATH=src PRODUCTNAME_LLM_API_KEY= PRODUCTNAME_LLM_WRITE_API_KEY=   # PYTHONPATH: see REPORT D3
+export PYTHONPATH=src KAIROS_LLM_API_KEY= KAIROS_LLM_WRITE_API_KEY=   # PYTHONPATH: see REPORT D3
 PY=.venv/bin/python; F=tests/fixtures/synthetic-students; R=var/audit-user-roots
 
 # Part 1
