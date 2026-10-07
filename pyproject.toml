@@ -49,8 +49,8 @@ diagrams = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
-Repository = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
+Homepage = "https://github.com/jacobdpfeifer-svg/Kairos_Time"
+Repository = "https://github.com/jacobdpfeifer-svg/Kairos_Time"
 
 [project.scripts]
 canvas-mcp-server = "canvas_mcp.server:main"

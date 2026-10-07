@@ -131,7 +131,7 @@ grep -rn "Jacob\|IBE\|Fall 2026\|APPM 1235\|CSCI1200" skills/ src/ app/src schoo
 
 **RSVP:** `plugins/cu-boulder-campusgroups/rsvp-*.mjs` require `--name`; no Jacob default in call path.
 
-**Product identity:** `tauri.conf.json` `com.kairosstudy.student`; Cargo `kairos`; package `kairos-app`; UA `canvas-mcp/... (https://github.com/jacobdpfeifer-svg/Canvas-Helper)`.
+**Product identity:** `tauri.conf.json` `com.kairosstudy.student`; Cargo `kairos`; package `kairos-app`; UA `canvas-mcp/... (https://github.com/jacobdpfeifer-svg/Kairos_Time)`.
 
 **Still recoverable on this branch:**
 
