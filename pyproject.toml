@@ -49,8 +49,8 @@ diagrams = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kairos/canvas-mcp"
-Repository = "https://github.com/kairos/canvas-mcp"
+Homepage = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
+Repository = "https://github.com/jacobdpfeifer-svg/Canvas-Helper"
 
 [project.scripts]
 canvas-mcp-server = "canvas_mcp.server:main"
