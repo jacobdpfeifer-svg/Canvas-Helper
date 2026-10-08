@@ -84,7 +84,7 @@ def packet_id_for(course_id: str) -> str:
 
 
 def _exam_from_candidate(candidate: dict[str, Any], *, course_label: str, zone: str) -> dict[str, Any] | None:
-    due = candidate.get("due_at")
+    due = candidate.get("due_at") or candidate.get("ends_at") or candidate.get("starts_at")
     if not due:
         return None
     try:
@@ -95,9 +95,13 @@ def _exam_from_candidate(candidate: dict[str, Any], *, course_label: str, zone: 
         "id": str(candidate["id"]),
         "course": course_label,
         "objective_scope": [],
-        "value": "known_instant",
+        "value": "window" if candidate.get("starts_at") or candidate.get("ends_at") else "known_instant",
         "at": iso(at),
+        "starts_at": candidate.get("starts_at") or "",
+        "ends_at": candidate.get("ends_at") or due,
         "zone": zone,
+        "source": str(candidate.get("source") or "canvas_due_at"),
+        "confidence": str(candidate.get("confidence") or "low"),
         "provenance": "canvas_inferred",
         "label": str(candidate.get("label") or "Exam"),
     }
@@ -133,11 +137,17 @@ def build_canvas_packet(
     kept_ids = {s["id"] for s in sources}
     items: list[dict[str, Any]] = []
     objectives: list[dict[str, Any]] = []
+    generated = [item for item in (record.get("generated_items") or []) if all(ref in {s["id"] for s in chosen} for ref in item.get("source_refs") or [])]
+    if generated:
+        objectives.append({"id": "objective-exam-review", "label": "Exam review material"})
+        items.extend(generated)
     if previous:
         for item in previous.get("items") or []:
-            if all(ref in kept_ids for ref in item.get("source_refs") or []):
+            if item.get("id") not in {row.get("id") for row in items} and all(ref in kept_ids for ref in item.get("source_refs") or []):
                 items.append(item)
         objectives = [o for o in previous.get("objectives") or [] if any(i["objective_id"] == o["id"] for i in items)]
+        if generated and not any(o["id"] == "objective-exam-review" for o in objectives):
+            objectives.append({"id": "objective-exam-review", "label": "Exam review material"})
     exams = [e for e in (_exam_from_candidate(c, course_label=label, zone=zone) for c in record.get("exams") or []) if e]
     return {
         "packet_id": packet_id_for(str(course["id"])),

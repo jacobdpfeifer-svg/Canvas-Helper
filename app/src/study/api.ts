@@ -98,7 +98,7 @@ export type CanvasSources = {
     label: string;
     fetched_at: string | null;
     sources: { id: string; kind: string; title: string; chars: number; truncated: boolean; updated_at: string | null }[];
-    exams: { id: string; label: string; due_at: string | null; kind: string; inferred: boolean }[];
+    exams: { id: string; label: string; due_at: string | null; starts_at?: string | null; ends_at?: string | null; kind: string; inferred: boolean; source?: string; confidence?: string }[];
     errors: string[];
     imported_version: number | null;
     imported_source_ids: string[];

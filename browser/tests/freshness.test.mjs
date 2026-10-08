@@ -12,7 +12,7 @@ import {
   summarySignature,
 } from "../scripts/lib/freshness/classify.mjs";
 import { atomObject, parseAtom, parseIcs } from "../scripts/lib/freshness/feeds-parse.mjs";
-import { captureIsStale, feedHash, feedLinksFromHtml, pollFeeds, splitIcsSummary } from "../scripts/lib/canvas-feeds.mjs";
+import { announcementEvents, captureIsStale, feedHash, feedLinksFromHtml, pollFeeds, splitIcsSummary } from "../scripts/lib/canvas-feeds.mjs";
 import { diffGenerations } from "../scripts/lib/canvas-changes.mjs";
 import { computeSkipCosts } from "../scripts/lib/skip-cost.mjs";
 import { buildDashboard, pickNextStep } from "../scripts/lib/freshness-dashboard.mjs";
@@ -53,6 +53,18 @@ describe("announcement actions", () => {
   it("caps the number of actions", () => {
     const text = Array.from({ length: 6 }, (_, i) => `Quiz ${i + 1} is on Monday.`).join(" ");
     assert.equal(extractActions(text, { limit: 2 }).length, 2);
+  });
+
+  it("persists the complete sanitized body separately from the UI preview", () => {
+    const body = "Exam logistics: " + "bring your calculator and formula sheet. ".repeat(20);
+    const [event] = announcementEvents(
+      [{ id: "a1", object_id: "1", title: "Exam reminder", html: `<p>${body}</p>`, published: "2026-09-29T17:00:00Z" }],
+      {},
+      { course_id: "12", course_name: "MATH 1300" },
+      { baselined: true, now: NOW, detectedAt: isoAt(NOW) },
+    );
+    assert.ok(event.detail.body.length > event.detail.preview.length);
+    assert.match(event.detail.body, /bring your calculator/);
   });
 });
 

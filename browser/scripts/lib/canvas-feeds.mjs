@@ -89,7 +89,7 @@ export function feedList(feeds) {
   return list;
 }
 
-function announcementEvents(entries, seen, feed, { baselined, now, detectedAt }) {
+export function announcementEvents(entries, seen, feed, { baselined, now, detectedAt }) {
   const events = [];
   for (const e of entries) {
     const known = seen[e.id];
@@ -108,7 +108,9 @@ function announcementEvents(entries, seen, feed, { baselined, now, detectedAt })
       url: e.url,
       at: at ? new Date(Date.parse(at)).toISOString() : detectedAt,
       detected_at: detectedAt,
-      detail: { preview: previewText(text) },
+      // Keep a bounded-but-complete local body for action extraction, search,
+      // and exam context. `preview` remains the compact UI field.
+      detail: { preview: previewText(text), body: text.slice(0, 100_000) },
       actions: extractActions(text),
     });
   }

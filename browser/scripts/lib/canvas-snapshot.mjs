@@ -29,9 +29,8 @@ async function fetchModuleSyllabusPdf(page, courseId, modules, api) {
     const url = file.url || item.html_url || "";
     if (!url) continue;
     try {
-      const response = await page.context().request.get(url);
-      if (!response.ok()) continue;
-      const body = await response.body();
+      const downloaded = await fetchModuleFile(page, file, item);
+      if (!downloaded) continue;
       discovered = {
         file_id: String(file.id || fileId),
         name: file.display_name || file.filename || item.title || "Syllabus PDF",
@@ -39,17 +38,12 @@ async function fetchModuleSyllabusPdf(page, courseId, modules, api) {
         text: "",
         extraction: "unavailable",
       };
-      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "canvas-syllabus-"));
-      const pdfPath = path.join(dir, "syllabus.pdf");
-      fs.writeFileSync(pdfPath, body);
-      const extracted = spawnSync("pdftotext", ["-layout", pdfPath, "-"], { encoding: "utf8" });
-      fs.rmSync(dir, { recursive: true, force: true });
-      if (extracted.status === 0 && extracted.stdout.trim()) {
+      if (downloaded.text) {
         return {
           file_id: String(file.id || fileId),
           name: file.display_name || file.filename || item.title || "Syllabus PDF",
           url,
-          text: extracted.stdout.trim(),
+          text: downloaded.text,
           extraction: "pdftotext",
         };
       }
@@ -58,6 +52,63 @@ async function fetchModuleSyllabusPdf(page, courseId, modules, api) {
     }
   }
   return discovered;
+}
+
+async function fetchModuleFile(page, file, item) {
+  const url = file.url || item.html_url || "";
+  if (!url) return null;
+  try {
+    const encoded = await page.evaluate(async (target) => {
+      const response = await fetch(target);
+      if (!response.ok) return null;
+      const length = Number(response.headers.get("content-length") || 0);
+      if (length > 20_000_000) return null;
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      if (bytes.length > 20_000_000) return null;
+      let binary = "";
+      for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(binary);
+    }, url);
+    if (!encoded) return null;
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "canvas-module-file-"));
+    const filePath = path.join(dir, path.basename(file.filename || item.title || "module-file"));
+    fs.writeFileSync(filePath, Buffer.from(encoded, "base64"));
+    let text = "";
+    if (/\.pdf$/i.test(filePath)) {
+      const extracted = spawnSync("pdftotext", ["-layout", filePath, "-"], { encoding: "utf8" });
+      if (extracted.status === 0) text = extracted.stdout.trim();
+    }
+    fs.rmSync(dir, { recursive: true, force: true });
+    return { text, url, file_id: String(file.id || item.content_id || "") };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchModuleLinkedSources(page, courseId, modules, api) {
+  const output = [];
+  for (const mod of modules || []) {
+    for (const item of mod.items || []) {
+      const type = String(item.type || "").toLowerCase();
+      const title = String(item.title || "");
+      if (type === "page") {
+        const url = item.page_url || item.url || item.content_details?.url;
+        if (!url || !api) continue;
+        const result = await api(page, `/api/v1/courses/${courseId}/pages/${encodeURIComponent(url)}`);
+        if (result.ok && result.json) {
+          output.push({ kind: "module_page", title, canvas_id: String(item.content_id || url), url: result.json.html_url || item.html_url || null, text: result.json.body || "", updated_at: result.json.updated_at || null, module_id: String(mod.id), exam_relevant: /exam|review|study guide|formula/i.test(`${title} ${result.json.body || ""}`) });
+        }
+      } else if (type === "file") {
+        const fileId = item.content_id || item.content_details?.id;
+        if (!fileId || !api) continue;
+        const meta = await api(page, `/api/v1/files/${fileId}`);
+        if (!meta.ok) continue;
+        const file = await fetchModuleFile(page, meta.json || {}, item);
+        if (file) output.push({ kind: "module_file", title: meta.json?.display_name || meta.json?.filename || title, canvas_id: String(file.file_id || fileId), url: file.url, text: file.text, updated_at: meta.json?.updated_at || null, module_id: String(mod.id), exam_relevant: /exam|review|study guide|formula|answer|key/i.test(title) });
+      }
+    }
+  }
+  return output;
 }
 
 async function poolMap(items, limit, fn) {
@@ -294,6 +345,7 @@ export async function fetchCanonicalGeneration(page, {
     } catch {
       /* pages optional */
     }
+    const moduleSources = await fetchModuleLinkedSources(page, id, modules.items, api);
     const syllabusPdf = await fetchModuleSyllabusPdf(page, id, modules.items, api);
     if (syllabusPdf && syllabusPdf.text && (!courseDetail.syllabus_body || /uploading a doc|under construction|preferred to create a syllabus page|course information module/i.test(String(courseDetail.syllabus_body)))) {
       courseDetail = {
@@ -314,6 +366,7 @@ export async function fetchCanonicalGeneration(page, {
       })),
       submissions: submissions.items,
       modules: modules.items,
+      moduleSources,
       discussions: discussions.items,
       quizzes: quizzes.items,
       pages,

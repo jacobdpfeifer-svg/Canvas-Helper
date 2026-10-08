@@ -242,6 +242,7 @@ function ExamRow({ exam, onSaved }: { exam: ExamView; onSaved: () => Promise<voi
           {exam.value === "cancelled" && "Cancelled — no cap."}
           {exam.value === "date_only" && `${exam.date} · practice slots end ${fmtWhen(exam.cutoff_at)}`}
           {exam.value === "known_instant" && `${fmtWhen(exam.at)} · practice slots end ${fmtWhen(exam.cutoff_at)}`}
+          {exam.value === "window" && `${fmtWhen(exam.starts_at)}–${fmtWhen(exam.ends_at)} · practice slots end ${fmtWhen(exam.cutoff_at)} · ${exam.confidence} confidence`}
           {exam.is_past ? " · past" : ""}
         </p>
       </div>

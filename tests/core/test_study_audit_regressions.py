@@ -13,6 +13,7 @@ import pytest
 
 from canvas_mcp.core.study import checkers
 from canvas_mcp.core.study.clock import calendar_add
+from canvas_mcp.core.study.clock import exam_window
 from canvas_mcp.core.study.model import Event, StudyError
 from canvas_mcp.core.study.packets import validate_packet
 from canvas_mcp.core.study.service import StudyService
@@ -160,6 +161,20 @@ def test_stale_draft_writer_is_rejected(tmp_path: Path) -> None:
 def test_spring_gap_normalizes_forward() -> None:
     assert calendar_add(T("2026-03-07T02:30:00-07:00"), 1, Z) == T("2026-03-08T03:30:00-06:00")
     assert calendar_add(T("2026-10-31T01:30:00-06:00"), 1, Z) == T("2026-11-01T01:30:00-07:00")
+
+
+def test_exam_window_uses_start_and_preserves_timezone_confidence() -> None:
+    window = exam_window({
+        "id": "exam-2", "value": "window",
+        "starts_at": "2026-10-08T00:45:00Z", "ends_at": "2026-10-08T02:15:00Z",
+        "zone": Z, "source": "module_page", "confidence": "high",
+    })
+    assert window.cutoff == T("2026-10-08T00:45:00+00:00")
+    assert window.ends_at == T("2026-10-08T02:15:00+00:00")
+    assert window.source == "module_page" and window.confidence == "high"
+
+    due_only = exam_window({"id": "exam-3", "value": "known_instant", "at": "2026-10-08T02:15:00Z", "zone": Z, "source": "canvas_due_at", "confidence": "low"})
+    assert due_only.cutoff == T("2026-10-08T01:15:00+00:00")
 
 
 # 8. item ids are global; collisions are refused

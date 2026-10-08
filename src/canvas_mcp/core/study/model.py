@@ -43,7 +43,9 @@ EVENT_TYPES = (
     "ai_proposal",
 )
 PROVENANCE = ("instructor", "student", "synthetic", "model_candidate")
-EXAM_VALUES = ("known_instant", "date_only", "unknown", "cancelled")
+EXAM_VALUES = ("known_instant", "date_only", "window", "unknown", "cancelled")
+EXAM_CONFIDENCES = ("high", "medium", "low", "unknown")
+EXAM_SOURCES = ("canvas_window", "module_page", "announcement", "student", "canvas_due_at", "unknown")
 
 # The ladder is a product hypothesis, not a validated learning constant.
 GAP_LADDER = (1, 3, 7, 14, 21)

@@ -155,10 +155,14 @@ export type ExamView = {
   id: string;
   course: string;
   objective_scope: string[];
-  value: "known_instant" | "date_only" | "unknown" | "cancelled";
+  value: "known_instant" | "date_only" | "window" | "unknown" | "cancelled";
   at: string;
+  starts_at: string;
+  ends_at: string;
   date: string;
   zone: string;
+  source: string;
+  confidence: "high" | "medium" | "low" | "unknown";
   label: string;
   cutoff_at: string | null;
   is_past: boolean;

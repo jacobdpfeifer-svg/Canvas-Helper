@@ -89,6 +89,7 @@ export function materializeGenerationDir(dest, generation) {
     put(path.join(base, "assignment-groups.json"), c["assignment-groups"] || []);
     put(path.join(base, "submissions.json"), c.submissions || []);
     put(path.join(base, "modules.json"), c.modules || []);
+    put(path.join(base, "module-sources.json"), c.moduleSources || []);
     put(path.join(base, "discussions.json"), c.discussions || []);
     put(path.join(base, "quizzes.json"), c.quizzes || []);
     if (c.pages) put(path.join(base, "pages.json"), c.pages);
@@ -127,6 +128,7 @@ export function loadGeneration(dir) {
         "assignment-groups": read("assignment-groups.json"),
         submissions: read("submissions.json"),
         modules: read("modules.json"),
+        moduleSources: read("module-sources.json", []),
         discussions: read("discussions.json"),
         quizzes: read("quizzes.json"),
         pages: read("pages.json", []),
@@ -216,6 +218,7 @@ export function carryForwardFailedData(previous, next) {
     quizzes: "quizzes",
     submissions: "submissions",
     modules: "modules",
+    module_sources: "moduleSources",
     module_items: "modules",
   };
   const previousById = new Map((previous.courses || []).map((p) => [String(p.course?.id), p]));

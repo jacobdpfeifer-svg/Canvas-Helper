@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any
 
 from .model import (
+    EXAM_CONFIDENCES,
+    EXAM_SOURCES,
     EXAM_VALUES,
     MODES,
     PROVENANCE,
@@ -240,8 +242,12 @@ def normalize_exam(entry: dict[str, Any], *, default_course: str = "", default_z
         "objective_scope": [str(o) for o in (entry.get("objective_scope") or [])],
         "value": value,
         "at": _str(entry.get("at"), "exam at", required=False, max_len=64),
+        "starts_at": _str(entry.get("starts_at"), "exam starts_at", required=False, max_len=64),
+        "ends_at": _str(entry.get("ends_at"), "exam ends_at", required=False, max_len=64),
         "date": _str(entry.get("date"), "exam date", required=False, max_len=32),
         "zone": _str(entry.get("zone"), "exam zone", required=False, max_len=64) or default_zone,
+        "source": require_choice(entry.get("source", "unknown"), EXAM_SOURCES, "exam source"),
+        "confidence": require_choice(entry.get("confidence", "unknown"), EXAM_CONFIDENCES, "exam confidence"),
         "provenance": _str(entry.get("provenance"), "exam provenance", required=False, max_len=32)
         or "student",
         "label": _str(entry.get("label"), "exam label", required=False, max_len=200),

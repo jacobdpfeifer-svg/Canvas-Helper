@@ -10,6 +10,7 @@ import {
   examCandidates,
   inferTerm,
   pageSource,
+  generatePracticeItems,
 } from "../scripts/lib/study-sources.mjs";
 import { uiRound1CourseRecords } from "../scripts/lib/ui-round1-fixtures.mjs";
 
@@ -35,6 +36,20 @@ test("course record strips html, clips long text, and infers exam candidates", (
   assert.equal(midterm.kind, "exam");
   const quiz = record.items.find((i) => i.title === "Quiz 2");
   assert.equal(quiz.kind, "quiz");
+});
+
+test("module review and answer sources generate deterministic local practice", () => {
+  const record = courseRecord({
+    course: { id: 77, name: "Calculus", course_code: "MATH 1300" },
+    moduleSources: [
+      { kind: "module_file", canvas_id: "r", title: "Exam 2 Review Practice Problems", text: "1. Find the derivative.\n2. Find the integral." },
+      { kind: "module_file", canvas_id: "a", title: "Exam 2 Review Practice Problems Answers", text: "1. cos(x)\n2. x^2/2" },
+    ],
+    assignments: [], quizzes: [], fetchedAt: "2026-10-07T00:00:00Z",
+  });
+  assert.equal(record.generated_items.length, 2);
+  assert.deepEqual(record.generated_items.map((i) => i.id), ["generated-module_file-r-1", "generated-module_file-r-2"]);
+  assert.deepEqual(record.generated_items[0].key.support_refs, ["module_file-a"]);
 });
 
 test("empty bodies produce no source and long bodies are clipped", () => {

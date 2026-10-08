@@ -68,27 +68,52 @@ class ExamWindow:
     value: str
     cutoff: datetime | None
     ends_at: datetime | None  # instant after which the exam is in the past
+    starts_at: datetime | None = None
+    source: str = "unknown"
+    confidence: str = "unknown"
 
     def is_past(self, now: datetime) -> bool:
         return self.ends_at is not None and self.ends_at <= now
 
 
 def exam_window(raw: dict[str, Any]) -> ExamWindow:
-    """Conservative cutoff: instant − 1h, or (start of date-only day in zone) − 1h."""
+    """Return a conservative pre-exam window.
+
+    A real start time is the hard cutoff. A due-only Canvas record is treated
+    as an end time with a low-confidence one-hour safety buffer; it is never
+    presented as a known exam start.
+    """
     exam_id = str(raw.get("id") or "")
     value = str(raw.get("value") or "unknown")
     zone = zone_of(str(raw.get("zone") or ""))
-    if value == "known_instant":
+    if value in ("known_instant", "window"):
+        starts_raw = raw.get("starts_at")
+        ends_raw = raw.get("ends_at") or raw.get("at")
+        start = None
+        end = None
         try:
-            at = datetime.fromisoformat(str(raw.get("at")).replace("Z", "+00:00"))
+            if starts_raw:
+                start = datetime.fromisoformat(str(starts_raw).replace("Z", "+00:00"))
+            if ends_raw:
+                end = datetime.fromisoformat(str(ends_raw).replace("Z", "+00:00"))
         except (TypeError, ValueError):
             return ExamWindow(exam_id, "unknown", None, None)
-        if at.tzinfo is None:
-            if zone is None:
-                return ExamWindow(exam_id, "unknown", None, None)
-            at = at.replace(tzinfo=zone)
-        at = at.astimezone(UTC)
-        return ExamWindow(exam_id, value, at - timedelta(hours=1), at)
+        if start is not None and start.tzinfo is None:
+            start = start.replace(tzinfo=zone) if zone else None
+        if end is not None and end.tzinfo is None:
+            end = end.replace(tzinfo=zone) if zone else None
+        if start is None and end is None:
+            return ExamWindow(exam_id, "unknown", None, None)
+        if start is not None:
+            start = start.astimezone(UTC)
+        if end is not None:
+            end = end.astimezone(UTC)
+        if end is None:
+            end = start
+        cutoff = start if start is not None else end - timedelta(hours=1)
+        return ExamWindow(exam_id, value, cutoff, end, starts_at=start,
+                          source=str(raw.get("source") or "unknown"),
+                          confidence=str(raw.get("confidence") or "unknown"))
     if value == "date_only":
         if zone is None:
             return ExamWindow(exam_id, "unknown", None, None)
@@ -98,7 +123,9 @@ def exam_window(raw: dict[str, Any]) -> ExamWindow:
             return ExamWindow(exam_id, "unknown", None, None)
         start = datetime(day.year, day.month, day.day, tzinfo=zone).astimezone(UTC)
         end = calendar_add(start, 1, str(raw.get("zone")))
-        return ExamWindow(exam_id, value, start - timedelta(hours=1), end)
+        return ExamWindow(exam_id, value, start - timedelta(hours=1), end, starts_at=start,
+                          source=str(raw.get("source") or "unknown"),
+                          confidence=str(raw.get("confidence") or "unknown"))
     return ExamWindow(exam_id, value if value in ("cancelled", "unknown") else "unknown", None, None)
 
 

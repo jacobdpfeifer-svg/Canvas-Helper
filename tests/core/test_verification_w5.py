@@ -116,6 +116,7 @@ def test_gate1_manifests_renamed():
     manifest = json.loads((root / "tools" / "TOOL_MANIFEST.json").read_text())
     assert "jacob" not in manifest["server"].lower()
     server = json.loads((root / "server.json").read_text())
-    assert "jacob" not in server["name"].lower()
+    assert "kairos" in server["name"].lower()
     app_manifest = json.loads((root / "manifest.json").read_text())
-    assert "jacob" not in json.dumps(app_manifest).lower()
+    app_text = json.dumps(app_manifest).lower()
+    assert "kairos" in app_text and "canvas-mcp" in app_text

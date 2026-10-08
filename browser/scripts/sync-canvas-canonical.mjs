@@ -30,8 +30,11 @@ import { buildProjections, promoteProjections } from "./lib/canvas-project.mjs";
 import { writeAdaptersFromProjection } from "./lib/canvas-adapters.mjs";
 import { afterCanonicalSync } from "./lib/freshness-run.mjs";
 import { syncCourseColors } from "./lib/course-colors.mjs";
+import { acquireSyncLock } from "./lib/sync-lock.mjs";
 
 const userRoot = resolveUserRoot({ create: true, announce: true });
+const releaseSyncLock = acquireSyncLock(userRoot);
+process.on("exit", releaseSyncLock);
 const adaptersOnly = process.env.CANVAS_ADAPTERS_ONLY === "1" || process.env.CANVAS_ADAPTERS_ONLY === "true";
 // Raw fetch depth (term-wide "full scrape") — CATALOG_DAYS only. WEEK_TABLE_DAYS
 // (below) controls only the week.md display window and must not shrink this.
@@ -44,6 +47,24 @@ const progressPath = path.join(outDir, "progress.json");
 function writeProgress(progress) {
   writeJsonAtomic(progressPath, progress);
   console.log(JSON.stringify({ type: "study-sync-progress", ...progress }));
+}
+
+function surfaceReconcile(userRoot, result) {
+  const healthPath = path.join(userRoot, "inbox", "sync-health.json");
+  writeJsonAtomic(healthPath, { reconcile: result, updated_at: new Date().toISOString() });
+  const statusPath = path.join(userRoot, "inbox", "study-sources", "status.json");
+  try {
+    const status = JSON.parse(fs.readFileSync(statusPath, "utf8"));
+    status.reconcile = result;
+    if (!result.ok) {
+      status.ok = false;
+      status.partial = true;
+      status.errors = [...new Set([...(status.errors || []), `reconcile: ${result.error || "failed"}`])];
+    }
+    writeJsonAtomic(statusPath, status);
+  } catch {
+    /* The health file above remains the authoritative failure surface. */
+  }
 }
 
 function writeCatalogsFromGeneration(generation) {
@@ -243,11 +264,23 @@ writeProgress({
     ["-m", "canvas_mcp.core.learn_loop", "reconcile"],
     { cwd: repoRoot, encoding: "utf8", env: process.env }
   );
-  if (proc.status !== 0) {
+  const reconcile = proc.status === 0
+    ? { ok: true, status: proc.status }
+    : { ok: false, status: proc.status, error: String(proc.stderr || "reconcile failed").slice(-2000) };
+  surfaceReconcile(userRoot, reconcile);
+  writeSyncRun(userRoot, {
+    sync_id,
+    started_at: generation.manifest.started_at,
+    finished_at: generation.manifest.finished_at,
+    complete: Boolean(generation.manifest.complete && reconcile.ok),
+    health: { ...(projections?.health || {}), reconcile },
+  });
+  if (!reconcile.ok) {
     console.warn("learn_loop reconcile exited non-zero — checkpoint drift may be stale");
     if (proc.stderr) console.warn(proc.stderr.trim());
   }
+  writeProgress({ phase: "done", error: reconcile.ok ? null : "reconcile_failed", reconcile, courses: generation.courses.map((p) => ({ id: String(p.course.id), label: p.course.course_code || p.course.name, ok: !(generation.manifest.named_courses_failed || []).includes(String(p.course.id)) })) });
 }
 
 await context.close();
-console.log(JSON.stringify({ sync_id, complete: generation.manifest.complete, courses: generation.courses.length }, null, 2));
+console.log(JSON.stringify({ sync_id, complete: generation.manifest.complete, reconcile: JSON.parse(fs.readFileSync(path.join(userRoot, "inbox", "sync-health.json"), "utf8")).reconcile, courses: generation.courses.length }, null, 2));

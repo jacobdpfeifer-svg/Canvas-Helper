@@ -88,6 +88,18 @@ def test_import_selected_sources_then_author_and_practice(tmp_path: Path) -> Non
     assert r["state"]["due"] == "2026-09-19T22:03:00+00:00"
 
 
+def test_multiple_courses_remain_separate(tmp_path: Path) -> None:
+    seed(tmp_path)
+    second = json.loads(FIXTURE.read_text())
+    second["course"] = {**second["course"], "id": "4243", "code": "PHYS 1110", "label": "PHYS 1110 — Physics"}
+    (tmp_path / "inbox" / "study-sources" / "4243.json").write_text(json.dumps(second), encoding="utf-8")
+    s = svc(tmp_path, "2026-09-18T16:00:00-06:00")
+    assert {row["course_id"] for row in s.canvas_sources()["courses"]} == {"4242", "4243"}
+    s.canvas_import("4242", ["page-701"])
+    s.canvas_import("4243", ["page-701"])
+    assert {p["course"] for p in svc(tmp_path, "2026-09-18T16:01:00-06:00").packets.values()} == {"MATH 1300 — Calculus 1 (synthetic)", "PHYS 1110 — Physics"}
+
+
 def test_reimport_keeps_student_items_and_bumps_version(tmp_path: Path) -> None:
     seed(tmp_path)
     s = svc(tmp_path, "2026-09-18T16:00:00-06:00")

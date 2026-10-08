@@ -9,6 +9,7 @@
 import { stripHtmlTags } from "./canvas-session.mjs";
 
 export const MAX_TEXT_CHARS = 60_000;
+export const PACKET_TEXT_CHARS = 18_000;
 export const MAX_PAGES = 40;
 export const SCHEMA_VERSION = 2;
 /** Exam-like titles (not quizzes). */
@@ -36,6 +37,17 @@ export const COURSE_PALETTE = [
 export function clip(text, max = MAX_TEXT_CHARS) {
   const value = String(text || "");
   return value.length > max ? { text: value.slice(0, max), truncated: true } : { text: value, truncated: false };
+}
+
+function chunks(source) {
+  const text = String(source?.text || "");
+  if (text.length <= PACKET_TEXT_CHARS) return [source];
+  const out = [];
+  for (let i = 0; i < text.length; i += PACKET_TEXT_CHARS) {
+    const part = Math.floor(i / PACKET_TEXT_CHARS) + 1;
+    out.push({ ...source, id: `${source.id}-part-${part}`, title: `${source.title} (part ${part})`, text: text.slice(i, i + PACKET_TEXT_CHARS), truncated: true, part });
+  }
+  return out;
 }
 
 /** Course record used as the packet course label. */
@@ -84,6 +96,24 @@ export function pageSource(courseId, page) {
     text,
     truncated,
     course_id: String(courseId),
+  };
+}
+
+export function moduleSource(courseId, item) {
+  const raw = item?.text || (item?.kind === "module_file" ? `[Attachment unavailable for local text extraction: ${item.title || "file"}]` : "");
+  const { text, truncated } = clip(item?.kind === "module_file" ? raw : stripHtmlTags(raw));
+  if (!text) return null;
+  return {
+    id: `${item.kind || "module"}-${item.canvas_id || item.id || item.title}`,
+    kind: item.kind || "module_page",
+    title: String(item.title || "Module material"),
+    canvas_id: String(item.canvas_id || item.id || ""),
+    updated_at: item.updated_at || null,
+    url: item.url || null,
+    text,
+    truncated,
+    course_id: String(courseId),
+    exam_relevant: Boolean(item.exam_relevant || /exam|review|study guide|formula|answer|key/i.test(`${item.title || ""} ${text}`)),
   };
 }
 
@@ -253,6 +283,10 @@ export function examCandidates(courseId, assignments = [], quizzes = []) {
       kind: a.is_quiz_assignment || QUIZ_TITLE_RE.test(title) ? "quiz" : "assignment",
       points: a.points_possible ?? null,
       inferred: true,
+      starts_at: a.starts_at || a.start_at || null,
+      ends_at: a.ends_at || a.due_at || null,
+      source: a.starts_at || a.start_at ? "canvas_window" : "canvas_due_at",
+      confidence: a.starts_at || a.start_at ? "medium" : "low",
     });
   }
   for (const q of quizzes) {
@@ -267,6 +301,10 @@ export function examCandidates(courseId, assignments = [], quizzes = []) {
       kind: "quiz",
       points: q.points_possible ?? null,
       inferred: true,
+      starts_at: q.starts_at || q.start_at || null,
+      ends_at: q.ends_at || q.due_at || null,
+      source: q.starts_at || q.start_at ? "canvas_window" : "canvas_due_at",
+      confidence: q.starts_at || q.start_at ? "medium" : "low",
     });
   }
   return rows;
@@ -292,6 +330,7 @@ export function courseRecord({
   assignments,
   quizzes,
   assignmentGroups,
+  moduleSources = [],
   fetchedAt,
   errors = [],
   truncated = false,
@@ -307,6 +346,12 @@ export function courseRecord({
     const s = assignmentSource(course.id, a);
     if (s) sources.push(s);
   }
+  for (const m of moduleSources || []) {
+    const s = moduleSource(course.id, m);
+    if (s) sources.push(s);
+  }
+  const packetSources = sources.flatMap(chunks);
+  const generated = generatePracticeItems(packetSources);
   const byId = groupIndex(assignmentGroups);
   const useGroupWeights = (assignmentGroups || []).some((g) => Number(g?.group_weight) > 0);
   const rawItems = [
@@ -328,10 +373,42 @@ export function courseRecord({
     },
     term,
     fetched_at: fetchedAt,
-    sources,
+    sources: packetSources,
     items,
+    generated_items: generated,
     exams: examCandidates(course.id, assignments, quizzes),
     truncated,
     errors,
   };
+}
+
+function splitProblems(text) {
+  const lines = String(text || "").split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+  const starts = lines.map((line, index) => /^(?:problem|question|#?\d+\s*[.)]|[Pp]\d+\b)/.test(line) ? index : -1).filter((x) => x >= 0);
+  if (!starts.length) return lines.length ? [lines.join(" ")] : [];
+  return starts.map((start, i) => lines.slice(start, starts[i + 1] ?? lines.length).join(" ").slice(0, 4000));
+}
+
+export function generatePracticeItems(sources = []) {
+  const review = sources.find((s) => /review|study guide|practice problem/i.test(`${s.title} ${s.kind || ""}`) && !/answer|key|solution/i.test(s.title));
+  const answer = sources.find((s) => /answer|key|solution/i.test(s.title));
+  if (!review || !answer) return [];
+  const questions = splitProblems(review.text);
+  const answers = splitProblems(answer.text);
+  const answerSource = answer.id;
+  return questions.slice(0, 40).map((stem, index) => ({
+    id: `generated-${review.id}-${index + 1}`.replace(/[^A-Za-z0-9._:-]/g, "-"),
+    objective_id: "objective-exam-review",
+    source_refs: [review.id, answerSource],
+    kind: "concept",
+    stem,
+    neutral_locator: review.title,
+    fields: [{ id: "answer", label: "Your answer", kind: "text", options: [], checker: { type: "none" } }],
+    key: { answer: answers[index] || "See the corresponding instructor answer.", explanation: "Compare your work with the paired instructor answer after submitting.", support_refs: [answerSource], provenance: "instructor" },
+    feedback: {},
+    hint: "Try the problem before opening the instructor answer.",
+    modes: ["review", "practice"],
+    predicted_seconds: 180,
+    why: "Generated locally from paired instructor review and answer materials.",
+  }));
 }

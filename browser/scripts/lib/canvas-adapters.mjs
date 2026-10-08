@@ -161,16 +161,23 @@ export function writeAdaptersFromProjection({
     fs.mkdirSync(outDir, { recursive: true });
     const summaries = [];
     for (const pack of generation.courses || []) {
+      const courseId = String(pack.course.id);
+      const failedEndpoints = (generation.manifest?.failed_endpoints || [])
+        .filter((row) => String(row.endpoint || row).endsWith(`:${courseId}`) || String(row.endpoint || row).includes(`:${courseId}:`))
+        .map((row) => String(row.endpoint || row));
+      const courseTruncated = (generation.manifest?.pagination || [])
+        .some((row) => String(row.endpoint || row).endsWith(`:${courseId}`) || String(row.endpoint || row).includes(`:${courseId}:`));
       const record = courseRecord({
         course: pack.course,
         syllabus: pack.course.syllabus_body,
         pages: pack.pages || [],
+        moduleSources: pack.moduleSources || [],
         assignments: pack.assignments || [],
         quizzes: pack.quizzes || [],
         assignmentGroups: pack["assignment-groups"] || [],
         fetchedAt: generation.manifest?.finished_at,
-        errors: [],
-        truncated: Boolean(generation.manifest?.pagination?.length),
+        errors: failedEndpoints,
+        truncated: courseTruncated,
       });
       record.sync_id = sync_id;
       record.projection_schema = projections.schema_version;
@@ -178,7 +185,7 @@ export function writeAdaptersFromProjection({
       const tmp = `${target}.tmp`;
       fs.writeFileSync(tmp, JSON.stringify(record, null, 2));
       fs.renameSync(tmp, target);
-      summaries.push({ id: String(pack.course.id), label: record.course.label, ok: true });
+      summaries.push({ id: courseId, label: record.course.label, ok: failedEndpoints.length === 0 && !courseTruncated, errors: failedEndpoints, truncated: courseTruncated });
     }
     fs.writeFileSync(
       path.join(outDir, "status.json"),
@@ -189,7 +196,7 @@ export function writeAdaptersFromProjection({
           projection_schema: projections.schema_version,
           started_at: generation.manifest?.started_at,
           finished_at: generation.manifest?.finished_at,
-          ok: true,
+          ok: Boolean(generation.manifest?.complete && errors.length === 0),
           partial: !generation.manifest?.complete || errors.length > 0,
           session: "ok",
           errors,
