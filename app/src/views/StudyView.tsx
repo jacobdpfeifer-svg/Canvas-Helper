@@ -144,11 +144,10 @@ function ErrorPanel({ error, retry, onGoToSources }: { error: StudyRequestError;
   const unreachable = error.code === "unreachable";
   return (
     <div className="page page-quiet" role="alert">
-      <p className="index-label">Study</p>
       <h2 ref={heading} tabIndex={-1}>
-        {unreachable ? "The study core did not answer" : "Something went wrong"}
+        {unreachable ? "Kairos couldn't open your study notes" : "Something went wrong on our side"}
       </h2>
-      <p>{error.message}</p>
+      <p>{unreachable ? "The study helper isn't answering. Try again, or quit and reopen Kairos." : error.message}</p>
       {error.code === "persistence_failed" && (
         <p>Your answer was not saved. Check free disk space, then retry with the same attempt.</p>
       )}

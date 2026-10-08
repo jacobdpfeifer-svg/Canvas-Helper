@@ -64,7 +64,7 @@ export function SettingsView() {
     setExportResult("");
     try {
       const result = await exportCanvas(exportGrades);
-      setExportResult(`ZIP ready: ${result.zip}${result.grades_included ? " · grades included" : " · grades excluded"}`);
+      setExportResult(`ZIP ready: ${result.zip} (${result.grades_included ? "grades included" : "grades left out"})`);
     } catch (e) {
       setExportResult(`Export failed: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
@@ -86,16 +86,15 @@ export function SettingsView() {
 
   return (
     <section className="settings settings-stage scene-paper" aria-labelledby="settings-heading">
-      <h1 id="settings-heading" className="index-label">Settings</h1>
+      <h1 id="settings-heading">Settings</h1>
       <nav className="settings-index" aria-label="Settings sections">
-        {groups.map(([id, label], i) => (
+        {groups.map(([id, label]) => (
           <button
             key={id}
             type="button"
             aria-current={group === id ? "true" : undefined}
             onClick={() => setGroup(id)}
           >
-            <span className="mono">{String(i + 1).padStart(2, "0")}</span>
             {label}
           </button>
         ))}

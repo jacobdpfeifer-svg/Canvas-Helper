@@ -18,7 +18,7 @@ describe("ChangesLedger", () => {
       title: `Item ${i}`,
       course: "APPM 1235",
       detected_at: new Date(NOW - (i + 1) * 3600_000).toISOString(),
-      url: i === 0 ? "https://canvas.colorado.edu/courses/1/assignments/2" : null,
+      url: i === 0 ? "https://canvas.example.edu/courses/1/assignments/2" : null,
     }));
     render(<ChangesLedger changes={changes} now={NOW} />);
     expect(screen.getByRole("heading", { name: "Changed" })).toBeTruthy();

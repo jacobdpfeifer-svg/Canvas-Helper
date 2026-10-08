@@ -37,28 +37,33 @@ export function ExamPrepView({
   const dueLabel = tick.due_at
     ? new Date(tick.due_at).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })
     : "No date";
-  const daysLeft = tick.due_at ? Math.max(0, Math.round((Date.parse(tick.due_at) - today.getTime()) / 86_400_000)) : null;
+  const daysLeft = tick.due_at ? Math.round((Date.parse(tick.due_at) - today.getTime()) / 86_400_000) : null;
 
   return (
     <section className="exam-prep scene-paper" style={{ ["--course" as string]: tick.color }}>
       <header className="exam-index">
         <button type="button" className="ghost" onClick={onBack}>
-          Return
+          Back
         </button>
-        <span className="mono">
-          {tick.course_label} · {dueLabel}
-          {daysLeft !== null ? ` · ${daysLeft} ${daysLeft === 1 ? "day" : "days"}` : ""}
+        <span className="exam-when">
+          {tick.course_label}, {dueLabel}
+          {daysLeft === null
+            ? ""
+            : daysLeft === 0
+              ? ". That's today."
+              : daysLeft < 0
+                ? `. That was ${-daysLeft} ${daysLeft === -1 ? "day" : "days"} ago.`
+                : `. ${daysLeft} ${daysLeft === 1 ? "day" : "days"} to go.`}
         </span>
       </header>
       <h1 className="display exam-title">{tick.title}</h1>
-      <p className="muted mono">Draft plan — reshuffled locally until a model planner exists.</p>
+      <p className="muted">A day-by-day plan up to the exam. Today is highlighted.</p>
       <ol className="ledger prep-days">
-        {plan.days.map((d, i) => (
+        {plan.days.map((d) => (
           <li key={d.date} className={`prep-day${d.isToday ? " today" : ""}`} aria-current={d.isToday ? "date" : undefined}>
-            <span className="mono idx">{String(i + 1).padStart(2, "0")}</span>
             <span className="rail-body">
               <strong>{d.label}</strong>
-              <span className="mono muted">{d.mode === "review" ? "Review" : "Study"}</span>
+              <span className="muted">{d.mode === "review" ? "Review" : "Study"}</span>
               <ul>
                 {d.topics.map((t) => (
                   <li key={t}>{t}</li>
@@ -77,9 +82,9 @@ export function ExamPrepView({
           <p className="empty">No practice items for this exam yet</p>
         )}
         <button type="button" className="ghost" onClick={() => setSeed((s) => s + 1)}>
-          Redo this plan
+          Shuffle this plan
         </button>
-        <p className="muted">Reshuffles this draft. It is not an agent rewrite yet.</p>
+        <p className="muted">Shuffles the order of topics across the days.</p>
       </div>
     </section>
   );

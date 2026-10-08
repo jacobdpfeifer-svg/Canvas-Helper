@@ -21,7 +21,7 @@ npm run open-canvas   # SSO + MFA once (you complete IdentiKey + MFA)
 npm run sync          # writes {user_root}/inbox/week.md from /api/v1
 ```
 
-Set `SCHOOL_SLUG` (default `cu-boulder`) and optionally `DEV_USER_ROOT` for a product user-root path (inbox + calibration). Without `DEV_USER_ROOT`, sync writes to the OS app-support user root (`~/Library/Application Support/Kairos/dev/` on macOS) — the same default as Python and Tauri.
+The student's school comes from onboarding (`{user_root}/school/profile.json`; see `docs/architecture/school-personalization.md`). For dev, set `SCHOOL_SLUG` to a curated `schools/*.yaml` and optionally `DEV_USER_ROOT` for a product user-root path (inbox + calibration). Without `DEV_USER_ROOT`, sync writes to the OS app-support user root (`~/Library/Application Support/Kairos/dev/` on macOS) — the same default as Python and Tauri.
 
 In chat: ask for a **week plan**, or **brief me** / **what should I do first**.
 

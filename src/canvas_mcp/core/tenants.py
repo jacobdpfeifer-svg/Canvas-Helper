@@ -1,8 +1,11 @@
 """School / tenant registry loader.
 
-Ships with the app as ``schools/{slug}.yaml``. User picks a school at
-onboarding; runtime code resolves Canvas base URL, SSO IdP, timezone, and
-optional course-file map from here — never from hard-coded CU constants.
+The student's school is discovered at onboarding (Instructure account search ->
+their Canvas host) and saved to ``{user_root}/school/profile.json``; Canvas itself
+then fills in time zone and term. ``schools/{slug}.yaml`` is an optional curated
+overlay for what Canvas cannot know (policy links, campus plugins, legal notice),
+matched by Canvas host. Nothing assumes a particular school.
+See docs/architecture/school-personalization.md.
 """
 
 from __future__ import annotations
@@ -11,6 +14,9 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+
+import json
+from urllib.parse import urlparse
 
 import yaml
 
@@ -138,3 +144,60 @@ def list_schools() -> list[str]:
 def clear_school_cache() -> None:
     """Drop cached school configs (tests)."""
     load_school.cache_clear()
+
+
+def _host_of(url: str) -> str:
+    raw = (url or "").strip()
+    if not raw:
+        return ""
+    if "://" not in raw:
+        raw = f"https://{raw}"
+    return (urlparse(raw).hostname or "").lower()
+
+
+def curated_slug_for_host(host: str) -> str:
+    """Slug of a curated ``schools/*.yaml`` whose canvas_base_url host matches, or ''."""
+    want = _host_of(host)
+    if not want:
+        return ""
+    for slug in list_schools():
+        try:
+            if _host_of(load_school(slug).canvas_base_url) == want:
+                return slug
+        except (OSError, ValueError, KeyError):
+            continue
+    return ""
+
+
+def read_school_profile(user_root: Path) -> dict[str, Any] | None:
+    """The onboarding pick at ``{user_root}/school/profile.json`` (None if absent or unreadable)."""
+    path = Path(user_root) / "school" / "profile.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) and data.get("canvas_host") else None
+
+
+def school_for_user(user_root: Path) -> SchoolConfig | None:
+    """The student's school: curated yaml when one matches their Canvas host, else built from the profile."""
+    profile = read_school_profile(user_root)
+    if not profile:
+        return None
+    curated = curated_slug_for_host(str(profile["canvas_host"]))
+    if curated:
+        return load_school(curated)
+    found = profile.get("discovered") or {}
+    term = found.get("term") or {}
+    return SchoolConfig(
+        slug=str(profile.get("slug") or ""),
+        display_name=str(profile.get("display_name") or profile["canvas_host"]),
+        canvas_base_url=f"https://{_host_of(str(profile['canvas_host']))}",
+        sso_idp="",
+        timezone=str(found.get("timezone") or "UTC"),
+        term_dates={
+            k: str(v)
+            for k, v in {"current_name": term.get("name"), "current_start": term.get("start_at"), "current_end": term.get("end_at")}.items()
+            if v
+        },
+    )

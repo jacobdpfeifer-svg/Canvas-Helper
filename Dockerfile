@@ -29,5 +29,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD python -c "import canvas_mcp; print('OK')" || exit 1
 
 # stdio MCP — pass token/url at run time, e.g.:
-# docker run -i --rm -e CANVAS_API_TOKEN -e CANVAS_API_URL=https://canvas.colorado.edu/api/v1 …
+# docker run -i --rm -e CANVAS_API_TOKEN -e CANVAS_API_URL=https://canvas.yourschool.edu/api/v1 …
 CMD ["canvas-mcp-server"]

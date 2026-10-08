@@ -28,8 +28,19 @@ export function getBase() {
   return school().canvas_base_url;
 }
 
-/** Canvas base URL from school registry (string). */
-export let BASE = getBase();
+/**
+ * Canvas base URL for the student's school. Resolved lazily: importing this module
+ * must work before onboarding has chosen a school (tests, school search). Every
+ * Canvas entry point (launchCanvasContext, requireLoggedIn) re-resolves it and
+ * throws a clear "pick your school" error when there is none.
+ */
+export let BASE = (() => {
+  try {
+    return getBase();
+  } catch {
+    return "";
+  }
+})();
 
 export const ROOT = path.join(__dirname, "..", "..", "..");
 /**
@@ -111,8 +122,14 @@ export function getCourseFileMap() {
   return school().course_file_map || [];
 }
 
-/** @deprecated Prefer getCourseFileMap() — refreshed each access via getter below. */
-export const COURSE_FILE_MAP = getCourseFileMap();
+/** @deprecated Prefer getCourseFileMap(); empty until a school is chosen. */
+export const COURSE_FILE_MAP = (() => {
+  try {
+    return getCourseFileMap();
+  } catch {
+    return [];
+  }
+})();
 
 /** School-local calendar day as YYYY-MM-DD (not UTC). */
 export function schoolLocalDay(d = new Date()) {

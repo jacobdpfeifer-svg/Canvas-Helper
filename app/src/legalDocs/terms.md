@@ -9,7 +9,7 @@ By installing or using Kairos you agree to these terms and the [Privacy Policy](
 
 Kairos is a local-first desktop companion for university students. It reads Canvas through **your** school SSO session and helps you plan and study on a device you control. It is a private beta, provided as-is, with no warranty that grades, deadlines, or synced data are complete or correct. Always verify critical dates in Canvas.
 
-Kairos is **not** affiliated with, endorsed by, or a product of the University of Colorado Boulder, Instructure, or any school listed in the picker.
+Kairos is **not** affiliated with, endorsed by, or a product of Instructure or any school.
 
 ## License to use
 

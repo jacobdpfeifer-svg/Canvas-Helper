@@ -60,10 +60,16 @@ describe("HomeView", () => {
     expect(screen.getAllByText("MATH 1300").length).toBeGreaterThan(0);
     // subject statement is the next due tick; orbit rail indexes the next three
     expect(screen.getByRole("button", { name: "Homework 1" })).toBeInTheDocument();
-    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // every due time carries its short zone ("MDT") so it is never ambiguous
+    const zone = new Intl.DateTimeFormat(undefined, { timeZoneName: "short" })
+      .formatToParts(new Date(surface.today))
+      .find((p) => p.type === "timeZoneName")?.value as string;
     expect(screen.getAllByText(new RegExp(zone.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Ask" })).toBeInTheDocument();
-    expect(screen.getByRole("complementary", { name: "Next up" })).toHaveTextContent("01");
+    // the focus block holds the lead item; "Next up" lists what comes after it
+    const rail = screen.getByRole("complementary", { name: "Next up" });
+    expect(rail).not.toHaveTextContent("Homework 1");
+    expect(rail).toHaveTextContent("Midterm 1");
     const ticks = screen.getAllByRole("option");
     expect(ticks.length).toBeGreaterThanOrEqual(2);
     const exam = ticks.find((t) => t.getAttribute("aria-label") === "Midterm 1") as HTMLElement;

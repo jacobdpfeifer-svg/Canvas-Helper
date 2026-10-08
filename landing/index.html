@@ -1,204 +1,208 @@
 <!doctype html>
-<html lang="en" data-theme="night">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kairos — the Canvas grade you can actually trust</title>
-<meta name="description" content="Kairos reads your Canvas courses, tells you what your grade really is, and builds short practice checks from your own material. It never submits, posts, or scrapes anything on your behalf.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<title>Kairos: your whole semester on one page</title>
+<meta name="description" content="Kairos reads every class in Canvas and writes down what's due, what it's worth, and what to study first. A Mac app for college students, in beta.">
+<meta name="color-scheme" content="light dark">
+<link rel="preload" href="fonts/gabarito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="nav-shell">
-  <nav class="nav glass" aria-label="Primary">
-    <a class="wordmark" href="#top">
-      <span class="mark" aria-hidden="true"></span>
-      Kairos
-    </a>
-    <div class="nav-links">
-      <a href="#what-it-does">What it does</a>
-      <a href="#non-goals">What it won't do</a>
-      <a href="#privacy">Privacy</a>
-    </div>
-    <div class="nav-actions">
-      <div class="theme-toggle" role="group" aria-label="Theme">
-        <button type="button" data-theme="night" aria-pressed="true">Night</button>
-        <button type="button" data-theme="paper" aria-pressed="false">Paper</button>
-      </div>
-      <a class="nav-access" href="#download">Get access</a>
-    </div>
+<header class="nav">
+  <a class="wordmark" href="#top">kairos</a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#how">How it works</a>
+    <a href="#privacy">Privacy</a>
   </nav>
-</div>
+  <a class="btn btn-small" href="#access">Get early access</a>
+</header>
 
 <main id="top">
 
+  <!-- Hero: one promise, one action, the product as the picture. -->
   <section class="hero wrap">
-    <div class="hero-stage">
-      <div class="hero-subject">
-        <p class="index-label">01 &nbsp; Private beta · CU Boulder</p>
-        <h1 class="hero-title">The grade Canvas shows you isn’t always the real one.</h1>
-        <p class="hero-sub">Kairos reads your Canvas courses over SSO — no token required — and turns them into an honest due list, a real grade calculation, and short practice checks built from your own course material.</p>
-        <a class="btn primary" href="#download">Get notified for macOS</a>
+    <div class="hero-copy">
+      <h1>Your whole semester on <span class="mark">one page.</span></h1>
+      <p class="lede">Kairos reads every class in Canvas and writes down what's due, what it's worth, and what to study first.</p>
+      <a class="btn" href="#access">Get early access</a>
+    </div>
+
+    <div class="hero-page">
+      <div class="page" role="img" aria-label="A Kairos to-do page for Tuesday: Problem Set 6 done, then Thermo practice, Lab 2 pre-lab, and a mission concept report draft">
+        <p class="page-title">Tuesday</p>
+        <p class="page-sub">4 classes, 3 things today</p>
+        <ul class="rows">
+          <li><span class="box done"></span><span class="t struck">Problem Set 6</span><span class="tag" style="--c: var(--c1)">Diff Eq</span></li>
+          <li><span class="box"></span><span class="t">Thermo practice, 25 min</span><span class="tag" style="--c: var(--c3)">Thermo</span></li>
+          <li><span class="box"></span><span class="t">Lab 2 pre-lab</span><span class="tag" style="--c: var(--c2)">Statics</span></li>
+          <li><span class="box"></span><span class="t">Mission concept report draft</span><span class="tag" style="--c: var(--c4)">Astro</span></li>
+        </ul>
       </div>
-      <aside class="hero-orbit" aria-label="What this product is">
-        <ol class="orbit">
-          <li>
-            <span class="orbit-idx">01</span>
-            <span class="orbit-name">Grade truth</span>
-          </li>
-          <li>
-            <span class="orbit-idx">02</span>
-            <span class="orbit-name">Stays on this machine</span>
-          </li>
-          <li>
-            <span class="orbit-idx">03</span>
-            <span class="orbit-name">No API token</span>
-          </li>
-        </ol>
-      </aside>
+      <p class="note n-canvas" aria-hidden="true">pulled from Canvas
+        <svg viewBox="0 0 60 50"><path d="M56 4 C 40 10 22 22 10 42 M10 42 L8 30 M10 42 L22 38"/></svg>
+      </p>
+      <p class="note n-notes" aria-hidden="true">built from your lecture notes
+        <svg viewBox="0 0 70 40"><path d="M4 36 C 24 30 46 20 64 6 M64 6 L52 8 M64 6 L62 18"/></svg>
+      </p>
     </div>
   </section>
 
-  <section class="wrap band" id="pain">
-    <div class="section-head">
-      <p class="index-label">Why this exists</p>
-      <h2 class="section-title">Every class runs Canvas differently. That’s the actual problem.</h2>
+  <!-- The app in use: the real Home layout with a sample student's week. -->
+  <section class="app-band" aria-labelledby="app-title">
+    <div class="wrap">
+      <h2 id="app-title">Open it and the day is already written down.</h2>
+      <p class="section-lede">The most important thing goes at the top. If a professor moves a date, the plan moves with it.</p>
     </div>
-    <ol class="ledger">
-      <li>
-        <span class="ledger-idx" aria-hidden="true">01</span>
-        <h3 class="ledger-statement">Every course is its own island</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">02</span>
-        <h3 class="ledger-statement">The Canvas grade lies by omission</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">03</span>
-        <h3 class="ledger-statement">The dashboard misses what’s due</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">04</span>
-        <h3 class="ledger-statement">You don’t trust tools near your grades</h3>
-      </li>
+    <div class="wrap">
+      <div class="app" role="img" aria-label="The Kairos home screen for a sample student with four aerospace classes. The Thermodynamics midterm is in seven days and moved from October 12 to October 14.">
+        <div class="app-side">
+          <span class="app-mark">kairos</span>
+          <span class="app-nav on">Today</span>
+          <span class="app-nav">Study</span>
+          <span class="app-nav">Calendar</span>
+          <span class="app-nav">Grades</span>
+          <span class="app-sec">Classes</span>
+          <span class="app-class" style="--c: var(--c1)">Diff Eq</span>
+          <span class="app-class" style="--c: var(--c2)">Statics</span>
+          <span class="app-class" style="--c: var(--c3)">Thermo</span>
+          <span class="app-class" style="--c: var(--c4)">Astronautics</span>
+        </div>
+        <div class="app-doc">
+          <p class="doc-date">Tuesday, Oct 7</p>
+          <p class="doc-sub">Good morning, Avery.</p>
+          <div class="focus">
+            <div>
+              <p class="focus-title">Thermo Midterm 1 is in 7 days.</p>
+              <p class="focus-body">Moved from Oct 12 to Tue, Oct 14 at 7 PM. Today's piece takes 25 minutes.</p>
+            </div>
+            <span class="btn btn-small" aria-hidden="true">Start</span>
+          </div>
+          <ul class="rows">
+            <li><span class="box"></span><span class="t">Lab 2 pre-lab, opens WebAssign</span><span class="tag" style="--c: var(--c2)">Wed</span></li>
+            <li><span class="box"></span><span class="t">Mission concept report draft, 50 pts</span><span class="tag" style="--c: var(--c4)">Thu</span></li>
+            <li><span class="box"></span><span class="t">Discussion: where does the second law bite?</span><span class="tag" style="--c: var(--c3)">Thu</span></li>
+          </ul>
+          <div class="sem">
+            <p class="sem-title">The rest of the semester</p>
+            <div class="lane" style="--c: var(--c1)"><span>Diff Eq</span><div class="track"><i style="left:10%;height:30%"></i><i style="left:38%;height:70%"></i><i style="left:66%;height:30%"></i><i style="left:96%;height:100%"></i></div></div>
+            <div class="lane" style="--c: var(--c2)"><span>Statics</span><div class="track"><i style="left:6%;height:20%"></i><i style="left:30%;height:60%"></i><i style="left:72%;height:60%"></i><i style="left:94%;height:90%"></i></div></div>
+            <div class="lane" style="--c: var(--c3)"><span>Thermo</span><div class="track"><i style="left:18%;height:80%"></i><i style="left:52%;height:40%"></i><i style="left:80%;height:80%"></i></div></div>
+            <div class="lane" style="--c: var(--c4)"><span>Astronautics</span><div class="track"><i style="left:12%;height:50%"></i><i style="left:46%;height:30%"></i><i style="left:90%;height:70%"></i></div></div>
+            <span class="today" aria-hidden="true"></span>
+            <p class="note n-taller" aria-hidden="true">taller = worth more
+              <svg viewBox="0 0 70 40"><path d="M6 6 C 26 8 46 18 60 34 M60 34 L48 31 M60 34 L58 22"/></svg>
+            </p>
+          </div>
+          <p class="note n-moved" aria-hidden="true">your professor moved this one
+            <svg viewBox="0 0 70 40"><path d="M66 34 C 50 30 30 22 8 8 M8 8 L20 10 M8 8 L12 20"/></svg>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The payoff: what the time is for. Line art, no mascot. -->
+  <section class="weekend" aria-labelledby="weekend-title">
+    <div class="wrap weekend-copy">
+      <h2 id="weekend-title">Get the week done. Keep the weekend.</h2>
+      <p class="section-lede">Kairos knows what's due, so it also knows when nothing is. When Saturday is clear, it says so.</p>
+      <div class="clear-card">
+        <svg viewBox="0 0 44 44" aria-hidden="true"><circle class="sun-fill" cx="30" cy="14" r="6"/><path d="M6 36 L18 20 Q20 17 22 20 L30 32"/><path d="M24 36 L30 28 Q32 26 34 28 L40 36"/></svg>
+        <span><strong>Saturday is clear</strong><span>Nothing due until Monday night.</span></span>
+      </div>
+    </div>
+    <svg class="panorama" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <circle class="sun" cx="1130" cy="74" r="38"/>
+      <path d="M0 250 L150 150 Q170 136 190 150 L260 196 L360 96 Q380 78 400 96 L520 214 L610 150 Q628 138 646 150 L760 230"/>
+      <path d="M340 116 L360 96 L382 116"/>
+      <path d="M380 70 L380 50 M380 50 L398 56 L380 62"/>
+      <circle cx="370" cy="74" r="5"/>
+      <path d="M370 79 L370 94 M370 84 L362 90 M370 84 L378 88 M370 94 L364 104 M370 94 L376 104"/>
+      <path class="soft" d="M420 120 C 440 140 410 156 432 176 C 452 194 426 206 448 224"/>
+      <path class="soft" d="M430 118 C 450 138 420 154 442 174 C 462 192 436 204 458 222"/>
+      <path d="M760 230 C 820 220 860 236 920 228 C 980 220 1020 236 1080 228 C 1140 220 1180 236 1240 228 C 1300 220 1360 234 1440 226"/>
+      <path class="soft" d="M840 252 C 870 246 890 256 920 250 M1010 256 C 1040 250 1060 260 1090 254 M1200 254 C 1230 248 1250 258 1280 252"/>
+      <path d="M1150 214 C 1170 206 1200 206 1220 214"/>
+      <circle cx="1186" cy="182" r="5"/>
+      <path d="M1186 187 L1186 202 M1186 192 L1174 188 M1186 192 L1198 196 M1186 202 L1178 212 M1186 202 L1194 212"/>
+      <path d="M560 266 L600 214 L640 266 Z M600 214 L600 266"/>
+      <path class="flame" d="M680 266 C 676 256 686 252 682 242 C 692 250 696 258 690 266 Z"/>
+      <path d="M0 290 L1440 290"/>
+    </svg>
+  </section>
+
+  <section class="grade wrap" id="grade" aria-labelledby="grade-title">
+    <div class="grade-copy">
+      <h2 id="grade-title">The grade Canvas shows you isn't always the real one.</h2>
+      <p class="section-lede">Canvas averages the work that's already graded. Kairos also counts what's still missing, so you see where you'd land if nothing else came in.</p>
+    </div>
+    <div class="grade-card" role="img" aria-label="Example: Canvas shows 94 percent. Counting two assignments that were not turned in as zero, the grade is 81 percent.">
+      <p class="grade-course">CHEM 1113 <span class="tag">Example</span></p>
+      <div class="grade-nums">
+        <div><p class="grade-label">Canvas says</p><p class="grade-num">94%</p><p class="grade-note">A, graded work only</p></div>
+        <div><p class="grade-label">With missing work as zero</p><p class="grade-num risk">81%</p><p class="grade-note">B</p></div>
+      </div>
+      <ul class="rows">
+        <li><span class="t">Lab 6</span><span class="muted">40 pts, not turned in</span></li>
+        <li><span class="t">Problem set 8</span><span class="muted">20 pts, not turned in</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="how wrap" id="how" aria-labelledby="how-title">
+    <h2 id="how-title">How you get started</h2>
+    <ol class="steps">
+      <li><strong>Find your school.</strong> <span>Type its name. Any school that uses Canvas works.</span></li>
+      <li><strong>Sign in the way you always do.</strong> <span>Your school's normal login. Kairos never sees your password.</span></li>
+      <li><strong>Your classes show up.</strong> <span>Due dates, grades, and syllabus pages, sorted into one plan.</span></li>
     </ol>
   </section>
 
-  <section class="wrap band" id="how">
-    <div class="section-head">
-      <p class="index-label">How it gets your data</p>
-      <h2 class="section-title">No API token. No password stored. Just your school login.</h2>
+  <section class="privacy wrap" id="privacy" aria-labelledby="privacy-title">
+    <h2 id="privacy-title">Where your stuff lives</h2>
+    <div class="privacy-cols">
+      <div>
+        <h3>On your Mac</h3>
+        <p>Your study history, Canvas sign-in, and grade math stay in a folder on your computer. Crash reports are off unless you turn them on.</p>
+      </div>
+      <div>
+        <h3>Sent only when you ask</h3>
+        <p>Optional AI help sends the page you're studying and your answer. It never sends your sign-in and can't change your grade.</p>
+      </div>
     </div>
-    <ol class="ledger">
-      <li>
-        <span class="ledger-idx" aria-hidden="true">01</span>
-        <h3 class="ledger-statement">Sign in once, via SSO</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">02</span>
-        <h3 class="ledger-statement">It reads Canvas’s own API</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">03</span>
-        <h3 class="ledger-statement">You study, plan, and check your grade</h3>
-      </li>
-    </ol>
+    <p class="wont">Kairos won't submit, comment, or post anything in Canvas for you. It has no tools for instructors, doesn't scrape your school's student portal or RateMyProfessors, and has no streaks to lose.</p>
   </section>
 
-  <section class="wrap band" id="what-it-does">
-    <div class="section-head">
-      <p class="index-label">What’s actually built</p>
-      <h2 class="section-title">Four things, done honestly</h2>
-    </div>
-    <ol class="ledger">
-      <li>
-        <span class="ledger-idx" aria-hidden="true">01</span>
-        <h3 class="ledger-statement">Study</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">02</span>
-        <h3 class="ledger-statement">Sources</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">03</span>
-        <h3 class="ledger-statement">Plan</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">04</span>
-        <h3 class="ledger-statement">Real grade + course suggestions</h3>
-      </li>
-    </ol>
-  </section>
-
-  <section class="wrap band" id="non-goals">
-    <div class="section-head">
-      <p class="index-label">The part most tools bury in a footnote</p>
-      <h2 class="section-title">What Kairos will never do</h2>
-    </div>
-    <ol class="ledger">
-      <li>
-        <span class="ledger-idx" aria-hidden="true">01</span>
-        <h3 class="ledger-statement">Never submits, comments, or posts for you</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">02</span>
-        <h3 class="ledger-statement">No educator or grading tools</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">03</span>
-        <h3 class="ledger-statement">No DegreeWorks or Buff Portal scraping</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">04</span>
-        <h3 class="ledger-statement">No RateMyProfessors scraping</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">05</span>
-        <h3 class="ledger-statement">No losable-state gamification</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">06</span>
-        <h3 class="ledger-statement">No standing automation on your accounts</h3>
-      </li>
-    </ol>
-  </section>
-
-  <section class="wrap band" id="privacy">
-    <div class="section-head">
-      <p class="index-label">Where your data actually goes</p>
-      <h2 class="section-title">Local-first, not a cloud product with a privacy page</h2>
-    </div>
-    <ol class="ledger">
-      <li>
-        <span class="ledger-idx" aria-hidden="true">01</span>
-        <h3 class="ledger-statement">Your study history stays local</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">02</span>
-        <h3 class="ledger-statement">Canvas cookies and sign-in tokens stay in your local profile folder</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">03</span>
-        <h3 class="ledger-statement">Optional AI help sends only the material you’re actively studying</h3>
-      </li>
-      <li>
-        <span class="ledger-idx" aria-hidden="true">04</span>
-        <h3 class="ledger-statement">Crash reporting is off by default</h3>
-      </li>
-    </ol>
-  </section>
-
-  <section class="wrap band" id="download">
-    <div class="download-sheet">
-      <p class="index-label">Waitlist</p>
-      <h2>We’re not going to link you a download that doesn’t exist.</h2>
+  <section class="access" id="access" aria-labelledby="access-title">
+    <div class="access-inner">
+      <h2 id="access-title">Choose how you'd like to try it.</h2>
+      <p class="section-lede">Kairos is in a small Mac beta. The signed download is still being prepared, so there are two honest ways to get in line.</p>
+      <div class="access-options">
+        <article class="access-option">
+          <p class="access-kicker">For most testers</p>
+          <h3>Get the Mac app</h3>
+          <p>We'll send you a verified <code>.dmg</code> when it's ready. It will install like a normal Mac app and won't require a git checkout.</p>
+          <span class="btn btn-disabled" id="dmg-status">DMG coming soon</span>
+          <p class="access-note">The download appears here after signing, fresh-machine testing, and release.</p>
+        </article>
+        <article class="access-option">
+          <p class="access-kicker">For GitHub users</p>
+          <h3>Try from source</h3>
+          <p>If you're comfortable with GitHub, request source instructions. We'll share the right repo access and setup steps directly.</p>
+          <a class="btn btn-outline" href="#waitlist-email" data-beta-path="github">Request GitHub access</a>
+          <p class="access-note">This is for technical beta testers, not the finished install experience.</p>
+        </article>
+      </div>
       <form id="waitlist-form" class="email-form" novalidate>
-        <label class="visually-hidden" for="waitlist-email">Email address</label>
-        <input id="waitlist-email" type="email" placeholder="you@colorado.edu" required autocomplete="email">
-        <button class="btn primary" type="submit">Notify me</button>
+        <label for="waitlist-email">School email</label>
+        <div class="email-row">
+          <input id="waitlist-email" type="email" placeholder="you@school.edu" required autocomplete="email">
+          <button class="btn" type="submit">Get early access</button>
+        </div>
+        <input id="beta-path" type="hidden" value="mac">
       </form>
       <p class="form-status" id="waitlist-status" role="status" aria-live="polite"></p>
     </div>
@@ -206,15 +210,13 @@
 
 </main>
 
-<footer class="wrap">
-  <div class="footer-row">
-    <p class="fine">Not affiliated with Instructure/Canvas or your school. &copy; <span id="year">2026</span>.</p>
-    <div class="footer-links">
-      <a href="#privacy">Privacy</a>
-      <a href="#non-goals">Non-goals</a>
-      <a href="mailto:jacobdpfeifer@gmail.com">Contact</a>
-    </div>
-  </div>
+<footer class="wrap footer">
+  <span class="wordmark">kairos</span>
+  <p class="fine">Not affiliated with Instructure, Canvas, or your school. &copy; <span id="year">2026</span></p>
+  <nav class="footer-links" aria-label="Footer">
+    <a href="#privacy">Privacy</a>
+    <a href="mailto:jacobdpfeifer@gmail.com">Contact</a>
+  </nav>
 </footer>
 
 <script src="app.js"></script>

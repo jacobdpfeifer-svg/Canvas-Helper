@@ -1,41 +1,46 @@
 /*
- * Kairos stage on the Canvas dashboard — Living Instrument (MASTER.md).
- * Ink field, one subject (next step), an orbit (ledger + rail), one signal
- * (cobalt). No card grid, no glass behind reading text, motion only on mount
- * and real state changes.
+ * Kairos on the Canvas dashboard — Notebook design system (design-system/kairos/MASTER.md).
+ * A white page with a hairline that sits naturally on Canvas: one subject (the next step),
+ * a quiet list, one highlighter. Motion only on mount and real state changes.
  */
 :host {
   all: initial;
   display: block;
   margin: 0 0 24px;
 
-  --ink-0: #0c0d0f;
-  --ink-1: #15171a;
-  --ink-2: #22262a;
-  --fg: #f3f1eb;
-  --muted: rgba(243, 241, 235, 0.62);
-  --faint: rgba(243, 241, 235, 0.38);
-  --hairline: rgba(255, 255, 255, 0.14);
-  --accent: #3767ff;
-  --accent-deep: #2a52d8;
-  --danger: #f35b57;
-  --success: #4cc38a;
+  /* legacy names kept so the component rules below keep working */
+  --ink-0: #ffffff;
+  --ink-1: #f7f7f5;
+  --ink-2: #ececea;
+  --fg: #1d1d1f;
+  --muted: #66666b;
+  --faint: #8d8d92;
+  --hairline: #e9e9e7;
+  --accent: #1d1d1f;
+  --accent-deep: #000000;
+  --danger: #c8432b;
+  --success: #2f8f5b;
+  --hl: #ffe14d;
+  --hl-soft: #fff4b3;
+  --hl-ink: #4a3f00;
+  --pen: #2f5bea;
 
-  --font-display: "PN Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  --font-ui: "PN IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "PN IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --type-editorial: clamp(28px, 3.2vw, 44px);
+  --font-display: "PN Gabarito", system-ui, sans-serif;
+  --font-ui: "PN Gabarito", system-ui, sans-serif;
+  --font-mono: "PN Gabarito", system-ui, sans-serif;
+  --font-hand: "PN Caveat", cursive;
+  --type-editorial: clamp(26px, 2.8vw, 36px);
   --type-ui: 15px;
-  --type-meta: 12px;
-  --type-label: 11px;
-  --type-label-tracking: 0.12em;
+  --type-meta: 13px;
+  --type-label: 14px;
+  --type-label-tracking: 0;
 
-  --radius-stage: 18px;
+  --radius-stage: 14px;
   --radius-control: 10px;
-  --radius-row: 6px;
-  --motion-settle: 220ms;
-  --motion-commit: 120ms;
-  --motion-chrome: 160ms;
+  --radius-row: 7px;
+  --motion-settle: 200ms;
+  --motion-commit: 110ms;
+  --motion-chrome: 140ms;
 }
 
 * {
@@ -403,4 +408,64 @@ a.pn-row-title:hover {
   .pn-quiet {
     transition: none;
   }
+}
+
+
+/* ---------- Notebook overrides ---------- */
+.pn-stage {
+  background: var(--ink-0);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 1px 0 var(--hairline), 0 18px 40px rgba(29, 29, 31, 0.06);
+  font-weight: 500;
+}
+.pn-meta,
+.pn-label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+  color: var(--muted);
+}
+.pn-title {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+.pn-sub {
+  font-weight: 500;
+}
+.pn-signal {
+  border-left: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  background: var(--hl-soft);
+  color: var(--hl-ink);
+  font-weight: 600;
+}
+.pn-primary {
+  background: var(--fg);
+  color: #ffffff;
+  border: 1px solid var(--fg);
+  font-weight: 700;
+  box-shadow: 3px 3px 0 var(--hl);
+}
+.pn-primary:hover {
+  background: var(--fg);
+}
+.pn-primary:active {
+  background: var(--fg);
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--hl);
+}
+:focus-visible {
+  outline-color: var(--pen);
+}
+.pn-kind {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--ink-1);
+  color: var(--muted);
 }

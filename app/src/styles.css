@@ -1,56 +1,74 @@
-/* Living Instrument workspace + parked dock — design-system/kairos/MASTER.md */
+/* Kairos Notebook workspace — design-system/kairos/MASTER.md (2026-10-07).
+   Notebook light is the default; legacy token names (--accent, --surface-*, --signal-*)
+   are kept as aliases so older component rules inherit the Notebook look. */
 
 :root {
-  /* --- material primitives (MASTER §04) --- */
-  --ink-0: #0c0d0f;
-  --ink-1: #15171a;
-  --ink-2: #22262a;
-  --paper-0: #f3efe7;
-  --paper-1: #e7dfd1;
-  --paper-ink: #272322;
-  --line-light: rgba(255, 255, 255, 0.16);
-  --line-dark: rgba(26, 22, 20, 0.16);
+  /* --- Notebook primitives (MASTER §03) --- */
+  --nb-desk: #fbfbfa;
+  --nb-page: #ffffff;
+  --nb-well: #f7f7f5;
+  --nb-ink: #1d1d1f;
+  --nb-pencil: #66666b;
+  --nb-rule: #e9e9e7;
+  --hl: #ffe14d;
+  --hl-soft: #fff4b3;
+  --hl-ink: #4a3f00;
+  --pen: #2f5bea;
 
-  /* named signals: a theme picks one as --accent; components never use these directly */
-  --signal-cobalt: #3767ff;
-  --signal-coral: #ff604d;
-  --signal-gold: #e1ad49;
-  --signal-violet: #8b72e8;
-  --signal-cream: #f1d7a7;
+  /* --- semantic tokens --- */
+  --bg: var(--nb-desk);
+  --sheet: var(--nb-page);
+  --sheet-2: var(--nb-well);
+  --fg: var(--nb-ink);
+  --muted: var(--nb-pencil);
+  --hairline: var(--nb-rule);
+  --nav-current: #ececea;
+  --danger: #c8432b;
+  --success: #2f8f5b;
+  --page-shadow: 0 1px 0 var(--hairline), 0 18px 40px rgba(29, 29, 31, 0.06);
+  --backdrop: rgba(22, 22, 24, 0.28);
 
-  /* --- semantic tokens: Night / Instrument (default) --- */
-  --bg: var(--ink-0);
-  --fg: #f3f1eb;
-  --muted: rgba(243, 241, 235, 0.6);
-  --accent: var(--signal-cobalt);
-  --accent-deep: #2a52d8;
-  --on-accent: #f5f7ff;
-  --danger: #f35b57;
-  --success: #4cc38a;
-  --paper-edge: rgba(241, 215, 167, 0.5);
-  --surface-0: rgba(34, 38, 42, 0.52);
-  --surface-1: rgba(34, 38, 42, 0.68);
-  --surface-2: var(--ink-1);
-  --surface-grouped: var(--ink-2);
+  /* legacy aliases: primary actions are ink, the one brand color is --hl */
+  --accent: var(--fg);
+  --accent-deep: #000000;
+  --on-accent: var(--sheet);
+  --ring: var(--pen);
+  --signal-cobalt: var(--pen);
+  --signal-coral: #ef6a4c;
+  --signal-gold: #e5a422;
+  --signal-violet: #9a7ae0;
+  --signal-cream: var(--hl-soft);
+  --ink-0: var(--bg);
+  --ink-1: var(--sheet-2);
+  --ink-2: var(--sheet-2);
+  --paper-0: var(--bg);
+  --paper-1: var(--sheet-2);
+  --paper-ink: var(--fg);
+  --paper-edge: var(--hairline);
+  --line-light: var(--hairline);
+  --line-dark: var(--hairline);
+  --surface-0: var(--sheet);
+  --surface-1: var(--sheet);
+  --surface-2: var(--sheet-2);
+  --surface-grouped: var(--sheet-2);
   --surface-solid: var(--bg);
-  --hairline: var(--line-light);
-  --specular: rgba(255, 255, 255, 0.22);
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
-  --blur: 20px;
+  --specular: transparent;
+  --shadow: var(--page-shadow);
+  --blur: 0px;
   --border: var(--hairline);
-  --border-strong: rgba(255, 255, 255, 0.28);
-  --divider: rgba(255, 255, 255, 0.08);
-  --ring: var(--accent);
+  --border-strong: #c9c9c6;
+  --divider: var(--hairline);
 
-  /* --- geometry by role (MASTER §06) --- */
-  --radius-window: 22px;
-  --radius-stage: 18px;
+  /* --- geometry (MASTER §05) --- */
+  --radius-window: 14px;
+  --radius-stage: 14px;
   --radius-sheet: 14px;
   --radius-control: 10px;
-  --radius-row: 6px;
+  --radius-row: 7px;
+  --radius-tag: 6px;
   --radius-pill: 999px;
   --radius-thumb: 999px;
-  --radius-icon: 999px;
+  --radius-icon: 10px;
   --radius-panel: var(--radius-stage);
   --radius-card: var(--radius-sheet);
   --radius-outer: var(--radius-window);
@@ -60,43 +78,49 @@
   --space-row: 12px;
   --space-section: 24px;
 
-  /* --- typography roles (MASTER §05) --- */
-  --font-display: "Source Serif 4 Variable", "Source Serif 4", "Iowan Old Style", "Palatino Linotype",
-    Georgia, serif;
-  --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  /* --- type (MASTER §04) --- */
+  --font-display: "Gabarito Variable", "Gabarito", system-ui, sans-serif;
+  --font-ui: "Gabarito Variable", "Gabarito", system-ui, sans-serif;
+  --font-hand: "Caveat Variable", "Caveat", "Comic Neue", cursive;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --type-display: clamp(56px, 8vw, 104px);
-  --type-display-leading: 0.92;
-  --type-editorial: clamp(28px, 3.4vw, 48px);
-  --type-editorial-leading: 1;
+  --type-display: clamp(40px, 5vw, 64px);
+  --type-display-leading: 1.02;
+  --type-editorial: clamp(24px, 2.6vw, 32px);
+  --type-editorial-leading: 1.1;
   --type-ui: 15px;
-  --type-ui-leading: 1.2;
-  --type-prose: 17px;
-  --type-prose-leading: 1.5;
-  --type-meta: 12px;
-  --type-meta-leading: 1.2;
-  --type-label: 11px;
-  --type-label-tracking: 0.1em;
+  --type-ui-leading: 1.35;
+  --type-prose: 18px;
+  --type-prose-leading: 1.6;
+  --type-meta: 13px;
+  --type-meta-leading: 1.3;
+  --type-label: 13px;
+  --type-label-tracking: 0;
 
-  /* --- motion verbs (MASTER §09) --- */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-chrome: 160ms;
-  --motion-settle: 220ms;
-  --motion-sheet: 280ms;
-  --motion-reveal: 420ms;
-  --motion-commit: 120ms;
+  /* --- motion (MASTER §09) --- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: var(--ease);
+  --motion-press: 110ms;
+  --motion-chrome: 140ms;
+  --motion-settle: 200ms;
+  --motion-sheet: 240ms;
+  --motion-reveal: 320ms;
+  --motion-draw: 600ms;
+  --motion-commit: 110ms;
   --motion-pulse: 1800ms;
-  --motion-showcase: 760ms;
+  --motion-showcase: 600ms;
 
-  /* --- glass: temporary chrome only --- */
-  --glass-tint: var(--surface-0);
-  --glass-tint-strong: var(--surface-1);
-  --glass-border: var(--border);
-  --glass-divider: var(--divider);
+  /* glass is retired; these resolve to plain sheets */
+  --glass-tint: var(--sheet);
+  --glass-tint-strong: var(--sheet);
+  --glass-border: var(--hairline);
+  --glass-divider: var(--hairline);
 
   font-family: var(--font-ui);
   font-size: var(--type-ui);
-  line-height: 1.4;
+  line-height: var(--type-ui-leading);
+  font-weight: 500;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -1231,102 +1255,55 @@ button.skip {
 }
 
 /* ===================================================================
-   Workspace: theme recipes (MASTER §04). Tokens above are the "night"
-   preset; each recipe below picks a field, an ink, and ONE signal.
+   Theme recipes (MASTER §03). Notebook light is :root; "paper" is an
+   explicit alias of it. Retired "forest"/"signal" fall back to light.
    =================================================================== */
 
-/* Paper / Archive — reading, writing, reference. Warm, never pure white. */
-:root[data-theme="paper"] {
-  --bg: var(--paper-0);
-  --fg: var(--paper-ink);
-  --muted: rgba(39, 35, 34, 0.62);
-  --accent: var(--signal-cobalt);
-  --accent-deep: #2a52d8;
-  --on-accent: #ffffff;
-  --danger: #c8453f;
-  --success: #2a8a5c;
-  --surface-0: rgba(243, 239, 231, 0.62);
-  --surface-1: rgba(243, 239, 231, 0.8);
-  --surface-2: #f7f4ee;
-  --surface-grouped: var(--paper-1);
-  --surface-solid: var(--bg);
-  --hairline: var(--line-dark);
-  --specular: rgba(255, 255, 255, 0.55);
-  --shadow: 0 12px 40px rgba(39, 35, 34, 0.12);
-  --border: var(--hairline);
-  --border-strong: rgba(26, 22, 20, 0.28);
-  --divider: rgba(26, 22, 20, 0.1);
-  --ring: var(--accent);
+:root[data-theme="paper"],
+:root[data-theme="forest"],
+:root[data-theme="signal"] {
   color-scheme: light;
 }
 
-/* Forest / Fieldwork — long sessions, review. Signal is gold, not mint. */
-:root[data-theme="forest"] {
-  --bg: #17201a;
-  --fg: #efe6d7;
-  --muted: rgba(239, 230, 215, 0.68);
-  --accent: var(--signal-gold);
-  --accent-deep: #c4933a;
-  --on-accent: #17201a;
-  --surface-0: rgba(239, 230, 215, 0.07);
-  --surface-1: rgba(239, 230, 215, 0.12);
-  --surface-2: #1c261f;
-  --surface-grouped: #222d25;
-  --surface-solid: var(--bg);
-  --hairline: rgba(239, 230, 215, 0.16);
-  --specular: rgba(255, 255, 255, 0.18);
-  --border: var(--hairline);
-  --border-strong: rgba(239, 230, 215, 0.28);
-  --divider: rgba(239, 230, 215, 0.1);
-  --ring: var(--accent);
+/* Night notebook — same roles on a dark page. */
+:root[data-theme="night"] {
+  --nb-desk: #161618;
+  --nb-page: #1e1e21;
+  --nb-well: #1a1a1d;
+  --nb-ink: #f1f1ed;
+  --nb-pencil: #a2a29e;
+  --nb-rule: #2e2e32;
+  --hl-soft: #3a3412;
+  --hl-ink: #ffe98a;
+  --pen: #8fb0ff;
+  --nav-current: #26262a;
+  --danger: #ff7a62;
+  --success: #5cc48c;
+  --page-shadow: 0 1px 0 var(--hairline), 0 18px 40px rgba(0, 0, 0, 0.35);
+  --backdrop: rgba(0, 0, 0, 0.5);
+  --accent-deep: #ffffff;
+  --border-strong: #4a4a4f;
+  color-scheme: dark;
 }
 
-/* Signal / Live — voice, collaboration, active processing. Violet-to-coral edge light. */
-:root[data-theme="signal"] {
-  --bg: #111522;
-  --fg: #f5f7ff;
-  --muted: rgba(245, 247, 255, 0.62);
-  --accent: var(--signal-violet);
-  --accent-deep: #6d55d1;
-  --on-accent: #0d0f1a;
-  --surface-0: rgba(139, 114, 232, 0.08);
-  --surface-1: rgba(139, 114, 232, 0.14);
-  --surface-2: #161b2c;
-  --surface-grouped: #1c2236;
-  --surface-solid: var(--bg);
-  --hairline: rgba(245, 247, 255, 0.16);
-  --specular: rgba(255, 255, 255, 0.2);
-  --border: var(--hairline);
-  --border-strong: rgba(245, 247, 255, 0.28);
-  --divider: rgba(245, 247, 255, 0.08);
-  --ring: var(--accent);
-  --signal-edge: linear-gradient(135deg, var(--signal-violet), var(--signal-coral));
-}
-
-/* High contrast — no blur, 2px rules, yellow signal. */
+/* High contrast — 2px rules, no shadows, highlighter stays. */
 :root[data-theme="contrast"] {
-  --bg: #08090a;
-  --fg: #ffffff;
-  --muted: #d0d0d4;
-  --accent: #ffd60a;
-  --accent-deep: #ffc300;
-  --on-accent: #000000;
-  --danger: #ff5a55;
-  --success: #4cc38a;
-  --surface-0: #08090a;
-  --surface-1: #08090a;
-  --surface-2: #08090a;
-  --surface-grouped: #131416;
-  --surface-solid: var(--bg);
-  --hairline: #ffffff;
+  --nb-desk: #000000;
+  --nb-page: #000000;
+  --nb-well: #0d0d0d;
+  --nb-ink: #ffffff;
+  --nb-pencil: #e0e0e0;
+  --nb-rule: #ffffff;
+  --hl-soft: #000000;
+  --hl-ink: #ffe14d;
+  --pen: #ffe14d;
+  --nav-current: #262626;
+  --danger: #ff6b55;
+  --success: #6be09a;
+  --page-shadow: none;
   --hairline-width: 2px;
-  --specular: transparent;
-  --shadow: none;
-  --blur: 0px;
-  --border: #ffffff;
   --border-strong: #ffffff;
-  --divider: #8a8a8a;
-  --ring: #ffd60a;
+  color-scheme: dark;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 export const THEMES = [
-  { id: "paper", label: "Paper" },
-  { id: "night", label: "Night" },
-  { id: "forest", label: "Forest" },
-  { id: "signal", label: "Signal" },
+  { id: "paper", label: "Light" },
+  { id: "night", label: "Dark" },
   { id: "contrast", label: "High contrast" },
 ] as const;
 
@@ -30,8 +28,8 @@ export function applyTheme(theme: string, motion: string): void {
 
 export function useTheme() {
   const [theme, setThemeState] = useState<ThemeId>(() => {
-    const raw = read(THEME_KEY, "night");
-    return (THEMES.some((t) => t.id === raw) ? raw : "night") as ThemeId;
+    const raw = read(THEME_KEY, "paper");
+    return (THEMES.some((t) => t.id === raw) ? raw : "paper") as ThemeId;
   });
   const [motion, setMotionState] = useState<Motion>(() => (read(MOTION_KEY, "auto") === "reduced" ? "reduced" : "auto"));
 

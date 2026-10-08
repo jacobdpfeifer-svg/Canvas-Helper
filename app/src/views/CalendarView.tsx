@@ -47,14 +47,14 @@ export function CalendarView({
   return (
     <section className="calendar-stage scene-ink" aria-labelledby="cal-heading">
       <div className="calendar-subject">
-        <p className="index-label">Today</p>
+        <p className="index-label">Next on your calendar</p>
         <h1 id="cal-heading" className="editorial">
           {next ? next.title : "Nothing scheduled"}
         </h1>
         {next && (
           <p className="calendar-when">
-            {next.family === "canvas" ? "Canvas · " : ""}
             {formatWhen(next.start)}
+            {next.family === "canvas" ? ", from Canvas" : ""}
           </p>
         )}
         <SyncHealthBanner health={surface.sync_health} />
@@ -191,14 +191,11 @@ function MonthLedger({
         <p className="muted">Nothing in this month.</p>
       ) : (
         <ol className="month-ledger">
-          {rows.map((e, i) => (
+          {rows.map((e) => (
             <li key={e.id}>
-              <span className="mono">{String(i + 1).padStart(2, "0")}</span>
               <span>
-                <strong>
-                  {e.family === "canvas" ? "Canvas · " : ""}
-                  {e.title}
-                </strong>
+                <strong>{e.title}</strong>
+                {e.family === "canvas" && <span className="course-tag">From Canvas</span>}
                 <span className="muted">{formatWhen(e.start)}</span>
               </span>
             </li>

@@ -46,7 +46,8 @@ impl Default for DaemonConfig {
     fn default() -> Self {
         Self {
             user_id: "dev".into(),
-            school_slug: env::var("SCHOOL_SLUG").unwrap_or_else(|_| "cu-boulder".into()),
+            // No default school: it is chosen at onboarding (school/profile.json).
+            school_slug: env::var("SCHOOL_SLUG").unwrap_or_default(),
             sentry_opt_in: false,
         }
     }
@@ -114,7 +115,39 @@ pub fn run_bootstrap_sync(rt: &Runtime) -> Result<(), String> {
     tick_log("bootstrap-sync");
     let mut cmd = rt.browser_script("sync-canvas-canonical")?;
     cmd.env("DAYS", "14").env("CATALOG_DAYS", "150");
-    run_status(cmd, "canvas bootstrap sync")
+    run_status(cmd, "canvas bootstrap sync")?;
+    // Best-effort: learn the school's time zone, term, and color from Canvas itself.
+    if let Err(e) = run_school_script(rt, &["enrich"]) {
+        tick_log(&format!("school enrich skipped: {e}"));
+    }
+    Ok(())
+}
+
+/// `browser/scripts/school.mjs <args>`: school search / choose / enrich (docs/architecture/school-personalization.md).
+/// Returns the script's single JSON line; `{ok:false,error}` becomes Err.
+pub fn run_school_script(rt: &Runtime, args: &[&str]) -> Result<Value, String> {
+    tick_log("school");
+    let mut cmd = rt.browser_script("school")?;
+    cmd.args(args);
+    let output = cmd
+        .output()
+        .map_err(|e| format!("failed to spawn school script: {e}"))?;
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let line = stdout
+        .lines()
+        .rev()
+        .find(|l| l.trim_start().starts_with('{'))
+        .ok_or_else(|| "school script produced no JSON output".to_string())?;
+    let parsed: Value =
+        serde_json::from_str(line).map_err(|e| format!("bad school JSON: {e}"))?;
+    if parsed.get("ok").and_then(Value::as_bool) == Some(false) {
+        return Err(parsed
+            .get("error")
+            .and_then(Value::as_str)
+            .unwrap_or("school script failed")
+            .to_string());
+    }
+    Ok(parsed)
 }
 
 pub fn canvas_stub() -> bool {

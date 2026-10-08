@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Blot, prefersStill } from "./Blot";
-import { BlotAnswer } from "./BlotAnswer";
+import { useEffect, useMemo, useState } from "react";
+import { InkRing } from "./InkRing";
 import { readCourseColors } from "../ipc";
-import { useVoicePresence, voicePresence, withCourseColors, type VoicePresence } from "../voice/presence";
+import { useVoicePresence, voicePresence, withCourseColors, type VoicePresence } from "./presence";
 
 const LABEL: Record<VoicePresence["state"], string> = {
   idle: "Ready",
-  listening: "Listening",
-  thinking: "Thinking",
+  listening: "Listening…",
+  thinking: "Thinking…",
   speaking: "Speaking",
   done: "Done",
   error: "Voice stopped",
@@ -32,17 +31,16 @@ function captionFor(p: VoicePresence): string {
 }
 
 /**
- * The voice surface: temporary chrome at the bottom of the workspace that
+ * The voice surface (MASTER §08): a sheet at the bottom of the workspace that
  * appears when the voice model starts a session and stays until the student
- * closes it. The workspace underneath stays usable (MASTER §08): no backdrop,
- * no focus trap. Every state has a text label, a caption, and Stop or Close.
+ * closes it. The ink ring shows that Kairos is listening or answering; the
+ * workspace underneath stays usable (no backdrop, no focus trap). Every state
+ * has a text label, a caption, and Stop or Close.
  */
 export function VoiceSheet() {
   const p = useVoicePresence();
   const [open, setOpen] = useState(() => voicePresence.get().state !== "idle");
-  const [speakingSince, setSpeakingSince] = useState<number | null>(null);
   const [colors, setColors] = useState<Record<string, string>>({});
-  const blotBox = useRef<HTMLDivElement>(null);
   const active = ACTIVE.has(p.state);
 
   useEffect(() => {
@@ -60,8 +58,6 @@ export function VoiceSheet() {
   if (seenState !== p.state) {
     setSeenState(p.state);
     if (p.state !== "idle") setOpen(true);
-    if (p.state === "speaking") setSpeakingSince(prefersStill() ? null : performance.now());
-    if (p.state === "listening") setSpeakingSince(null);
   }
 
   const items = useMemo(() => withCourseColors(p.items, colors), [p.items, colors]);
@@ -85,9 +81,9 @@ export function VoiceSheet() {
   if (!open) return null;
 
   return (
-    <aside className="voice-sheet glass" aria-label="Voice" data-state={p.state}>
-      <div className="voice-blot" ref={blotBox}>
-        <Blot state={p.state} items={items} getLevel={() => voicePresence.level} size={132} />
+    <aside className="voice-sheet" aria-label="Voice" data-state={p.state}>
+      <div className="voice-ring">
+        <InkRing state={p.state} getLevel={() => voicePresence.level} size={104} accent={items[0]?.color} />
       </div>
       <div className="voice-body">
         <p className="voice-label" aria-live="polite">
@@ -96,8 +92,18 @@ export function VoiceSheet() {
         <p className="voice-caption" aria-live="polite">
           {captionFor(p)}
         </p>
-        {(p.state === "speaking" || p.state === "done" || (p.state === "idle" && items.length > 0)) && (
-          <BlotAnswer items={items} startedAt={p.state === "speaking" || p.state === "done" ? speakingSince : null} originRef={blotBox} />
+        {(p.state === "speaking" || p.state === "done" || (p.state === "idle" && items.length > 0)) && items.length > 0 && (
+          <ol className="voice-answer" aria-label="Answer">
+            {items.map((it, i) => (
+              <li key={`${it.title}-${i}`} className="voice-line" style={{ ["--course" as string]: it.color || "var(--muted)" }}>
+                <span className="course-dot" aria-hidden="true" />
+                <span>
+                  {it.title}
+                  {it.due ? <span className="muted">, {it.due}</span> : null}
+                </span>
+              </li>
+            ))}
+          </ol>
         )}
         <div className="voice-actions">
           {active && voicePresence.canStop ? (

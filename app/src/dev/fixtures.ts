@@ -99,3 +99,15 @@ export function fixtureSemester(range: string): SemesterSurface {
 export function fixtureHealth(): SyncHealth {
   return { state: "fresh_complete", surfaces_enabled: true, sync_id: "fixture", as_of: TODAY };
 }
+
+/** Browser-preview stand-in for the public Instructure school search. */
+export function fixtureSchools(term: string): { name: string; host: string; account_id: number | null }[] {
+  const all = [
+    { name: "Ohio State – CarmenCanvas", host: "osu.instructure.com", account_id: 132008 },
+    { name: "University of Michigan - Ann Arbor", host: "m.canvas.umich.edu", account_id: 133948 },
+    { name: "University of Colorado Boulder - CU Boulder", host: "canvas.colorado.edu", account_id: 128826 },
+    { name: "University of Texas at Austin", host: "utexas.instructure.com", account_id: null },
+  ];
+  const q = term.trim().toLowerCase();
+  return q.length < 2 ? [] : all.filter((s) => s.name.toLowerCase().includes(q) || s.host.includes(q));
+}

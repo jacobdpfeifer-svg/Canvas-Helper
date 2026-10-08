@@ -90,6 +90,54 @@ pub fn bootstrap_canvas_sync(app: AppHandle, rt: Rt<'_>) -> Result<(), String> {
     Ok(())
 }
 
+/// Find the student's school by name (public Instructure account search).
+#[tauri::command]
+pub fn search_schools(rt: Rt<'_>, term: String) -> Result<serde_json::Value, String> {
+    let term = term.trim();
+    if term.chars().count() < 2 {
+        return Ok(serde_json::json!({ "schools": [] }));
+    }
+    let parsed = daemon::run_school_script(&rt, &["search", term])?;
+    Ok(parsed.get("schools").cloned().unwrap_or(serde_json::json!([])))
+}
+
+/// Save the school the student picked (or the Canvas address they pasted) to
+/// `{user_root}/school/profile.json`; every later SSO/sync shell reads it.
+#[tauri::command]
+pub fn choose_school(
+    rt: Rt<'_>,
+    host: String,
+    name: String,
+    account_id: Option<i64>,
+    manual: Option<bool>,
+) -> Result<serde_json::Value, String> {
+    let account = account_id.map(|n| n.to_string());
+    let mut args: Vec<&str> = vec!["choose", "--host", host.trim(), "--name", name.trim()];
+    if let Some(a) = account.as_deref() {
+        args.extend(["--account-id", a]);
+    }
+    if manual.unwrap_or(false) {
+        args.extend(["--source", "manual"]);
+    }
+    let parsed = daemon::run_school_script(&rt, &args)?;
+    let profile = parsed.get("profile").cloned().unwrap_or(serde_json::Value::Null);
+    if let Some(slug) = profile.get("slug").and_then(|v| v.as_str()) {
+        inbox::save_school_slug(&rt.user_root, slug)?;
+        std::env::set_var("SCHOOL_SLUG", slug);
+    }
+    Ok(profile)
+}
+
+/// The school saved at onboarding (`{user_root}/school/profile.json`), or null.
+#[tauri::command]
+pub fn read_school_profile(rt: Rt<'_>) -> Result<serde_json::Value, String> {
+    let path = rt.user_root.join("school").join("profile.json");
+    match std::fs::read_to_string(&path) {
+        Ok(text) => serde_json::from_str(&text).map_err(|e| format!("bad school profile: {e}")),
+        Err(_) => Ok(serde_json::Value::Null),
+    }
+}
+
 #[tauri::command]
 pub fn save_onboarding(
     rt: Rt<'_>,

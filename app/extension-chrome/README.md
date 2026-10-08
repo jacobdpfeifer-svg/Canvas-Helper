@@ -44,11 +44,11 @@ Decision record: [`docs/handoff/freshness-extension-spike-2026-09-29.md`](../../
 | `lib/native.js` | promise wrapper for `com.kairosstudy.daemon` |
 | `lib/format.js`, `lib/assignment-plan.js` | display helpers, checklist + path builders |
 | `shared/*.js` | **generated** from `browser/scripts/lib/freshness/*.mjs` — edit the source, then run `node app/extension-chrome/tools/vendor-shared.mjs` |
-| `ui/dashboard.js`, `ui/dashboard.css` | Canvas dashboard stage (Living Instrument, ink) |
-| `panel.html`, `panel.js`, `panel.css` | side panel (Living Instrument, paper) |
-| `shared/blot/*.js` | **generated** Blot engine from `app/src/blot/core/` (same tool); `lib/blot-mount.js` puts Blot in the side-panel header (thinking while loading, hop when ready) |
-| `icons/blot-*.png` | pixel Blot icons, written by `node app/extension-chrome/tools/blot-icons.mjs` |
-| `fonts/` | self-hosted Source Serif 4, IBM Plex Sans/Mono (OFL, licenses alongside) |
+| `ui/dashboard.js`, `ui/dashboard.css` | Canvas dashboard page (Notebook design system, `design-system/kairos/MASTER.md`) |
+| `panel.html`, `panel.js`, `panel.css` | side panel (Notebook design system) |
+| `shared/blot/*.js` | **generated** voice-level engine from `app/src/blot/core/` (same tool); not rendered in the panel (the Blot character was retired 2026-10-07) |
+| `icons/kairos-*.png` | ink square with a highlighter "k", written by `node app/extension-chrome/tools/kairos-icons.mjs` (`--check` to verify) |
+| `fonts/` | self-hosted Big Shoulders Display, IBM Plex Sans/Mono (OFL, licenses alongside) |
 | `tools/` | dev only — not part of a packaged build |
 
 ## Try it

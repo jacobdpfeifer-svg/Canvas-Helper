@@ -247,7 +247,7 @@ try {
   check("stage_renders", stageText.includes(nextTitle) && /Homework 2/.test(stageText) && /What changed/.test(stageText) && /Professors said/.test(stageText));
   const fonts = await dash.evaluate(async () => {
     await document.fonts.ready;
-    return ["PN Source Serif 4", "PN IBM Plex Sans", "PN IBM Plex Mono"].map((f) => document.fonts.check(`16px "${f}"`));
+    return ["PN Big Shoulders Display", "PN IBM Plex Sans", "PN IBM Plex Mono"].map((f) => document.fonts.check(`16px "${f}"`));
   });
   check("self_hosted_fonts_load", fonts.every(Boolean), fonts);
   await dash.locator("#kairos-stage").screenshot({ path: path.join(OUT, "dashboard.png") });

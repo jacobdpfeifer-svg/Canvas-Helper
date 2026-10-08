@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { GENERIC_LEGAL, LEGAL_BY_SCHOOL } from "../legal";
+import { GENERIC_LEGAL, schoolLegalText } from "../legal";
 import {
   bootstrapCanvasSync,
   checkCanvasSession,
   openCanvasSso,
+  readSchoolProfile,
   saveLearningProfile,
   saveOnboarding,
   saveUserProfile,
@@ -24,7 +25,9 @@ const STEP_COUNT = 6;
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
-  const [school, setSchool] = useState("cu-boulder");
+  // The school was found at first run (school/profile.json); this wizard only shows it.
+  const [school, setSchool] = useState("");
+  const [schoolName, setSchoolName] = useState("");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [cloudKey, setCloudKey] = useState("");
   const [sentryOptIn, setSentryOptIn] = useState(false);
@@ -67,10 +70,24 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [profileError, setProfileError] = useState<string | null>(null);
   const [checkFirst, setCheckFirst] = useState(false);
 
+  useEffect(() => {
+    let alive = true;
+    readSchoolProfile()
+      .then((p) => {
+        if (!alive || !p) return;
+        setSchool(p.slug);
+        setSchoolName(p.display_name);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const isWaitlist = school === "waitlist";
   const visibleStepCount = isWaitlist ? 2 : STEP_COUNT;
 
-  // On reaching the Canvas step (CU only), silently check for an already-open
+  // On reaching the Canvas step, silently check for an already-open
   // session (browser/.auth cookies) before asking the student to sign in.
   useEffect(() => {
     if (isWaitlist || step !== 2 || sessionCheck !== "pending") return;
@@ -97,7 +114,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     };
   }, [step, sessionCheck, isWaitlist]);
 
-  const legalText = LEGAL_BY_SCHOOL[school] || GENERIC_LEGAL;
+  const legalText = schoolName ? schoolLegalText(schoolName) : GENERIC_LEGAL;
   const profileReady =
     practiceFormat !== null &&
     checkDepth !== null &&
@@ -143,20 +160,15 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         {step === 0 && (
           <>
             <p className="onboarding-step-label">School</p>
-            <p>Pick your school so policies and sync targets match.</p>
-            <select
-              value={school}
-              onChange={(e) => {
-                setSchool(e.target.value);
-                setLegalAccepted(false);
-                setSessionCheck("pending");
-              }}
-              aria-label="School"
-            >
-              <option value="cu-boulder">University of Colorado Boulder</option>
-              <option value="waitlist">Waitlist my school…</option>
-            </select>
-            <button type="button" className="primary" onClick={() => setStep(1)}>
+            {school ? (
+              <p>
+                Kairos is set up for <strong>{schoolName || school}</strong>. To switch schools, sign out of Canvas in
+                Settings and run setup again.
+              </p>
+            ) : (
+              <p>Finish first-run setup to choose your school.</p>
+            )}
+            <button type="button" className="primary" disabled={!school} onClick={() => setStep(1)}>
               Continue
             </button>
           </>
@@ -165,9 +177,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           <>
             <p className="onboarding-step-label">Waitlist</p>
             <p>
-              Kairos only syncs Canvas for CU Boulder today. Leave your
-              email and we will notify you when your school is supported — no
-              Canvas sign-in on this path.
+              Leave your email and we'll write when there's a spot in the beta.
+              There's no Canvas sign-in on this path.
             </p>
             <pre className="legal-sheet">{legalText}</pre>
             <label>

@@ -1,22 +1,28 @@
 # Kairos landing page
 
-Static HTML/CSS/JS marketing site for the local-first Canvas companion. No build step — open `index.html` directly (double-click) or serve this directory with any static server (`npx serve landing` etc).
+Static HTML/CSS/JS marketing site. No build step: open `index.html` directly or serve this folder with any static server. Deployed on Vercel from `main` with Root Directory `landing`, preset Other, no build command. Keep it that way: `index.html` at the root of this folder, every asset relative, no bundler.
 
 ## Files
 
-- `index.html` — the whole page (hero, pain points, how-it-works, features, non-goals, privacy, download/waitlist, footer)
-- `styles.css` — Living Instrument tokens (`design-system/kairos/MASTER.md`: ink/paper primitives, named signals, role-based radii, Source Serif 4 / IBM Plex Sans / IBM Plex Mono), mirrored from `app/src/styles.css` so the site matches the running app instead of inventing a new look. Glass is limited to temporary chrome (nav, hero frame, download panel). Night theme by default; a Paper toggle in the nav swaps to the warm paper theme, both using the same token values as the app.
-- `app.js` — theme toggle (persisted to `localStorage`), scroll-reveal (respects `prefers-reduced-motion`), and the email-capture form handler.
+- `index.html` — hero (headline + the product page with margin notes), the app in use, "keep the weekend", the grade-math example, how you get started, privacy and what Kairos won't do, early access, footer.
+- `styles.css` — the Notebook design system (`design-system/kairos/MASTER.md`), mirrored from `app/src/styles.css` + `app/src/notebook.css` so the site looks like the app. Light by default; dark follows the visitor's system setting.
+- `app.js` — draws the margin notes and marker swipe in once as they scroll into view (skipped under reduced motion), and handles the early-access form.
+- `fonts/` — Gabarito and Caveat (OFL, licenses alongside), self-hosted so the page makes no third-party requests. The Big Shoulders files are left over from an earlier pass and unused.
 
-## Design decisions
+## Rules this page follows
 
-- **Visual language:** anchored to the app's own design system (`design-system/kairos/MASTER.md`, Living Instrument as of 2026-09-21; previously Spatial Instrument, commit `be0eb3c`) rather than inventing a fresh style. A calmer, glass/trust aesthetic — not the loud/high-motion starting idea from the brief — because this product touches grades, and a skeptical, privacy-aware Gen Z audience converts better on "this looks like something that won't screw up my transcript" than on maximalist motion. Motion is present but restrained: a scroll-reveal fade and hover/press states only.
-- **Messaging:** sells relief from specific pain points (Canvas grade fragmentation, "the grade Canvas shows isn't the real grade", dashboards that miss what's due, distrust of anything AI-flavored near grades) rather than generic "AI assistant" language.
-- **Non-goals as a selling point:** a dedicated section lists what the product will never do (no auto-submit/comment/post, no educator tools, no DegreeWorks/Buff Portal scraping, no RateMyProfessors scraping, no losable-state gamification, no standing account automation) — framed as why it's safe to point at your real grades, not as buried legal text.
-- **No DMG exists in this repo** (`app/src-tauri/target` has only a `debug` build, no `release`/`bundle` output, no signed artifact anywhere in the tree). The download section says so explicitly and offers an email-capture form instead of a fake or broken link.
-- **Email capture has no backend.** Submitting builds a `mailto:jacobdpfeifer@gmail.com` link with the visitor's address in the body and opens the visitor's own mail client. The UI copy says exactly that — no claim of a connected list, no fake success state.
+- Show, don't tell: the product UI is built from real components with a sample student's week, not a screenshot mockup made of boxes.
+- No school is named in the copy. Kairos works for any school on Canvas.
+- No social proof that isn't real. No invented testimonials, avatars, logos, user counts, or AI-generated "students" (FTC 2024 rule on fake reviews and testimonials). When real beta students record clips or give quotes with permission, add them as their own section below the app band.
+- One CTA label for one intent: "Get early access".
+- Copy: no em-dashes, no buzzwords, hero subtext of 20 words or fewer.
+
+## Email capture
+
+There is no backend. Submitting builds a `mailto:jacobdpfeifer@gmail.com` link with the visitor's address in the body and opens their own mail client; the status line says nothing was sent yet. If you switch to a Tally or Google Form, change the form's `action`/handler in `app.js` and update the status copy so the page never claims to have saved something it didn't.
 
 ## Before a real launch
 
-- Once a signed, fresh-machine-tested `.dmg` exists, replace the `#download` panel's status pill/copy and add the real download button/link.
-- If a real waitlist endpoint is stood up, swap `app.js`'s `mailto:` fallback for that endpoint and update the copy in `index.html` (`#waitlist-status` note) accordingly — don't silently start claiming persistence without updating what the page tells the visitor.
+- Replace the panorama line art in the "weekend" section with real hand-drawn assets (Open Peeps / Open Doodles are CC0 and match the line style) or real footage (Pexels / Mixkit, free license).
+- The access section intentionally keeps the `.dmg` button disabled until a signed, fresh-machine-tested artifact exists. When that gate is met, replace the disabled button with the versioned download URL and update the release note.
+- The GitHub path currently routes through the email handoff because the repo may still be private. If the repo becomes public and source setup is a supported beta path, replace that path with the public repository URL and keep the source-build caveat visible.

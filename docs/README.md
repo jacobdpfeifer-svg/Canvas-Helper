@@ -13,7 +13,8 @@ Product architecture for Kairos (Phase 1).
 | [`../design-system/kairos/MASTER.md`](../design-system/kairos/MASTER.md) | **Living Instrument** design system (2026-09-21) — source of truth for visual craft: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test |
 | [`design/spatial-instrument-brief.md`](design/spatial-instrument-brief.md) | Owner product-behavior brief (2026-09-18); its visual direction and style tile are superseded by MASTER where they conflict |
 | [`architecture.md`](architecture.md) | Truth path, tenants, permissions, skills |
-| [`schools/`](schools/) | Per-school notes (e.g. CU Boulder) |
+| [`schools/`](schools/) | Per-school notes for curated overlays |
+| [`architecture/school-personalization.md`](architecture/school-personalization.md) | How the student's school is discovered and what personalization does |
 | [`handoff/architect-brief.md`](handoff/architect-brief.md) | Architect handback status |
 
 Agent guide: [`../AGENTS.md`](../AGENTS.md) · Install: [`../README.md`](../README.md) · User template: [`../templates/USER.md`](../templates/USER.md)

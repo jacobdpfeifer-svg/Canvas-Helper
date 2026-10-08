@@ -31,7 +31,7 @@ Gmail is read only if you connect it. Suggested calendar rows from mail are a co
 
 ## No affiliation
 
-Not affiliated with CU Boulder or Instructure.
+Not affiliated with Instructure or any school.
 
 ## Contact and deletion
 

@@ -108,6 +108,17 @@ def _institution_for(identity: OnboardingIdentity) -> str:
 
         return load_school(slug).display_name.strip()
     except (FileNotFoundError, OSError, ValueError):
+        pass
+    # A school discovered at onboarding has no curated yaml; use the saved profile.
+    try:
+        import os
+
+        from .tenants import school_for_user
+        from .user_root import resolve_user_root
+
+        school = school_for_user(resolve_user_root(os.environ.get("PRODUCT_USER_ID", "dev")))
+        return school.display_name.strip() if school else ""
+    except (OSError, ValueError, TypeError):
         return ""
 
 

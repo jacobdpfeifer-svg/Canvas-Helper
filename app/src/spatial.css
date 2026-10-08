@@ -1055,15 +1055,15 @@
 .scene-paper {
   --bg: var(--paper-0);
   --fg: var(--paper-ink);
-  --muted: rgba(39, 35, 34, 0.62);
-  --surface-0: rgba(231, 223, 209, 0.5);
-  --surface-1: rgba(231, 223, 209, 0.8);
+  --muted: rgba(26, 30, 36, 0.62);
+  --surface-0: rgba(211, 217, 226, 0.5);
+  --surface-1: rgba(211, 217, 226, 0.8);
   --surface-2: var(--paper-1);
   --surface-grouped: var(--paper-1);
   --hairline: var(--line-dark);
   --border: var(--line-dark);
-  --border-strong: rgba(26, 22, 20, 0.32);
-  --divider: rgba(26, 22, 20, 0.1);
+  --border-strong: rgba(26, 30, 36, 0.32);
+  --divider: rgba(26, 30, 36, 0.1);
   --specular: rgba(255, 255, 255, 0.5);
   --ring: var(--accent);
   background: var(--bg);

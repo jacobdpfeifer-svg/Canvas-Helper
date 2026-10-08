@@ -3,17 +3,15 @@
  * professor said about it, what changed, the cost of skipping, and the
  * fastest honest path. Elsewhere: the next step.
  *
- * The panel never produces the graded work and never submits anything — the
+ * The panel never produces the graded work and never submits anything: the
  * "path" is an order of attack built from the rubric, not an answer.
  * Canvas-authored text is inserted with textContent only.
  */
 import { assignmentFromUrl, blockBefore, costLine, formatDue, relTime } from "./lib/format.js";
 import { checklistItems, honestPath } from "./lib/assignment-plan.js";
-import { mountBlot } from "./lib/blot-mount.js";
 
 const main = document.getElementById("panel");
 const statusEl = document.getElementById("pn-status");
-const blot = mountBlot(document.getElementById("pn-blot"));
 
 const send = (message) =>
   new Promise((resolve) => chrome.runtime.sendMessage(message, (reply) => resolve(chrome.runtime.lastError ? null : reply)));
@@ -44,8 +42,8 @@ function link(text, url) {
   return href ? el("a", { href, target: "_blank", rel: "noopener", text }) : el("span", { text });
 }
 
-function section(index, label, ...children) {
-  return el("section", {}, el("p", { class: "pn-label" }, el("span", { class: "pn-index", text: index }), label), ...children);
+function section(label, ...children) {
+  return el("section", {}, el("p", { class: "pn-label", text: label }), ...children);
 }
 
 async function checklist(assignment) {
@@ -71,7 +69,7 @@ async function checklist(assignment) {
       )
     );
   }
-  const source = assignment.rubric?.length ? "From the rubric." : "No rubric attached — these lines come from the instructions.";
+  const source = assignment.rubric?.length ? "From the rubric." : "No rubric attached, so these lines come from the instructions.";
   return el("div", {}, wrap, el("p", { class: "pn-note", text: `${source} Checks stay in this browser.` }));
 }
 
@@ -84,7 +82,7 @@ async function assignmentView(ids) {
     ];
   }
   const a = ctx.assignment;
-  const sub = [a.due_at ? `due ${formatDue(a.due_at)}` : "no due date", a.points_possible ? `${a.points_possible} pts` : null].filter(Boolean).join(" · ");
+  const sub = [a.due_at ? `due ${formatDue(a.due_at)}` : "no due date", a.points_possible ? `${a.points_possible} pts` : null].filter(Boolean).join(", ");
   const out = [el("p", { class: "pn-label", text: "Assignment" }), el("h1", { class: "pn-title", text: a.name }), el("p", { class: "pn-sub", text: sub })];
   for (const c of ctx.changes || []) {
     const text =
@@ -98,12 +96,11 @@ async function assignmentView(ids) {
     if (text) out.push(el("p", { class: "pn-signal", text }));
   }
 
-  out.push(section("01", "Checklist", await checklist(a)));
+  out.push(section("Checklist", await checklist(a)));
 
   const mentions = ctx.mentions || [];
   out.push(
     section(
-      "02",
       "What your professor said",
       mentions.length
         ? mentions.map((m) =>
@@ -111,7 +108,7 @@ async function assignmentView(ids) {
               "div",
               { class: "pn-mention" },
               link(m.title, m.url),
-              el("span", { class: "pn-sub", text: ` · ${relTime(m.at)}` }),
+              el("span", { class: "pn-sub", text: `, ${relTime(m.at)}` }),
               m.actions?.length ? el("ul", {}, m.actions.map((x) => el("li", { text: x.text }))) : null
             )
           )
@@ -122,7 +119,6 @@ async function assignmentView(ids) {
   const cost = costLine(ctx.skip_cost);
   out.push(
     section(
-      "03",
       "Cost of skipping",
       cost
         ? el(
@@ -134,7 +130,7 @@ async function assignmentView(ids) {
               el("span", { class: "pn-meta-text", text: "Now" }),
               el("span", { class: "pn-meta-text", text: "With a zero" }),
               el("span", { class: "pn-meta-text", text: "Full marks" }),
-              el("strong", { text: ctx.skip_cost.current != null ? `${ctx.skip_cost.current.toFixed(1)}%` : "—" }),
+              el("strong", { text: ctx.skip_cost.current != null ? `${ctx.skip_cost.current.toFixed(1)}%` : "None yet" }),
               el("strong", { text: `${ctx.skip_cost.if_zero.toFixed(1)}%` }),
               el("strong", { text: cost.full })
             ),
@@ -150,7 +146,7 @@ async function assignmentView(ids) {
     )
   );
 
-  const pathSection = section("04", "Fastest honest path", el("ol", { class: "pn-steps" }, honestPath(a).map((s) => el("li", { text: s }))));
+  const pathSection = section("Fastest honest path", el("ol", { class: "pn-steps" }, honestPath(a).map((s) => el("li", { text: s }))));
   const slot = blockBefore(a.due_at);
   const ask = el("button", { class: "pn-secondary", type: "button", text: "Ask about this" });
   ask.addEventListener("click", async () => {
@@ -172,7 +168,7 @@ async function assignmentView(ids) {
         proctored: Boolean(a.proctored),
       },
     });
-    if (reply?.ok) ask.textContent = "Saved · open Kairos";
+    if (reply?.ok) ask.textContent = "Saved. Open Kairos to answer it.";
     else if (!reply || reply.error === "host_missing") ask.textContent = "Connect the Kairos app, then try again";
     else ask.textContent = "Couldn't save the question";
     if (!reply?.ok) ask.disabled = false;
@@ -186,7 +182,7 @@ async function assignmentView(ids) {
         type: "queue_suggestion",
         suggestion: { key: `${a.course_id}:${a.id}`, title: `Work on ${a.name}`, start: slot.start, end: slot.end, why: `Due ${formatDue(a.due_at)}` },
       });
-      button.textContent = reply?.ok ? (reply.queued ? "Queued · approve in the app's Calendar" : "Already queued") : "Couldn't queue";
+      button.textContent = reply?.ok ? (reply.queued ? "Queued. Approve it in the app's Calendar." : "Already queued") : "Couldn't queue";
       if (!reply?.ok) button.disabled = false;
     });
     pathSection.append(button);
@@ -198,12 +194,18 @@ async function assignmentView(ids) {
 async function homeView() {
   const view = await send({ type: "get_view" });
   const next = view?.dashboard?.next_step;
-  const out = [el("p", { class: "pn-label", text: "Next" })];
+  const out = [el("p", { class: "pn-label", text: "Next up" })];
   if (next) {
     out.push(el("h1", { class: "pn-title" }, link(next.title, next.url)));
-    out.push(el("p", { class: "pn-sub", text: [next.course, next.due_at ? `due ${formatDue(next.due_at)}` : null].filter(Boolean).join(" · ") }));
+    out.push(el("p", { class: "pn-sub", text: [next.course, next.due_at ? `due ${formatDue(next.due_at)}` : null].filter(Boolean).join(", ") }));
   } else {
-    const title = view?.mode === "local" ? "Connect the Kairos app" : view?.mode === "pending" ? "Syncing your semester" : "Nothing due this week";
+    const title = view?.status?.needsSchool
+      ? "Open Canvas once"
+      : view?.mode === "local"
+        ? "Connect the Kairos app"
+        : view?.mode === "pending"
+          ? "Syncing your semester"
+          : "Nothing due this week";
     out.push(el("h1", { class: "pn-title", text: title }));
   }
   out.push(el("p", { class: "pn-note", text: "Open an assignment in Canvas to see its checklist, what changed, and the cost of skipping." }));
@@ -218,11 +220,15 @@ async function refresh() {
   lastUrl = url;
   const ids = assignmentFromUrl(url);
   main.replaceChildren(el("p", { class: "pn-note", text: "Loading…" }));
-  blot.set("thinking");
   main.replaceChildren(...(ids ? await assignmentView(ids) : await homeView()));
   const { last = {} } = await chrome.storage.local.get("last");
-  statusEl.textContent = last.signedIn === false ? "Signed out of Canvas" : last.lastPollAt ? `Checked ${relTime(last.lastPollAt)}` : "";
-  blot.set(last.signedIn === false ? "error" : "done");
+  statusEl.textContent = last.needsSchool
+    ? "Open your school's Canvas in a tab"
+    : last.signedIn === false
+      ? "Signed out of Canvas"
+      : last.lastPollAt
+        ? `Checked ${relTime(last.lastPollAt)}`
+        : "";
 }
 
 document.getElementById("pn-readout").addEventListener("click", async (event) => {

@@ -15,7 +15,6 @@ import { callHost } from "./lib/native.js";
 import { classifyDelta, summarySignature } from "./shared/classify.js";
 import { buildDigest, recentChanges } from "./shared/view.js";
 
-const DEFAULT_BASE = "https://canvas.colorado.edu/";
 const POLL_MINUTES = 5;
 const LOCAL_EVENT_CAP = 60;
 const MAX_DELTA_BYTES = 900_000;
@@ -25,9 +24,13 @@ const DAY = 24 * 60 * 60 * 1000;
 const get = (keys) => chrome.storage.local.get(keys);
 const set = (values) => chrome.storage.local.set(values);
 
+/**
+ * The student's Canvas origin. There is no default school: it is learned the first
+ * time the student opens their own Canvas (the content script says "hello").
+ */
 async function canvasBase() {
   const { base } = await get("base");
-  return isAllowedBase(base) ? base : DEFAULT_BASE;
+  return isAllowedBase(base) ? base : null;
 }
 
 function ensureSetup() {
@@ -122,9 +125,14 @@ async function poll(trigger) {
   inFlight = (async () => {
     const base = await canvasBase();
     const now = Date.now();
-    const res = await canvasGet(base, SUMMARY_PATH);
     const { last = {} } = await get("last");
-    const status = { lastPollAt: new Date(now).toISOString(), lastStatus: res.status, trigger };
+    if (!base) {
+      const status = { lastPollAt: null, lastStatus: 0, trigger, needsSchool: true };
+      await set({ last: { ...last, ...status } });
+      return status;
+    }
+    const res = await canvasGet(base, SUMMARY_PATH);
+    const status = { lastPollAt: new Date(now).toISOString(), lastStatus: res.status, trigger, needsSchool: false };
     if (res.status === 401 || (res.ok && !Array.isArray(res.json))) {
       await bumpFunnel({ count: "signed_out_polls" });
       if (last.signedIn !== false) await callHost({ type: "canvas_signed_out", ts: status.lastPollAt });
@@ -163,7 +171,7 @@ async function buildView() {
   const { localEvents = [], courseNames = {}, last = {} } = await get(["localEvents", "courseNames", "last"]);
   const host = await callHost({ type: "get_dashboard" });
   const hostState = await noteHost(host);
-  const status = { signedIn: last.signedIn ?? null, lastPollAt: last.lastPollAt || null, host: hostState };
+  const status = { signedIn: last.signedIn ?? null, lastPollAt: last.lastPollAt || null, host: hostState, needsSchool: Boolean(last.needsSchool) };
   if (hostState === "ok" && host.ok) {
     const d = host.dashboard;
     // The brain processes deltas on its own tick; show anything newer right away.
@@ -215,6 +223,7 @@ function pickAssignment(a) {
 async function assignmentContext({ courseId, assignmentId }) {
   if (!/^\d+$/.test(String(courseId)) || !/^\d+$/.test(String(assignmentId))) return { ok: false, error: "invalid_ids" };
   const base = await canvasBase();
+  if (!base) return { ok: false, error: "no_school" };
   const res = await canvasGet(base, `/api/v1/courses/${courseId}/assignments/${assignmentId}`);
   if (!res.ok || !res.json) return { ok: false, status: res.status, error: res.status === 401 ? "signed_out" : "not_found" };
   const assignment = pickAssignment(res.json);

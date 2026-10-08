@@ -8,7 +8,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { IconCalendar, IconHome, IconPlan, IconSettings, IconStudy } from "./components/Icons";
 import { useTheme } from "./theme";
-import { VoiceSheet } from "./blot/VoiceSheet";
+import { VoiceSheet } from "./voice/VoiceSheet";
 import { setDockMode, type SemesterTick } from "./ipc";
 
 export type Tab = "home" | "plan" | "study" | "calendar" | "settings";

@@ -1,35 +1,25 @@
 ---
-description: Living Instrument UI craft — stage composition, material tokens, parked dock
-globs: app/src/**/*.{tsx,ts,css},app/index.html,landing/**/*,docs/design/ambient-dock-ui.md,design-system/**/*
+description: Notebook UI craft — page, highlighter, margin notes, school-agnostic copy
+globs: app/src/**/*.{tsx,ts,css},app/index.html,app/extension-chrome/**/*,landing/**/*,design-system/**/*
 alwaysApply: false
 ---
 
-# UI craft — Kairos Living Instrument
+# UI craft — Kairos Notebook
 
-When changing workspace, landing, or dock UI, read and obey:
-
-1. [`design-system/kairos/MASTER.md`](design-system/kairos/MASTER.md) — source of truth: stage model, material, tokens, type, geometry, motion, anti-patterns, acceptance test
-2. [`docs/design/spatial-instrument-brief.md`](docs/design/spatial-instrument-brief.md) — product behavior and anatomy (visual direction superseded by MASTER)
-3. [`docs/design/ambient-dock-ui.md`](docs/design/ambient-dock-ui.md) — Peek geometry only
+When changing app, extension, or landing UI, read and obey [`design-system/kairos/MASTER.md`](design-system/kairos/MASTER.md) (source of truth). Tokens: `app/src/styles.css` `:root`; components: `app/src/notebook.css`.
 
 ## Must
 
-- Compose every screen as a **stage**: field → subject → orbit → signal. Pick the subject before drawing any surface.
-- Material is semantic: **ink** for focus/study, **paper** for reading/review, **glass** for temporary chrome only (sidebar, sheets, palette, now-playing), **signal** for live feedback only.
-- Tokens from MASTER §04/§06: primitives `--ink-*`, `--paper-*`, `--signal-*`; semantic `--bg`, `--fg`, `--accent` (one signal per scene), `--surface-0/1/2`, `--surface-grouped`, `--hairline`, `--ring`; radii by role `--radius-window` 22 / `--radius-stage` 18 / `--radius-sheet` 14 / `--radius-control` 10 / `--radius-row` 6 / `--radius-pill`.
-- Five themes (`app/src/theme.ts`): Night `#0C0D0F` cobalt, Paper `#F3EFE7` cobalt/coral, Forest `#17201A` gold, Signal `#111522` violet→coral edge, High contrast `#08090A` yellow with no blur and 2px rules.
-- Type roles: Source Serif 4 display/editorial, IBM Plex Sans utility + 17–19px prose (45–70ch), IBM Plex Mono meta. Scale tokens `--type-*`.
-- Density by zone: tight ledger / medium chrome / reading / cinematic. Do not average.
-- Motion verbs only on real state: settle, reveal, pulse, commit (`--motion-*`). Honor `prefers-reduced-motion` and `data-motion="reduced"`. Never `transition: all`.
-- Hit 44×44. Focus `2px --ring` offset 2. No `outline: none` on controls.
-- Peek dock keeps 18/14 radii and 6/14/22 spacing under `.dock`.
+- One subject per screen; lists of hairline rows, not card grids.
+- One highlighter (`--hl`) per screen: a marker swipe, the focus block (`--hl-soft`), or the primary button's offset shadow.
+- Primary button: ink with `3px 3px 0 var(--hl)` that snaps flat on press. Secondary: sheet + hairline.
+- Gabarito for all UI type; Caveat only for decorative margin notes (`aria-hidden`, info repeated in text).
+- Sentence case; plain dates ("Thu, Sep 24 at 10:00 AM MDT", `app/src/format.ts`).
+- Light, Dark, High contrast (`app/src/theme.ts`); reduced motion honored; 44px targets; focus ring `--pen`.
+- Never name or assume a school in product UI; the school comes from onboarding.
 
 ## Must not
 
-- Three equal cards as the first answer; nested cards; cards inside glass; card-grid Home.
-- Blanket glass; glass, blur, or animated texture behind study prose; glass over a flat radial gradient.
-- Purple/indigo/cyan glow atmosphere; lime decoration; gradient text; sparkle-as-AI; emoji-as-brand.
-- One radius on everything; Inter/Geist/Roboto/SF Pro as the identity face.
-- Shimmer, confetti, bounce, endless loops, cursor-following noise; kinetic type in body copy, lists, errors, or nav.
-- Streak/leaderboard celebration mechanics; ChatGPT transcript as Home; voice as a mic glyph or orb.
-- Old Spatial values: `#1C1C1E` night, `#6B8CFF` accent, 24px panel radius, 12px control radius, Forest mint.
+- Uppercase eyebrows, numbered `01/02` indexes, middle-dot metadata chains, em-dashes in UI copy.
+- Glass/blur, gradients, glow, dark sidebar on a light page, colored left-border cards, mascots or faces.
+- Fabricated testimonials, avatars, or counts on the landing page.

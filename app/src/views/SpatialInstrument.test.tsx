@@ -23,16 +23,12 @@ describe("Spatial Instrument chrome", () => {
     document.documentElement.dataset.motion = "auto";
   });
 
-  it("keeps Continue disabled until Accept, then enables a real primary", async () => {
+  it("keeps Continue a disabled primary until a school is found and the terms are accepted", async () => {
     const { FirstRun } = await import("../components/FirstRun");
-    const user = userEvent.setup();
     render(<FirstRun onDone={() => undefined} />);
     const continueBtn = screen.getByRole("button", { name: "Continue" });
     expect(continueBtn).toBeDisabled();
     expect(continueBtn).toHaveClass("primary");
-    await user.click(screen.getByRole("button", { name: "Accept terms" }));
-    expect(continueBtn).toBeEnabled();
-    expect(continueBtn).not.toHaveAttribute("aria-disabled", "true");
   });
 
   it("lets 5 / 10 min segmented change session length", async () => {

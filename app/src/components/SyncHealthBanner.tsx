@@ -1,33 +1,33 @@
 import { openExternalUrl, type SyncHealth } from "../ipc";
+import { friendlyWhen } from "../format";
 
 export function SyncHealthBanner({ health, inspectUrl }: { health?: SyncHealth | null; inspectUrl?: string | null }) {
   if (!health?.state) return null;
   const state = health.state;
   if (state === "fresh_complete") {
     return (
-      <p className="muted sync-health" data-state={state}>
-        Last complete sync {health.as_of ? new Date(health.as_of).toLocaleString() : ""} · {health.sync_id}
+      <p className="muted sync-health" data-state={state} title={health.sync_id ? `Sync ${health.sync_id}` : undefined}>
+        {health.as_of ? `Up to date with Canvas as of ${friendlyWhen(health.as_of)}` : "Up to date with Canvas"}
       </p>
     );
   }
   const emptyUnverified = state === "empty_unverified";
   const label =
     state === "blocked"
-      ? "Canvas data is blocked until sync can run."
+      ? "Kairos can't read Canvas right now. Sign in again from Settings."
       : emptyUnverified
-        ? "No Canvas snapshot has been verified yet — this is not an empty week."
+        ? "Kairos hasn't finished reading Canvas yet, so this is not an empty week."
         : state === "fresh_partial"
-          ? "Sync is partial; named sources failed."
+          ? "Some classes didn't load from Canvas."
           : state === "stale_complete"
-            ? "Canvas data is stale."
+            ? "This is an older copy of your Canvas data."
             : state === "stale_partial"
-              ? "Only an older partial snapshot is available."
-              : "Canvas data needs attention.";
+              ? "This is an older, partial copy of your Canvas data."
+              : "Canvas data needs a look.";
   return (
     <aside className="sync-health warn" data-state={state} role="status">
       <strong>{label}</strong>
-      {health.as_of && <span> as of {new Date(health.as_of).toLocaleString()}</span>}
-      {health.sync_id && <span className="muted"> · {health.sync_id}</span>}
+      {health.as_of && <span> Last read {friendlyWhen(health.as_of)}.</span>}
       {Array.isArray(health.named_courses_failed) && health.named_courses_failed.length > 0 && (
         <span> Courses: {health.named_courses_failed.join(", ")}</span>
       )}

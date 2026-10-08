@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { fixtureEnabled, fixtureHealth, fixtureSemester } from "./dev/fixtures";
+import { fixtureEnabled, fixtureHealth, fixtureSchools, fixtureSemester } from "./dev/fixtures";
 
 export type Top3Item = { id: string; title: string; due: string };
 
@@ -66,6 +66,62 @@ export async function openCanvasSso(): Promise<void> {
 }
 
 /** Headless probe: is there already a valid Canvas session in browser/.auth? */
+/** A Canvas school from the public Instructure search (docs/architecture/school-personalization.md). */
+export type SchoolMatch = { name: string; host: string; account_id: number | null };
+
+/** What onboarding saved to `{user_root}/school/profile.json`. */
+export type SchoolProfile = {
+  slug: string;
+  display_name: string;
+  canvas_host: string;
+  canvas_base_url: string;
+  instructure_account_id: number | null;
+  source: "instructure-search" | "manual";
+  discovered?: { timezone?: string; term?: { name: string; start_at: string; end_at: string | null }; brand_color?: string };
+};
+
+export async function searchSchools(term: string): Promise<SchoolMatch[]> {
+  if (!isTauri()) return fixtureEnabled() ? fixtureSchools(term) : [];
+  return invoke<SchoolMatch[]>("search_schools", { term });
+}
+
+export async function chooseSchool(
+  match: { host: string; name: string; account_id?: number | null },
+  manual = false
+): Promise<SchoolProfile> {
+  if (!isTauri()) {
+    const host = match.host.trim().toLowerCase();
+    const profile: SchoolProfile = {
+      slug: host.replace(/\./g, "-"),
+      display_name: match.name || host,
+      canvas_host: host,
+      canvas_base_url: `https://${host}`,
+      instructure_account_id: match.account_id ?? null,
+      source: manual ? "manual" : "instructure-search",
+    };
+    localStorage.setItem("pn_school_profile", JSON.stringify(profile));
+    return profile;
+  }
+  return invoke<SchoolProfile>("choose_school", {
+    host: match.host,
+    name: match.name,
+    accountId: match.account_id ?? null,
+    manual,
+  });
+}
+
+export async function readSchoolProfile(): Promise<SchoolProfile | null> {
+  if (!isTauri()) {
+    try {
+      const raw = localStorage.getItem("pn_school_profile");
+      return raw ? (JSON.parse(raw) as SchoolProfile) : null;
+    } catch {
+      return null;
+    }
+  }
+  return invoke<SchoolProfile | null>("read_school_profile");
+}
+
 export async function checkCanvasSession(): Promise<boolean> {
   if (!isTauri()) return false;
   return invoke<boolean>("check_canvas_session");

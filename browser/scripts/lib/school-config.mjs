@@ -1,11 +1,17 @@
 /**
- * Load school registry config for browser SSO scripts.
- * Reads schools/{slug}.yaml (SCHOOL_SLUG env, default cu-boulder).
+ * Load the student's school config for browser SSO scripts.
+ *
+ * Resolution (docs/architecture/school-personalization.md):
+ *   1. SCHOOL_SLUG env naming a curated schools/{slug}.yaml (dev, tests, plugins)
+ *   2. the school the student chose at onboarding ({user_root}/school/profile.json),
+ *      with any curated yaml whose canvas_base_url host matches layered on top
+ *   3. otherwise an error: no school is ever assumed.
  * Prefer SCHOOLS_DIR override for tests.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { normalizeCanvasHost, readSchoolProfile } from "./school-discovery.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.join(__dirname, "..", "..", "..");
@@ -114,27 +120,113 @@ function parseSchoolYaml(text) {
 
 let _cached = null;
 
-export function getSchoolSlug() {
-  return (process.env.SCHOOL_SLUG || "cu-boulder").trim();
+function yamlPath(slug) {
+  return path.join(schoolsDir(), `${slug}.yaml`);
 }
 
-export function getSchoolConfig(slug = getSchoolSlug()) {
-  if (_cached && _cached.slug === slug) return _cached;
-  const file = path.join(schoolsDir(), `${slug}.yaml`);
-  if (!fs.existsSync(file)) {
-    throw new Error(`Unknown school slug: ${slug} (${file})`);
+function loadYaml(slug) {
+  const file = yamlPath(slug);
+  if (!slug || slug.startsWith("_") || !fs.existsSync(file)) return null;
+  return parseSchoolYaml(fs.readFileSync(file, "utf8"));
+}
+
+/** Curated yaml slug whose canvas_base_url host matches, or "". */
+export function findCuratedSlugForHost(host) {
+  let want;
+  try {
+    want = normalizeCanvasHost(host);
+  } catch {
+    return "";
   }
-  const raw = parseSchoolYaml(fs.readFileSync(file, "utf8"));
+  const dir = schoolsDir();
+  if (!fs.existsSync(dir)) return "";
+  for (const name of fs.readdirSync(dir)) {
+    if (!name.endsWith(".yaml") || name.startsWith("_")) continue;
+    const raw = parseSchoolYaml(fs.readFileSync(path.join(dir, name), "utf8"));
+    try {
+      if (raw.canvas_base_url && normalizeCanvasHost(raw.canvas_base_url) === want) return name.replace(/\.yaml$/, "");
+    } catch {
+      /* malformed curated file: ignore for matching */
+    }
+  }
+  return "";
+}
+
+/** Slug in effect: explicit env, else the school the student chose. Never a default school. */
+export function getSchoolSlug() {
+  const env = (process.env.SCHOOL_SLUG || "").trim();
+  if (env && env !== "waitlist") return env;
+  const profile = readSchoolProfile();
+  return profile ? String(profile.slug || "") : "";
+}
+
+/** Generic defaults every school starts from (US 4.0 scale, common LTI tools, legal notice). */
+function baseDefaults() {
+  const file = yamlPath("_template");
+  const tpl = parseSchoolYaml(fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
+  return {
+    timezone: "UTC",
+    term_dates: {},
+    lti_catalog: tpl.lti_catalog || [],
+    engagement_platform: null,
+    course_file_map: [],
+    grade_scale: tpl.grade_scale || {},
+    policy_links: {},
+    legal_notice: tpl.legal_notice || "",
+    sso_idp: "",
+  };
+}
+
+/** Build a config from the onboarding profile, overlaying a curated yaml when one matches. */
+export function configFromProfile(profile) {
+  const curatedSlug = findCuratedSlugForHost(profile.canvas_host);
+  const curated = curatedSlug ? loadYaml(curatedSlug) : null;
+  const found = profile.discovered || {};
+  const out = {
+    ...baseDefaults(),
+    ...(curated || {}),
+    slug: curatedSlug || profile.slug,
+    display_name: (curated && curated.display_name) || profile.display_name,
+    canvas_base_url: `https://${normalizeCanvasHost(profile.canvas_host)}`,
+    discovered: found,
+  };
+  // Canvas is the source of truth for time zone and term when the curated file does not pin them.
+  if (found.timezone && (!curated || !curated.timezone || curated.timezone === "UTC")) out.timezone = found.timezone;
+  if (found.term && !(curated && curated.term_dates && Object.keys(curated.term_dates).length)) {
+    out.term_dates = { current_name: found.term.name, current_start: found.term.start_at, current_end: found.term.end_at || "" };
+  }
+  return out;
+}
+
+function finalize(raw) {
   if (!raw.canvas_base_url) {
-    throw new Error(`School config missing canvas_base_url: ${file}`);
+    throw new Error(`School config missing canvas_base_url: ${raw.slug}`);
   }
   raw.canvas_base_url = String(raw.canvas_base_url).replace(/\/$/, "");
   raw.course_file_map = (raw.course_file_map || []).map((e) => ({
     code: e.code,
-    patterns: (e.patterns || []).map((p) => new RegExp(p, "i")),
+    patterns: (e.patterns || []).map((p) => (p instanceof RegExp ? p : new RegExp(p, "i"))),
   }));
-  _cached = raw;
   return raw;
+}
+
+export function getSchoolConfig(slug = getSchoolSlug()) {
+  if (_cached && _cached.slug === slug) return _cached;
+  const curated = loadYaml(slug);
+  if (curated) {
+    _cached = finalize({ ...curated, slug: curated.slug || slug });
+    return _cached;
+  }
+  const profile = readSchoolProfile();
+  if (profile) {
+    _cached = finalize(configFromProfile(profile));
+    return _cached;
+  }
+  throw new Error(
+    slug
+      ? `Unknown school: ${slug}. Finish onboarding (pick your school) or add schools/${slug}.yaml.`
+      : "No school chosen yet. Finish onboarding to pick your school."
+  );
 }
 
 export function clearSchoolConfigCache() {

@@ -32,7 +32,7 @@ export function formatDue(iso) {
 }
 
 function pct(v) {
-  return v == null ? "—" : `${Number(v).toFixed(1)}%`;
+  return v == null ? "None yet" : `${Number(v).toFixed(1)}%`;
 }
 
 /** "84.0% → 66.0%", full marks, share of the final grade — null when there is nothing honest to say. */

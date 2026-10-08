@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Living Instrument — style tile</title>
     <style>
+      @font-face {
+        font-family: "Big Shoulders Display Variable";
+        src: url("../../landing/fonts/big-shoulders-display-latin-wght-normal.woff2") format("woff2");
+        font-weight: 100 900;
+        font-display: swap;
+      }
       /* Tokens mirror app/src/styles.css — design-system/kairos/MASTER.md §04–§06 is the source of truth. */
       :root {
         --ink-0: #0c0d0f; --ink-1: #15171a; --ink-2: #22262a;
-        --paper-0: #f3efe7; --paper-1: #e7dfd1; --paper-ink: #272322;
-        --line-light: rgba(255, 255, 255, 0.16); --line-dark: rgba(26, 22, 20, 0.16);
+        --paper-0: #e4e8ee; --paper-1: #d3d9e2; --paper-ink: #1a1e24;
+        --line-light: rgba(255, 255, 255, 0.16); --line-dark: rgba(26, 30, 36, 0.16);
         --signal-cobalt: #3767ff; --signal-coral: #ff604d; --signal-gold: #e1ad49;
         --signal-violet: #8b72e8; --signal-cream: #f1d7a7;
 
@@ -40,7 +46,7 @@
         --radius-icon: 999px;
         --radius-panel: var(--radius-stage);
         --radius-card: var(--radius-sheet);
-        --font-display: "Source Serif 4", "Iowan Old Style", Palatino, serif;
+        --font-display: "Big Shoulders Display Variable", "Big Shoulders Display", sans-serif;
         --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
         --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
         --course: var(--signal-cobalt);
@@ -52,15 +58,15 @@
       }
       :root[data-theme="paper"] {
         --bg: var(--paper-0);
-        --surface-0: rgba(243, 239, 231, 0.62);
-        --surface-1: rgba(243, 239, 231, 0.8);
-        --surface-2: #f7f4ee;
+        --surface-0: rgba(228, 232, 238, 0.62);
+        --surface-1: rgba(228, 232, 238, 0.8);
+        --surface-2: #eef1f6;
         --surface-grouped: var(--paper-1);
         --fg: var(--paper-ink);
-        --muted: rgba(39, 35, 34, 0.62);
+        --muted: rgba(26, 30, 36, 0.62);
         --hairline: var(--line-dark);
         --specular: rgba(255, 255, 255, 0.55);
-        --shadow: 0 12px 40px rgba(39, 35, 34, 0.12);
+        --shadow: 0 12px 40px rgba(26, 30, 36, 0.12);
         --accent: var(--signal-cobalt);
         --on-accent: #ffffff;
         --accent-deep: #2a52d8;

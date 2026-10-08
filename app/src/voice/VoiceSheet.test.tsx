@@ -5,7 +5,7 @@ import { VoiceSheet } from "./VoiceSheet";
 import { voicePresence, withCourseColors } from "../voice/presence";
 
 beforeAll(() => {
-  // jsdom has no canvas; Blot must cope with a null context
+  // jsdom has no canvas; the ink ring must cope with a null context
   HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext;
 });
 
@@ -21,7 +21,7 @@ describe("VoiceSheet", () => {
     expect(screen.queryByRole("complementary", { name: "Voice" })).toBeNull();
     act(() => voicePresence.set({ state: "listening", transcript: "What's due Friday?" }));
     expect(screen.getByRole("complementary", { name: "Voice" })).toBeInTheDocument();
-    expect(screen.getByText("Listening")).toBeInTheDocument();
+    expect(screen.getByText("Listening…")).toBeInTheDocument();
     expect(screen.getByText("What's due Friday?")).toBeInTheDocument();
   });
 
@@ -40,7 +40,7 @@ describe("VoiceSheet", () => {
     expect(voicePresence.get().state).toBe("idle");
   });
 
-  it("gives screen readers every answer line in full, even while the handwriting is still running", () => {
+  it("gives screen readers every answer line in full", () => {
     render(<VoiceSheet />);
     act(() =>
       voicePresence.set({
@@ -61,7 +61,7 @@ describe("VoiceSheet", () => {
     document.documentElement.dataset.motion = "reduced";
     render(<VoiceSheet />);
     act(() => voicePresence.set({ state: "speaking", items: [{ title: "Read ch. 3" }] }));
-    const line = document.querySelector(".blot-line");
+    const line = document.querySelector(".voice-line");
     expect(line?.textContent).toBe("Read ch. 3");
   });
 
@@ -76,11 +76,11 @@ describe("VoiceSheet", () => {
     expect(screen.queryByRole("complementary", { name: "Voice" })).toBeNull();
   });
 
-  it("Blot is a poke target with a name, and its canvas is hidden from assistive tech", () => {
+  it("shows the ink ring as decoration only, never a character to poke", () => {
     render(<VoiceSheet />);
     act(() => voicePresence.set({ state: "listening" }));
-    const poke = screen.getByRole("button", { name: "Poke Blot" });
-    expect(poke.querySelector("canvas")).toHaveAttribute("aria-hidden", "true");
+    expect(document.querySelector(".ink-ring")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.queryByRole("button", { name: /Blot/ })).toBeNull();
   });
 });
 

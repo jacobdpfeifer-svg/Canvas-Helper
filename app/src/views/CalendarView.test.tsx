@@ -58,6 +58,7 @@ describe("CalendarView", () => {
     expect(addCalendarEvent).toHaveBeenCalledTimes(1);
     expect(addCalendarEvent.mock.calls[0][0].title).toBe("Chain rule block");
     expect(await screen.findByText("Chain rule block")).toBeInTheDocument();
-    expect(screen.getByText(/Canvas · Homework 1/)).toBeInTheDocument();
+    expect(screen.getAllByText("Homework 1").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("From Canvas").length).toBeGreaterThan(0);
   });
 });

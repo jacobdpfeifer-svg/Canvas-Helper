@@ -275,7 +275,7 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
             : [
                 {
                   id: "idle",
-                  title: "No checks scheduled",
+                  title: "Nothing to review right now",
                   due: "",
                 },
               ];
@@ -283,7 +283,7 @@ export function PlanView({ compact = false }: { compact?: boolean }) {
   return (
     <div className="plan scene-ink">
       <header className="plan-index">
-        <h1 className="plan-heading index-label">Plan</h1>
+        <h1 className="plan-heading">Plan</h1>
         <button
           type="button"
           className="ghost icon-btn"

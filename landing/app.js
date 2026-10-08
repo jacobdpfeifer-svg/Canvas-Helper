@@ -1,75 +1,74 @@
-// Kairos landing page — no build step, no framework, no backend.
+// Kairos landing page: no build step, no framework, no backend.
 (function () {
   "use strict";
 
-  var THEME_KEY = "pn_site_theme";
-
-  function readTheme() {
-    try {
-      var stored = localStorage.getItem(THEME_KEY);
-      if (stored === "paper" || stored === "night") return stored;
-    } catch (e) {
-      /* per-viewer convenience only */
-    }
-    var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    return prefersLight ? "paper" : "night";
-  }
-
-  function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    var buttons = document.querySelectorAll(".theme-toggle button");
-    buttons.forEach(function (btn) {
-      btn.setAttribute("aria-pressed", String(btn.dataset.theme === theme));
-    });
-    try {
-      localStorage.setItem(THEME_KEY, theme);
-    } catch (e) {
-      /* ignore */
-    }
-  }
-
-  function initTheme() {
-    applyTheme(readTheme());
-    document.querySelectorAll(".theme-toggle button").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        applyTheme(btn.dataset.theme);
-      });
+  // Margin notes and the marker swipe draw in once, when they scroll into view.
+  // Without JS (or with reduced motion) they are simply shown.
+  function initReveal() {
+    var targets = document.querySelectorAll(".note, .mark");
+    if (!("IntersectionObserver" in window)) return;
+    document.documentElement.classList.add("js");
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    targets.forEach(function (el) {
+      io.observe(el);
     });
   }
 
-  // Email capture: no backend exists yet. We are honest about that in the
-  // UI copy. Submitting opens the visitor's own mail client addressed to
-  // the maintainer, with the entered address in the body, so nothing is
-  // silently dropped and nothing is faked as "connected."
+  // Email capture: there is no backend yet, and the copy says so. Submitting opens
+  // the visitor's own mail client addressed to the maintainer with the address in
+  // the body, so nothing is silently dropped and nothing pretends to be saved.
   function initEmailForm() {
     var form = document.getElementById("waitlist-form");
     if (!form) return;
     var input = document.getElementById("waitlist-email");
     var status = document.getElementById("waitlist-status");
+    var path = document.getElementById("beta-path");
+
+    document.querySelectorAll("[data-beta-path]").forEach(function (link) {
+      link.addEventListener("click", function () {
+        if (path) path.value = link.getAttribute("data-beta-path") || "mac";
+        window.setTimeout(function () {
+          input.focus();
+        }, 0);
+      });
+    });
 
     form.addEventListener("submit", function (evt) {
       evt.preventDefault();
       var email = (input.value || "").trim();
       var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       if (!valid) {
-        status.textContent = "That doesn't look like a full email address — try again.";
+        status.textContent = "That doesn't look like a full email address. Try again?";
         status.className = "form-status err";
         input.focus();
         return;
       }
-      var subject = encodeURIComponent("Kairos beta — notify me");
+      var wantsGithub = path && path.value === "github";
+      var subject = encodeURIComponent(wantsGithub ? "Kairos beta: GitHub access" : "Kairos beta: early access");
       var body = encodeURIComponent(
-        "Please notify me when the Kairos macOS build is ready for testing.\n\nMy email: " + email + "\n"
+        (wantsGithub
+          ? "I'd like GitHub/source instructions for the Kairos beta."
+          : "Please let me know when there's a spot in the Kairos Mac beta.") +
+        "\n\nMy email: " + email + "\n"
       );
       var mailto = "mailto:jacobdpfeifer@gmail.com?subject=" + subject + "&body=" + body;
-      status.textContent = "Opening your email app to send this to jacobdpfeifer@gmail.com — nothing was sent automatically.";
+      status.textContent = "Opening your email app so you can send this. Nothing was sent yet.";
       status.className = "form-status ok";
       window.location.href = mailto;
     });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    initTheme();
+    initReveal();
     initEmailForm();
     var yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());

@@ -145,7 +145,7 @@ export function Top3Sticky({
               <ol>
                 {visible.map((item, i) => (
                   <li key={item.id}>
-                    <span className="idx">{i + 1}</span>
+                    {item.id !== "idle" && <span className="idx">{i + 1}</span>}
                     <div>
                       <strong>{item.title}</strong>
                       {item.due ? <em>{item.due}</em> : null}

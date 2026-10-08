@@ -29,11 +29,8 @@
   // @font-face does not apply inside shadow roots; declare unique families on the document.
   if (!document.getElementById("kairos-fonts")) {
     const faces = [
-      ["PN IBM Plex Sans", "ibm-plex-sans-latin-400-normal.woff2", 400],
-      ["PN IBM Plex Sans", "ibm-plex-sans-latin-500-normal.woff2", 500],
-      ["PN IBM Plex Sans", "ibm-plex-sans-latin-600-normal.woff2", 600],
-      ["PN IBM Plex Mono", "ibm-plex-mono-latin-500-normal.woff2", 500],
-      ["PN Source Serif 4", "source-serif-4-latin-opsz-normal.woff2", "200 900"],
+      ["PN Gabarito", "gabarito-latin-wght-normal.woff2", "400 900"],
+      ["PN Caveat", "caveat-latin-wght-normal.woff2", "400 700"],
     ];
     const style = document.createElement("style");
     style.id = "kairos-fonts";
@@ -89,9 +86,9 @@
     const state = status.signedIn === false ? "signed-out" : status.signedIn ? "ok" : "unknown";
     const liveText =
       state === "signed-out"
-        ? "Signed out · sign in to refresh"
+        ? "Signed out. Sign in to Canvas to refresh."
         : status.lastPollAt
-          ? `Live · checked ${fmt.relTime(status.lastPollAt)}`
+          ? `Checked ${fmt.relTime(status.lastPollAt)}`
           : "Checking Canvas";
     const refresh = el("button", { class: "pn-quiet", type: "button", text: "Refresh" });
     refresh.addEventListener("click", async () => {
@@ -124,11 +121,11 @@
       button.disabled = true;
       const reply = await send({ type: "queue_suggestion", suggestion });
       if (reply?.ok) {
-        button.textContent = reply.queued ? "Queued · approve in the app" : "Already queued";
+        button.textContent = reply.queued ? "Queued. Approve it in the app." : "Already queued";
         if (row) row.dataset.state = "queued";
       } else {
         button.disabled = false;
-        button.textContent = "Couldn't queue — is the app installed?";
+        button.textContent = "Couldn't queue. Is the Kairos app installed?";
       }
     });
     return button;
@@ -163,7 +160,7 @@
     }
     const sub = [next.course, next.due_at ? `due ${fmt.formatDue(next.due_at)}` : null, next.points_possible ? `${next.points_possible} pts` : null]
       .filter(Boolean)
-      .join(" · ");
+      .join(", ");
     const cost = fmt.costLine(next.skip_cost);
     const slot = fmt.blockBefore(next.due_at);
     const actions = el("div", { class: "pn-actions" });
@@ -185,17 +182,17 @@
       el("p", { class: "pn-label", text: next.why === "missing" ? "Missing" : "Next" }),
       el("h2", { class: "pn-title" }, link(next.title, next.url)),
       el("p", { class: "pn-sub", text: sub }),
-      next.moved?.from ? el("p", { class: "pn-signal", text: `Due date moved — was ${fmt.formatDue(next.moved.from)}` }) : null,
+      next.moved?.from ? el("p", { class: "pn-signal", text: `Due date moved. It was ${fmt.formatDue(next.moved.from)}.` }) : null,
       cost
         ? el(
             "p",
             { class: "pn-cost" },
-            cost.share ? `Worth ${cost.share} of your grade · ` : "",
+            cost.share ? `Worth ${cost.share} of your grade. ` : "",
             "Skip it: ",
             el("strong", { text: cost.skip }),
-            " · Full marks: ",
+            "Full marks: ",
             el("strong", { text: cost.full }),
-            cost.estimate ? " · estimate" : ""
+            cost.estimate ? " (estimate)" : ""
           )
         : null,
       actions

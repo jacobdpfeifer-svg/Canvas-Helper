@@ -12,20 +12,16 @@ import {
 import { ChangesLedger } from "../components/ChangesLedger";
 import { SyncHealthBanner } from "../components/SyncHealthBanner";
 import { clusterTicks, kindLabel, loadRange, saveRange, tickHeightPx, type RangeId } from "../semesterTicks";
-import { dueWithZone, rankOpenWork } from "../ask/rank";
+import { rankOpenWork } from "../ask/rank";
 import { AskPanel } from "../ask/AskPanel";
+import { friendlyDue, friendlyRelative, friendlyWhen } from "../format";
 import { study } from "../study/api";
 import type { AskEnvelope } from "../study/types";
 
 /*
- * Home is a stage (MASTER §02, §11):
- *   field   — paper (`.scene-paper`)
- *   subject — the next meaningful tick as a display statement, and the semester
- *             line at full bleed beneath it
- *   orbit   — NEXT rail: a vertical mono index of the next three ticks;
- *             CHANGED ledger beneath the line (what moved in Canvas)
- *   signal  — the today-rule in the scene accent
- * The old Start/Learn/Do/Check 4-up lives inside the tick sheet now.
+ * Home (MASTER §10): the date as the page heading, the one most important item
+ * in the highlighted focus block, a short "Next up" list beside it, then the
+ * semester line and what changed in Canvas. Start/Learn/Do/Check lives in the item sheet.
  */
 
 const RANGES: { id: RangeId; label: string }[] = [
@@ -34,10 +30,6 @@ const RANGES: { id: RangeId; label: string }[] = [
   { id: "3m", label: "3 months" },
   { id: "full", label: "Full semester" },
 ];
-
-function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
 
 export function HomeView({
   surface: surfaceProp,
@@ -143,7 +135,7 @@ export function HomeView({
   const today = new Date(todayMs);
   const ranked = surface ? rankOpenWork(surface.courses.flatMap((c) => c.ticks)) : { recommendation: null, alternatives: [] };
   const lead = ranked.recommendation;
-  const rail = lead ? [lead, ...ranked.alternatives] : [];
+  const rail = lead ? ranked.alternatives : [];
   const hasCourses = Boolean(surface && surface.courses.length > 0);
   const askOpen = askActive || Boolean(activeAsk?.response);
 
@@ -155,10 +147,10 @@ export function HomeView({
   return (
     <section className="home scene-paper" aria-labelledby="home-heading">
       <header className="home-index">
-        <h1 id="home-heading" className="index-label">
+        <h1 id="home-heading" className="visually-hidden">
           Home
         </h1>
-        <span className="mono home-date">{new Date(todayMs).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}</span>
+        <p className="home-date">{new Date(todayMs).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}</p>
         <fieldset className="segmented home-range" aria-label="Time range">
           {RANGES.map((r) => (
             <label key={r.id} className={range === r.id ? "on" : undefined}>
@@ -180,15 +172,15 @@ export function HomeView({
             </p>
           )}
           {!askOpen && hasCourses && lead && lead.due_at && (
-            <>
-              <p className="mono home-kicker">
-                <span style={{ ["--course" as string]: lead.color }} className="course-dot" aria-hidden="true" />
-                {lead.course_label} · {kindLabel(lead.kind)} · {dueWithZone(lead.due_at, today)}
-              </p>
-              <button type="button" className="home-statement display" onClick={() => openTick(lead)}>
+            <div className="home-focus" style={{ ["--course" as string]: lead.color }}>
+              <span className="kind-badge">
+                {lead.course_label}, {kindLabel(lead.kind).toLowerCase()}
+              </span>
+              <button type="button" className="home-statement" onClick={() => openTick(lead)}>
                 {lead.title}
               </button>
-            </>
+              <p className="home-when">Due {friendlyDue(lead.due_at, today)}</p>
+            </div>
           )}
           {!askOpen && hasCourses && !lead && (
             <p className="home-statement display">Nothing due in this window.</p>
@@ -198,17 +190,16 @@ export function HomeView({
 
         {!askOpen && rail.length > 0 && (
           <aside className="next-rail" aria-label="Next up">
-            <span className="index-label">Next</span>
+            <h2>Next up</h2>
             <ol>
-              {rail.map((t, i) => (
+              {rail.map((t) => (
                 <li key={t.id} style={{ ["--course" as string]: t.color }}>
                   <button type="button" onClick={() => openTick(t)}>
-                    <span className="mono idx">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="rail-body">
-                      <strong>{t.title}</strong>
-                      <span className="mono">
-                        {t.course_label} · {t.due_at ? `${shortDate(t.due_at)} · ${dueWithZone(t.due_at, today)}` : "no date"}
-                      </span>
+                    <strong>{t.title}</strong>
+                    <span className="rail-when">{t.due_at ? friendlyRelative(t.due_at, today) : "No date"}</span>
+                    <span className="rail-meta">
+                      <span className="course-dot" aria-hidden="true" />
+                      {t.course_label}
                     </span>
                   </button>
                 </li>
@@ -218,6 +209,9 @@ export function HomeView({
         )}
       </div>
 
+      {hasCourses && surface && (
+        <h2 className="semester-title">The rest of the semester</h2>
+      )}
       {hasCourses && surface && (
         <div className="semester bleed" ref={axis}>
           <TodayLine start={surface.window_start} end={surface.window_end} today={surface.today} />
@@ -246,6 +240,7 @@ export function HomeView({
       {popup && (
         <ItemSheet
           tick={popup}
+          today={today}
           map={map && (!map.course?.id || map.course.id === popup.course_id) ? map : null}
           grades={grades}
           onClose={() => setPopup(null)}
@@ -267,7 +262,7 @@ function CourseMapLedger({ map, grades }: { map: CourseMap; grades: GradeTruth |
   if (startHere.length + learn.length + doRows.length === 0 && !lead && !map.fallback_reason) return null;
   return (
     <div className="course-map ledger">
-      {map.fallback_reason && <p className="muted mono">{map.fallback_reason}</p>}
+      {map.fallback_reason && <p className="muted">{map.fallback_reason}</p>}
       {startHere.length > 0 && (
       <section aria-labelledby="map-start">
         <h3 id="map-start" className="index-label">
@@ -297,8 +292,8 @@ function CourseMapLedger({ map, grades }: { map: CourseMap; grades: GradeTruth |
           {learn.map((row) => (
             <li key={row.id}>
               {row.title}
-              {row.lti && <span className="muted"> · launch in browser</span>}
-              {row.locked && <span className="muted"> · locked</span>}
+              {row.lti && <span className="muted">, opens in the browser</span>}
+              {row.locked && <span className="muted">, locked</span>}
             </li>
           ))}
         </ul>
@@ -313,7 +308,7 @@ function CourseMapLedger({ map, grades }: { map: CourseMap; grades: GradeTruth |
           {doRows.map((row) => (
             <li key={row.id}>
               {row.title}
-              <span className="muted"> · {row.submission_state}</span>
+              <span className="muted">, {row.submission_state}</span>
             </li>
           ))}
         </ul>
@@ -341,7 +336,7 @@ function TodayLine({ start, end, today }: { start: string; end: string; today: s
   const left = Math.min(100, Math.max(0, pct));
   return (
     <div className="today-line" style={{ left: `${left}%` }} aria-hidden="true">
-      <span className="mono">Today</span>
+      <span>Today</span>
     </div>
   );
 }
@@ -367,7 +362,7 @@ function CourseRow({
 }) {
   return (
     <div className="course-row" style={{ ["--course" as string]: color }}>
-      <div className="course-meta mono">
+      <div className="course-meta">
         <span className="course-dot" aria-hidden="true" />
         <strong>{label}</strong>
         {inferred && <span className="muted">dates inferred</span>}
@@ -429,10 +424,10 @@ function TickBubble({ tick, x, y }: { tick: SemesterTick; x: number; y: number }
     <div ref={ref} className="bubble" style={{ left: pos.left, top: pos.top }} role="tooltip">
       <span className="kind-badge">{kindLabel(tick.kind)}</span>
       <strong>{tick.title}</strong>
-      <span className="mono">{tick.course_label}</span>
-      <span className="mono">{tick.due_at ? dueWithZone(tick.due_at) : "No due date"}</span>
-      <span className="mono">
-        {tick.points_possible ?? 0} pts · {weightPct}% of course
+      <span className="muted">{tick.course_label}</span>
+      <span className="muted">{tick.due_at ? friendlyWhen(tick.due_at) : "No due date"}</span>
+      <span className="muted">
+        {tick.points_possible ?? 0} points, {weightPct}% of the course
       </span>
     </div>
   );
@@ -440,12 +435,14 @@ function TickBubble({ tick, x, y }: { tick: SemesterTick; x: number; y: number }
 
 function ItemSheet({
   tick,
+  today,
   map,
   grades,
   onClose,
   onPlan,
 }: {
   tick: SemesterTick;
+  today: Date;
   map: CourseMap | null;
   grades: GradeTruth | null;
   onClose: () => void;
@@ -462,7 +459,7 @@ function ItemSheet({
       role="presentation"
     >
       <div
-        className="glass item-popup sheet"
+        className="item-popup sheet"
         role="dialog"
         aria-labelledby="item-pop-title"
         style={{ ["--course" as string]: tick.color }}
@@ -472,8 +469,8 @@ function ItemSheet({
         <h2 id="item-pop-title" className="editorial">
           {tick.title}
         </h2>
-        <p className="mono">
-          {tick.course_label} · {tick.due_at ? dueWithZone(tick.due_at) : "No due date"}
+        <p className="item-when">
+          {tick.course_label}. {tick.due_at ? `Due ${friendlyDue(tick.due_at, today)}.` : "No due date."}
         </p>
         {tick.description && <p className="cover">{tick.description.slice(0, 600)}</p>}
         <div className="sheet-actions">

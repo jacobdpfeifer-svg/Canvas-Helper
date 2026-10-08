@@ -66,7 +66,7 @@ calls the dock a specialized object, not the global geometry.
 - **Direction:** physical sticky note + Raycast-grade chrome. Frosted shell,
   opaque-enough content. Not a SaaS dashboard, cream/terracotta editorial,
   full Apple Liquid Glass, or purple glass pack.
-- **Type:** Source Serif 4 (display: “Today”, Kairos) + IBM Plex Sans
+- **Type:** Big Shoulders Display (display: “Today”, Kairos) + IBM Plex Sans
   (UI) + IBM Plex Mono (due times / ledger). Fonts must load for real.
 - **Accent:** ink cobalt (`--accent` / `#6B8CFF`), surgical — not mint/teal AI-HUD.
 - **Surfaces:** shell ladder (`--surface-0` peek → `--surface-1` expanded)
