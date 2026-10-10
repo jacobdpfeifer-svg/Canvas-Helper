@@ -24,6 +24,8 @@ src/canvas_mcp/       # vendored optional PAT MCP (upstream canvas-mcp)
 skills/                # student-* + canvas-week-plan + discussion
 app/                   # Kairos Tauri shell + daemon; extension-chrome/ + native-messaging/ (Canvas-page surface)
 plugins/               # school-conditional Bucket-A connectors (see plugins/README.md)
+landing/               # static Vercel site; go/ = QR/NFC landing (phone → Mac hand-off), config.js = launch switches
+marketing/             # placements.json → print-ready QR codes + NFC tag links (see marketing/README.md)
 vendor/                # upstream CHANGELOG boundary + archived articles/examples/internal
 ```
 

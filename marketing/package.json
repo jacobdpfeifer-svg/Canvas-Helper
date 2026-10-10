@@ -1,0 +1,14 @@
+{
+  "name": "kairos-marketing",
+  "private": true,
+  "description": "Print-ready QR codes and NFC tag links for Kairos campus placements. See README.md.",
+  "type": "module",
+  "scripts": {
+    "codes": "node make-codes.mjs",
+    "check": "node make-codes.mjs --check",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
+  }
+}

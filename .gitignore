@@ -174,3 +174,6 @@ var/
 
 # Voice intake: raw speech transcripts stay local (they live under {user_root}/inbox/voice/sessions/)
 **/voice/sessions/
+
+# Generated QR codes and NFC link list (rebuild with: cd marketing && npm run codes)
+marketing/codes/

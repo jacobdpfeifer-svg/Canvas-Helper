@@ -917,3 +917,197 @@ section h2 {
     padding-right: 16px;
   }
 }
+
+/* ---------- /go: the page every QR code and NFC tag lands on ----------
+   Phone-first single column. One view shows at a time (body[data-view]). */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 14px 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+  background: var(--sheet);
+  color: var(--fg);
+  font: 700 16px/1 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 110ms var(--ease);
+}
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+.go-body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.go-top,
+.go,
+.go-foot {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+.go-top {
+  padding-top: 20px;
+  padding-bottom: 8px;
+}
+.go {
+  flex: 1;
+  padding-top: 12px;
+  padding-bottom: 40px;
+}
+.go .view {
+  display: none;
+}
+.go-body[data-view="handheld"] #view-handheld,
+.go-body[data-view="mac"] #view-mac,
+.go-body[data-view="other"] #view-other {
+  display: block;
+}
+.go h1 {
+  font-size: clamp(36px, 10vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin-bottom: 16px;
+}
+.go .lede {
+  font-size: 18px;
+  max-width: none;
+  margin-bottom: 28px;
+}
+.go-page {
+  padding: 20px 20px 8px;
+  margin-bottom: 28px;
+}
+.go-page .page-title {
+  font-size: 24px;
+}
+.go-page .rows {
+  margin-top: 12px;
+}
+.go-page .t {
+  font-size: 15px;
+}
+.go-wide {
+  width: 100%;
+  min-height: 56px;
+  font-size: 18px;
+}
+.go-help {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--muted);
+}
+.go-gap {
+  margin-top: 28px;
+}
+.go-link {
+  margin-top: 16px;
+}
+.go-link label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.go-link input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  font: 500 16px/1.2 var(--font);
+  color: var(--fg);
+  background: var(--sheet);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+}
+.go-form {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+.go-form .email-row input {
+  font-size: 16px; /* 16px keeps iOS Safari from zooming in on focus */
+}
+.go .form-status {
+  color: var(--fg);
+}
+.go .form-status.err {
+  color: var(--risk);
+}
+.go-other {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+}
+.go-other summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+.go-other p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 15px;
+}
+.go-other .go-form {
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: 0;
+}
+#dl-waiting .go-form {
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
+}
+.go-steps {
+  margin-top: 40px;
+}
+.go-steps li {
+  grid-template-columns: 1fr;
+}
+.go-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding-top: 20px;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--hairline);
+  font-size: 14px;
+  font-weight: 600;
+}
+.go-foot .fine {
+  flex-basis: 100%;
+  font-weight: 500;
+}
+@media (min-width: 700px) {
+  .go {
+    padding-top: 56px;
+  }
+  .go-wide {
+    width: auto;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* main page: shown only on phones and tablets (app.js), points them at /go */
+.phone-handoff {
+  display: block;
+  margin: 0 16px 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  background: var(--sheet);
+  font-size: 15px;
+  font-weight: 600;
+}
+.phone-handoff[hidden] {
+  display: none;
+}

@@ -1,0 +1,13 @@
+{
+  "baseUrl": null,
+  "placements": [
+    { "slug": "hoodie", "kind": "qr", "note": "Back of a hoodie. The person behind you in lecture scans it." },
+    { "slug": "tee", "kind": "qr", "note": "T-shirt, back print." },
+    { "slug": "sleeve", "kind": "nfc", "note": "NFC patch on a hoodie cuff. Label it \"tap my sleeve\"." },
+    { "slug": "laptop", "kind": "both", "note": "Sticker with an NFC tag behind it, on your own laptop." },
+    { "slug": "card", "kind": "both", "note": "Business card you hand out, NFC tag on the back." },
+    { "slug": "flyer", "kind": "qr", "note": "Tear-off flyer, approved bulletin boards only." },
+    { "slug": "pen", "kind": "qr", "note": "Highlighter barrel giveaway." },
+    { "slug": "notes", "kind": "qr", "note": "Corner of a sticky-note pad giveaway." }
+  ]
+}

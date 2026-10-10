@@ -19,6 +19,7 @@
   </nav>
   <a class="btn btn-small" href="#access">Get early access</a>
 </header>
+<a class="phone-handoff" id="phone-handoff" href="/go" hidden>On your phone? Kairos runs on a Mac. Send it to yours.</a>
 
 <main id="top">
 
@@ -179,14 +180,14 @@
   <section class="access" id="access" aria-labelledby="access-title">
     <div class="access-inner">
       <h2 id="access-title">Choose how you'd like to try it.</h2>
-      <p class="section-lede">Kairos is in a small Mac beta. The signed download is still being prepared, so there are two honest ways to get in line.</p>
+      <p class="section-lede" id="access-lede">Kairos is in a small Mac beta. The signed download is still being prepared, so there are two honest ways to get in line.</p>
       <div class="access-options">
         <article class="access-option">
           <p class="access-kicker">For most testers</p>
           <h3>Get the Mac app</h3>
-          <p>We'll send you a verified <code>.dmg</code> when it's ready. It will install like a normal Mac app and won't require a git checkout.</p>
+          <p id="dmg-copy">We'll send you a verified <code>.dmg</code> when it's ready. It will install like a normal Mac app and won't require a git checkout.</p>
           <span class="btn btn-disabled" id="dmg-status">DMG coming soon</span>
-          <p class="access-note">The download appears here after signing, fresh-machine testing, and release.</p>
+          <p class="access-note" id="dmg-note">The download appears here after signing, fresh-machine testing, and release.</p>
         </article>
         <article class="access-option">
           <p class="access-kicker">For GitHub users</p>
@@ -219,6 +220,11 @@
   </nav>
 </footer>
 
+<script src="config.js"></script>
+<script src="funnel.js"></script>
 <script src="app.js"></script>
+<!-- Vercel Web Analytics: same-origin, cookieless page views by path and device.
+     Turn it on in the Vercel project's Analytics tab; until then this 404s quietly. -->
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

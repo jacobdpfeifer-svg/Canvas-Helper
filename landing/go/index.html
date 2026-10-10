@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kairos: send it to your Mac</title>
+<meta name="description" content="Kairos reads every class in Canvas and tells you what's due and what to study first. A Mac app for college students.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161618" media="(prefers-color-scheme: dark)">
+<!-- Shown as the preview card when the link is texted or AirDropped to yourself. -->
+<meta property="og:title" content="Kairos: your whole semester on one page">
+<meta property="og:description" content="Open this on your Mac to get Kairos.">
+<meta property="og:type" content="website">
+<!-- Root-relative paths: this page is also served at /go/<placement> (vercel.json). -->
+<link rel="preload" href="/fonts/gabarito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body class="go-body" data-view="handheld">
+
+<header class="go-top">
+  <a class="wordmark" href="/">kairos</a>
+</header>
+
+<main class="go">
+
+  <!-- Phone or tablet: they scanned a code or tapped a tag. Get the link onto their Mac. -->
+  <section class="view" id="view-handheld" aria-labelledby="handheld-title">
+    <h1 id="handheld-title">Your whole semester on <span class="mark">one page.</span></h1>
+    <p class="lede">Kairos reads every class in Canvas and tells you what's due and what to study first. It's a Mac app.</p>
+
+    <div class="page go-page" role="img" aria-label="A Kairos page for Tuesday: Problem Set 6 done, then Thermo practice and a Lab 2 pre-lab">
+      <p class="page-title">Tuesday</p>
+      <p class="page-sub">4 classes, 3 things today</p>
+      <ul class="rows">
+        <li><span class="box done"></span><span class="t struck">Problem Set 6</span><span class="tag" style="--c: var(--c1)">Diff Eq</span></li>
+        <li><span class="box"></span><span class="t">Thermo practice, 25 min</span><span class="tag" style="--c: var(--c3)">Thermo</span></li>
+        <li><span class="box"></span><span class="t">Lab 2 pre-lab</span><span class="tag" style="--c: var(--c2)">Statics</span></li>
+      </ul>
+    </div>
+
+    <div class="go-action">
+      <button class="btn go-wide" id="send-btn" type="button">Send it to my Mac</button>
+      <p class="go-help" id="send-help">AirDrop it, text it to yourself, or save it to Notes. It'll be waiting when you open your laptop.</p>
+      <div class="go-link" id="send-link" hidden>
+        <label for="send-link-input">Your link</label>
+        <input id="send-link-input" type="text" readonly>
+      </div>
+      <p class="form-status" id="send-status" role="status" aria-live="polite"></p>
+      <noscript><p class="go-help">Open this page on your Mac to get Kairos.</p></noscript>
+    </div>
+
+    <form class="email-form go-form" data-intent="self" novalidate>
+      <label for="self-email">Or email the link to yourself</label>
+      <div class="email-row">
+        <input id="self-email" type="email" placeholder="you@school.edu" required autocomplete="email">
+        <button class="btn-secondary" type="submit">Email me</button>
+      </div>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+
+    <details class="go-other">
+      <summary>Don't have a Mac?</summary>
+      <p>Kairos only runs on a Mac for now. Leave your email and we'll tell you when it works on your computer.</p>
+      <form class="email-form go-form" data-intent="waitlist" novalidate>
+        <label for="other-email-h">School email</label>
+        <div class="email-row">
+          <input id="other-email-h" type="email" placeholder="you@school.edu" required autocomplete="email">
+          <button class="btn-secondary" type="submit">Tell me when</button>
+        </div>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </details>
+  </section>
+
+  <!-- On a Mac: usually the link they just sent from their phone. -->
+  <section class="view" id="view-mac" aria-labelledby="mac-title">
+    <h1 id="mac-title">You made it to your <span class="mark">Mac.</span></h1>
+    <p class="lede">Install Kairos, sign in to Canvas the way you always do, and your week is written down.</p>
+
+    <div class="go-action" id="dl-ready" hidden>
+      <a class="btn" id="dl-btn" href="/">Download for Mac</a>
+      <p class="go-help" id="dl-note"></p>
+    </div>
+
+    <div id="dl-waiting">
+      <p class="go-help">The download isn't out yet. Leave your school email and you'll get it first.</p>
+      <form class="email-form go-form" data-intent="early" novalidate>
+        <label for="mac-email">School email</label>
+        <div class="email-row">
+          <input id="mac-email" type="email" placeholder="you@school.edu" required autocomplete="email">
+          <button class="btn" type="submit">Get early access</button>
+        </div>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <ol class="steps go-steps">
+      <li><strong>Find your school.</strong> <span>Type its name. Any school that uses Canvas works.</span></li>
+      <li><strong>Sign in the way you always do.</strong> <span>Your school's normal login. Kairos never sees your password.</span></li>
+      <li><strong>Your classes show up.</strong> <span>Due dates, grades, and syllabus pages, sorted into one plan.</span></li>
+    </ol>
+  </section>
+
+  <!-- Windows, Chromebook, Linux: not yet. Capture them, or let them pass it to a Mac. -->
+  <section class="view" id="view-other" aria-labelledby="other-title">
+    <h1 id="other-title">Kairos is a Mac app <span class="mark">for now.</span></h1>
+    <p class="lede">Leave your email and we'll tell you when it runs on your computer.</p>
+    <form class="email-form go-form" data-intent="waitlist" novalidate>
+      <label for="other-email">School email</label>
+      <div class="email-row">
+        <input id="other-email" type="email" placeholder="you@school.edu" required autocomplete="email">
+        <button class="btn" type="submit">Tell me when</button>
+      </div>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+    <p class="go-help go-gap">Have a Mac too? Open <a id="other-link" href="/go">this page</a> on it.</p>
+  </section>
+
+</main>
+
+<footer class="go-foot">
+  <a href="/">See how Kairos works</a>
+  <a href="/#privacy">Privacy</a>
+  <p class="fine">Not affiliated with Instructure, Canvas, or your school.</p>
+</footer>
+
+<script src="/config.js"></script>
+<script src="/funnel.js"></script>
+<script src="/go/go.js"></script>
+<!-- Vercel Web Analytics: same-origin, cookieless page views by path and device.
+     Turn it on in the Vercel project's Analytics tab; until then this 404s quietly. -->
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

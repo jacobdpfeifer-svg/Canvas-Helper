@@ -60,16 +60,46 @@
           : "Please let me know when there's a spot in the Kairos Mac beta.") +
         "\n\nMy email: " + email + "\n"
       );
-      var mailto = "mailto:jacobdpfeifer@gmail.com?subject=" + subject + "&body=" + body;
+      var to = (window.KAIROS_CONFIG && window.KAIROS_CONFIG.contactEmail) || "jacobdpfeifer@gmail.com";
+      var mailto = "mailto:" + to + "?subject=" + subject + "&body=" + body;
       status.textContent = "Opening your email app so you can send this. Nothing was sent yet.";
       status.className = "form-status ok";
       window.location.href = mailto;
     });
   }
 
+  // The download button stays disabled until config.js names a real release.
+  function initDownload() {
+    var config = window.KAIROS_CONFIG || {};
+    var slot = document.getElementById("dmg-status");
+    if (!config.downloadUrl || !slot) return;
+    var btn = document.createElement("a");
+    btn.className = "btn";
+    btn.id = "dmg-status";
+    btn.href = config.downloadUrl;
+    btn.textContent = "Download for Mac";
+    slot.parentNode.replaceChild(btn, slot);
+    var copy = document.getElementById("dmg-copy");
+    if (copy) copy.textContent = "A signed .dmg that installs like a normal Mac app. No git checkout needed.";
+    var note = document.getElementById("dmg-note");
+    if (note) note.textContent = config.downloadNote || "";
+    var lede = document.getElementById("access-lede");
+    if (lede) lede.textContent = "Kairos is in a small Mac beta. Download it below, or get in line for source access.";
+  }
+
+  // Phones and tablets can't install a Mac app, so point them at the hand-off page.
+  function initPhoneHandoff() {
+    var F = window.KairosFunnel;
+    var banner = document.getElementById("phone-handoff");
+    if (!F || !banner) return;
+    if (F.isHandheld(F.currentDevice(window))) banner.hidden = false;
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initReveal();
     initEmailForm();
+    initDownload();
+    initPhoneHandoff();
     var yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
   });

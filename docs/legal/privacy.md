@@ -1,7 +1,7 @@
 # Privacy Policy — Kairos (beta draft)
 
 **Status:** beta draft, not lawyer-reviewed. Product name **Kairos** (chosen 2026-10-06; trademark search pending).  
-**Date:** 2026-09-20
+**Date:** 2026-10-10
 
 This describes what the current beta actually does. It is not legal advice.
 
@@ -28,6 +28,10 @@ If you connect the funded AI relay, selected material and a question/answer may 
 ## Email and calendar
 
 Gmail is read only if you connect it. Suggested calendar rows from mail are a contract (`inbox/calendar-suggestions.jsonl`); this round ships the file shape and a reader, not an automatic producer. Sends and Google Calendar writes require a per-action confirmation. We do not auto-add events.
+
+## The website
+
+The marketing site, including the `/go` pages that QR codes and NFC tags open, may use Vercel Web Analytics once it is switched on: page views with the page path, referrer, country and device type, collected without cookies and without anything that identifies you. Email sign-up forms open your own mail app; the site itself stores nothing you type.
 
 ## No affiliation
 
