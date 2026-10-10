@@ -41,7 +41,7 @@ dependencies = [
 google = [
     "google-auth>=2.28.0",
     "google-auth-oauthlib>=1.2.0",
-    "google-api-python-client>=2.120.0",
+    "google-api-python-client>=2.201.0",
 ]
 diagrams = [
     "matplotlib>=3.8",
